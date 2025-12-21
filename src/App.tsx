@@ -12,11 +12,14 @@ import Loading from '@/components/loading'
 const About = lazy(() => import('@/pages/About'))
 const Contact = lazy(() => import('@/pages/Contact'))
 const FAQ = lazy(() => import('@/pages/FAQ'))
+const Home = lazy(() => import('@/pages/Home'))
+const Pricing = lazy(() => import('@/pages/Pricing'))
 const Login = lazy(() => import('@/pages/Login'))
 const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'))
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'))
 const Verify = lazy(() => import('@/pages/Verify'))
 const Signup = lazy(() => import('@/pages/Signup'))
+const Register = lazy(() => import('@/pages/Register'))
 const Manager = lazy(() => import('@/pages/Manager'))
 const SuperAdmin = lazy(() => import('@/pages/SuperAdmin'))
 const Admin = lazy(() => import('@/pages/Admin'))
@@ -29,22 +32,29 @@ const PageNotFound = lazy(() => import('@/pages/PageNotFound'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
 const Terms = lazy(() => import('@/pages/Terms'))
 const Handoff = lazy(() => import('@/pages/Handoff'))
+const FreeTrial = lazy(() => import('@/pages/FreeTrial'))
 
 function App() {
   const location = useLocation()
-  // Hide header on auth pages and portal pages (portals have their own navigation)
-  const hideHeaderRoutes = [
-    '/', '/login', '/signup', '/forgot-password', '/reset-password', '/verify',
-    '/super-admin', '/admin', '/dashboard', '/owner', '/tenant', '/maintenance', '/handoff'
+  // Hide global chrome on auth + portal routes so portals retain bespoke navigation
+  const hideChromePrefixes = [
+    '/login',
+    '/register',
+    '/signup',
+    '/forgot-password',
+    '/reset-password',
+    '/verify',
+    '/super-admin',
+    '/admin',
+    '/dashboard',
+    '/owner',
+    '/tenant',
+    '/maintenance',
+    '/handoff',
   ]
-  const hideFooterRoutes = [
-    '/', '/login', '/signup', '/forgot-password', '/reset-password', '/verify',
-    '/super-admin', '/admin', '/dashboard', '/owner', '/tenant', '/maintenance', '/handoff'
-  ]
-  
-  // Check if current path starts with any hide route
-  const shouldHideHeader = hideHeaderRoutes.some(route => location.pathname.startsWith(route))
-  const shouldHideFooter = hideFooterRoutes.some(route => location.pathname.startsWith(route))
+
+  const shouldHideHeader = hideChromePrefixes.some(route => location.pathname.startsWith(route))
+  const shouldHideFooter = hideChromePrefixes.some(route => location.pathname.startsWith(route))
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
@@ -55,11 +65,14 @@ function App() {
             <Suspense fallback={<Loading />}>
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
+                <Route path="/free-trial" element={<FreeTrial />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/signup/:token" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />

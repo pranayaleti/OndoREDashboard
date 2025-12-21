@@ -1,133 +1,335 @@
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { ArrowRight } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import useApiRequest from "../hooks/useApiRequest";
-import { getLogoPath } from "@/lib/logo";
-import { ERROR_MESSAGES, REGEX_PATTERNS } from "@/constants";
-import { sanitize } from "@/utils/validation.utils";
-import { companyInfo } from "@/constants/companyInfo";
+import { useState } from "react"
+import { Building2, CreditCard, FileSignature, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/hooks/use-toast"
+import { useValidatedForm } from "@/hooks/useValidatedForm"
+import type { FormValidationSchema } from "@/utils/validation.utils"
+import { sanitize, validators } from "@/utils/validation.utils"
+import { ERROR_MESSAGES, REGEX_PATTERNS } from "@/constants/regex.constants"
+import { OnboardingLayout } from "@/components/auth/onboarding-layout"
+import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
+import { OnboardingCard } from "@/components/auth/onboarding-card"
+import { authApi, type OwnerOnboardingRequest } from "@/lib/api"
+import { useApi } from "@/hooks/useApi"
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .regex(REGEX_PATTERNS.FULL_NAME, { message: ERROR_MESSAGES.NAME }),
-  email: z
-    .string()
-    .regex(REGEX_PATTERNS.EMAIL, { message: ERROR_MESSAGES.EMAIL }),
-  password: z
-    .string()
-    .regex(REGEX_PATTERNS.PASSWORD_MEDIUM, { message: ERROR_MESSAGES.PASSWORD_MEDIUM }),
-});
+interface OwnerOnboardingFormValues extends OwnerOnboardingRequest, Record<string, unknown> {
+  goal: string
+  portfolioSize: string
+}
 
-type FormType = z.infer<typeof formSchema>;
+const checklists = {
+  owners: [
+    "Invite owners & tenants with branded emails",
+    "Run SmartMove / Checkr screening",
+    "Schedule rent + autopay",
+    "Track maintenance & communication",
+  ],
+  tenants: [
+    "Self-serve onboarding",
+    "Submit maintenance with media",
+    "Pay rent + download receipts",
+    "Chat with owners in the same portal",
+  ],
+}
 
+const planHighlights = [
+  {
+    title: "Launch day workflows",
+    description: "Screening, rent collection, maintenance, documents, comms, accounting.",
+    icon: <Building2 className="h-6 w-6" />,
+  },
+  {
+    title: "Payments ready",
+    description: "Stripe + Plaid autopay placeholders with late-fee automation.",
+    icon: <CreditCard className="h-6 w-6" />,
+  },
+  {
+    title: "Lease + eSign",
+    description: "Templates, uploads, DocuSign/HelloSign integration points.",
+    icon: <FileSignature className="h-6 w-6" />,
+  },
+]
+
+const portfolioOptions = [
+  "1-5 units",
+  "6-10 units",
+  "11-20 units",
+  "21-50 units",
+  "51+ units",
+]
 
 export default function Register() {
-  const { register, handleSubmit, formState: { errors } } =
-    useForm<FormType>({ resolver: zodResolver(formSchema) });
+  const { toast } = useToast()
+  const { execute: submitOnboarding, loading } = useApi(authApi.requestOwnerOnboarding)
+  const [submitted, setSubmitted] = useState(false)
 
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { request, loading } = useApiRequest();
+  const schema: FormValidationSchema<OwnerOnboardingFormValues> = {
+    firstName: {
+      required: true,
+      formatter: sanitize.trim,
+      maxLength: 50,
+      rules: [],
+    },
+    lastName: {
+      required: true,
+      formatter: sanitize.trim,
+      maxLength: 50,
+      rules: [],
+    },
+    email: {
+      required: true,
+      formatter: sanitize.trim,
+      rules: [
+        {
+          validator: validators.email,
+          message: ERROR_MESSAGES.EMAIL,
+        },
+      ],
+      maxLength: 120,
+    },
+    phone: {
+      formatter: sanitize.trim,
+      rules: [
+        {
+          validator: (value) => !value || REGEX_PATTERNS.PHONE_US_STRICT.test(value),
+          message: ERROR_MESSAGES.PHONE,
+        },
+      ],
+      maxLength: 20,
+    },
+    companyName: {
+      formatter: sanitize.trim,
+      maxLength: 80,
+      rules: [],
+    },
+    portfolioSize: {
+      formatter: sanitize.trim,
+      required: true,
+      maxLength: 40,
+      rules: [],
+    },
+    goal: {
+      required: true,
+      formatter: sanitize.trim,
+      maxLength: 280,
+      rules: [],
+    },
+    referredBy: {
+      formatter: sanitize.trim,
+      maxLength: 120,
+      rules: [],
+    },
+  }
 
-  const onSubmit = async (body: FormType) => {
-    const payload: FormType = {
-      name: sanitize.trim(body.name),
-      email: sanitize.trim(body.email).toLowerCase(),
-      password: body.password,
-    };
-    const data = await request<{ status?: string; message?: string }>({
-      url: `/auth/signup`,
-      method: "POST",
-      body: payload,
-    });
-    if (data?.status === "success") {
+  const initialValues: OwnerOnboardingFormValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    companyName: "",
+    portfolioSize: "1-5 units",
+    goal: "",
+    referredBy: "",
+  }
+
+  const { values, errors, touched, handleChange, handleBlur, validateForm, resetForm } = useValidatedForm<OwnerOnboardingFormValues>({
+    initialValues,
+    schema,
+  })
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!validateForm()) {
       toast({
-        title: "Success",
-        description: "Account created. Please login.",
-      });
-      navigate("/login");
+        title: "Double-check the form",
+        description: "Highlighted fields need attention.",
+        variant: "destructive",
+      })
+      return
     }
-  };
+
+    try {
+      const payload: OwnerOnboardingRequest = {
+        firstName: sanitize.trim(values.firstName),
+        lastName: sanitize.trim(values.lastName),
+        email: sanitize.trim(values.email).toLowerCase(),
+        phone: values.phone?.replace(/\D/g, "") || undefined,
+        companyName: sanitize.trim(values.companyName || ""),
+        portfolioSize: values.portfolioSize,
+        goal: values.goal,
+        referredBy: values.referredBy,
+      }
+
+      await submitOnboarding(payload)
+      setSubmitted(true)
+      toast({
+        title: "Request received",
+        description: "We’ll configure your workspace and send next steps shortly.",
+      })
+      resetForm()
+    } catch (error: any) {
+      toast({
+        title: "Unable to submit",
+        description: error?.message || "Please try again later.",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-white">
-      <div className="flex flex-col items-center gap-5">
-        <div className="flex items-center">
-          <img className="w-20 h-auto" src={getLogoPath()} alt={`${companyInfo.name} logo`} />
-          <p className="text-6xl font-medium font-kanit bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-            {companyInfo.name}
-          </p>
+    <OnboardingLayout
+      title="Owner & operator sign up"
+      subtitle="Tell us about your portfolio and the workflows you need. We’ll provision a workspace, configure roles, and help you invite tenants."
+      hero={
+        <div className="grid gap-4 md:grid-cols-2">
+          <OnboardingChecklist title="Owners" items={checklists.owners} />
+          <OnboardingChecklist title="Tenants" items={checklists.tenants} />
         </div>
-
-      <p className="text-2xl font-medium mt-5 bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-        Create your account
-      </p>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-5 w-[29rem]">
-        <div className="w-full">
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            {...register("name")}
-            id="name"
-            placeholder="Enter your full name"
-            maxLength={100}
-            aria-invalid={!!errors.name}
-            className={`${errors.name ? "border-red-500 focus:ring-red-500" : ""}`}
-          />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+      }
+      sidebar={
+        <div className="grid gap-4">
+          {planHighlights.map((highlight) => (
+            <OnboardingCard
+              key={highlight.title}
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
         </div>
-        
-        <div className="w-full">
-          <Label htmlFor="email">Company Email</Label>
+      }
+    >
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        {submitted && (
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-200">
+            Thanks! Check your email for onboarding instructions. We’re prepping sample data and screening flows.
+          </div>
+        )}
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="firstName">First name *</Label>
+            <Input
+              id="firstName"
+              value={values.firstName}
+              maxLength={50}
+              onChange={handleChange("firstName")}
+              onBlur={handleBlur("firstName")}
+              aria-invalid={touched.firstName && !!errors.firstName}
+            />
+            {touched.firstName && errors.firstName && <p className="text-xs text-red-400">{errors.firstName}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lastName">Last name *</Label>
+            <Input
+              id="lastName"
+              value={values.lastName}
+              maxLength={50}
+              onChange={handleChange("lastName")}
+              onBlur={handleBlur("lastName")}
+              aria-invalid={touched.lastName && !!errors.lastName}
+            />
+            {touched.lastName && errors.lastName && <p className="text-xs text-red-400">{errors.lastName}</p>}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Work email *</Label>
           <Input
-            {...register("email")}
             id="email"
             type="email"
-            placeholder="Enter your email"
+            value={values.email}
             maxLength={120}
-            aria-invalid={!!errors.email}
-            className={`${errors.email ? "border-red-500 focus:ring-red-500" : ""}`}
+            placeholder="you@portfolio.com"
+            onChange={handleChange("email")}
+            onBlur={handleBlur("email")}
+            aria-invalid={touched.email && !!errors.email}
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          {touched.email && errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
         </div>
-        
-        <div className="w-full">
-          <Label htmlFor="password">Password</Label>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              value={values.phone}
+              maxLength={20}
+              placeholder="Optional"
+              onChange={handleChange("phone")}
+              onBlur={handleBlur("phone")}
+              aria-invalid={touched.phone && !!errors.phone}
+            />
+            {touched.phone && errors.phone && <p className="text-xs text-red-400">{errors.phone}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyName">Company / portfolio name</Label>
+            <Input
+              id="companyName"
+              value={values.companyName}
+              maxLength={80}
+              placeholder="Optional"
+              onChange={handleChange("companyName")}
+              onBlur={handleBlur("companyName")}
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="portfolioSize">Units under management *</Label>
+          <select
+            id="portfolioSize"
+            value={values.portfolioSize}
+            onChange={handleChange("portfolioSize")}
+            onBlur={handleBlur("portfolioSize")}
+            className="w-full rounded-xl border border-white/20 bg-slate-900 p-3 text-sm"
+          >
+            {portfolioOptions.map((option) => (
+              <option key={option} value={option} className="bg-slate-900">
+                {option}
+              </option>
+            ))}
+          </select>
+          {touched.portfolioSize && errors.portfolioSize && <p className="text-xs text-red-400">{errors.portfolioSize}</p>}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="goal">What are you hoping to solve? *</Label>
+          <Textarea
+            id="goal"
+            value={values.goal}
+            maxLength={280}
+            rows={4}
+            placeholder="e.g. reduce rent collection time, centralize maintenance, prep for audits..."
+            onChange={handleChange("goal")}
+            onBlur={handleBlur("goal")}
+            aria-invalid={touched.goal && !!errors.goal}
+          />
+          {touched.goal && errors.goal && <p className="text-xs text-red-400">{errors.goal}</p>}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="referredBy">How did you hear about us?</Label>
           <Input
-            {...register("password")}
-            id="password"
-            type="password"
-            placeholder="Enter your password"
-            maxLength={128}
-            aria-invalid={!!errors.password}
-            className={`${errors.password ? "border-red-500 focus:ring-red-500" : ""}`}
+            id="referredBy"
+            value={values.referredBy}
+            maxLength={120}
+            placeholder="Optional"
+            onChange={handleChange("referredBy")}
+            onBlur={handleBlur("referredBy")}
           />
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
         </div>
-
         <Button
-          disabled={loading}
           type="submit"
-          className="bg-gradient-to-r from-orange-500 to-red-800 py-4 rounded-2xl text-white text-xl w-full"
+          disabled={loading}
+          className="w-full rounded-2xl bg-orange-500 py-4 text-lg font-semibold text-black hover:bg-orange-400"
         >
-          Submit <ArrowRight className="ml-2 h-5 w-5" />
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" /> Sending...
+            </span>
+          ) : (
+            "Request onboarding"
+          )}
         </Button>
-
-        <p className="text-center">
-          Already have an account?{" "}
-          <Link to={"/login"} className="underline">
-            Login here
-          </Link>
-        </p>
       </form>
-    </div>
-  </div>
-  );
+    </OnboardingLayout>
+  )
 }

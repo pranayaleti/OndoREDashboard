@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { ArrowRight, EyeIcon, EyeOffIcon, CheckCircle, AlertTriangle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { authApi } from "@/lib/api"
@@ -16,6 +17,42 @@ import { ERROR_MESSAGES, REGEX_PATTERNS, validationPresets } from "@/constants"
 import { AddressForm, type AddressFormValues } from "@/components/forms/address-form"
 import { parseAddressString, formatAddressFields } from "@/utils/address"
 import { companyInfo } from "@/constants/companyInfo"
+import { OnboardingLayout } from "@/components/auth/onboarding-layout"
+import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
+import { OnboardingCard } from "@/components/auth/onboarding-card"
+
+const roleFlows: Record<string, { title: string; subtitle: string; steps: string[] }> = {
+  owner: {
+    title: "Owner onboarding",
+    subtitle: "Confirm contact details, enable screening, and finish lease + rent setup.",
+    steps: [
+      "Verify your profile + security settings",
+      "Upload lease templates or generate new ones",
+      "Invite tenants, trigger screening, and collect rent",
+      "Monitor maintenance + statements in one dashboard",
+    ],
+  },
+  tenant: {
+    title: "Tenant onboarding",
+    subtitle: "We’ll verify your details, background checks, and get your portal ready.",
+    steps: [
+      "Confirm your contact information",
+      "Authorize screening + upload documents",
+      "Enable autopay + download receipts",
+      "Submit maintenance + chat with your landlord",
+    ],
+  },
+  maintenance: {
+    title: "Maintenance onboarding",
+    subtitle: "Get access to ticket queues, vendor notes, and communication tools.",
+    steps: [
+      "Set up your contact preferences",
+      "Review open tickets assigned to you",
+      "Upload before/after media for every job",
+      "Close work orders and notify tenants",
+    ],
+  },
+}
 
 export default function Signup() {
   const { token } = useParams<{ token: string }>()
@@ -293,208 +330,243 @@ export default function Signup() {
     )
   }
 
+  const flow = roleFlows[invitation.role] || roleFlows.owner
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <div className="w-full max-w-md">
-        {/* Ondo Real Estate Logo and Branding */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="mb-6">
-            <Logo size="xl" variant="centered" showText={true} linkTo="/" />
-          </div>
-          <h1 className="text-2xl font-medium bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-            Complete Your Registration
-          </h1>
-        </div>
-
-        <Card className="border-none shadow-lg">
-          <CardContent className="pt-6">
-            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <p className="text-sm text-blue-800 dark:text-blue-300">
-                <strong>Email:</strong> {invitation.email}
-              </p>
-              <p className="text-sm text-blue-800 dark:text-blue-300">
-                <strong>Role:</strong> {invitation.role.charAt(0).toUpperCase() + invitation.role.slice(1)}
-              </p>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    placeholder="John"
-                    value={values.firstName}
-                    maxLength={50}
-                    onChange={handleChange("firstName")}
-                    onBlur={handleBlur("firstName")}
-                    aria-invalid={touched.firstName && !!errors.firstName}
-                    className={`rounded-xl border-gray-300 dark:border-gray-600 focus:border-orange-500 focus:ring-orange-500 ${
-                      touched.firstName && errors.firstName ? "border-red-500 focus:ring-red-500" : ""
-                    }`}
-                    required
-                  />
-                  {touched.firstName && errors.firstName && <p className="text-sm text-red-600">{errors.firstName}</p>}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300">Last Name *</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    value={values.lastName}
-                    maxLength={50}
-                    onChange={handleChange("lastName")}
-                    onBlur={handleBlur("lastName")}
-                    aria-invalid={touched.lastName && !!errors.lastName}
-                    className={`rounded-xl border-gray-300 dark:border-gray-600 focus:border-orange-500 focus:ring-orange-500 ${
-                      touched.lastName && errors.lastName ? "border-red-500 focus:ring-red-500" : ""
-                    }`}
-                    required
-                  />
-                  {touched.lastName && errors.lastName && <p className="text-sm text-red-600">{errors.lastName}</p>}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mobile" className="text-gray-700 dark:text-gray-300">Mobile Number (Optional)</Label>
-                <Input
-                  id="mobile"
-                  type="tel"
-                  placeholder="+1 (555) 123-4567"
-                  value={values.phone}
-                  maxLength={14}
-                  onChange={handleChange("phone")}
-                  onBlur={handleBlur("phone")}
-                  aria-invalid={touched.phone && !!errors.phone}
-                  className={`rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 ${
-                    touched.phone && errors.phone ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
-                />
-                {touched.phone && errors.phone && <p className="text-sm text-red-600">{errors.phone}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-gray-700 dark:text-gray-300">Address (Optional)</Label>
-                <AddressForm
-                  value={addressValue}
-                  onChange={handleAddressFormChange}
-                  onFieldBlur={handleAddressBlur}
-                  hideTypeToggle
-                  showRequiredIndicator={false}
-                  idPrefix="signup"
-                />
-                <p className="text-xs text-gray-500 dark:text-gray-400">Helps personalize your portal experience.</p>
-                {touched.address && errors.address && <p className="text-sm text-red-600">{errors.address}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="profilePicture" className="text-gray-700 dark:text-gray-300">Profile Picture URL (Optional)</Label>
-                <Input
-                  id="profilePicture"
-                  type="url"
-                  placeholder="https://example.com/profile.jpg"
-                  value={values.profilePicture}
-                  maxLength={2048}
-                  onChange={handleChange("profilePicture")}
-                  onBlur={handleBlur("profilePicture")}
-                  aria-invalid={touched.profilePicture && !!errors.profilePicture}
-                  className={`rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 ${
-                    touched.profilePicture && errors.profilePicture ? "border-red-500 focus:ring-red-500" : ""
-                  }`}
-                />
-                {touched.profilePicture && errors.profilePicture && <p className="text-sm text-red-600">{errors.profilePicture}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">Password *</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
-                    value={values.password}
-                    maxLength={128}
-                    onChange={handleChange("password")}
-                    onBlur={handleBlur("password")}
-                    aria-invalid={touched.password && !!errors.password}
-                    className={`rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 pr-10 ${
-                      touched.password && errors.password ? "border-red-500 focus:ring-red-500" : ""
-                    }`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Must include uppercase, lowercase, number, and special character.</p>
-                {touched.password && errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">Confirm Password *</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    value={values.confirmPassword}
-                    maxLength={128}
-                    onChange={handleChange("confirmPassword")}
-                    onBlur={handleBlur("confirmPassword")}
-                    aria-invalid={touched.confirmPassword && !!errors.confirmPassword}
-                    className={`rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 pr-10 ${
-                      touched.confirmPassword && errors.confirmPassword ? "border-red-500 focus:ring-red-500" : ""
-                    }`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
-                  </button>
-                </div>
-                {touched.confirmPassword && errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}
-              </div>
-
-              <button
-                type="submit"
-                disabled={signingUp}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-600 hover:to-red-900 text-white font-medium py-4 rounded-2xl text-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {signingUp ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Creating Account...
-                  </>
-                ) : (
-                  <>
-                    Create Account
-                    <ArrowRight className="h-5 w-5" />
-                  </>
-                )}
-              </button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Already have an account?{" "}
-            <Link to="/login" className="text-orange-600 dark:text-orange-400 hover:underline font-medium">
-              Sign in here
-            </Link>
+    <OnboardingLayout
+      title={`Complete your ${invitation.role} workspace`}
+      subtitle={flow.subtitle}
+      hero={<OnboardingChecklist title={flow.title} items={flow.steps} />}
+      sidebar={
+        <OnboardingCard
+          eyebrow="Next steps"
+          title="Need help?"
+          description="Our team can resend invites, update emails, or enable integrations before you log in."
+        >
+          <p className="text-sm text-white/80">
+            Reach us at{' '}
+            <a
+              href={`mailto:${companyInfo.email}`}
+              className="text-orange-300 hover:text-orange-200"
+            >
+              {companyInfo.email}
+            </a>
+          </p>
+        </OnboardingCard>
+      }
+    >
+      <div className="space-y-6">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
+          <p>
+            <strong>Email:</strong> {invitation.email}
+          </p>
+          <p>
+            <strong>Role:</strong> {invitation.role.charAt(0).toUpperCase() + invitation.role.slice(1)}
           </p>
         </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-2 gap-4">
+            <TextField
+              id="firstName"
+              label="First name *"
+              placeholder="Alex"
+              value={values.firstName}
+              maxLength={50}
+              error={touched.firstName ? errors.firstName : undefined}
+              onChange={handleChange('firstName')}
+              onBlur={handleBlur('firstName')}
+              required
+            />
+            <TextField
+              id="lastName"
+              label="Last name *"
+              placeholder="Rivera"
+              value={values.lastName}
+              maxLength={50}
+              error={touched.lastName ? errors.lastName : undefined}
+              onChange={handleChange('lastName')}
+              onBlur={handleBlur('lastName')}
+              required
+            />
+          </div>
+          <TextField
+            id="mobile"
+            label="Mobile number"
+            type="tel"
+            placeholder="Optional"
+            value={values.phone}
+            maxLength={14}
+            error={touched.phone ? errors.phone : undefined}
+            onChange={handleChange('phone')}
+            onBlur={handleBlur('phone')}
+          />
+          <div className="space-y-2">
+            <Label>Address (optional)</Label>
+            <AddressForm
+              value={addressValue}
+              onChange={handleAddressFormChange}
+              onFieldBlur={handleAddressBlur}
+              hideTypeToggle
+              showRequiredIndicator={false}
+              idPrefix="signup"
+            />
+            {touched.address && errors.address && (
+              <p className="text-xs text-red-400">{errors.address}</p>
+            )}
+          </div>
+          <TextField
+            id="profilePicture"
+            label="Profile picture URL"
+            type="url"
+            placeholder="https://example.com/avatar.jpg"
+            value={values.profilePicture}
+            maxLength={2048}
+            error={touched.profilePicture ? errors.profilePicture : undefined}
+            onChange={handleChange('profilePicture')}
+            onBlur={handleBlur('profilePicture')}
+          />
+          <PasswordField
+            id="password"
+            label="Password *"
+            placeholder="Create a strong password"
+            value={values.password}
+            onChange={handleChange('password')}
+            onBlur={handleBlur('password')}
+            error={touched.password ? errors.password : undefined}
+            showPassword={showPassword}
+            onToggle={() => setShowPassword(!showPassword)}
+          />
+          <PasswordField
+            id="confirmPassword"
+            label="Confirm password *"
+            placeholder="Repeat your password"
+            value={values.confirmPassword}
+            onChange={handleChange('confirmPassword')}
+            onBlur={handleBlur('confirmPassword')}
+            error={touched.confirmPassword ? errors.confirmPassword : undefined}
+            showPassword={showConfirmPassword}
+            onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+          />
+          <Button
+            type="submit"
+            disabled={signingUp}
+            className="w-full rounded-2xl bg-orange-500 py-4 text-lg font-semibold text-black hover:bg-orange-400"
+          >
+            {signingUp ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/40 border-t-transparent" />
+                Creating account...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                Create account
+                <ArrowRight className="h-5 w-5" />
+              </span>
+            )}
+          </Button>
+          <p className="text-center text-sm text-white/60">
+            Already have an account?{' '}
+            <Link to="/login" className="text-orange-300 hover:text-orange-200">
+              Sign in
+            </Link>
+          </p>
+        </form>
       </div>
-    </div>
+    </OnboardingLayout>
   )
+}
+
+interface TextFieldProps {
+  id: string;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  value: string;
+  maxLength?: number;
+  required?: boolean;
+  error?: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+}
+
+function TextField({
+  id,
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  maxLength,
+  required,
+  error,
+  onChange,
+  onBlur,
+}: TextFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        maxLength={maxLength}
+        onChange={onChange}
+        onBlur={onBlur}
+        required={required}
+        aria-invalid={!!error}
+        className="rounded-xl border-white/15 bg-slate-900 text-white"
+      />
+      {error && <p className="text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
+
+interface PasswordFieldProps {
+  id: string;
+  label: string;
+  placeholder?: string;
+  value: string;
+  error?: string;
+  showPassword: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onToggle: () => void;
+}
+
+function PasswordField({
+  id,
+  label,
+  placeholder,
+  value,
+  error,
+  showPassword,
+  onChange,
+  onBlur,
+  onToggle,
+}: PasswordFieldProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <div className="relative">
+        <Input
+          id={id}
+          type={showPassword ? 'text' : 'password'}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          aria-invalid={!!error}
+          className="rounded-xl border-white/15 bg-slate-900 pr-11 text-white"
+        />
+        <button
+          type="button"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60"
+          onClick={onToggle}
+        >
+          {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+        </button>
+      </div>
+      {error && <p className="text-xs text-red-400">{error}</p>}
+    </div>
+  );
 }

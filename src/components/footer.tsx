@@ -1,33 +1,55 @@
 import { Link } from "react-router-dom"
-import { useAuth } from "@/lib/auth-context"
 import { companyInfo } from "@/constants/companyInfo"
 
-export function Footer() {
-  const { user } = useAuth()
-  const shouldShowContent = user?.role === "owner" || user?.role === "tenant"
+const footerLinks = {
+  Product: [
+    { label: "Overview", href: "/#product" },
+    { label: "Features", href: "/#features" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Free trial", href: "/free-trial" },
+  ],
+  Company: [
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+    { label: "FAQ", href: "/faq" },
+    { label: "Careers", href: "/contact" },
+  ],
+  Support: [
+    { label: "Owner sign up", href: "/register" },
+    { label: "Tenant login", href: "/login" },
+    { label: "Docs", href: "/faq" },
+    { label: "Status", href: "/contact" },
+  ],
+  Legal: [
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
+  ],
+}
 
+export function Footer() {
   return (
-    <footer className="w-full bg-card text-foreground border-t">
-      <div className="container mx-auto px-4 py-2">
-        {shouldShowContent && (
-          <div className="flex flex-col items-center justify-center gap-1 md:flex-row md:justify-between md:gap-4 text-center">
-            <p className="text-xs text-muted-foreground order-1 md:order-1 leading-tight">
-              © {new Date().getFullYear()} {companyInfo.name}. All rights reserved.
-            </p>
-            
-            <div className="flex flex-col items-center gap-0.5 md:flex-row md:gap-1.5 order-2 md:order-2">
-              <span className="text-xs text-muted-foreground/80 leading-tight">Designed. Developed. Deployed by</span>
-              <a 
-                href="https://www.ondosoft.com/?utm_source=ondorealestate" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-xs md:text-sm font-semibold text-orange-500 hover:text-orange-600 transition-colors duration-200 hover:underline decoration-orange-500 underline-offset-2 leading-tight"
-              >
-                OndoSoft
-              </a>
-            </div>
+    <footer className="bg-slate-950 text-white">
+      <div className="container mx-auto grid gap-10 px-4 py-12 md:grid-cols-2 lg:grid-cols-4">
+        {Object.entries(footerLinks).map(([section, links]) => (
+          <div key={section}>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">{section}</p>
+            <ul className="mt-4 space-y-2 text-sm text-white/70">
+              {links.map((link) => (
+                <li key={link.label}>
+                  <Link to={link.href} className="transition hover:text-white">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
+        ))}
+      </div>
+      <div className="border-t border-white/10">
+        <div className="container mx-auto flex flex-col gap-2 px-4 py-6 text-center text-xs text-white/60 md:flex-row md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} {companyInfo.name}. All rights reserved.</p>
+          <p>Crafted for independent landlords & tenants.</p>
+        </div>
       </div>
     </footer>
   )
