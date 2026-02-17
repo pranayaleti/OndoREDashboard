@@ -1,4 +1,4 @@
-import { Building, DollarSign, TrendingUp, Users, FileText, BarChart3, Wrench, Plus, MessageSquare, FolderOpen } from "lucide-react"
+import { Building, DollarSign, Users, FileText, BarChart3, Wrench, Plus, MessageSquare, FolderOpen } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, type Property } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -63,8 +63,8 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
   portfolioStats.expenseBreakdown.propertyManagement = portfolioStats.monthlyExpenses * 0.24
   portfolioStats.expenseBreakdown.insurance = portfolioStats.monthlyExpenses * 0.13
 
-  // Generate activity feed
-  const activities: ActivityItem[] = properties.slice(0, 5).map((p, idx) => ({
+  // Generate activity feed (reserved for future ActivityFeed integration)
+  const _activities: ActivityItem[] = properties.slice(0, 5).map((p, idx) => ({
     id: `prop-${idx}`,
     type: "property" as const,
     message: `Property "${p.title}" ${p.status === 'approved' ? 'approved' : p.status === 'pending' ? 'pending review' : 'rejected'}`,

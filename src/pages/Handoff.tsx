@@ -8,13 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import {
   Home,
-  Phone,
   Zap,
   Key,
   Mail,
   Wrench,
   FileText,
-  MapPin,
   Shield,
   Car,
   CheckSquare,
@@ -240,7 +238,7 @@ export default function Handoff() {
     }
   }
 
-  const handleDeleteDocument = (docId: string) => {
+  const handleDeleteDocument = (_docId: string) => {
     // Only owners and admins can delete
     if (!canEdit) {
       toast({
@@ -259,7 +257,7 @@ export default function Handoff() {
   }
 
   // Handle navigation to specific section
-  const navigateToSection = (tab: string, accordionValue?: string) => {
+  const _navigateToSection = (tab: string, accordionValue?: string) => {
     setActiveTab(tab)
     if (accordionValue) {
       // Small delay to ensure tab is switched first
@@ -317,7 +315,7 @@ export default function Handoff() {
     }
 
     fetchProperties()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user?.id, user?.role, urlPropertyId])
 
   // Fetch handoff data when property is selected

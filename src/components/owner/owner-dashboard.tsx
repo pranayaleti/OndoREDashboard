@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building, DollarSign, TrendingUp, Users, FileText, BarChart3, AlertTriangle, Plus, MessageSquare, Wrench, ArrowUp, Calendar, Home, FolderOpen, Loader2 } from "lucide-react"
+import { Building, DollarSign, Users, FileText, BarChart3, AlertTriangle, Plus, MessageSquare, Wrench, ArrowUp, Calendar, Home, FolderOpen, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, type Property } from "@/lib/api"
 import { ModernPropertyCard } from "./modern-property-card"

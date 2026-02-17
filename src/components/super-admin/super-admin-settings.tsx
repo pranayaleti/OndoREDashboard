@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -11,7 +10,7 @@ import { useUserTimezone } from "@/hooks/use-user-timezone"
 
 export default function SuperAdminSettings() {
   const { toast } = useToast()
-  const { displayTimezone, storageTimezone } = useUserTimezone()
+  const { storageTimezone } = useUserTimezone()
   const [settings, setSettings] = useState({
     notifications: {
       systemAlerts: true,

@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { MessageSquare, Send, Search, Plus, Reply, User, Users, Building, Calendar } from "lucide-react"
+import { MessageSquare, Send, Search, Plus, Reply, User, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { companyInfo } from "@/constants/companyInfo"
 

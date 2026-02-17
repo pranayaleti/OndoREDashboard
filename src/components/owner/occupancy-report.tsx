@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { TrendingUp, Users, Building, Calendar, DollarSign, BarChart3 } from "lucide-react"
+import { TrendingUp, Users, Building, BarChart3 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 export const mockOccupancyData = {

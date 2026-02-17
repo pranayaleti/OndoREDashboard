@@ -33,8 +33,8 @@ export function createSuperAdminConfig(
     systemHealth: 98.5, // Mock
   }
 
-  // Generate activity feed
-  const activities: ActivityItem[] = [
+  // Generate activity feed (reserved for future ActivityFeed integration)
+  const _activities: ActivityItem[] = [
     ...properties.slice(0, 3).map((p, idx) => ({
       id: `prop-${idx}`,
       type: "property" as const,

@@ -11,7 +11,6 @@ import {
   BarChart3, 
   User, 
   Settings,
-  FolderOpen,
   Plus,
   type LucideIcon
 } from "lucide-react"

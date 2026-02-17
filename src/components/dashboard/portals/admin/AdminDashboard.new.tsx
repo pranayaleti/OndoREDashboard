@@ -5,15 +5,13 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createAdminConfig } from "./admin.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
-import type { ActivityItem } from "../../base/types"
-
 /**
  * New AdminDashboard using BaseDashboard architecture
  * 
  * This is a cleaner implementation that properly integrates with the base dashboard system.
  */
 function AdminDashboardContent() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format

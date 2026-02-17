@@ -619,7 +619,7 @@ export function generateOccupancyReportHTML(data: OccupancyReportData): string {
  * This is a fallback method that works without external libraries
  * @param useCurrentWindow - If true, uses current window instead of opening new one
  */
-export async function generatePDFFromHTML(htmlContent: string, fileName: string = 'report', useCurrentWindow: boolean = false): Promise<void> {
+export async function generatePDFFromHTML(htmlContent: string, _fileName: string = 'report', useCurrentWindow: boolean = false): Promise<void> {
   if (useCurrentWindow) {
     // Use current window - replace content and trigger print
     document.open();

@@ -86,7 +86,10 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
 
   const summaryParams = useMemo<TenantScreeningSummaryParams | null>(() => {
     if (!derivedParams) return null
-    const { limit: _limit, status: _status, ...rest } = derivedParams
+    // Exclude limit/status from summary params
+    const { limit, status, ...rest } = derivedParams
+    void limit
+    void status
     return rest
   }, [derivedParams])
 

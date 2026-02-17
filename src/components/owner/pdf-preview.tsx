@@ -26,7 +26,7 @@ const getDefaultReportData = (): OccupancyReportData => ({
 
 export default function PDFPreview() {
   const location = useLocation()
-  const navigate = useNavigate()
+  const _navigate = useNavigate()
   const { toast } = useToast()
   const [htmlContent, setHtmlContent] = useState<string>("")
   const [reportData, setReportData] = useState<OccupancyReportData | null>(null)

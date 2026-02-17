@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
-import { Shield, Users, Building, Wrench, DollarSign, AlertTriangle, BarChart3, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react"
+import { Shield, Users, Building, Wrench, BarChart3, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { SuperAdminNav } from "./super-admin-nav"
 import { propertyApi, authApi, maintenanceApi, type Property, type InvitedUser, type MaintenanceRequest } from "@/lib/api"

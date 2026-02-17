@@ -5,13 +5,11 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createSuperAdminConfig } from "./super-admin.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
-import type { ActivityItem } from "../../base/types"
-
 /**
  * New SuperAdminDashboard using BaseDashboard architecture
  */
 function SuperAdminDashboardContent() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format

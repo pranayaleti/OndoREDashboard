@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Calendar, Plus, Clock, Building, Users } from "lucide-react"
+import { Calendar, Plus, Clock, Building } from "lucide-react"
 import { format } from "date-fns"
 
 const mockEvents = [

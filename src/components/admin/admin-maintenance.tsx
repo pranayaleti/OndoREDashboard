@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wrench, Plus } from "lucide-react"
-import { maintenanceApi, propertyApi, type MaintenanceRequest, type Property } from "@/lib/api"
+import { maintenanceApi, propertyApi, type Property } from "@/lib/api"
 import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-maintenance-request-dialog"
 import { useToast } from "@/hooks/use-toast"
 

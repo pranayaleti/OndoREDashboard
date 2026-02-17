@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { ProfileShell, ProfileSummaryCard } from "@/components/portal/profile"
-import { PaymentMethods, type PaymentMethod } from "@/components/ui/payment-methods"
+import { PaymentMethods } from "@/components/ui/payment-methods"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
 import { TwoFactorAuthDialog } from "@/components/ui/two-factor-auth-dialog"
 import { Shield, Bell, ExternalLink } from "lucide-react"
@@ -129,7 +129,7 @@ export default function SuperAdminProfile() {
                 description: "Payment method dialog would open here.",
               })
             }}
-            onSetDefault={(id) => {
+            onSetDefault={(_id) => {
               toast({
                 title: "Default Updated",
                 description: "Payment method set as default.",
@@ -142,7 +142,7 @@ export default function SuperAdminProfile() {
                 description: `Edit dialog would open for payment method ${id}.`,
               })
             }}
-            onRemove={(id) => {
+            onRemove={(_id) => {
               toast({
                 title: "Payment Method Removed",
                 description: "Payment method has been removed.",

@@ -33,7 +33,6 @@ export default function FreeTrialPage() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.table(form)
     toast({
       title: "Trial requested",
       description: "We'll provision your workspace and reach out within a few hours.",

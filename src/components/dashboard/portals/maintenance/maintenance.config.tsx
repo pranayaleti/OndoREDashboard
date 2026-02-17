@@ -35,8 +35,8 @@ export function createMaintenanceConfig(
     pending: assignedRequests.filter(r => r.status === 'pending').length,
   }
 
-  // Generate activity feed
-  const activities: ActivityItem[] = assignedRequests.slice(0, 5).map((r, idx) => ({
+  // Generate activity feed (reserved for future ActivityFeed integration)
+  const _activities: ActivityItem[] = assignedRequests.slice(0, 5).map((r, idx) => ({
     id: `ticket-${idx}`,
     type: "maintenance" as const,
     message: `Ticket "${r.title}" ${r.status === 'completed' ? 'completed' : r.status === 'in_progress' ? 'in progress' : 'pending'}`,

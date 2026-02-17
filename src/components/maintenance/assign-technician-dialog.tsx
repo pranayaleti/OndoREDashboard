@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, Calendar, DollarSign } from "lucide-react"
+import { Loader2, Calendar } from "lucide-react"
 import { getTechnicianOptions } from "@/constants/technicians.constants"
 
 interface AssignTechnicianDialogProps {
@@ -37,7 +37,7 @@ export function AssignTechnicianDialog({
   onOpenChange,
   request,
   onAssign,
-  availableTechnicians,
+  availableTechnicians: _availableTechnicians,
 }: AssignTechnicianDialogProps) {
   const { toast } = useToast()
   const technicianOptions = getTechnicianOptions()

@@ -258,7 +258,7 @@ export function DocumentsView() {
     return matchesSearch && matchesProperty && matchesCategory && matchesFolder
   })
 
-  const handleAddDocument = (data: any) => {
+  const _handleAddDocument = (data: any) => {
     // In a real app, this would call an API to upload the document
     const newDocument = {
       id: `doc${documents.length + 1}`,

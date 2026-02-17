@@ -22,7 +22,6 @@ import {
   Eye,
   FolderOpen,
   Building,
-  Upload,
   Grid3x3,
   List,
 } from "lucide-react"
@@ -272,10 +271,10 @@ const DEFAULT_FOLDERS: DocumentFolder[] = [
 const DEFAULT_CATEGORIES = ["lease", "insurance", "tax", "maintenance", "inspection", "financial"]
 
 export function DocumentsPage({
-  role,
+  role: _role,
   documents = DEFAULT_DOCUMENTS,
   folders = DEFAULT_FOLDERS,
-  properties = ["123 Main Street", "456 Oak Avenue", "All Properties"],
+  properties: _properties = ["123 Main Street", "456 Oak Avenue", "All Properties"],
   showPropertyFilter = true,
   showUpload = true,
   showDownload = true,

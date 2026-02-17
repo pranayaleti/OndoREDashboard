@@ -1,13 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { 
   DollarSign, 
   TrendingUp, 
-  TrendingDown,
-  Receipt,
   BarChart3,
   CreditCard
 } from "lucide-react"

@@ -817,7 +817,8 @@ async function tenantScreeningRequest<T>(endpoint: string, options: RequestInit 
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const { headers: _ignoredHeaders, ...restOptions } = options;
+  const { headers: _headers, ...restOptions } = options;
+  void _headers
   const config: RequestInit = {
     ...restOptions,
     headers,

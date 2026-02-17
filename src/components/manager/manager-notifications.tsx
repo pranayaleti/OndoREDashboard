@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Bell, AlertTriangle, MessageSquare, Wrench, DollarSign, Building, UserPlus, CheckCircle2, Clock, X } from "lucide-react"
+import { Bell, AlertTriangle, MessageSquare, Wrench, Building, UserPlus, CheckCircle2, X } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { formatDistanceToNow } from "date-fns"
 

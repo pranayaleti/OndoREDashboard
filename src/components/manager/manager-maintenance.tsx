@@ -14,7 +14,7 @@ import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-mainte
 import { useAuth } from "@/lib/auth-context"
 
 export default function ManagerMaintenance() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([])
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)

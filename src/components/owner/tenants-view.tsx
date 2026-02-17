@@ -124,7 +124,7 @@ export function TenantsView() {
     return matchesSearch
   })
 
-  const handleAddTenant = (data: any) => {
+  const _handleAddTenant = (data: any) => {
     // In a real app, this would call an API to add the tenant
     const newTenant = {
       id: `tenant${tenants.length + 1}`,

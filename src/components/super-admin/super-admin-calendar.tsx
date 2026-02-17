@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Calendar, Plus, Clock, Users, Building, Shield } from "lucide-react"
+import { Calendar, Plus, Clock } from "lucide-react"
 import { format } from "date-fns"
 
 // Mock events for super admin

@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Calendar, Plus, Clock } from "lucide-react"
