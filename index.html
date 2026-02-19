@@ -5,7 +5,37 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ondo Real Estate - Property Management Platform</title>
-    
+
+    <!-- Speculation Rules API: prefetch public same-origin pages for faster navigation -->
+    <script type="speculationrules">
+      {
+        "prefetch": [
+          {
+            "source": "list",
+            "urls": [
+              "/ondorealestateui/",
+              "/ondorealestateui/pricing"
+            ],
+            "eagerness": "eager"
+          },
+          {
+            "source": "list",
+            "urls": [
+              "/ondorealestateui/about",
+              "/ondorealestateui/contact",
+              "/ondorealestateui/faq",
+              "/ondorealestateui/free-trial",
+              "/ondorealestateui/login",
+              "/ondorealestateui/register",
+              "/ondorealestateui/privacy",
+              "/ondorealestateui/terms"
+            ],
+            "eagerness": "moderate"
+          }
+        ]
+      }
+    </script>
+
     <!-- Start Single Page Apps for GitHub Pages -->
     <script type="text/javascript">
       // Single Page Apps for GitHub Pages
