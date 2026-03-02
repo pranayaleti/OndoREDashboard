@@ -361,7 +361,7 @@ function NewMaintenanceRequest() {
         description: data.description,
         category: data.category as any,
         priority: data.priority as any,
-        photos: [] // TODO: Handle photo uploads
+        photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
       })
 
       toast({

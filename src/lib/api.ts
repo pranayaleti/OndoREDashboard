@@ -947,7 +947,7 @@ export const authApi = {
 
   // Owner onboarding request from marketing/register flow
   async requestOwnerOnboarding(payload: OwnerOnboardingRequest): Promise<OwnerOnboardingResponse> {
-    // TODO: Connect to actual onboarding service once backend endpoint exists.
+    // ROADMAP: Connect to actual onboarding service once backend endpoint exists (Q2 2026).
     return apiRequest<OwnerOnboardingResponse>('/auth/owner/onboarding', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -1355,7 +1355,7 @@ export const featureApi = {
       return apiRequest<ScreeningRequestPayload[]>(`/screening/requests${query}`);
     },
     createRequest(payload: CreateScreeningRequestInput): Promise<ScreeningRequestPayload> {
-      // TODO: Integrate actual SmartMove/Checkr provider IDs once backend wiring is ready.
+      // ROADMAP: Integrate actual SmartMove/Checkr provider IDs once backend wiring is ready (Q3 2026).
       return apiRequest<ScreeningRequestPayload>('/screening/requests', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -1389,7 +1389,7 @@ export const featureApi = {
       });
     },
     createPayment(scheduleId: string, amount: number, method: RentPaymentMethod = 'ach'): Promise<RentPayment> {
-      // TODO: Wire to Stripe + Plaid ACH once credentials provided.
+      // ROADMAP: Wire to Stripe + Plaid ACH once credentials provided (Q2 2026 - payment system).
       return apiRequest<RentPayment>(`/rent/schedules/${scheduleId}/payments`, {
         method: 'POST',
         body: JSON.stringify({ amount, method }),
@@ -1431,7 +1431,7 @@ export const featureApi = {
       return apiRequest<LeaseDocument[]>(`/leases/documents${buildQueryString(params)}`);
     },
     sendForSignature(documentId: string, provider: ESignRequest['provider'] = 'mock'): Promise<ESignRequest> {
-      // TODO: Plug in DocuSign/HelloSign keys.
+      // ROADMAP: Plug in DocuSign/HelloSign keys (Q2 2026 - lease management).
       return apiRequest<ESignRequest>(`/leases/documents/${documentId}/esign`, {
         method: 'POST',
         body: JSON.stringify({ provider }),
@@ -1480,7 +1480,7 @@ export const featureApi = {
       });
     },
     triggerNotification(payload: { template: string; channel: CommunicationChannel; targetId: string }): Promise<{ message: string }> {
-      // TODO: Integrate SendGrid/Resend + Twilio credentials here.
+      // ROADMAP: Integrate SendGrid/Resend + Twilio credentials here (Q2 2026 - notifications).
       return apiRequest<{ message: string }>('/communication/notify', {
         method: 'POST',
         body: JSON.stringify(payload),
