@@ -1,4 +1,4 @@
-import { Wrench, CreditCard, FileText, MessageSquare, DollarSign, Calendar, Building, TrendingUp, CheckCircle, Clock, AlertCircle } from "lucide-react"
+import { Wrench, CreditCard, FileText, MessageSquare, DollarSign, Calendar, Building, TrendingUp, CheckCircle, Clock } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, maintenanceApi, type Property, type MaintenanceRequest } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -198,8 +198,8 @@ export function createTenantConfig(
     },
   ]
 
-  // Generate activity feed
-  const activities: ActivityItem[] = [
+  // Generate activity feed (reserved for future ActivityFeed integration)
+  const _activities: ActivityItem[] = [
     // Maintenance activities
     ...maintenanceRequests.slice(0, 2).map((m, idx) => ({
       id: `maint-${idx}`,

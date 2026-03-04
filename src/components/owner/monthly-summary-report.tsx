@@ -1,8 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { FileText, Calendar, DollarSign, TrendingUp, TrendingDown, BarChart3 } from "lucide-react"
+import { FileText, DollarSign, TrendingUp, TrendingDown, BarChart3 } from "lucide-react"
 
 const mockMonthlyData = {
   month: "November 2025",

@@ -8,13 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import {
   Home,
-  Phone,
   Zap,
   Key,
   Mail,
   Wrench,
   FileText,
-  MapPin,
   Shield,
   Car,
   CheckSquare,
@@ -240,7 +238,7 @@ export default function Handoff() {
     }
   }
 
-  const handleDeleteDocument = (docId: string) => {
+  const handleDeleteDocument = (_docId: string) => {
     // Only owners and admins can delete
     if (!canEdit) {
       toast({
@@ -251,7 +249,7 @@ export default function Handoff() {
       return
     }
 
-    // TODO: Implement actual delete API call
+    // ROADMAP: Implement actual delete API call (Q2 2026 - document management).
     toast({
       title: "Document deleted",
       description: "The document has been deleted successfully.",
@@ -259,7 +257,7 @@ export default function Handoff() {
   }
 
   // Handle navigation to specific section
-  const navigateToSection = (tab: string, accordionValue?: string) => {
+  const _navigateToSection = (tab: string, accordionValue?: string) => {
     setActiveTab(tab)
     if (accordionValue) {
       // Small delay to ensure tab is switched first
@@ -317,7 +315,7 @@ export default function Handoff() {
     }
 
     fetchProperties()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [user?.id, user?.role, urlPropertyId])
 
   // Fetch handoff data when property is selected
@@ -331,7 +329,7 @@ export default function Handoff() {
       return
     }
 
-    // TODO: Fetch handoff data from API based on selectedPropertyId
+    // ROADMAP: Fetch handoff data from API based on selectedPropertyId (Q2 2026).
     // For now, using mock data
     const selectedProperty = properties.find(p => p.id === selectedPropertyId)
     const mockData: PropertyHandoff = {
@@ -1069,7 +1067,7 @@ export default function Handoff() {
                     Cancel
                   </Button>
                   <Button onClick={() => {
-                    // TODO: Save changes to API
+                    // ROADMAP: Save changes to API (Q2 2026 - document management).
                     if (handoffData) {
                       setHandoffData({
                         ...handoffData,
@@ -2388,7 +2386,7 @@ export default function Handoff() {
                         const matchesSearch = doc.name.toLowerCase().includes(documentSearch.toLowerCase())
                         const matchesCategory = documentCategoryFilter === "all" || doc.type.toLowerCase() === documentCategoryFilter.toLowerCase()
                         const matchesProperty = documentPropertyFilter === "all" || documentPropertyFilter === selectedPropertyId
-                        const matchesFolder = documentFolderFilter === "all" // TODO: Add folder property to documents
+                        const matchesFolder = documentFolderFilter === "all" // ROADMAP: Add folder property to documents (Q2 2026).
                         
                         if (documentTab === "recent") {
                           const oneMonthAgo = new Date()

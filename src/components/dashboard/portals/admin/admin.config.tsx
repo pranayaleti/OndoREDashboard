@@ -1,11 +1,10 @@
-import { Shield, Users, Building, Wrench, DollarSign, BarChart3, Clock, CheckCircle, XCircle } from "lucide-react"
+import { Shield, Users, Building, Wrench, Clock, CheckCircle, XCircle } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, ActivityItem, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, maintenanceApi, type Property, type InvitedUser, type MaintenanceRequest } from "@/lib/api"
 import { formatUSDate } from "@/lib/us-format"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { Badge } from "@/components/ui/badge"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 
@@ -42,8 +41,8 @@ export function createAdminConfig(
     completedMaintenance: maintenanceRequests.filter(m => m.status === 'completed').length,
   }
 
-  // Generate activity feed
-  const activities: ActivityItem[] = [
+  // Generate activity feed (reserved for future ActivityFeed integration)
+  const _activities: ActivityItem[] = [
     ...properties.slice(0, 3).map((p, idx) => ({
       id: `prop-${idx}`,
       type: "property" as const,

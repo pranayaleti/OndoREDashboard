@@ -7,7 +7,6 @@ import { ImageUploader } from "@/components/ui/image-uploader"
 import { ProfilePictureViewer } from "@/components/ui/profile-picture-viewer"
 import { Upload, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { cn } from "@/lib/utils"
 import type { UserRole } from "@/lib/auth-utils"
 
 const ROLE_LABELS: Record<UserRole, string> = {

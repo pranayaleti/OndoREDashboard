@@ -5,10 +5,14 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/ondorealestateui/',
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
   resolve: {
     alias: {
       "@": "/src",
     },
+    dedupe: ["react", "react-dom"],
   },
   server: {
     port: 3001,
@@ -18,6 +22,10 @@ export default defineConfig({
     assetsDir: 'assets',
     // Preserve unchanged files for faster incremental builds
     emptyOutDir: false,
+    // Strip console statements from production bundles via esbuild.
+    // Keeps them intact in dev for debugging; removes them cleanly at build time
+    // without regex transforms that can corrupt third-party code.
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         // Deterministic chunk names for better caching
@@ -32,5 +40,9 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
+  },
+  esbuild: {
+    // Drop console and debugger statements in production builds only
+    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
 })

@@ -4,6 +4,9 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import "@/lib/us-locale-override"
+import { initBFCache } from '@/lib/bfcache'
+
+initBFCache()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

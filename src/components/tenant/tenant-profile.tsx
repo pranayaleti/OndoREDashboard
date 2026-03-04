@@ -4,9 +4,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ImageUploader } from "@/components/ui/image-uploader"
-import { ProfilePictureViewer } from "@/components/ui/profile-picture-viewer"
 import { Calendar, Edit, Save, Loader2, DollarSign, Home, Shield, Bell, ExternalLink } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useAuth } from "@/lib/auth-context"
@@ -16,7 +13,7 @@ import { ProfileShell, ProfileSummaryCard, type SummaryMetric } from "@/componen
 import { AddressForm, type AddressFormValues } from "@/components/forms/address-form"
 import { parseAddressString, formatAddressFields } from "@/utils/address"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
-import { PaymentMethods, type PaymentMethod } from "@/components/ui/payment-methods"
+import { PaymentMethods } from "@/components/ui/payment-methods"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -443,7 +440,7 @@ export default function TenantProfile() {
                     description: "Payment method dialog would open here.",
                   })
                 }}
-                onSetDefault={(id) => {
+                onSetDefault={(_id) => {
                   toast({
                     title: "Default Updated",
                     description: "Payment method set as default.",
@@ -456,7 +453,7 @@ export default function TenantProfile() {
                     description: `Edit dialog would open for payment method ${id}.`,
                   })
                 }}
-                onRemove={(id) => {
+                onRemove={(_id) => {
                   toast({
                     title: "Payment Method Removed",
                     description: "Payment method has been removed.",

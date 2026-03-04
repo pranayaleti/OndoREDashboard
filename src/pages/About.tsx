@@ -1,96 +1,114 @@
 import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Link } from "react-router-dom"
 import { PageBanner } from "@/components/page-banner"
 import { companyInfo } from "@/constants/companyInfo"
 import { TenantScreeningSection } from "@/components/tenant-screening/TenantScreeningSection"
+import { BarChart3, MessageSquare, ShieldCheck } from "lucide-react"
+
+const values = [
+  {
+    title: "Owners first",
+    copy: "Independent landlords deserve modern workflows. We ship the same automation larger portfolios enjoy without the enterprise overhead.",
+    icon: BarChart3,
+  },
+  {
+    title: "Tenant empathy",
+    copy: "Residents expect transparent screening, instant receipts, and quick maintenance updates. We design every module with tenants in mind.",
+    icon: MessageSquare,
+  },
+  {
+    title: "Trustworthy ops",
+    copy: "Background checks, payments, and documents deal with sensitive data. We build auditable, role-aware experiences from day one.",
+    icon: ShieldCheck,
+  },
+]
+
+const milestones = [
+  { year: "2022", detail: "Initial landlord + tenant portal launched" },
+  { year: "2023", detail: "Micro-feature architecture + maintenance hub" },
+  { year: "2024", detail: "Stripe ACH, DocuSign placeholders, tenant screening hooks" },
+  { year: "Today", detail: "Full SaaS blueprint for Ondo Property Management" },
+]
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen">
+    <main className="bg-slate-950 text-white">
       <PageBanner
         title={`About ${companyInfo.name}`}
-        subtitle="Professional property management services connecting quality properties with qualified tenants"
+        subtitle="We build the operating system for modern landlords and tenants."
       />
 
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <TenantScreeningSection
-            ctaHref="/contact"
-            ctaLabel="Partner with us"
-            title="Screening engineered for professional property teams"
-            description="Deliver consistent, auditable screening that keeps your owners protected and tenants onboarded faster."
-          />
+      <section className="container mx-auto px-4 py-12">
+        <TenantScreeningSection
+          ctaHref="/contact"
+          ctaLabel="Book a platform tour"
+          title="Product vision"
+          description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing)."
+        />
+      </section>
+
+      <section className="bg-slate-900 px-4 py-16">
+        <div className="container mx-auto grid gap-8 lg:grid-cols-2">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-orange-300">mission</p>
+            <h2 className="mt-4 text-3xl font-semibold">Keep small portfolios wildly efficient</h2>
+            <p className="mt-4 text-white/70">
+              {companyInfo.name} started as an internal tool for boutique property operators. Paper leases, missing rent, and phone-tag maintenance made it impossible to grow. We rebuilt every workflow—screening, rent, maintenance, documents, communication, accounting—as modular features so owners and tenants finally share the same truth.
+            </p>
+            <p className="mt-4 text-white/70">
+              Today we deliver the same polish you expect from enterprise PMS suites, but in a lightweight SaaS model that launches within days and scales with your portfolio.
+            </p>
+          </div>
+          <div className="grid gap-4">
+            {values.map((value) => (
+              <Card key={value.title} className="border-white/10 bg-white/5">
+                <CardHeader className="flex items-center gap-3">
+                  <value.icon className="h-6 w-6 text-orange-300" />
+                  <div>
+                    <CardTitle className="text-xl text-white">{value.title}</CardTitle>
+                    <CardDescription className="text-white/70">{value.copy}</CardDescription>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <p className="text-lg mb-8 dark:text-gray-300">
-              {companyInfo.name} is a professional property management company dedicated to connecting quality rental
-              properties with responsible tenants while providing exceptional management services to property owners.
+      <section className="px-4 py-16">
+        <div className="container mx-auto grid gap-8 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <p className="text-xs uppercase tracking-[0.4em] text-slate-400">timeline</p>
+            <h2 className="mt-4 text-3xl font-semibold">Milestones</h2>
+            <p className="mt-4 text-white/70">
+              We iterate with operators every quarter, folding their playbooks into reusable modules and hooks.
             </p>
-
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Our Mission</h2>
-            <p className="mb-8 dark:text-gray-300">
-              Our mission is to create positive rental experiences through professional management, transparent
-              communication, and exceptional service. We strive to maximize property values for owners while providing
-              safe, comfortable homes for tenants.
-            </p>
-
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Our Services</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-xl font-medium mb-3 dark:text-white">For Property Owners</h3>
-                <ul className="space-y-2 dark:text-gray-300">
-                  <li>• Comprehensive property marketing</li>
-                  <li>• Tenant screening and placement</li>
-                  <li>• Rent collection and disbursement</li>
-                  <li>• Maintenance coordination</li>
-                  <li>• Regular property inspections</li>
-                  <li>• Financial reporting</li>
-                  <li>• Legal compliance management</li>
-                </ul>
+          </div>
+          <div className="space-y-4">
+            {milestones.map((entry) => (
+              <div key={entry.year} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p className="text-sm uppercase tracking-[0.3em] text-orange-200">{entry.year}</p>
+                <p className="mt-2 text-lg text-white">{entry.detail}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <div className="bg-slate-50 dark:bg-gray-800 p-6 rounded-lg">
-                <h3 className="text-xl font-medium mb-3 dark:text-white">For Tenants</h3>
-                <ul className="space-y-2 dark:text-gray-300">
-                  <li>• Wide selection of quality rental properties</li>
-                  <li>• Transparent application process</li>
-                  <li>• Professional property showings</li>
-                  <li>• Responsive maintenance service</li>
-                  <li>• Online rent payment options</li>
-                  <li>• 24/7 emergency support</li>
-                  <li>• Renewal options for long-term stability</li>
-                </ul>
-              </div>
-            </div>
-
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Our Team</h2>
-            <p className="mb-8 dark:text-gray-300">
-              Our team consists of experienced property management professionals who are dedicated to providing
-              exceptional service. From our property managers to our maintenance staff, everyone at {companyInfo.name} is
-              committed to creating positive rental experiences.
-            </p>
-
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Our Coverage Area</h2>
-            <p className="mb-8 dark:text-gray-300">
-              {companyInfo.name} currently serves the {companyInfo.location.short} area and surrounding communities. We're continuously expanding to new areas to better serve our
-              clients.
-            </p>
-
-            <div className="text-center mt-12">
-              <h3 className="text-2xl font-semibold mb-4 dark:text-white">Ready to work with us?</h3>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg">
-                  <Link to="/properties">Browse Properties</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <Link to="/contact">Contact Us</Link>
-                </Button>
-              </div>
-            </div>
+      <section className="bg-slate-900 px-4 py-16 text-center">
+        <div className="container mx-auto">
+          <h2 className="text-3xl font-semibold">Join the operators shaping {companyInfo.name}</h2>
+          <p className="mt-4 text-white/70">
+            Share feedback, request modules, or co-build integrations. We ship weekly and keep you in the loop.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
+              <Link to="/free-trial">Start free trial</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+              <Link to="/contact">Contact us</Link>
+            </Button>
           </div>
         </div>
       </section>

@@ -18,8 +18,6 @@ import {
   Users,
   DollarSign,
   Loader2,
-  Eye,
-  EyeOff,
   Bell,
   ExternalLink
 } from "lucide-react"
@@ -29,9 +27,9 @@ import { useToast } from "@/hooks/use-toast"
 import { authApi, ApiError, type ManagerPortfolioStats, type InvitedUser } from "@/lib/api"
 import { ProfileShell, ProfileSummaryCard, type SummaryMetric } from "@/components/portal/profile"
 import { AddressForm, type AddressFormValues } from "@/components/forms/address-form"
-import { parseAddressString, formatAddressFields, defaultAddressFields } from "@/utils/address"
+import { parseAddressString, formatAddressFields } from "@/utils/address"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
-import { PaymentMethods, type PaymentMethod } from "@/components/ui/payment-methods"
+import { PaymentMethods } from "@/components/ui/payment-methods"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -575,7 +573,7 @@ export default function ManagerProfile() {
                     description: "Payment method dialog would open here.",
                   })
                 }}
-                onSetDefault={(id) => {
+                onSetDefault={(_id) => {
                   toast({
                     title: "Default Updated",
                     description: "Payment method set as default.",
@@ -588,7 +586,7 @@ export default function ManagerProfile() {
                     description: `Edit dialog would open for payment method ${id}.`,
                   })
                 }}
-                onRemove={(id) => {
+                onRemove={(_id) => {
                   toast({
                     title: "Payment Method Removed",
                     description: "Payment method has been removed.",

@@ -14,7 +14,7 @@ import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-mainte
 import { useAuth } from "@/lib/auth-context"
 
 export default function ManagerMaintenance() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([])
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
@@ -525,7 +525,7 @@ export default function ManagerMaintenance() {
               description: data.description,
               category: data.category as any,
               priority: data.priority as any,
-              photos: [] // TODO: Handle photo uploads
+              photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
             })
 
             toast({

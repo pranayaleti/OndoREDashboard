@@ -5,13 +5,11 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createTenantConfig } from "./tenant.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
-import type { ActivityItem } from "../../base/types"
-
 /**
  * New TenantDashboard using BaseDashboard architecture
  */
 function TenantDashboardContent() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format

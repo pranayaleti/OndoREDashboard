@@ -287,6 +287,53 @@ export interface TenantScreeningApplicantParams extends TenantScreeningSummaryPa
   status?: TenantScreeningStatus;
 }
 
+export interface CreateScreeningRequestInput {
+  tenantName: string;
+  tenantEmail: string;
+  propertyId: string;
+  monthlyRent?: number;
+  dueDate?: string;
+  notes?: string;
+}
+
+export interface ScreeningRequestPayload extends CreateScreeningRequestInput {
+  id: string;
+  ownerId: string;
+  status: TenantScreeningStatus;
+  invitationSentAt?: string;
+  completedAt?: string;
+  reportId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScreeningReportMetadata {
+  id: string;
+  requestId: string;
+  vendor: 'smartmove' | 'applyconnect' | 'rentprep' | 'checkr' | 'mock';
+  score?: number;
+  summary?: string;
+  downloadUrl?: string;
+  retrievedAt?: string;
+}
+
+export interface OwnerOnboardingRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  companyName?: string;
+  portfolioSize?: string;
+  goal?: string;
+  referredBy?: string;
+}
+
+export interface OwnerOnboardingResponse {
+  message: string;
+  status: 'received' | 'in_review';
+  nextSteps?: string[];
+}
+
 export interface Property {
   id: string;
   ownerId: string;
@@ -454,6 +501,212 @@ export interface CreatePropertyRequest {
   amenityIds?: string[];
 }
 
+export type RentPaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded';
+export type RentPaymentMethod = 'ach' | 'card';
+
+export interface RentSchedule {
+  tenantId: string;
+  propertyId: string;
+  monthlyAmount: number;
+  dueDay: number;
+  lateFee?: number;
+  gracePeriodDays?: number;
+  autopayEnabled: boolean;
+  autopayMethod?: RentPaymentMethod;
+  nextChargeDate?: string;
+  upcomingDueDates: string[];
+}
+
+export interface RentPayment {
+  id: string;
+  scheduleId: string;
+  tenantId: string;
+  propertyId: string;
+  amount: number;
+  status: RentPaymentStatus;
+  method: RentPaymentMethod;
+  scheduledFor: string;
+  processedAt?: string;
+  failureReason?: string;
+  receiptId?: string;
+}
+
+export interface RentReceipt {
+  id: string;
+  paymentId: string;
+  tenantId: string;
+  propertyId: string;
+  issuedAt: string;
+  downloadUrl?: string;
+}
+
+export interface LandlordStatement {
+  id: string;
+  ownerId: string;
+  periodStart: string;
+  periodEnd: string;
+  totalCollected: number;
+  totalFees: number;
+  netPayout: number;
+  downloadUrl?: string;
+}
+
+export interface AutoPayToggleRequest {
+  scheduleId: string;
+  enabled: boolean;
+  method?: RentPaymentMethod;
+}
+
+export type LeaseStatus = 'draft' | 'pending_signature' | 'executed' | 'active' | 'expired';
+
+export interface LeaseTemplateField {
+  key: string;
+  label: string;
+  type: 'text' | 'number' | 'date' | 'select';
+  required?: boolean;
+}
+
+export interface LeaseTemplate {
+  id: string;
+  name: string;
+  jurisdiction: string;
+  description?: string;
+  fields: LeaseTemplateField[];
+  isDefault?: boolean;
+}
+
+export interface LeaseDocument {
+  id: string;
+  propertyId: string;
+  tenantId: string;
+  ownerId: string;
+  templateId?: string;
+  status: LeaseStatus;
+  effectiveDate?: string;
+  expirationDate?: string;
+  storageKey?: string;
+  downloadUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ESignRequest {
+  id: string;
+  documentId: string;
+  provider: 'docusign' | 'hellosign' | 'mock';
+  status: 'draft' | 'sent' | 'signed' | 'declined' | 'expired';
+  signerEmails: string[];
+  sentAt?: string;
+  completedAt?: string;
+}
+
+export interface DocumentCategory {
+  id: string;
+  label: string;
+  description?: string;
+  slug: string;
+  roles: Array<User['role']>;
+}
+
+export interface DocumentRecord {
+  id: string;
+  propertyId?: string;
+  tenantId?: string;
+  ownerId?: string;
+  categoryId: string;
+  fileName: string;
+  fileSize: number;
+  storageKey: string;
+  downloadUrl?: string;
+  tags: string[];
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+export type CommunicationChannel = 'in_app' | 'email' | 'sms';
+
+export interface MessageParticipant {
+  userId: string;
+  role: User['role'];
+  lastReadAt?: string;
+}
+
+export interface MessageThread {
+  id: string;
+  subject: string;
+  participants: MessageParticipant[];
+  lastMessagePreview?: string;
+  lastMessageAt?: string;
+  unreadCount?: number;
+}
+
+export interface MessagePayload {
+  threadId?: string;
+  recipientId: string;
+  body: string;
+  attachments?: string[];
+  channel: CommunicationChannel;
+}
+
+export interface MessageRecord extends MessagePayload {
+  id: string;
+  senderId: string;
+  sentAt: string;
+}
+
+export interface NotificationPreference {
+  channel: CommunicationChannel;
+  enabled: boolean;
+  phoneNumber?: string;
+  email?: string;
+}
+
+export type LedgerEntryType = 'rent' | 'late_fee' | 'expense' | 'credit' | 'adjustment';
+
+export interface LedgerEntry {
+  id: string;
+  propertyId: string;
+  tenantId?: string;
+  ownerId: string;
+  type: LedgerEntryType;
+  category?: string;
+  description: string;
+  amount: number;
+  date: string;
+  createdAt: string;
+}
+
+export interface ProfitLossSummary {
+  totalIncome: number;
+  totalExpenses: number;
+  netIncome: number;
+  startDate: string;
+  endDate: string;
+  propertiesIncluded: number;
+}
+
+export interface LedgerExportRequest {
+  propertyId?: string;
+  startDate?: string;
+  endDate?: string;
+  format?: 'csv' | 'pdf';
+}
+
+export interface AdminMetric {
+  label: string;
+  value: number | string;
+  change?: number;
+  trend?: 'up' | 'down' | 'flat';
+}
+
+export interface RoleAssignment {
+  id: string;
+  userId: string;
+  role: User['role'];
+  status: 'pending' | 'approved' | 'revoked';
+  createdAt: string;
+}
+
 // API Error Class
 export class ApiError extends Error {
   constructor(
@@ -564,7 +817,8 @@ async function tenantScreeningRequest<T>(endpoint: string, options: RequestInit 
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const { headers: _ignoredHeaders, ...restOptions } = options;
+  const { headers: _headers, ...restOptions } = options;
+  void _headers
   const config: RequestInit = {
     ...restOptions,
     headers,
@@ -688,6 +942,15 @@ export const authApi = {
     return apiRequest<{ message: string; user: any }>(`/auth/users/${userId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ isActive }),
+    });
+  },
+
+  // Owner onboarding request from marketing/register flow
+  async requestOwnerOnboarding(payload: OwnerOnboardingRequest): Promise<OwnerOnboardingResponse> {
+    // ROADMAP: Connect to actual onboarding service once backend endpoint exists (Q2 2026).
+    return apiRequest<OwnerOnboardingResponse>('/auth/owner/onboarding', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     });
   },
 };
@@ -1081,5 +1344,187 @@ export const handoffApi = {
         propertyAddress,
       }),
     });
+  },
+};
+
+// Feature-level API namespaces (placeholders wired to backend routes)
+export const featureApi = {
+  screening: {
+    listRequests(params?: Record<string, string | number>): Promise<ScreeningRequestPayload[]> {
+      const query = buildQueryString(params);
+      return apiRequest<ScreeningRequestPayload[]>(`/screening/requests${query}`);
+    },
+    createRequest(payload: CreateScreeningRequestInput): Promise<ScreeningRequestPayload> {
+      // ROADMAP: Integrate actual SmartMove/Checkr provider IDs once backend wiring is ready (Q3 2026).
+      return apiRequest<ScreeningRequestPayload>('/screening/requests', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    sendScreeningLink(requestId: string, channel: CommunicationChannel = 'email'): Promise<{ message: string }> {
+      return apiRequest<{ message: string }>(`/screening/requests/${requestId}/send-link`, {
+        method: 'POST',
+        body: JSON.stringify({ channel }),
+      });
+    },
+    fetchReportMetadata(requestId: string): Promise<ScreeningReportMetadata> {
+      return apiRequest<ScreeningReportMetadata>(`/screening/requests/${requestId}/report`);
+    },
+  },
+  rentPayments: {
+    getSchedule(propertyId?: string): Promise<RentSchedule[]> {
+      const query = buildQueryString(propertyId ? { propertyId } : undefined);
+      return apiRequest<RentSchedule[]>(`/rent/schedules${query}`);
+    },
+    updateSchedule(scheduleId: string, partial: Partial<RentSchedule>): Promise<RentSchedule> {
+      return apiRequest<RentSchedule>(`/rent/schedules/${scheduleId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(partial),
+      });
+    },
+    toggleAutopay(payload: AutoPayToggleRequest): Promise<RentSchedule> {
+      return apiRequest<RentSchedule>(`/rent/schedules/${payload.scheduleId}/autopay`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    createPayment(scheduleId: string, amount: number, method: RentPaymentMethod = 'ach'): Promise<RentPayment> {
+      // ROADMAP: Wire to Stripe + Plaid ACH once credentials provided (Q2 2026 - payment system).
+      return apiRequest<RentPayment>(`/rent/schedules/${scheduleId}/payments`, {
+        method: 'POST',
+        body: JSON.stringify({ amount, method }),
+      });
+    },
+    listPayments(params?: { propertyId?: string; tenantId?: string }): Promise<RentPayment[]> {
+      return apiRequest<RentPayment[]>(`/rent/payments${buildQueryString(params)}`);
+    },
+    listReceipts(tenantId?: string): Promise<RentReceipt[]> {
+      return apiRequest<RentReceipt[]>(`/rent/receipts${buildQueryString(tenantId ? { tenantId } : undefined)}`);
+    },
+    getLandlordStatements(ownerId?: string): Promise<LandlordStatement[]> {
+      return apiRequest<LandlordStatement[]>(`/rent/statements${buildQueryString(ownerId ? { ownerId } : undefined)}`);
+    },
+  },
+  leaseManagement: {
+    listTemplates(): Promise<LeaseTemplate[]> {
+      return apiRequest<LeaseTemplate[]>('/leases/templates');
+    },
+    createTemplate(payload: LeaseTemplate): Promise<LeaseTemplate> {
+      return apiRequest<LeaseTemplate>('/leases/templates', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    generateFromTemplate(templateId: string, context: Record<string, unknown>): Promise<LeaseDocument> {
+      return apiRequest<LeaseDocument>(`/leases/templates/${templateId}/generate`, {
+        method: 'POST',
+        body: JSON.stringify(context),
+      });
+    },
+    uploadLease(metadata: Partial<LeaseDocument>): Promise<LeaseDocument> {
+      return apiRequest<LeaseDocument>('/leases/documents', {
+        method: 'POST',
+        body: JSON.stringify(metadata),
+      });
+    },
+    listLeases(params?: { propertyId?: string; tenantId?: string; status?: LeaseStatus }): Promise<LeaseDocument[]> {
+      return apiRequest<LeaseDocument[]>(`/leases/documents${buildQueryString(params)}`);
+    },
+    sendForSignature(documentId: string, provider: ESignRequest['provider'] = 'mock'): Promise<ESignRequest> {
+      // ROADMAP: Plug in DocuSign/HelloSign keys (Q2 2026 - lease management).
+      return apiRequest<ESignRequest>(`/leases/documents/${documentId}/esign`, {
+        method: 'POST',
+        body: JSON.stringify({ provider }),
+      });
+    },
+  },
+  maintenance: {
+    ...maintenanceApi,
+  },
+  documents: {
+    listCategories(): Promise<DocumentCategory[]> {
+      return apiRequest<DocumentCategory[]>('/documents/categories');
+    },
+    listDocuments(params?: { propertyId?: string; tenantId?: string; ownerId?: string }): Promise<DocumentRecord[]> {
+      return apiRequest<DocumentRecord[]>(`/documents${buildQueryString(params)}`);
+    },
+    uploadDocument(record: Partial<DocumentRecord>): Promise<DocumentRecord> {
+      return apiRequest<DocumentRecord>('/documents', {
+        method: 'POST',
+        body: JSON.stringify(record),
+      });
+    },
+    deleteDocument(documentId: string): Promise<{ message: string }> {
+      return apiRequest<{ message: string }>(`/documents/${documentId}`, {
+        method: 'DELETE',
+      });
+    },
+  },
+  communication: {
+    listThreads(): Promise<MessageThread[]> {
+      return apiRequest<MessageThread[]>('/communication/threads');
+    },
+    listMessages(threadId: string): Promise<MessageRecord[]> {
+      return apiRequest<MessageRecord[]>(`/communication/threads/${threadId}/messages`);
+    },
+    sendMessage(payload: MessagePayload): Promise<MessageRecord> {
+      return apiRequest<MessageRecord>('/communication/messages', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    updatePreferences(preferences: NotificationPreference[]): Promise<NotificationPreference[]> {
+      return apiRequest<NotificationPreference[]>('/communication/preferences', {
+        method: 'PUT',
+        body: JSON.stringify(preferences),
+      });
+    },
+    triggerNotification(payload: { template: string; channel: CommunicationChannel; targetId: string }): Promise<{ message: string }> {
+      // ROADMAP: Integrate SendGrid/Resend + Twilio credentials here (Q2 2026 - notifications).
+      return apiRequest<{ message: string }>('/communication/notify', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+  },
+  accounting: {
+    listLedgerEntries(params?: { propertyId?: string; startDate?: string; endDate?: string }): Promise<LedgerEntry[]> {
+      return apiRequest<LedgerEntry[]>(`/accounting/ledger${buildQueryString(params)}`);
+    },
+    createLedgerEntry(entry: LedgerEntry): Promise<LedgerEntry> {
+      return apiRequest<LedgerEntry>('/accounting/ledger', {
+        method: 'POST',
+        body: JSON.stringify(entry),
+      });
+    },
+    recordExpense(entry: Omit<LedgerEntry, 'id' | 'type'> & { type?: LedgerEntry['type'] }): Promise<LedgerEntry> {
+      return apiRequest<LedgerEntry>('/accounting/expenses', {
+        method: 'POST',
+        body: JSON.stringify({ ...entry, type: entry.type ?? 'expense' }),
+      });
+    },
+    getProfitLoss(params?: { propertyId?: string; startDate?: string; endDate?: string }): Promise<ProfitLossSummary> {
+      return apiRequest<ProfitLossSummary>(`/accounting/profit-loss${buildQueryString(params)}`);
+    },
+    exportLedger(payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
+      return apiRequest<{ downloadUrl: string }>('/accounting/export', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+  },
+  admin: {
+    getMetrics(): Promise<AdminMetric[]> {
+      return apiRequest<AdminMetric[]>('/admin/metrics');
+    },
+    listRoleAssignments(): Promise<RoleAssignment[]> {
+      return apiRequest<RoleAssignment[]>('/admin/roles');
+    },
+    updateRoleAssignment(roleId: string, status: RoleAssignment['status']): Promise<RoleAssignment> {
+      return apiRequest<RoleAssignment>(`/admin/roles/${roleId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+    },
   },
 };

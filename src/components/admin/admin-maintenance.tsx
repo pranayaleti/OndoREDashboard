@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wrench, Plus } from "lucide-react"
-import { maintenanceApi, propertyApi, type MaintenanceRequest, type Property } from "@/lib/api"
+import { maintenanceApi, propertyApi, type Property } from "@/lib/api"
 import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-maintenance-request-dialog"
 import { useToast } from "@/hooks/use-toast"
 
@@ -65,7 +65,7 @@ export default function AdminMaintenance() {
               description: data.description,
               category: data.category as any,
               priority: data.priority as any,
-              photos: [] // TODO: Handle photo uploads
+              photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
             })
 
             toast({

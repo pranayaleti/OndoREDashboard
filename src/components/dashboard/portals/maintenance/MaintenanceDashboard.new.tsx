@@ -5,13 +5,11 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createMaintenanceConfig } from "./maintenance.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
-import type { ActivityItem } from "../../base/types"
-
 /**
  * New MaintenanceDashboard using BaseDashboard architecture
  */
 function MaintenanceDashboardContent() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format

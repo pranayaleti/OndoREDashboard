@@ -6,15 +6,10 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { 
   BarChart3, 
-  Download, 
   TrendingUp,
   DollarSign,
-  Building,
   FileText,
   ExternalLink,
-  Users,
-  Home,
-  Calendar,
   ArrowRight,
   Percent
 } from "lucide-react"

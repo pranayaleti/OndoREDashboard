@@ -1,6 +1,4 @@
 import { ReactNode } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { BaseDashboardProps } from "./types"
@@ -36,7 +34,7 @@ import { useDashboardTheme } from "./hooks/useDashboardTheme"
 export function BaseDashboard({ config, children, className }: BaseDashboardProps) {
   const { data, loading } = useBaseDashboard()
   const { user } = useAuth()
-  const basePath = user ? getDashboardPath(user.role) : "/"
+  const _basePath = user ? getDashboardPath(user.role) : "/"
   const { getThemeStyle, primaryColor } = useDashboardTheme()
 
   if (loading && config.dataFetchers && Object.keys(config.dataFetchers).length > 0) {

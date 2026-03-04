@@ -11,7 +11,7 @@ import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { formatUSDate } from "@/lib/us-format"
 
 export default function TenantDashboard() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   useWelcomeToast() // Show welcome toast on dashboard visit
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("overview")

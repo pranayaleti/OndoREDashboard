@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import { User, Mail, Phone, Building, Shield, Upload, Key } from "lucide-react"
+import { User, Mail, Phone, Building, Shield, Upload } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,

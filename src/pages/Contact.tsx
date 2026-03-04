@@ -106,8 +106,8 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <PageBanner
-        title="Contact Us"
-        subtitle="Get in touch with our property management experts to find your perfect rental or manage your property"
+        title="Contact our team"
+        subtitle="Need help with onboarding, integrations, or inviting owners + tenants? We respond within one business day."
       />
 
       <main className="flex-1">

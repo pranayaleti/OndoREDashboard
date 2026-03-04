@@ -1,9 +1,8 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Calendar, Plus, Clock, Wrench } from "lucide-react"
+import { Calendar, Clock, Wrench } from "lucide-react"
 import { format } from "date-fns"
 
 const mockEvents = [

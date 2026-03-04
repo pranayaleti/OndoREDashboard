@@ -1,26 +1,19 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   Building, 
   Users, 
   Wrench, 
   Mail, 
-  TrendingUp, 
-  TrendingDown,
   CheckCircle,
   Clock,
   XCircle,
   AlertTriangle,
-  DollarSign,
-  BarChart3,
-  PieChart,
   Activity
 } from "lucide-react"
 import { propertyApi, authApi, leadApi, maintenanceApi, type Property, type InvitedUser, type Lead, type MaintenanceRequest } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
-import { formatUSDate, formatUSD } from "@/lib/us-format"
 
 export default function ManagerReports() {
   const [loading, setLoading] = useState(true)

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Routes, Route, Link, useNavigate } from "react-router-dom"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -361,7 +361,7 @@ function NewMaintenanceRequest() {
         description: data.description,
         category: data.category as any,
         priority: data.priority as any,
-        photos: [] // TODO: Handle photo uploads
+        photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
       })
 
       toast({

@@ -6,13 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -905,7 +904,7 @@ export function OwnerMaintenanceManagement() {
                                           <Checkbox
                                             id="property-all"
                                             checked={filterProperty.length === 0}
-                                            onCheckedChange={(checked) => {
+                                            onCheckedChange={(_checked) => {
                                               setFilterProperty([])
                                               setCurrentPage(1)
                                             }}
@@ -923,7 +922,7 @@ export function OwnerMaintenanceManagement() {
                                               id={`property-${prop}`}
                                               checked={filterProperty.includes(prop)}
                                               onCheckedChange={(checked) => {
-                                                if (checked) {
+                                                if (checked === true) {
                                                   setFilterProperty([...filterProperty, prop])
                                                 } else {
                                                   setFilterProperty(filterProperty.filter((p) => p !== prop))
@@ -997,7 +996,7 @@ export function OwnerMaintenanceManagement() {
                                           <Checkbox
                                             id="priority-all"
                                             checked={filterPriority.length === 0}
-                                            onCheckedChange={(checked) => {
+                                            onCheckedChange={(_checked) => {
                                               setFilterPriority([])
                                               setCurrentPage(1)
                                             }}
@@ -1015,7 +1014,7 @@ export function OwnerMaintenanceManagement() {
                                               id={`priority-${priority.value}`}
                                               checked={filterPriority.includes(priority.value)}
                                               onCheckedChange={(checked) => {
-                                                if (checked) {
+                                                if (checked === true) {
                                                   setFilterPriority([...filterPriority, priority.value])
                                                 } else {
                                                   setFilterPriority(filterPriority.filter((p) => p !== priority.value))
@@ -1068,7 +1067,7 @@ export function OwnerMaintenanceManagement() {
                                           <Checkbox
                                             id="status-all"
                                             checked={filterStatus.length === 0}
-                                            onCheckedChange={(checked) => {
+                                            onCheckedChange={(_checked) => {
                                               setFilterStatus([])
                                               setCurrentPage(1)
                                             }}
@@ -1086,7 +1085,7 @@ export function OwnerMaintenanceManagement() {
                                               id={`status-${status.value}`}
                                               checked={filterStatus.includes(status.value)}
                                               onCheckedChange={(checked) => {
-                                                if (checked) {
+                                                if (checked === true) {
                                                   setFilterStatus([...filterStatus, status.value])
                                                 } else {
                                                   setFilterStatus(filterStatus.filter((s) => s !== status.value))

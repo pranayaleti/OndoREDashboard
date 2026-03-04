@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react"
-import { MAINTENANCE_PRIORITIES, MAINTENANCE_CATEGORIES, getCategoryLabel, getPriorityLabel } from "@/constants/maintenance.constants"
+import { MAINTENANCE_PRIORITIES, MAINTENANCE_CATEGORIES } from "@/constants/maintenance.constants"
 import { type Property } from "@/lib/api"
 
 interface NewMaintenanceRequestDialogProps {

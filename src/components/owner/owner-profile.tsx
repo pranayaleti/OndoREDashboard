@@ -18,7 +18,7 @@ import { AddressForm, type AddressFormValues } from "@/components/forms/address-
 import { parseAddressString, formatAddressFields } from "@/utils/address"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
 import { TwoFactorAuthDialog } from "@/components/ui/two-factor-auth-dialog"
-import { PaymentMethods, type PaymentMethod } from "@/components/ui/payment-methods"
+import { PaymentMethods } from "@/components/ui/payment-methods"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -198,7 +198,7 @@ export default function OwnerProfile() {
     handleInputChange("personalInfo", "address", formatAddressFromForm(nextValue))
   }
 
-  const handlePreferenceChange = (field: string, value: boolean) => {
+  const _handlePreferenceChange = (field: string, value: boolean) => {
     setProfileData(prev => ({
       ...prev,
       investmentPreferences: {
@@ -663,7 +663,7 @@ export default function OwnerProfile() {
                       description: "Payment method dialog would open here.",
                     })
                   }}
-                  onSetDefault={(id) => {
+                  onSetDefault={(_id) => {
                     toast({
                       title: "Default Updated",
                       description: "Payment method set as default.",
@@ -676,7 +676,7 @@ export default function OwnerProfile() {
                       description: `Edit dialog would open for payment method ${id}.`,
                     })
                   }}
-                  onRemove={(id) => {
+                  onRemove={(_id) => {
                     toast({
                       title: "Payment Method Removed",
                       description: "Payment method has been removed.",

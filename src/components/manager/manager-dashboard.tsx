@@ -37,7 +37,7 @@ import ManagerMaintenance from "./manager-maintenance"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 
 export default function ManagerDashboard() {
-  const { user } = useAuth()
+  const { user: _user } = useAuth()
   useWelcomeToast() // Show welcome toast on dashboard visit
   const { toast } = useToast()
   const navigate = useNavigate()

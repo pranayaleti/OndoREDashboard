@@ -10,7 +10,6 @@ import {
   CreditCard, 
   Calendar, 
   DollarSign, 
-  Download, 
   CheckCircle, 
   Clock,
   AlertTriangle,
@@ -594,7 +593,7 @@ export default function TenantPayments() {
                 description: "Payment method dialog would open here.",
               })
             }}
-            onSetDefault={(id) => {
+            onSetDefault={(_id) => {
               toast({
                 title: "Default Updated",
                 description: "Payment method set as default.",
@@ -607,7 +606,7 @@ export default function TenantPayments() {
                 description: `Edit dialog would open for payment method ${id}.`,
               })
             }}
-            onRemove={(id) => {
+            onRemove={(_id) => {
               toast({
                 title: "Payment Method Removed",
                 description: "Payment method has been removed.",
