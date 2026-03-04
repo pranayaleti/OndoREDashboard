@@ -1,9 +1,25 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+/**
+ * Vite plugin to remove console statements in production builds.
+ * Keeps console statements in development for debugging, but strips them
+ * from production bundles to reduce noise and prevent accidental logging
+ * of sensitive information.
+ */
+const stripConsolePlugin = {
+  name: 'strip-console',
+  apply: 'build',
+  transform(code: string) {
+    // Remove console.log, console.warn, console.error, console.info statements
+    // Handles: console.log(...), console.log(...);, etc.
+    return code.replace(/console\.(log|warn|error|info|debug)\([^)]*\);?/g, '');
+  },
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), stripConsolePlugin],
   base: '/ondorealestateui/',
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
@@ -22,10 +38,6 @@ export default defineConfig({
     assetsDir: 'assets',
     // Preserve unchanged files for faster incremental builds
     emptyOutDir: false,
-    // Strip console statements from production bundles via esbuild.
-    // Keeps them intact in dev for debugging; removes them cleanly at build time
-    // without regex transforms that can corrupt third-party code.
-    minify: 'esbuild',
     rollupOptions: {
       output: {
         // Deterministic chunk names for better caching
@@ -40,9 +52,5 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
-  },
-  esbuild: {
-    // Drop console and debugger statements in production builds only
-    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
 })
