@@ -1,7 +1,12 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Check, Sparkles } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Check, Sparkles, Loader2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { StripePaymentForm } from "@/components/stripe/StripePaymentForm"
+import { featureApi } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
 
 const plans = [
   {
@@ -9,6 +14,7 @@ const plans = [
     price: "$89",
     cadence: "/month",
     highlight: "Perfect for independent landlords",
+    planKey: "starter" as const,
     features: [
       "Up to 20 units",
       "Tenant + owner portals",
@@ -23,6 +29,7 @@ const plans = [
     price: "$189",
     cadence: "/month",
     highlight: "Adds advanced automations",
+    planKey: "growth" as const,
     featured: true,
     features: [
       "Everything in Starter",
@@ -38,6 +45,7 @@ const plans = [
     price: "Custom",
     cadence: "",
     highlight: "For operators w/ dedicated teams",
+    planKey: "portfolio" as const,
     features: [
       "Everything in Growth",
       "Dedicated success manager",
@@ -57,6 +65,41 @@ const addOns = [
 ]
 
 export default function PricingPage() {
+  const { toast } = useToast()
+  const [isSubscribing, setIsSubscribing] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  const handleSubscribe = async (planKey: string) => {
+    if (planKey === "portfolio") return // Portfolio goes to contact sales
+
+    setIsSubscribing(true)
+    setSelectedPlan(planKey)
+    try {
+      const result = await featureApi.subscriptions.create(planKey)
+      setClientSecret(result.clientSecret)
+      setIsDialogOpen(true)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to start subscription."
+      toast({ title: "Error", description: message, variant: "destructive" })
+    } finally {
+      setIsSubscribing(false)
+    }
+  }
+
+  const handleSubscriptionSuccess = () => {
+    setIsDialogOpen(false)
+    setClientSecret(null)
+    setSelectedPlan(null)
+    toast({
+      title: "Subscription Active!",
+      description: "Welcome to OnDo Real Estate. Your subscription is now active.",
+    })
+  }
+
+  const selectedPlanDetails = plans.find((p) => p.planKey === selectedPlan)
+
   return (
     <main className="bg-slate-950 px-4 py-16 text-white">
       <div className="container mx-auto max-w-5xl text-center">
@@ -100,11 +143,26 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Button asChild className="w-full bg-orange-500 text-black hover:bg-orange-400">
-                <Link to={plan.name === "Portfolio" ? "/contact" : "/free-trial"}>
-                  {plan.name === "Portfolio" ? "Contact sales" : "Start now"}
-                </Link>
-              </Button>
+              {plan.planKey === "portfolio" ? (
+                <Button asChild className="w-full bg-orange-500 text-black hover:bg-orange-400">
+                  <Link to="/contact">Contact sales</Link>
+                </Button>
+              ) : (
+                <Button
+                  className="w-full bg-orange-500 text-black hover:bg-orange-400"
+                  onClick={() => handleSubscribe(plan.planKey)}
+                  disabled={isSubscribing && selectedPlan === plan.planKey}
+                >
+                  {isSubscribing && selectedPlan === plan.planKey ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Starting...
+                    </>
+                  ) : (
+                    "Start now"
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -136,6 +194,34 @@ export default function PricingPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Subscription Payment Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        if (!open) { setIsDialogOpen(false); setClientSecret(null); setSelectedPlan(null) }
+      }}>
+        <DialogContent className="sm:max-w-lg border-2 border-orange-500 bg-white text-black">
+          <DialogHeader>
+            <DialogTitle>
+              Subscribe to {selectedPlanDetails?.name}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedPlanDetails?.price}{selectedPlanDetails?.cadence} — Enter your payment details below
+            </DialogDescription>
+          </DialogHeader>
+          {clientSecret ? (
+            <StripePaymentForm
+              clientSecret={clientSecret}
+              onSuccess={handleSubscriptionSuccess}
+              onError={(msg) => toast({ title: "Payment Failed", description: msg, variant: "destructive" })}
+              submitLabel={`Subscribe — ${selectedPlanDetails?.price}/mo`}
+            />
+          ) : (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

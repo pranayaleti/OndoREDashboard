@@ -1,533 +1,203 @@
 import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CreditCard, Building, Wallet, ArrowLeft } from "lucide-react"
-import { formatCardNumber, formatExpiration, formatExpirationInput, parseExpirationInput, getPaymentMethodDisplayText } from "@/utils/payment.utils"
+import { CreditCard, Building, Loader2 } from "lucide-react"
+import { formatExpiration } from "@/utils/payment.utils"
+import { StripeAddPaymentMethod } from "@/components/stripe/StripeAddPaymentMethod"
+import { featureApi, type StripePaymentMethod } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
 
 export interface PaymentMethod {
   id: string
-  type?: "credit_card" | "bank_account" | "ach" | "digital_wallet"
+  stripePaymentMethodId?: string
+  type?: "card" | "us_bank_account" | "credit_card" | "bank_account" | "ach" | "digital_wallet"
   brand?: string
   last4: string
-  cardNumber?: string // Full card number (stored for reuse)
   expMonth?: number
   expYear?: number
-  cvv?: string // CVV code (stored for reuse)
+  bankName?: string
   bank?: string
-  routingNumber?: string // 9-digit routing number for ACH/bank accounts
-  accountNumber?: string // Full account number for ACH/bank accounts
   handle?: string
   nickname?: string
   isDefault: boolean
 }
 
-type MethodFormState = PaymentMethod & {
-  cardNumber?: string
-  expiration?: string
-  cvv?: string
-}
-
-const PAYMENT_TYPE_OPTIONS: Array<{
-  value: Required<PaymentMethod["type"]>
-  label: string
-  description: string
-  icon: React.ReactNode
-}> = [
-  { value: "credit_card", label: "Credit Card", description: "Visa, MasterCard, AmEx", icon: <CreditCard className="h-5 w-5" /> },
-  { value: "bank_account", label: "Bank Account", description: "Checking or savings", icon: <Building className="h-5 w-5" /> },
-  { value: "ach", label: "ACH", description: "Direct debit routing", icon: <Building className="h-5 w-5" /> },
-  { value: "digital_wallet", label: "Digital Wallet", description: "Apple Pay, Venmo, etc.", icon: <Wallet className="h-5 w-5" /> },
-]
-
 interface PaymentMethodsProps {
-  paymentMethods: PaymentMethod[]
+  paymentMethods?: PaymentMethod[]
   onAddPaymentMethod?: () => void
   onSetDefault?: (id: string) => void
   onEdit?: (id: string) => void
   onRemove?: (id: string) => void
 }
 
+function mapApiMethod(m: StripePaymentMethod): PaymentMethod {
+  return {
+    id: m.id,
+    stripePaymentMethodId: m.stripePaymentMethodId,
+    type: m.type,
+    brand: m.brand,
+    last4: m.last4,
+    expMonth: m.expMonth,
+    expYear: m.expYear,
+    bankName: m.bankName,
+    isDefault: m.isDefault,
+  }
+}
+
 export function PaymentMethods({
-  paymentMethods,
+  paymentMethods: initialMethods,
   onAddPaymentMethod,
   onSetDefault,
-  onEdit,
   onRemove,
 }: PaymentMethodsProps) {
-  const [localMethods, setLocalMethods] = useState<PaymentMethod[]>(paymentMethods)
-  const [methodForm, setMethodForm] = useState<MethodFormState | null>(null)
+  const { toast } = useToast()
+  const [methods, setMethods] = useState<PaymentMethod[]>(initialMethods || [])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [isTypeSelectionOpen, setIsTypeSelectionOpen] = useState(false)
+  const [setupClientSecret, setSetupClientSecret] = useState<string | null>(null)
+  const [isLoadingSetup, setIsLoadingSetup] = useState(false)
   const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null)
+  const [isRemoving, setIsRemoving] = useState(false)
 
   useEffect(() => {
-    setLocalMethods(paymentMethods)
-  }, [paymentMethods])
+    if (initialMethods) {
+      setMethods(initialMethods)
+    } else {
+      loadMethods()
+    }
+  }, [initialMethods])
 
-  // Use utility functions from payment.utils.ts
-  const formatCardNumberInput = (value: string) => formatCardNumber(value)
-  const getDisplayText = (method: PaymentMethod) => getPaymentMethodDisplayText(method)
+  const loadMethods = async () => {
+    try {
+      const result = await featureApi.stripe.listPaymentMethods()
+      setMethods(result.data.map(mapApiMethod))
+    } catch {
+      // Methods will show empty
+    }
+  }
 
   const normalizedMethods = useMemo(() => {
-    if (localMethods.length === 0) return []
-    const hasDefault = localMethods.some((method) => method.isDefault)
-    if (hasDefault) return localMethods
-    const [first, ...rest] = localMethods
+    if (methods.length === 0) return []
+    const hasDefault = methods.some((m) => m.isDefault)
+    if (hasDefault) return methods
+    const [first, ...rest] = methods
     return [{ ...first, isDefault: true }, ...rest]
-  }, [localMethods])
+  }, [methods])
 
-  const canManageMultipleMethods = normalizedMethods.length > 1
-
-  const initializeForm = (method?: MethodFormState, defaultType: PaymentMethod["type"] = "credit_card"): MethodFormState =>
-    method ?? {
-      id: "",
-      type: defaultType,
-      brand: "",
-      bank: "",
-      routingNumber: "",
-      accountNumber: "",
-      handle: "",
-      last4: "",
-      expMonth: undefined,
-      expYear: undefined,
-      nickname: "",
-      cardNumber: "",
-      expiration: "",
-      cvv: "",
-      isDefault: normalizedMethods.length === 0,
-    }
-
-  const handleOpenAddDialog = (type: PaymentMethod["type"] = "credit_card") => {
-    setMethodForm(initializeForm(undefined, type))
-    setIsTypeSelectionOpen(false)
+  const handleOpenAddDialog = async () => {
+    setIsLoadingSetup(true)
     setIsAddDialogOpen(true)
-  }
-
-  const handleOpenTypeSelection = () => {
-    setIsTypeSelectionOpen(true)
-  }
-
-  const handleOpenEditDialog = (method: PaymentMethod) => {
-    const expiration = method.type === "credit_card" ? formatExpirationInput(method.expMonth, method.expYear) : ""
-    // Pre-fill card information if available
-    const cardNumber = method.type === "credit_card" && method.cardNumber 
-      ? formatCardNumberInput(method.cardNumber) 
-      : ""
-    setMethodForm({
-      ...method,
-      expiration,
-      cardNumber,
-      cvv: method.type === "credit_card" ? method.cvv || "" : "",
-    })
-    setIsEditDialogOpen(true)
-  }
-
-  const handleCloseDialog = () => {
-    setIsAddDialogOpen(false)
-    setIsEditDialogOpen(false)
-    setIsTypeSelectionOpen(false)
-    setMethodForm(null)
-  }
-
-  const handleFormChange = (key: keyof MethodFormState, value: string | number | boolean | undefined) => {
-    setMethodForm((prev) => {
-      if (!prev) return prev
-      if (key === "expMonth" || key === "expYear") {
-        return { ...prev, [key]: value ? Number(value) : undefined }
-      }
-      if (key === "last4") {
-        return { ...prev, last4: typeof value === "string" ? value.replace(/\D/g, "").slice(0, 4) : "" }
-      }
-      if (key === "routingNumber" && typeof value === "string") {
-        const digits = value.replace(/\D/g, "").slice(0, 9)
-        return { ...prev, routingNumber: digits }
-      }
-      if (key === "accountNumber" && typeof value === "string") {
-        const digits = value.replace(/\D/g, "")
-        const last4 = digits.slice(-4)
-        return { ...prev, accountNumber: digits, last4: last4 || prev.last4 }
-      }
-      if (key === "cardNumber" && typeof value === "string") {
-        const formatted = formatCardNumberInput(value)
-        const digits = formatted.replace(/\D/g, "")
-        return { ...prev, cardNumber: formatted, last4: digits.slice(-4) }
-      }
-      if (key === "expiration" && typeof value === "string") {
-        const sanitized = value.replace(/[^\d/]/g, "")
-        const digits = sanitized.replace(/\D/g, "")
-        let formatted = sanitized
-        if (digits.length >= 3) {
-          formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}`
-        } else if (digits.length >= 1) {
-          formatted = digits
-        }
-        return { ...prev, expiration: formatted }
-      }
-      if (key === "cvv" && typeof value === "string") {
-        return { ...prev, cvv: value.replace(/\D/g, "").slice(0, 4) }
-      }
-      return { ...prev, [key]: value }
-    })
-  }
-
-  const ensureSingleDefault = (methods: PaymentMethod[], defaultId: string) =>
-    methods.map((method) => ({
-      ...method,
-      isDefault: method.id === defaultId,
-    }))
-
-  const handleSubmitForm = () => {
-    if (!methodForm) return
-    const isEdit = Boolean(methodForm.id && localMethods.some((method) => method.id === methodForm.id))
-    const { cardNumber, expiration, cvv, ...base } = methodForm
-    const digits = (cardNumber ?? "").replace(/\D/g, "")
-    const last4 = digits.slice(-4) || base.last4 || "0000"
-    const { expMonth, expYear } =
-      base.type === "credit_card" ? parseExpirationInput(expiration || formatExpirationInput(base.expMonth, base.expYear)) : { expMonth: undefined, expYear: undefined }
-    const prepared: PaymentMethod = {
-      ...base,
-      id: methodForm.id || `pm-${Date.now()}`,
-      nickname: base.nickname?.trim() || undefined,
-      last4,
-      cardNumber: base.type === "credit_card" ? digits : undefined, // Store full card number for credit cards
-      expMonth,
-      expYear,
-      cvv: base.type === "credit_card" ? cvv : undefined, // Store CVV for credit cards
-      routingNumber: (base.type === "ach" || base.type === "bank_account") ? base.routingNumber : undefined,
-      accountNumber: (base.type === "ach" || base.type === "bank_account") ? base.accountNumber : undefined,
-      isDefault: !!methodForm.isDefault,
+    try {
+      const result = await featureApi.stripe.createSetupIntent()
+      setSetupClientSecret(result.clientSecret)
+    } catch {
+      toast({ title: "Error", description: "Failed to initialize payment setup.", variant: "destructive" })
+      setIsAddDialogOpen(false)
+    } finally {
+      setIsLoadingSetup(false)
     }
+  }
 
-    setLocalMethods((prev) => {
-      let next = isEdit
-        ? prev.map((method) => (method.id === prepared.id ? prepared : method))
-        : [...prev, prepared]
-
-      if (prepared.isDefault || next.length === 1) {
-        next = ensureSingleDefault(next, prepared.id)
-      }
-
-      return next
-    })
-
-    if (isEdit) {
-      onEdit?.(prepared.id)
-    } else {
+  const handleAddSuccess = async (paymentMethodId: string) => {
+    try {
+      await featureApi.stripe.attachPaymentMethod(paymentMethodId)
+      toast({ title: "Payment Method Saved", description: "Your payment method has been added." })
+      await loadMethods()
       onAddPaymentMethod?.()
+    } catch {
+      toast({ title: "Error", description: "Failed to save payment method.", variant: "destructive" })
     }
-
-    handleCloseDialog()
+    setIsAddDialogOpen(false)
+    setSetupClientSecret(null)
   }
 
-  const handleSetDefault = (id: string) => {
-    setLocalMethods((prev) => ensureSingleDefault(prev, id))
-    onSetDefault?.(id)
+  const handleSetDefault = async (id: string) => {
+    try {
+      await featureApi.stripe.setDefaultPaymentMethod(id)
+      setMethods((prev) => prev.map((m) => ({ ...m, isDefault: m.id === id })))
+      toast({ title: "Default Updated", description: "Payment method set as default." })
+      onSetDefault?.(id)
+    } catch {
+      toast({ title: "Error", description: "Failed to update default.", variant: "destructive" })
+    }
   }
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (!pendingRemovalId) return
-    setLocalMethods((prev) => {
-      const remaining = prev.filter((method) => method.id !== pendingRemovalId)
-      if (remaining.length === 0) return remaining
-      if (!remaining.some((method) => method.isDefault)) {
-        const [first, ...rest] = remaining
-        return [{ ...first, isDefault: true }, ...rest]
-      }
-      return remaining
-    })
-    onRemove?.(pendingRemovalId)
+    setIsRemoving(true)
+    try {
+      await featureApi.stripe.removePaymentMethod(pendingRemovalId)
+      setMethods((prev) => {
+        const remaining = prev.filter((m) => m.id !== pendingRemovalId)
+        if (remaining.length > 0 && !remaining.some((m) => m.isDefault)) {
+          remaining[0].isDefault = true
+        }
+        return remaining
+      })
+      toast({ title: "Removed", description: "Payment method has been removed." })
+      onRemove?.(pendingRemovalId)
+    } catch {
+      toast({ title: "Error", description: "Failed to remove payment method.", variant: "destructive" })
+    }
+    setIsRemoving(false)
     setPendingRemovalId(null)
   }
 
-  const renderFormFields = () => (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label>Payment Method Type</Label>
-        <Select value={methodForm?.type ?? "credit_card"} onValueChange={(value) => handleFormChange("type", value)}>
-          <SelectTrigger className="focus:border-orange-500 focus:ring-orange-500">
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent>
-            {PAYMENT_TYPE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {methodForm?.type === "credit_card" ? (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Nickname</Label>
-            <Input
-              placeholder="Company Visa, Personal Card..."
-              value={methodForm?.nickname ?? ""}
-              onChange={(e) => handleFormChange("nickname", e.target.value)}
-              className="focus:border-orange-500 focus:ring-orange-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Card Number</Label>
-            <Input
-              inputMode="numeric"
-              placeholder="1234 5678 9012 3456"
-              value={methodForm?.cardNumber ?? ""}
-              maxLength={19}
-              onChange={(e) => handleFormChange("cardNumber", e.target.value)}
-              className="focus:border-orange-500 focus:ring-orange-500"
-            />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Expiration (MM/YY)</Label>
-              <Input
-                inputMode="numeric"
-                placeholder="MM/YY"
-                value={methodForm?.expiration ?? ""}
-                maxLength={5}
-                onChange={(e) => handleFormChange("expiration", e.target.value)}
-                className="focus:border-orange-500 focus:ring-orange-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>CVV</Label>
-              <Input
-                inputMode="numeric"
-                placeholder="123"
-                value={methodForm?.cvv ?? ""}
-                maxLength={4}
-                onChange={(e) => handleFormChange("cvv", e.target.value)}
-                className="focus:border-orange-500 focus:ring-orange-500"
-              />
-            </div>
-          </div>
-        </div>
-      ) : methodForm?.type === "digital_wallet" ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Wallet Name</Label>
-            <Input
-              placeholder="Venmo, PayPal..."
-              value={methodForm?.brand ?? ""}
-              onChange={(e) => handleFormChange("brand", e.target.value)}
-              className="focus:border-orange-500 focus:ring-orange-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Handle</Label>
-            <Input
-              placeholder="@handle"
-              value={methodForm?.handle ?? ""}
-              onChange={(e) => handleFormChange("handle", e.target.value)}
-              className="focus:border-orange-500 focus:ring-orange-500"
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Bank Name</Label>
-            <Input
-              placeholder="Chase, Wells Fargo..."
-              value={methodForm?.bank ?? ""}
-              onChange={(e) => handleFormChange("bank", e.target.value)}
-              className="focus:border-orange-500 focus:ring-orange-500"
-            />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Routing Number</Label>
-              <Input
-                inputMode="numeric"
-                placeholder="123456789"
-                value={methodForm?.routingNumber ?? ""}
-                maxLength={9}
-                onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                className="focus:border-orange-500 focus:ring-orange-500"
-              />
-              <p className="text-xs text-muted-foreground">9-digit routing number</p>
-            </div>
-            <div className="space-y-2">
-              <Label>Account Number</Label>
-              <Input
-                inputMode="numeric"
-                placeholder="Account number"
-                value={methodForm?.accountNumber ?? ""}
-                onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                className="focus:border-orange-500 focus:ring-orange-500"
-              />
-              {methodForm?.accountNumber && methodForm.accountNumber.length >= 4 && (
-                <p className="text-xs text-muted-foreground">
-                  Last 4 digits: {methodForm.accountNumber.slice(-4)}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between rounded-lg border p-3">
-        <div className="space-y-1">
-          <p className="text-sm font-medium">Set as default payment method</p>
-          <p className="text-xs text-muted-foreground">This replaces your current default method.</p>
-        </div>
-        <Switch checked={methodForm?.isDefault ?? false} onCheckedChange={(checked) => handleFormChange("isDefault", checked)} />
-      </div>
-    </div>
-  )
-
-  const renderTypeSelectionDialog = () => (
-    <Dialog open={isTypeSelectionOpen} onOpenChange={(open) => {
-      if (!open) setIsTypeSelectionOpen(false)
-    }}>
-      <DialogContent className="sm:max-w-2xl border-2 border-orange-500">
-        <DialogHeader>
-          <DialogTitle>Select Payment Type</DialogTitle>
-          <DialogDescription>
-            Choose the type of payment method you'd like to add
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-          {PAYMENT_TYPE_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => handleOpenAddDialog(option.value)}
-              className="flex items-start gap-4 p-5 border-2 rounded-lg hover:bg-accent hover:border-primary transition-all text-left group cursor-pointer"
-            >
-              <div className="p-3 bg-primary/10 rounded-lg text-primary group-hover:bg-primary/20 transition-colors">
-                {option.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-base mb-1">{option.label}</p>
-                <p className="text-sm text-muted-foreground">{option.description}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => setIsTypeSelectionOpen(false)}>
-            Cancel
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-
-  const handleBackToTypeSelection = () => {
-    setIsAddDialogOpen(false)
-    setIsTypeSelectionOpen(true)
+  const getDisplayText = (method: PaymentMethod) => {
+    if (method.type === "card" || method.type === "credit_card") {
+      const brand = method.brand ? method.brand.charAt(0).toUpperCase() + method.brand.slice(1) : "Card"
+      return `${brand} •••• ${method.last4}`
+    }
+    if (method.type === "us_bank_account" || method.type === "bank_account" || method.type === "ach") {
+      const bank = method.bankName || method.bank || "Bank"
+      return `${bank} •••• ${method.last4}`
+    }
+    return `•••• ${method.last4}`
   }
 
-  const renderDialog = () => (
-    <Dialog open={isAddDialogOpen || isEditDialogOpen} onOpenChange={(open) => {
-      if (!open) handleCloseDialog()
-    }}>
-      <DialogContent className="sm:max-w-lg border-2 border-orange-500">
-        <DialogHeader>
-          <DialogTitle>{isEditDialogOpen ? "Edit Payment Method" : "Add Payment Method"}</DialogTitle>
-          <DialogDescription>
-            {isEditDialogOpen
-              ? "Update the details for this payment method."
-              : "Provide the details for the new payment method you would like to use."}
-          </DialogDescription>
-        </DialogHeader>
-        {renderFormFields()}
-        <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-          {isAddDialogOpen && (
-            <Button type="button" variant="outline" onClick={handleBackToTypeSelection} className="sm:mr-auto">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-          )}
-          <Button type="button" variant="outline" onClick={handleCloseDialog}>
-            Cancel
-          </Button>
-          <Button type="button" onClick={handleSubmitForm}>
-            {isEditDialogOpen ? "Save Changes" : "Add Method"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
-
-  const renderRemoveDialog = () => (
-    <AlertDialog open={!!pendingRemovalId} onOpenChange={(open) => {
-      if (!open) setPendingRemovalId(null)
-    }}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Remove payment method?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will immediately remove the payment method from your account.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleRemove}>
-            Remove
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  )
+  const getIcon = (type?: string) => {
+    if (type === "card" || type === "credit_card") return <CreditCard className="h-4 w-4" />
+    return <Building className="h-4 w-4" />
+  }
 
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>Payment Methods</CardTitle>
-          <CardDescription>Manage your payment methods</CardDescription>
+          <CardDescription>Manage your payment methods securely via Stripe</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {normalizedMethods.length === 0 ? (
             <p className="text-sm text-muted-foreground">No payment methods added yet.</p>
           ) : (
-            normalizedMethods.map((paymentMethod) => (
-              <div key={paymentMethod.id} className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold leading-none">{getDisplayText(paymentMethod)}</p>
-                  {paymentMethod.type === "credit_card" && (
-                    <div className="space-y-0.5">
-                      {paymentMethod.expMonth && paymentMethod.expYear && (
-                        <p className="text-sm text-muted-foreground">
-                          Expires {formatExpiration(paymentMethod.expMonth, paymentMethod.expYear)}
-                        </p>
-                      )}
-                      {paymentMethod.cvv && (
-                        <p className="text-xs text-muted-foreground">
-                          CVV: {paymentMethod.cvv}
-                        </p>
-                      )}
-                    </div>
-                  )}
+            normalizedMethods.map((method) => (
+              <div key={method.id} className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                    {getIcon(method.type)}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold leading-none">{getDisplayText(method)}</p>
+                    {(method.type === "card" || method.type === "credit_card") && method.expMonth && method.expYear && (
+                      <p className="text-sm text-muted-foreground">
+                        Expires {formatExpiration(method.expMonth, method.expYear)}
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  {paymentMethod.isDefault ? (
-                    <Button variant="secondary" size="sm" disabled>
-                      Default
-                    </Button>
+                  {method.isDefault ? (
+                    <Button variant="secondary" size="sm" disabled>Default</Button>
                   ) : (
-                    <>
-                      {canManageMultipleMethods && (
-                        <Button variant="outline" size="sm" onClick={() => handleSetDefault(paymentMethod.id)}>
-                          Set as Default
-                        </Button>
-                      )}
-                    </>
+                    normalizedMethods.length > 1 && (
+                      <Button variant="outline" size="sm" onClick={() => handleSetDefault(method.id)}>
+                        Set as Default
+                      </Button>
+                    )
                   )}
-                  <Button variant="outline" size="sm" onClick={() => handleOpenEditDialog(paymentMethod)}>
-                    Edit
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-red-600" onClick={() => setPendingRemovalId(paymentMethod.id)}>
+                  <Button variant="outline" size="sm" className="text-red-600" onClick={() => setPendingRemovalId(method.id)}>
                     Remove
                   </Button>
                 </div>
@@ -536,15 +206,58 @@ export function PaymentMethods({
           )}
         </CardContent>
         <CardFooter>
-          <Button onClick={handleOpenTypeSelection} className="w-full sm:w-auto">
+          <Button onClick={handleOpenAddDialog} className="w-full sm:w-auto">
             Add Payment Method
           </Button>
         </CardFooter>
       </Card>
-      {renderTypeSelectionDialog()}
-      {renderDialog()}
-      {renderRemoveDialog()}
+
+      {/* Add Payment Method Dialog (Stripe Elements) */}
+      <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+        if (!open) { setIsAddDialogOpen(false); setSetupClientSecret(null) }
+      }}>
+        <DialogContent className="sm:max-w-lg border-2 border-orange-500">
+          <DialogHeader>
+            <DialogTitle>Add Payment Method</DialogTitle>
+            <DialogDescription>
+              Securely save a card or bank account via Stripe.
+            </DialogDescription>
+          </DialogHeader>
+          {isLoadingSetup ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            </div>
+          ) : setupClientSecret ? (
+            <StripeAddPaymentMethod
+              clientSecret={setupClientSecret}
+              onSuccess={handleAddSuccess}
+              onError={(msg) => toast({ title: "Error", description: msg, variant: "destructive" })}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      {/* Remove Confirmation */}
+      <AlertDialog open={!!pendingRemovalId} onOpenChange={(open) => { if (!open) setPendingRemovalId(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove payment method?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will immediately remove the payment method from your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleRemove}
+              disabled={isRemoving}
+            >
+              {isRemoving ? "Removing..." : "Remove"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
-

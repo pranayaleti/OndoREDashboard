@@ -707,6 +707,53 @@ export interface RoleAssignment {
   createdAt: string;
 }
 
+// ─── Stripe / Payment Types ───────────────────────────────────────
+
+export interface StripePaymentMethod {
+  id: string;
+  stripePaymentMethodId: string;
+  type: 'card' | 'us_bank_account';
+  brand?: string;
+  last4: string;
+  expMonth?: number;
+  expYear?: number;
+  bankName?: string;
+  isDefault: boolean;
+  createdAt: string;
+}
+
+export interface CreatePaymentIntentParams {
+  amountCents: number;
+  paymentType: 'rent' | 'one_time' | 'investment';
+  propertyId?: string;
+  description?: string;
+  paymentMethodId?: string;
+}
+
+export interface PaymentRecord {
+  id: string;
+  stripePaymentIntentId: string;
+  amountCents: number;
+  currency: string;
+  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded';
+  paymentType: 'rent' | 'one_time' | 'investment' | 'subscription';
+  propertyId?: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubscriptionRecord {
+  id: string;
+  stripeSubscriptionId: string;
+  planName: 'starter' | 'growth' | 'portfolio';
+  status: 'active' | 'past_due' | 'canceled' | 'trialing' | 'incomplete';
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  createdAt: string;
+}
+
 // API Error Class
 export class ApiError extends Error {
   constructor(
@@ -1534,6 +1581,56 @@ export const featureApi = {
         method: 'PATCH',
         body: JSON.stringify({ status }),
       });
+    },
+  },
+
+  // ─── Stripe Payments ────────────────────────────────────────────
+  stripe: {
+    createSetupIntent(): Promise<{ success: boolean; clientSecret: string }> {
+      return apiRequest('/payments/setup-intent', { method: 'POST' });
+    },
+    listPaymentMethods(): Promise<{ success: boolean; data: StripePaymentMethod[] }> {
+      return apiRequest('/payments/payment-methods');
+    },
+    attachPaymentMethod(stripePaymentMethodId: string): Promise<{ success: boolean; data: StripePaymentMethod }> {
+      return apiRequest('/payments/payment-methods', {
+        method: 'POST',
+        body: JSON.stringify({ stripePaymentMethodId }),
+      });
+    },
+    removePaymentMethod(id: string): Promise<{ success: boolean }> {
+      return apiRequest(`/payments/payment-methods/${id}`, { method: 'DELETE' });
+    },
+    setDefaultPaymentMethod(id: string): Promise<{ success: boolean }> {
+      return apiRequest(`/payments/payment-methods/${id}/default`, { method: 'PUT' });
+    },
+    createPaymentIntent(params: CreatePaymentIntentParams): Promise<{ success: boolean; clientSecret: string; paymentId: string }> {
+      return apiRequest('/payments/create-payment-intent', {
+        method: 'POST',
+        body: JSON.stringify(params),
+      });
+    },
+    getPaymentHistory(page?: number, limit?: number): Promise<{ success: boolean; data: PaymentRecord[]; pagination: { page: number; limit: number; total: number; hasMore: boolean } }> {
+      return apiRequest(`/payments/history${buildQueryString({ page, limit })}`);
+    },
+  },
+
+  // ─── Subscriptions ──────────────────────────────────────────────
+  subscriptions: {
+    create(planName: string): Promise<{ success: boolean; clientSecret: string; subscriptionId: string }> {
+      return apiRequest('/subscriptions/create', {
+        method: 'POST',
+        body: JSON.stringify({ planName }),
+      });
+    },
+    getCurrent(): Promise<{ success: boolean; data: SubscriptionRecord | null }> {
+      return apiRequest('/subscriptions/current');
+    },
+    cancel(): Promise<{ success: boolean; message: string }> {
+      return apiRequest('/subscriptions/cancel', { method: 'POST' });
+    },
+    resume(): Promise<{ success: boolean; message: string }> {
+      return apiRequest('/subscriptions/resume', { method: 'POST' });
     },
   },
 };
