@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL: https://ondorealestateserver.onrender.com/api
+          VITE_API_BASE_URL: https://lpklmquhxgbpavjngbby.supabase.co/functions/v1/api
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
