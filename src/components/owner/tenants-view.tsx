@@ -151,6 +151,7 @@ export function TenantsView() {
       description: "The tenant has been successfully added.",
     })
   }
+  void _handleAddTenant
 
   return (
     <div className="space-y-6">

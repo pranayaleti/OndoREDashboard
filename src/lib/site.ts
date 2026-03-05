@@ -32,8 +32,8 @@ export const SITE_HOURS_LABEL = (() => {
   const weekday = companyInfo.hours.find(h => h.day === "Mon-Fri")
   if (weekday) {
     // Convert 24-hour format to 12-hour format
-    const [opensHour, opensMin] = weekday.opens.split(":").map(Number)
-    const [closesHour, closesMin] = weekday.closes.split(":").map(Number)
+    const [opensHour, opensMin] = (weekday.opens ?? "09:00").split(":").map(Number)
+    const [closesHour, closesMin] = (weekday.closes ?? "17:00").split(":").map(Number)
     
     const opens12 = new Date(2000, 0, 1, opensHour, opensMin).toLocaleTimeString('en-US', { 
       hour: 'numeric', 

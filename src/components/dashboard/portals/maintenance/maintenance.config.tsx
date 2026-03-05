@@ -44,6 +44,7 @@ export function createMaintenanceConfig(
     status: r.status === 'completed' ? 'success' as const : r.status === 'in_progress' ? 'info' as const : 'warning' as const,
     href: `/maintenance/tickets`,
   }))
+  void _activities
 
   // Stat cards configuration
   const statCards: StatCardConfig[] = [

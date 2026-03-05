@@ -193,9 +193,9 @@ export default function ContactPage() {
                           }
                           return (
                             <>
-                              {weekday ? `Monday - Friday: ${formatTime(weekday.opens)} - ${formatTime(weekday.closes)}` : "Monday - Friday: 9am - 5pm"}
+                              {weekday ? `Monday - Friday: ${formatTime(weekday.opens ?? "09:00")} - ${formatTime(weekday.closes ?? "17:00")}` : "Monday - Friday: 9am - 5pm"}
                               <br />
-                              {saturday && !saturday.closed ? `Saturday: ${formatTime(saturday.opens)} - ${formatTime(saturday.closes)}` : "Saturday: 10am - 2pm"}
+                              {saturday && !saturday.closed ? `Saturday: ${formatTime(saturday.opens ?? "10:00")} - ${formatTime(saturday.closes ?? "14:00")}` : "Saturday: 10am - 2pm"}
                               <br />
                               {sunday?.closed ? "Sunday: Closed" : "Sunday: Closed"}
                             </>

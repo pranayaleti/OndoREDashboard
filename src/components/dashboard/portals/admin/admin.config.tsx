@@ -60,6 +60,7 @@ export function createAdminConfig(
       href: `/admin/maintenance`,
     })),
   ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5)
+  void _activities
 
   // Stat cards configuration
   const statCards: StatCardConfig[] = [

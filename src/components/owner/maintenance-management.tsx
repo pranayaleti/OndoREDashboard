@@ -362,7 +362,7 @@ export function OwnerMaintenanceManagement() {
       } else {
         // When viewing a specific tab, only apply column filter if it includes the current tab status
         // Otherwise, ignore column status filter (tab takes precedence)
-        if (filterStatus.includes(status)) {
+        if (status !== null && filterStatus.includes(status)) {
           filtered = filtered.filter((req) => filterStatus.includes(req.status))
         }
         // If column filter doesn't include tab status, it would filter everything out

@@ -228,6 +228,7 @@ export function createTenantConfig(
       href: "/tenant/messages",
     }] : []),
   ]
+  void _activities
 
   // Dashboard tabs configuration
   const tabs: DashboardTab[] = [

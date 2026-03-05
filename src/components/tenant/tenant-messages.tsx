@@ -369,7 +369,7 @@ export default function TenantMessages() {
                   </div>
                 </div>
                 
-                {mockMessages.find(m => m.id === selectedMessage)?.attachments.length > 0 && (
+                {(mockMessages.find(m => m.id === selectedMessage)?.attachments.length ?? 0) > 0 && (
                   <div className="mt-6 pt-6 border-t">
                     <h4 className="font-medium mb-3">Attachments</h4>
                     <div className="space-y-2">

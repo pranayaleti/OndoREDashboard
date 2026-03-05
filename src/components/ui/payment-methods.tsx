@@ -22,6 +22,8 @@ export interface PaymentMethod {
   handle?: string
   nickname?: string
   isDefault: boolean
+  cardNumber?: string
+  cvv?: string
 }
 
 interface PaymentMethodsProps {

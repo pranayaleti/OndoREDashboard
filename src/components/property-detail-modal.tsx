@@ -262,11 +262,11 @@ export function PropertyDetailModal({
                 </div>
               )}
               {/* Property Categories */}
-              {(property.specialties?.length > 0 || property.services?.length > 0 || property.valueRanges?.length > 0) && (
+              {((property.specialties?.length ?? 0) > 0 || (property.services?.length ?? 0) > 0 || (property.valueRanges?.length ?? 0) > 0) && (
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
                   <h4 className="text-lg font-semibold mb-4">Property Categories</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {property.specialties?.length > 0 && (
+                    {property.specialties && property.specialties.length > 0 && (
                       <div>
                         <h5 className="font-medium mb-3 flex items-center text-blue-600">
                           <Tag className="h-4 w-4 mr-2" />
@@ -282,7 +282,7 @@ export function PropertyDetailModal({
                       </div>
                     )}
 
-                    {property.services?.length > 0 && (
+                    {property.services && property.services.length > 0 && (
                       <div>
                         <h5 className="font-medium mb-3 flex items-center text-green-600">
                           <Building className="h-4 w-4 mr-2" />
@@ -298,7 +298,7 @@ export function PropertyDetailModal({
                       </div>
                     )}
 
-                    {property.valueRanges?.length > 0 && (
+                    {property.valueRanges && property.valueRanges.length > 0 && (
                       <div>
                         <h5 className="font-medium mb-3 flex items-center text-purple-600">
                           <DollarSign className="h-4 w-4 mr-2" />

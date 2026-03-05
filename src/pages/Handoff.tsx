@@ -271,6 +271,7 @@ export default function Handoff() {
       }, 100)
     }
   }
+  void _navigateToSection
 
   // Fetch properties for selection
   useEffect(() => {
@@ -4705,7 +4706,7 @@ export default function Handoff() {
                                     value={contact.phone || ""}
                                     onChange={(e) => {
                                       const updatedContacts = [...handoffData.maintenance.contacts]
-                                      updatedContacts[index] = { ...contact, phone: e.target.value || undefined }
+                                      updatedContacts[index] = { ...contact, phone: e.target.value }
                                       setHandoffData({
                                         ...handoffData,
                                         maintenance: {
@@ -4856,7 +4857,7 @@ export default function Handoff() {
                                     value={contractor.phone || ""}
                                     onChange={(e) => {
                                       const updatedContractors = [...(handoffData.maintenance.preferredContractors || [])]
-                                      updatedContractors[index] = { ...contractor, phone: e.target.value || undefined }
+                                      updatedContractors[index] = { ...contractor, phone: e.target.value }
                                       setHandoffData({
                                         ...handoffData,
                                         maintenance: {

@@ -207,6 +207,7 @@ export default function OwnerProfile() {
       }
     }))
   }
+  void _handlePreferenceChange
 
   const handleToggleChange = (category: string, setting: string) => {
     setSettings((prev) => ({

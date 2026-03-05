@@ -35,6 +35,7 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
   const { data, loading } = useBaseDashboard()
   const { user } = useAuth()
   const _basePath = user ? getDashboardPath(user.role) : "/"
+  void _basePath
   const { getThemeStyle, primaryColor } = useDashboardTheme()
 
   if (loading && config.dataFetchers && Object.keys(config.dataFetchers).length > 0) {

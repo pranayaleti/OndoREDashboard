@@ -279,6 +279,7 @@ export function DocumentsView() {
       description: "The document has been successfully uploaded.",
     })
   }
+  void _handleAddDocument
 
   const handleCreateFolder = (data: any) => {
     // In a real app, this would call an API to create the folder

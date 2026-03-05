@@ -77,7 +77,7 @@ export function ChartPie({ data, index, category, valueFormatter, className }: C
     <ResponsiveContainer width="100%" height="100%" className={className}>
       <PieChart>
         <Pie data={data} dataKey={category} nameKey={index} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" label>
-          {data.map((entry, index) => (
+          {data.map((_entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

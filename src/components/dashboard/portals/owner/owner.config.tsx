@@ -72,6 +72,7 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
     status: p.status === 'approved' ? 'success' as const : p.status === 'rejected' ? 'error' as const : 'warning' as const,
     href: `/owner/properties`,
   }))
+  void _activities
 
   // Stat cards configuration
   const statCards: StatCardConfig[] = [
