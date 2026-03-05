@@ -1,5 +1,16 @@
 import { companyInfo } from "@/constants/companyInfo";
 
+/** Escape user-supplied strings before embedding them in HTML templates. */
+function escapeHtml(value: string | number | undefined | null): string {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 export interface PDFContent {
   title?: string;
   subtitle?: string;
@@ -463,7 +474,7 @@ export function generateOccupancyReportHTML(data: OccupancyReportData): string {
     <div class="container">
         <div class="header">
             <h1>${companyInfo.name.toUpperCase()}</h1>
-            <div class="subtitle">${propertyName} - Occupancy Report</div>
+            <div class="subtitle">${escapeHtml(propertyName)} - Occupancy Report</div>
             <div class="timestamp">Generated: ${generatedText}</div>
             <div class="website">${companyInfo.urls.website}</div>
         </div>
@@ -560,12 +571,12 @@ export function generateOccupancyReportHTML(data: OccupancyReportData): string {
                 <tbody>
                     ${data.tenants.map(tenant => `
                     <tr>
-                        <td>${tenant.name}</td>
-                        <td>${tenant.unit}</td>
+                        <td>${escapeHtml(tenant.name)}</td>
+                        <td>${escapeHtml(tenant.unit)}</td>
                         <td>$${tenant.rent.toLocaleString()}</td>
-                        <td>${tenant.moveIn}</td>
-                        <td>${tenant.leaseEnd}</td>
-                        <td><span class="status-active">${tenant.status}</span></td>
+                        <td>${escapeHtml(tenant.moveIn)}</td>
+                        <td>${escapeHtml(tenant.leaseEnd)}</td>
+                        <td><span class="status-active">${escapeHtml(tenant.status)}</span></td>
                     </tr>
                     `).join('')}
                 </tbody>
@@ -577,7 +588,7 @@ export function generateOccupancyReportHTML(data: OccupancyReportData): string {
             <div class="property-section">
                 ${data.properties.map(property => `
                 <div class="property-card">
-                    <div class="property-name">${property.name}</div>
+                    <div class="property-name">${escapeHtml(property.name)}</div>
                     <div class="property-stat">
                         <span class="property-stat-label">Total Units:</span>
                         <span class="property-stat-value">${property.units}</span>
@@ -683,8 +694,8 @@ export async function generatePDFFromHTMLWithLibrary(
     return generatePDFFromHTML(htmlContent, fileName);
   }
 
+  const element = document.createElement('div');
   try {
-    const element = document.createElement('div');
     element.innerHTML = htmlContent;
     document.body.appendChild(element);
 
@@ -697,12 +708,14 @@ export async function generatePDFFromHTMLWithLibrary(
     };
 
     await html2pdf().set(opt).from(element).save();
-
-    document.body.removeChild(element);
   } catch (error) {
     console.error('Error generating PDF with library:', error);
     // Fallback to print method
     await generatePDFFromHTML(htmlContent, fileName);
+  } finally {
+    if (document.body.contains(element)) {
+      document.body.removeChild(element);
+    }
   }
 }
 
@@ -1047,7 +1060,7 @@ export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'rep
     <div class="container">
         <div class="header">
             <h1>${companyInfo.name.toUpperCase()}</h1>
-            ${userEmail ? `<div class="user-info">${userEmail}</div>` : ''}
+            ${userEmail ? `<div class="user-info">${escapeHtml(userEmail)}</div>` : ''}
             <div class="timestamp">Generated: ${generatedText}</div>
             <div class="website">${companyInfo.urls.website}</div>
         </div>
@@ -1071,8 +1084,8 @@ export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'rep
 
         ${data.title ? `
         <div style="text-align: center; margin-bottom: 30px;">
-            <h2 style="font-size: 2em; font-weight: 700; color: #1f2937; margin-bottom: 8px;">${data.title.toUpperCase()}</h2>
-            ${data.subtitle ? `<p style="font-size: 1.1em; color: #6b7280;">${data.subtitle}</p>` : ''}
+            <h2 style="font-size: 2em; font-weight: 700; color: #1f2937; margin-bottom: 8px;">${escapeHtml(data.title?.toUpperCase())}</h2>
+            ${data.subtitle ? `<p style="font-size: 1.1em; color: #6b7280;">${escapeHtml(data.subtitle)}</p>` : ''}
         </div>
         ` : ''}
 
@@ -1081,12 +1094,12 @@ export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'rep
             <div class="summary-title">Executive Summary</div>
             <div class="summary-grid">
                 ${data.summary.map(item => {
-                  const value = typeof item.value === 'number' 
+                  const value = typeof item.value === 'number'
                     ? (item.value.toLocaleString ? `$${item.value.toLocaleString()}` : item.value.toString())
-                    : item.value;
+                    : escapeHtml(item.value);
                   return `
                 <div class="summary-item">
-                    <div class="summary-label">${item.label}</div>
+                    <div class="summary-label">${escapeHtml(item.label)}</div>
                     <div class="summary-value">${value}</div>
                 </div>
                 `;
@@ -1097,14 +1110,14 @@ export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'rep
 
         ${data.sections && data.sections.length > 0 ? data.sections.map(section => `
         <div class="section">
-            <div class="section-title">${section.title}</div>
+            <div class="section-title">${escapeHtml(section.title)}</div>
             ${section.items.map(item => {
-              const value = typeof item.value === 'number' 
+              const value = typeof item.value === 'number'
                 ? (item.value.toLocaleString ? `$${item.value.toLocaleString()}` : item.value.toString())
-                : item.value;
+                : escapeHtml(item.value);
               return `
             <div class="section-item">
-                <span class="section-label">${item.label}</span>
+                <span class="section-label">${escapeHtml(item.label)}</span>
                 <span class="section-value">${value}</span>
             </div>
             `;
@@ -1114,20 +1127,20 @@ export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'rep
 
         ${data.tables && data.tables.length > 0 ? data.tables.map(table => `
         <div class="table-section">
-            <div class="table-title">${table.title}</div>
+            <div class="table-title">${escapeHtml(table.title)}</div>
             <table>
                 <thead>
                     <tr>
-                        ${table.headers.map(header => `<th>${header}</th>`).join('')}
+                        ${table.headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody>
                     ${table.rows.map(row => `
                     <tr>
                         ${row.map(cell => {
-                          const cellValue = typeof cell === 'number' 
+                          const cellValue = typeof cell === 'number'
                             ? (cell.toLocaleString ? cell.toLocaleString() : cell.toString())
-                            : String(cell || '');
+                            : escapeHtml(cell);
                           return `<td>${cellValue}</td>`;
                         }).join('')}
                     </tr>

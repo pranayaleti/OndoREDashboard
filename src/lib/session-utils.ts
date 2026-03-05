@@ -26,7 +26,13 @@ export function getUserZipCode(): string | null {
 export function getUserData(): Record<string, any> | null {
   if (typeof window !== "undefined") {
     const userData = sessionStorage.getItem("userData")
-    return userData ? JSON.parse(userData) : null
+    if (!userData) return null
+    try {
+      return JSON.parse(userData)
+    } catch {
+      sessionStorage.removeItem("userData")
+      return null
+    }
   }
   return null
 }

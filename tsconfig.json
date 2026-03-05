@@ -14,11 +14,15 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
+    /* Linting — migrate toward strict: true incrementally.
+       Step 1 (done): enable null checks + switch safety.
+       Step 2: fix all resulting type errors in src/.
+       Step 3: set strict: true and remove the overrides below. */
     "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
 
     /* Path mapping */
     "baseUrl": ".",

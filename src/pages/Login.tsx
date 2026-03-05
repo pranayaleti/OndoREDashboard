@@ -218,26 +218,28 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80">
-          <button
-            type="button"
-            className="flex w-full items-center justify-between text-left font-semibold text-white"
-            onClick={() => setShowTestAccounts((prev) => !prev)}
-          >
-            <span>Testing the demo?</span>
-            <span>{showTestAccounts ? "Hide" : "Show"}</span>
-          </button>
-          {showTestAccounts && (
-            <div className="mt-3 space-y-2">
-              <CredentialButton label="Owner" email="mail2pranayreddy@gmail.com" password="Test@123" onFill={handleFillCredentials} />
-              <CredentialButton label="Tenant" email="pranayreddyui@gmail.com" password="Test@123" onFill={handleFillCredentials} />
-              <CredentialButton label="Manager" email={`manager@${companyInfo.social.twitterDomain}`} password="Test@123" onFill={handleFillCredentials} />
-              <CredentialButton label="Admin" email={`admin@${companyInfo.social.twitterDomain}`} password="Test@123" onFill={handleFillCredentials} />
-              <CredentialButton label="Super Admin" email={`superadmin@${companyInfo.social.twitterDomain}`} password="Test@123" onFill={handleFillCredentials} />
-              <CredentialButton label="Maintenance" email={`maintenance@${companyInfo.social.twitterDomain}`} password="Test@123" onFill={handleFillCredentials} />
-            </div>
-          )}
-        </div>
+        {import.meta.env.DEV && (
+          <div className="rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between text-left font-semibold text-white"
+              onClick={() => setShowTestAccounts((prev) => !prev)}
+            >
+              <span>Testing the demo? (dev only)</span>
+              <span>{showTestAccounts ? "Hide" : "Show"}</span>
+            </button>
+            {showTestAccounts && (
+              <div className="mt-3 space-y-2">
+                <CredentialButton label="Owner" email={import.meta.env.VITE_TEST_OWNER_EMAIL ?? ""} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Tenant" email={import.meta.env.VITE_TEST_TENANT_EMAIL ?? ""} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Manager" email={`manager@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Admin" email={`admin@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Super Admin" email={`superadmin@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Maintenance" email={`maintenance@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </OnboardingLayout>
   )

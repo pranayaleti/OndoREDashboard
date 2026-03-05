@@ -744,9 +744,14 @@ async function apiRequest<T>(
     };
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30_000);
+  config.signal = controller.signal;
+
   try {
     const response = await fetch(url, config);
-    
+    clearTimeout(timeoutId);
+
     // Check if response has content and is JSON
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
@@ -775,8 +780,12 @@ async function apiRequest<T>(
 
     return data;
   } catch (error) {
+    clearTimeout(timeoutId);
     if (error instanceof ApiError) {
       throw error;
+    }
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new ApiError('Request timed out after 30 seconds', 0);
     }
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new ApiError('Network error: Unable to reach server', 0);
