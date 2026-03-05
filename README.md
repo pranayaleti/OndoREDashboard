@@ -23,7 +23,7 @@ All through a unified platform with role-based access, invitation system, and mo
 ### **Backend (Node.js + Express + PostgreSQL)**
 - **Authentication**: JWT-based with role management
 - **Invitation System**: Email-based user onboarding
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: PostgreSQL (Supabase)
 - **API**: RESTful endpoints with TypeScript
 
 ### **Frontend (React + TypeScript + Vite)**
