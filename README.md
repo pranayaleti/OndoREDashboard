@@ -184,14 +184,27 @@ npm run seed         # Seed database with admin user
 
 ## 🚀 **Deployment**
 
-### **Quick Deploy (Vercel + Neon)**
-1. **Database**: Create PostgreSQL on [Neon](https://neon.tech)
-2. **Backend**: Deploy to [Vercel](https://vercel.com)
-3. **Frontend**: Deploy to [Vercel](https://vercel.com)
-4. **Configure**: Set environment variables
-5. **Migrate**: Run `npm run db:push` and `npm run seed`
+### **Quick Deploy (Vercel + Supabase)**
 
-See **[Deployment Guide](DEPLOYMENT-GUIDE.md)** for detailed instructions.
+1. **Database (Supabase)**  
+   - Create a project at [Supabase](https://supabase.com).  
+   - In **Project Settings → Database**, copy the **Connection string** (URI). Use the **Connection pooler** (port 6543, Transaction mode) for serverless backends.  
+   - Set `DATABASE_URL` in your backend env.
+
+2. **Backend**  
+   - Deploy the backend (this repo’s backend or Supabase Edge Functions) to [Vercel](https://vercel.com) or your chosen host.  
+   - Configure `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL`, and SMTP vars (see backend `.env.example`).  
+   - Run `npm run db:push` and `npm run seed` (e.g. in a one-off job or from your machine against the same DB).
+
+3. **Frontend (Dashboard)**  
+   - Deploy the Dashboard to [Vercel](https://vercel.com) or GitHub Pages.  
+   - Set **`VITE_API_BASE_URL`** to your API base URL (e.g. Supabase Edge Functions: `https://<project-ref>.supabase.co/functions/v1/api`, or your Node backend URL + `/api`).  
+   - See this repo’s `.env.example` for the expected format.
+
+4. **Verify**  
+   - Log in at the Dashboard URL and confirm API calls succeed (check network tab if needed).
+
+See **[Deployment Guide](DEPLOYMENT-GUIDE.md)** for detailed instructions (if present).
 
 ---
 
