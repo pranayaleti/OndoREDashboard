@@ -1,59 +1,11 @@
-Project: Ondo Real Estate web UI
+OndoREDashboard — Ondo Real Estate Admin Dashboard
 
-Purpose:
-- Marketing site and dashboard UI for Ondo Real Estate, built as a SPA.
+Purpose: React/Vite SPA for Manager, Owner, and Tenant portals. Connects to OndoREBackend API. Single assistant UI at /assistant; backend role-scopes data.
 
-Tech stack:
-- React 18 with TypeScript
-- Vite for bundling and dev server
-- React Router (`src/pages` holds route-level components)
-- Tailwind CSS + `tailwindcss-animate`
-- Radix UI primitives and shadcn-style components (various `@radix-ui/*`, `cmdk`, `sonner`, `lucide-react`)
-- Form handling with `react-hook-form` + `zod`
-- Charts with `recharts`
+Stack: React 18, TypeScript, Vite, Tailwind CSS (OnDo gradient from-orange-500 to-red-800), Radix UI, React Router DOM, React Hook Form + Zod, Lucide. API client: src/lib/api.ts. Auth: src/lib/auth-context.tsx.
 
-Key npm scripts (see package.json):
-- `npm run dev` – start Vite dev server
-- `npm run build` – typecheck and build for production
-- `npm run preview` – preview built app
-- `npm run lint` – run ESLint on TypeScript/React code
+Run: npm run dev (Vite, default :5173). Set VITE_API_URL in .env to backend. npm run build, npm run preview, npm run lint.
 
-Source layout (high level):
-- `src/pages` – top-level routed pages (marketing, auth, dashboard shells, etc.)
-- `src/components` – shared UI components and building blocks
-- `src/features` – feature-oriented modules (logic + UI)
-- `src/hooks` – reusable React hooks
-- `src/lib` – app-level utilities (API client, auth/session helpers, site metadata)
-- `src/constants` – static configuration and constant values
-- `src/utils` – generic helpers
+Structure: src/pages/ (Login, Signup, Dashboard/Manager, Owner, Tenant, SuperAdmin). src/components/ui/ (Radix), admin/, owner/, tenant/, portal-sidebar, manager-assistant, risk-analytics, manager-at-risk, sparkline-chart. src/lib/auth-context.tsx, api.ts, utils.ts. src/hooks/ (use-notifications, useApi).
 
-Styling:
-- Use Tailwind utility classes for layout, spacing, and typography.
-- Prefer existing design tokens/components over hand-rolled inline styles.
-
-Routing:
-- Use React Router v6 patterns.
-- New top-level routes should be implemented as components in `src/pages` and integrated into the router configuration (typically in the main app entry).
-
-Forms and validation:
-- Prefer `react-hook-form` with `zod` schemas for new forms.
-- Keep form schemas close to the form component or in the relevant `src/features/*` module.
-
-State and data flow:
-- Keep business logic in `src/features` or `src/lib` rather than inside page components when possible.
-- Prefer hooks in `src/hooks` for reusable behaviors.
-
-Environment/config:
-- Environment variables and required config should be documented in `.env.example`.
-- Do not hardcode secrets or environment-specific URLs; use Vite env variables instead (e.g. `import.meta.env.VITE_*`).
-
-LLM-specific guidance:
-- Respect existing patterns; before adding new libraries, look for similar usage under `src/features`, `src/components`, or `src/lib`.
-- When adding components, keep them small and composable; co-locate tests and stories (if any) next to the component.
-- Follow TypeScript strictly (no `any` unless unavoidable and justified with comments).
-- Run `npm run lint` and fix new lint errors introduced by changes.
-
-Non-goals:
-- Do not modify build tooling (`vite.config.ts`, `tsconfig*.json`, ESLint config) unless explicitly requested.
-- Avoid introducing breaking API shape changes to shared helpers in `src/lib` without clear justification.
-
+Rules: Use useAuth() for auth; never read localStorage for auth. All API via src/lib/api.ts. Tailwind only; colors in tailwind.config.ts. React Hook Form + Zod. No any. Test users from backend seed: admin/owner/tenant@ondorealestate.com, ondo1234.
