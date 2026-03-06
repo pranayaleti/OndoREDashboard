@@ -29,6 +29,7 @@ const milestones = [
   { year: "2023", detail: "Micro-feature architecture + maintenance hub" },
   { year: "2024", detail: "Stripe ACH, DocuSign placeholders, tenant screening hooks" },
   { year: "Today", detail: "Full SaaS blueprint for Ondo Property Management" },
+  { year: "Roadmap", detail: "Conversational AI assistant (lease review, portfolio insights, marketing, maintenance routing); outbound sales engine and GTM from zero" },
 ]
 
 export default function AboutPage() {
@@ -44,7 +45,7 @@ export default function AboutPage() {
           ctaHref="/contact"
           ctaLabel="Book a platform tour"
           title="Product vision"
-          description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing)."
+          description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing). We're building a conversational AI assistant for lease review, portfolio insights, marketing, and auto-routing maintenance — and we build outbound sales from the ground up: prospecting, lead qualification, CRM from zero, and representing Ondo RE as your first point of contact."
         />
       </section>
 

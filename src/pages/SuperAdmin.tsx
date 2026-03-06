@@ -17,6 +17,7 @@ import SuperAdminMessages from "@/components/super-admin/super-admin-messages"
 import SuperAdminCalendar from "@/components/super-admin/super-admin-calendar"
 import SuperAdminNotifications from "@/components/super-admin/super-admin-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
+import ManagerAssistant from "@/components/manager/manager-assistant"
 
 export default function SuperAdmin() {
   return (
@@ -26,6 +27,7 @@ export default function SuperAdmin() {
           <Routes>
             <Route path="/" element={<SuperAdminDashboard />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
+            <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/managers/*" element={<SuperAdminManagers />} />
             <Route path="/admins/*" element={<SuperAdminAdmins />} />
             <Route path="/owners/*" element={<SuperAdminOwners />} />

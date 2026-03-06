@@ -14,6 +14,7 @@ import { AddPropertyForm } from "@/components/owner/add-property-form"
 import { OwnerMaintenanceManagement } from "@/components/owner/maintenance-management"
 import OwnerCalendar from "@/components/owner/owner-calendar"
 import OwnerNotifications from "@/components/owner/owner-notifications"
+import ManagerAssistant from "@/components/manager/manager-assistant"
 
 export default function Owner() {
   return (
@@ -22,6 +23,7 @@ export default function Owner() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<OwnerDashboard />} />
+            <Route path="/assistant" element={<ManagerAssistant />} />
             {/* Property creation routes - both old and new URLs */}
             <Route path="/properties/add" element={<AddPropertyForm />} />
             <Route path="/property-management/add" element={<AddPropertyForm />} />

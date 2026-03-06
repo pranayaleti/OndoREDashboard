@@ -37,6 +37,11 @@ const featureHighlights = [
     description: "Generate from templates, upload your own docs, and trigger DocuSign/HelloSign when you're ready to execute.",
     icon: FileSignature,
   },
+  {
+    title: "AI assistant",
+    description: "Agentic chat: portfolio and finance insights, list or create maintenance — one conversational layer, role-scoped for managers and owners.",
+    icon: Sparkles,
+  },
 ]
 
 const workflowTracks = [
@@ -319,7 +324,7 @@ export default function LandingPage() {
               <Link to="/free-trial">Start free trial</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
-              <Link to="/contact">Talk to our team</Link>
+              <Link to="/contact">Talk to our team — we're your first point of contact</Link>
             </Button>
           </div>
         </div>

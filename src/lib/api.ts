@@ -1058,6 +1058,13 @@ export const dashboardApi = {
       body: JSON.stringify(body),
     });
   },
+  /** AI Assistant: send conversation and get one reply. */
+  assistantChat(messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>): Promise<{ reply: string }> {
+    return apiRequest<{ reply: string }>('/dashboard/assistant/chat', {
+      method: 'POST',
+      body: JSON.stringify({ messages }),
+    });
+  },
 };
 
 // Token management

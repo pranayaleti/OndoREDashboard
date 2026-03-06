@@ -6,6 +6,8 @@ This is the **admin dashboard frontend** for the Ondo Real Estate platform. It i
 
 For shared product context (mission, roles, brand, repo map), see `../soul.md` and `../identity.md` at the workspace root, or the always-on Cursor rule at `../.cursor/rules/shared-context.mdc`.
 
+**Agentic experience**: Assistant chat at `/assistant` (Manager, Admin, SuperAdmin, Owner). One UI component (`manager-assistant.tsx`), one API: `dashboardApi.assistantChat(messages)`. Backend scopes data by role; no per-role UI branches.
+
 ## Stack
 
 - **Framework**: React 18 + TypeScript

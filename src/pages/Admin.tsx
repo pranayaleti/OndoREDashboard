@@ -16,6 +16,7 @@ import AdminMessages from "@/components/admin/admin-messages"
 import AdminCalendar from "@/components/admin/admin-calendar"
 import AdminNotifications from "@/components/admin/admin-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
+import ManagerAssistant from "@/components/manager/manager-assistant"
 
 export default function Admin() {
   return (
@@ -25,6 +26,7 @@ export default function Admin() {
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
+            <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/managers/*" element={<AdminManagers />} />
             <Route path="/owners/*" element={<AdminOwners />} />
             <Route path="/tenants/*" element={<AdminTenants />} />
