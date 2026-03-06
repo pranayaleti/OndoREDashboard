@@ -730,6 +730,70 @@ export interface CreateRiskInterventionRequest {
   notes?: string | null;
 }
 
+export type InterventionType = 'payment_plan' | 'reminder' | 'assistance_referral' | 'outreach' | 'early_renewal';
+
+export interface RiskAnalytics {
+  distribution: { low: number; medium: number; high: number };
+  totalScored: number;
+  atRiskCount: number;
+  trend: Array<{ date: string; avgScore: number; count: number }>;
+  interventionsByType: Record<string, { total: number; completed: number; avgRating: number | null }>;
+  modelVersions: Record<string, number>;
+  windowDays: number;
+}
+
+export interface TenantRiskHistory {
+  tenantId: string;
+  scoreHistory: Array<{
+    id: string;
+    score: number;
+    band: 'low' | 'medium' | 'high';
+    modelVersion: string;
+    features: Record<string, unknown>;
+    scoredAt: string;
+  }>;
+  interventions: Array<{
+    id: string;
+    type: InterventionType;
+    status: string;
+    notes: string | null;
+    outcome: string | null;
+    effectivenessRating: number | null;
+    createdAt: string;
+    resolvedAt: string | null;
+  }>;
+  recommendations: Array<{
+    id: string;
+    recommendedType: InterventionType;
+    reasoning: string;
+    confidence: number;
+    status: string;
+    createdAt: string;
+  }>;
+}
+
+export interface RiskRecommendation {
+  id: string;
+  tenantId: string;
+  propertyId: string | null;
+  recommendedType: InterventionType;
+  reasoning: string;
+  confidence: number;
+  status: 'pending' | 'approved' | 'dismissed';
+  createdAt: string;
+  tenantName: string | null;
+  tenantEmail: string | null;
+}
+
+export interface InlineRecommendation {
+  tenantId: string;
+  recommended_type: InterventionType;
+  reasoning: string;
+  confidence: number;
+  currentScore: number;
+  currentBand: 'low' | 'medium' | 'high';
+}
+
 // ─── Stripe / Payment Types ───────────────────────────────────────
 
 export interface StripePaymentMethod {
@@ -1057,6 +1121,35 @@ export const dashboardApi = {
       method: 'POST',
       body: JSON.stringify(body),
     });
+  },
+  getRiskAnalytics(days = 30): Promise<RiskAnalytics> {
+    return apiRequest<RiskAnalytics>(`/dashboard/at-risk/analytics?days=${days}`);
+  },
+  getTenantRiskHistory(tenantId: string, limit = 30): Promise<TenantRiskHistory> {
+    return apiRequest<TenantRiskHistory>(`/dashboard/at-risk/${tenantId}/history?limit=${limit}`);
+  },
+  getRecommendations(): Promise<RiskRecommendation[]> {
+    return apiRequest<RiskRecommendation[]>('/dashboard/at-risk/recommendations').then((r) => (Array.isArray(r) ? r : []));
+  },
+  approveRecommendation(id: string, notes?: string): Promise<{ interventionId: string }> {
+    return apiRequest(`/dashboard/at-risk/recommendations/${id}/approve`, {
+      method: 'POST',
+      body: JSON.stringify({ notes }),
+    });
+  },
+  dismissRecommendation(id: string): Promise<{ message: string }> {
+    return apiRequest(`/dashboard/at-risk/recommendations/${id}/dismiss`, {
+      method: 'POST',
+    });
+  },
+  updateInterventionOutcome(id: string, data: { effectivenessRating?: number; outcome?: string; status?: string }): Promise<Record<string, unknown>> {
+    return apiRequest(`/dashboard/at-risk/interventions/${id}/outcome`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+  getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {
+    return apiRequest<InlineRecommendation>(`/dashboard/at-risk/${tenantId}/recommend`);
   },
   /** AI Assistant: send conversation and get one reply. */
   assistantChat(messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>): Promise<{ reply: string }> {
