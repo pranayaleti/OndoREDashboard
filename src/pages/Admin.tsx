@@ -15,6 +15,7 @@ import AdminDocuments from "@/components/admin/admin-documents"
 import AdminMessages from "@/components/admin/admin-messages"
 import AdminCalendar from "@/components/admin/admin-calendar"
 import AdminNotifications from "@/components/admin/admin-notifications"
+import ManagerAtRisk from "@/components/manager/manager-at-risk"
 
 export default function Admin() {
   return (
@@ -23,6 +24,7 @@ export default function Admin() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
+            <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/managers/*" element={<AdminManagers />} />
             <Route path="/owners/*" element={<AdminOwners />} />
             <Route path="/tenants/*" element={<AdminTenants />} />

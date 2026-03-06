@@ -33,6 +33,7 @@ import {
   UserPlus,
   Settings,
   HelpCircle,
+  AlertTriangle,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -64,6 +65,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
     case "super_admin":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
+        { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
         { title: "Admins", href: `${basePath}/admins`, icon: <Shield className="h-5 w-5" /> },
         { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
@@ -83,6 +85,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
     case "admin":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
+        { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
         { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
@@ -100,6 +103,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
     case "manager":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
+        { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Leads", href: `${basePath}/leads`, icon: <UserPlus className="h-5 w-5" /> },
         { title: "Owners", href: `${basePath}/owners`, icon: <Users className="h-5 w-5" /> },

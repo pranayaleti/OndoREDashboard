@@ -707,6 +707,29 @@ export interface RoleAssignment {
   createdAt: string;
 }
 
+// At-risk tenants (AI/ML early intervention)
+export interface AtRiskTenant {
+  tenantId: string;
+  propertyId: string | null;
+  score: number;
+  band: 'low' | 'medium' | 'high';
+  features: Record<string, unknown>;
+  scoredAt: string;
+  tenantFirstName: string | null;
+  tenantLastName: string | null;
+  tenantEmail: string | null;
+  tenantPhone: string | null;
+  propertyTitle: string | null;
+  propertyAddress: string | null;
+}
+
+export interface CreateRiskInterventionRequest {
+  tenantId: string;
+  interventionType: 'payment_plan' | 'reminder' | 'assistance_referral' | 'outreach' | 'early_renewal';
+  propertyId?: string | null;
+  notes?: string | null;
+}
+
 // ─── Stripe / Payment Types ───────────────────────────────────────
 
 export interface StripePaymentMethod {
@@ -1007,6 +1030,32 @@ export const authApi = {
     return apiRequest<OwnerOnboardingResponse>('/auth/owner/onboarding', {
       method: 'POST',
       body: JSON.stringify(payload),
+    });
+  },
+};
+
+// Dashboard (manager): at-risk tenants and interventions
+export const dashboardApi = {
+  getAtRiskTenants(): Promise<AtRiskTenant[]> {
+    return apiRequest<AtRiskTenant[]>('/dashboard/at-risk').then((r) => (Array.isArray(r) ? r : []));
+  },
+  refreshAtRiskScores(): Promise<{ message: string; tenantsScored: number }> {
+    return apiRequest<{ message: string; tenantsScored: number }>('/dashboard/at-risk/refresh', {
+      method: 'POST',
+    });
+  },
+  createRiskIntervention(body: CreateRiskInterventionRequest): Promise<{
+    id: string;
+    tenantId: string;
+    propertyId: string | null;
+    interventionType: string;
+    status: string;
+    notes: string | null;
+    createdAt: string;
+  }> {
+    return apiRequest('/dashboard/at-risk/interventions', {
+      method: 'POST',
+      body: JSON.stringify(body),
     });
   },
 };

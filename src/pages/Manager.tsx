@@ -15,6 +15,7 @@ import ManagerDocuments from "@/components/manager/manager-documents"
 import ManagerMessages from "@/components/manager/manager-messages"
 import ManagerCalendar from "@/components/manager/manager-calendar"
 import ManagerNotifications from "@/components/manager/manager-notifications"
+import ManagerAtRisk from "@/components/manager/manager-at-risk"
 
 export default function Manager() {
   return (
@@ -23,6 +24,7 @@ export default function Manager() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<ManagerDashboard />} />
+            <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/properties/*" element={<ManagerProperties />} />
             <Route path="/leads" element={<ManagerLeads />} />
             <Route path="/owners/*" element={<ManagerOwners />} />
