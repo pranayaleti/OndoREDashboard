@@ -50,6 +50,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Toaster } from "sonner"
+import { useNotifications } from "@/hooks/use-notifications"
 
 interface NavItem {
   title: string
@@ -174,6 +176,8 @@ interface PortalSidebarProps {
   children: React.ReactNode
 }
 
+const MANAGER_LIKE_ROLES: UserRole[] = ["manager", "admin", "super_admin"]
+
 function SidebarLayout({
   children,
   navItems,
@@ -191,6 +195,9 @@ function SidebarLayout({
 }) {
   const { expanded } = useSidebar()
   const { theme, setTheme } = useTheme()
+
+  const canAccessNotifications = MANAGER_LIKE_ROLES.includes(user.role)
+  const { unreadCount } = useNotifications(canAccessNotifications)
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName[0]}${lastName[0]}`.toUpperCase()
@@ -222,20 +229,34 @@ function SidebarLayout({
             {navItems.map((item) => {
               const isActive = location.pathname === item.href || 
                 (item.href !== basePath && location.pathname.startsWith(item.href))
+              const isNotifications = item.title === "Notifications"
+              const badge = isNotifications && unreadCount > 0 ? unreadCount : null
               
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton 
                     asChild 
                     isActive={isActive}
-                    tooltip={item.title}
+                    tooltip={badge ? `${item.title} (${badge} unread)` : item.title}
                   >
                     <Link
                       to={item.href}
                       className="flex items-center gap-3"
                     >
-                      {item.icon}
+                      <span className="relative inline-flex">
+                        {item.icon}
+                        {badge !== null && (
+                          <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white leading-none">
+                            {badge > 99 ? "99+" : badge}
+                          </span>
+                        )}
+                      </span>
                       {expanded && <span>{item.title}</span>}
+                      {expanded && badge !== null && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-[11px] font-bold text-white leading-none">
+                          {badge > 99 ? "99+" : badge}
+                        </span>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -339,6 +360,7 @@ function SidebarLayout({
       <main className="flex-1 overflow-auto">
         {children}
       </main>
+      <Toaster position="bottom-right" richColors closeButton />
     </div>
   )
 }

@@ -1783,3 +1783,32 @@ export const featureApi = {
     },
   },
 };
+
+// ─── Notifications API ──────────────────────────────────────────────────────
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'api_down' | 'info';
+  endpoint_name: string | null;
+  endpoint_url: string | null;
+  status_code: number | null;
+  is_read: boolean;
+  created_at: string;
+}
+
+export const notificationsApi = {
+  list(): Promise<{ notifications: AppNotification[] }> {
+    return apiRequest('/notifications');
+  },
+  unreadCount(): Promise<{ count: number }> {
+    return apiRequest('/notifications/unread-count');
+  },
+  markRead(id: string): Promise<{ message: string }> {
+    return apiRequest(`/notifications/${id}/read`, { method: 'PATCH' });
+  },
+  markAllRead(): Promise<{ message: string }> {
+    return apiRequest('/notifications/mark-all-read', { method: 'POST' });
+  },
+};
