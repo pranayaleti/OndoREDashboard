@@ -7,14 +7,15 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, CheckCircle, Clock, AlertCircle, Wrench, Calendar, MessageSquare, User, Building, Loader2, Edit, Plus } from "lucide-react"
+import { Search, CheckCircle, Clock, AlertCircle, Wrench, Calendar, MessageSquare, User, Building, Loader2, Edit, Plus, Radio } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { maintenanceApi, propertyApi, type MaintenanceRequest, type Property } from "@/lib/api"
 import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-maintenance-request-dialog"
 import { useAuth } from "@/lib/auth-context"
+import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 
 export default function ManagerMaintenance() {
-  const { user: _user } = useAuth()
+  const { user } = useAuth()
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([])
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,6 +39,23 @@ export default function ManagerMaintenance() {
     fetchMaintenanceRequests()
     fetchProperties()
   }, [])
+
+  // Live updates: auto-refresh when a maintenance request is created or updated
+  useRealtimeTable({
+    table: "maintenance_requests",
+    events: ["INSERT", "UPDATE"],
+    enabled: !!user?.id,
+    onEvent: (payload) => {
+      if (payload.eventType === "INSERT") {
+        toast({
+          title: "New Maintenance Request",
+          description: `A new ${(payload.new as Record<string, string>).priority} priority request has been submitted.`,
+          duration: 5000,
+        })
+      }
+      fetchMaintenanceRequests()
+    },
+  })
 
   const fetchMaintenanceRequests = async () => {
     try {
@@ -189,7 +207,13 @@ export default function ManagerMaintenance() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">Maintenance Management</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">Maintenance Management</h2>
+            <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+              <Radio className="h-3 w-3 animate-pulse" />
+              <span>Live</span>
+            </div>
+          </div>
           <p className="text-gray-600 dark:text-gray-400">Manage tenant maintenance requests</p>
         </div>
         <div className="flex gap-2">

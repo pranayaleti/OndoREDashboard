@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
-  Users, 
+import {
+  Users,
   Mail,
   Phone,
   Building,
@@ -15,13 +15,17 @@ import {
   Heart,
   UserPlus,
   Search,
-  Filter
+  Filter,
+  Radio
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { leadApi, authApi, type Lead } from "@/lib/api"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
+import { useAuth } from "@/lib/auth-context"
+import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 
 export default function ManagerLeads() {
+  const { user } = useAuth()
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -31,6 +35,25 @@ export default function ManagerLeads() {
   useEffect(() => {
     fetchLeads()
   }, [])
+
+  // Live updates: auto-refresh when a lead is inserted or updated for this manager
+  useRealtimeTable({
+    table: "leads",
+    events: ["INSERT", "UPDATE"],
+    filterColumn: "manager_id",
+    filterValue: user?.id,
+    enabled: !!user?.id,
+    onEvent: (payload) => {
+      if (payload.eventType === "INSERT") {
+        toast({
+          title: "New Lead",
+          description: `${(payload.new as Record<string, string>).tenant_name} submitted interest in a property.`,
+          duration: 5000,
+        })
+      }
+      fetchLeads()
+    },
+  })
 
   const fetchLeads = async () => {
     try {
@@ -118,13 +141,19 @@ export default function ManagerLeads() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          Property Leads
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Manage tenant inquiries and leads from your properties
-        </p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            Property Leads
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage tenant inquiries and leads from your properties
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400 mt-1">
+          <Radio className="h-3 w-3 animate-pulse" />
+          <span>Live</span>
+        </div>
       </div>
 
       {/* Filters */}
