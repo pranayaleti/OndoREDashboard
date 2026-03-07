@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Bell, CheckCircle, Calendar } from "lucide-react"
+import { toast } from "sonner"
 import { dashboardApi, type PropertyReminderItem } from "@/lib/api"
-import { useToast } from "@/components/ui/use-toast"
 import { formatUSDate } from "@/lib/us-format"
 
 const MAX_VISIBLE = 6
@@ -13,7 +13,6 @@ export function HomeCareRemindersCard() {
   const [reminders, setReminders] = useState<PropertyReminderItem[]>([])
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState<string | null>(null)
-  const { toast } = useToast()
 
   useEffect(() => {
     let cancelled = false
@@ -41,15 +40,12 @@ export function HomeCareRemindersCard() {
       await dashboardApi.completeReminder(propertyId, reminderType)
       const data = await dashboardApi.getReminders()
       setReminders(data)
-      toast({
-        title: "Reminder completed",
+      toast.success("Reminder completed", {
         description: "Next due date has been updated.",
       })
     } catch (err) {
-      toast({
-        title: "Could not mark complete",
+      toast.error("Could not mark complete", {
         description: err instanceof Error ? err.message : "Please try again.",
-        variant: "destructive",
       })
     } finally {
       setCompleting(null)
