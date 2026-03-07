@@ -30,6 +30,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({ error, errorInfo })
+    // Log for production debugging (Sentry, LogRocket, etc. can capture console.error)
+    console.error("[ErrorBoundary] Caught error:", error.message, {
+      componentStack: errorInfo.componentStack,
+      error: error.toString(),
+    })
   }
 
   resetError = () => {
