@@ -8,6 +8,7 @@ import { formatUSDate } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
+import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
 
 /**
  * Manager Portal Configuration
@@ -283,6 +284,13 @@ export function createManagerConfig(
   ]
 
   const widgets: DashboardWidget[] = [
+    {
+      id: "home-care-reminders",
+      title: "Home care reminders",
+      gridCols: 2,
+      priority: 0,
+      component: <HomeCareRemindersCard />,
+    },
     {
       id: "tenant-screening",
       title: "Tenant Screening",

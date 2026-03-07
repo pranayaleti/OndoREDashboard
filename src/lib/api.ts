@@ -707,6 +707,19 @@ export interface RoleAssignment {
   createdAt: string;
 }
 
+// Property reminders (home care: HVAC, air filter, winterize lawn, etc.)
+export interface PropertyReminderItem {
+  propertyId: string;
+  propertyTitle: string;
+  propertyAddress: string;
+  reminderType: string;
+  title: string;
+  description: string;
+  nextDue: string;
+  overdue: boolean;
+  lastCompletedAt: string | null;
+}
+
 // At-risk tenants (AI/ML early intervention)
 export interface AtRiskTenant {
   tenantId: string;
@@ -1156,6 +1169,24 @@ export const dashboardApi = {
     return apiRequest<{ reply: string }>('/dashboard/assistant/chat', {
       method: 'POST',
       body: JSON.stringify({ messages }),
+    });
+  },
+  /** Home care reminders for properties (owner, tenant, manager). */
+  getReminders(): Promise<PropertyReminderItem[]> {
+    return apiRequest<PropertyReminderItem[]>('/dashboard/reminders').then((r) =>
+      Array.isArray(r) ? r : []
+    );
+  },
+  /** Mark a property reminder as completed. */
+  completeReminder(propertyId: string, reminderType: string): Promise<{
+    id: string;
+    propertyId: string;
+    reminderType: string;
+    completedAt: string;
+  }> {
+    return apiRequest('/dashboard/reminders/complete', {
+      method: 'POST',
+      body: JSON.stringify({ propertyId, reminderType }),
     });
   },
 };

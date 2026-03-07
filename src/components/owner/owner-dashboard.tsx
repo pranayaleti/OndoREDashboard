@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Building, DollarSign, Users, FileText, BarChart3, AlertTriangle, Plus, MessageSquare, Wrench, ArrowUp, Calendar, Home, FolderOpen, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, type Property } from "@/lib/api"
+import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
 import { ModernPropertyCard } from "./modern-property-card"
 import { PropertyDetailModal } from "@/components/property-detail-modal"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
@@ -484,6 +485,9 @@ export default function OwnerDashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Home care reminders */}
+            <HomeCareRemindersCard />
           </div>
 
           {/* Bottom Row: Recent Payments, Quick Actions, Upcoming Events */}

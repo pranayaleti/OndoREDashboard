@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Wrench, CreditCard, FileText, MessageSquare, Calendar, DollarSign, Clock, MapPin, Building } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, maintenanceApi, type Property, type MaintenanceRequest } from "@/lib/api"
+import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { formatUSDate } from "@/lib/us-format"
 
@@ -465,6 +466,9 @@ export default function TenantDashboard() {
                 </Link>
               </CardContent>
             </Card>
+
+            {/* Home care reminders */}
+            <HomeCareRemindersCard />
 
             {/* Maintenance Summary */}
             {totalMaintenance > 0 && (
