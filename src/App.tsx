@@ -6,6 +6,7 @@ import { AuthProvider } from '@/lib/auth-context'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import Loading from '@/components/loading'
 
 // Lazy load page components for code splitting
@@ -60,10 +61,17 @@ function App() {
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <AuthProvider>
         <div className="min-h-screen flex flex-col">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
+            Skip to main content
+          </a>
           {!shouldHideHeader && <Header />}
-          <main className="flex-1">
-            <Suspense fallback={<Loading />}>
-              <Routes>
+          <main id="main-content" className="flex-1" role="main">
+            <ErrorBoundary>
+              <Suspense fallback={<Loading />}>
+                <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
@@ -131,8 +139,9 @@ function App() {
                 
                 {/* 404 Page */}
                 <Route path="*" element={<PageNotFound />} />
-              </Routes>
-            </Suspense>
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </main>
           {!shouldHideFooter && <Footer />}
         </div>
