@@ -859,7 +859,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public errors?: any
+    public errors?: Record<string, string[]> | Record<string, unknown>
   ) {
     super(message);
     this.name = 'ApiError';
@@ -903,29 +903,28 @@ async function apiRequest<T>(
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     
-    let data: any;
+    let data: Record<string, unknown>;
     if (isJson) {
       try {
         const text = await response.text();
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
+        data = text ? (JSON.parse(text) as Record<string, unknown>) : {};
+      } catch {
         throw new ApiError('Invalid JSON response', response.status);
       }
     } else {
-      // For non-JSON responses, create a data object
       const text = await response.text();
       data = { message: text || 'An error occurred' };
     }
 
     if (!response.ok) {
       throw new ApiError(
-        data.message || 'An error occurred',
+        typeof data.message === 'string' ? data.message : 'An error occurred',
         response.status,
-        data.errors
+        data.errors as Record<string, unknown> | undefined
       );
     }
 
-    return data;
+    return data as unknown as T;
   } catch (error) {
     clearTimeout(timeoutId);
     if (error instanceof ApiError) {
@@ -986,10 +985,10 @@ async function tenantScreeningRequest<T>(endpoint: string, options: RequestInit 
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
 
-    let data: any;
+    let data: Record<string, unknown>;
     if (isJson) {
       const text = await response.text();
-      data = text ? JSON.parse(text) : {};
+      data = text ? (JSON.parse(text) as Record<string, unknown>) : {};
     } else {
       const text = await response.text();
       data = { message: text || 'An error occurred contacting tenant screening service' };
@@ -1001,11 +1000,11 @@ async function tenantScreeningRequest<T>(endpoint: string, options: RequestInit 
           ? data.message
           : `Tenant screening request failed (${response.status})`,
         response.status,
-        data.errors
+        data.errors as Record<string, unknown> | undefined
       );
     }
 
-    return data;
+    return data as unknown as T;
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -1094,8 +1093,8 @@ export const authApi = {
   },
 
   // Update user status (enable/disable)
-  async updateUserStatus(userId: string, isActive: boolean): Promise<{ message: string; user: any }> {
-    return apiRequest<{ message: string; user: any }>(`/auth/users/${userId}/status`, {
+  async updateUserStatus(userId: string, isActive: boolean): Promise<{ message: string; user: User }> {
+    return apiRequest<{ message: string; user: User }>(`/auth/users/${userId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ isActive }),
     });
@@ -1315,12 +1314,12 @@ export const propertyApi = {
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     
-    let data: any;
+    let data: Record<string, unknown>;
     if (isJson) {
       try {
         const text = await response.text();
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
+        data = text ? (JSON.parse(text) as Record<string, unknown>) : {};
+      } catch {
         throw new ApiError('Invalid JSON response', response.status);
       }
     } else {
@@ -1329,10 +1328,14 @@ export const propertyApi = {
     }
     
     if (!response.ok) {
-      throw new ApiError(data.message || 'Upload failed', response.status, data.errors);
+      throw new ApiError(
+        typeof data.message === 'string' ? data.message : 'Upload failed',
+        response.status,
+        data.errors as Record<string, unknown> | undefined
+      );
     }
 
-    return data;
+    return data as unknown as PropertyPhoto;
   },
 
   // Generate presigned URL for S3 upload
@@ -1479,12 +1482,12 @@ export const leadApi = {
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     
-    let data: any;
+    let data: Record<string, unknown>;
     if (isJson) {
       try {
         const text = await response.text();
-        data = text ? JSON.parse(text) : {};
-      } catch (parseError) {
+        data = text ? (JSON.parse(text) as Record<string, unknown>) : {};
+      } catch {
         throw new ApiError('Invalid JSON response', response.status);
       }
     } else {
@@ -1493,10 +1496,14 @@ export const leadApi = {
     }
     
     if (!response.ok) {
-      throw new ApiError(data.message || 'Lead submission failed', response.status, data.errors);
+      throw new ApiError(
+        typeof data.message === 'string' ? data.message : 'Lead submission failed',
+        response.status,
+        data.errors as Record<string, unknown> | undefined
+      );
     }
 
-    return data;
+    return data as unknown as LeadSubmissionResponse;
   },
 
   // Get manager leads (authenticated)

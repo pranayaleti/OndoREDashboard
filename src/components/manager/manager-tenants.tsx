@@ -389,9 +389,9 @@ function AddTenant() {
         duration: 3000,
       })
       
-      // Show the invitation URL for testing
-      console.log("Invitation URL:", response.inviteUrl)
-      
+      if (response) {
+        console.log("Invitation URL:", response.inviteUrl)
+      }
       navigate("/dashboard/tenants")
     } catch (error: any) {
       toast({

@@ -237,8 +237,8 @@ export default function Signup() {
 
       // Auto-login after successful signup
       setTimeout(() => {
-        const redirectPath = response.user.role === "manager" ? "/dashboard" : 
-                           response.user.role === "owner" ? "/owner" : "/tenant"
+        const redirectPath = response?.user.role === "manager" ? "/dashboard" : 
+                           response?.user.role === "owner" ? "/owner" : "/tenant"
         navigate(redirectPath)
       }, 2000)
 

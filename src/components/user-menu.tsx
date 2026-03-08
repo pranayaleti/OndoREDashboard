@@ -33,7 +33,7 @@ export default function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user.avatar || `${import.meta.env.BASE_URL}placeholder.svg?height=40&width=40&query=user`} alt={`${user.firstName} ${user.lastName}`} />
+            <AvatarImage src={user.profilePicture || `${import.meta.env.BASE_URL}placeholder.svg?height=40&width=40&query=user`} alt={`${user.firstName} ${user.lastName}`} />
             <AvatarFallback>{getInitials(user.firstName, user.lastName)}</AvatarFallback>
           </Avatar>
         </Button>

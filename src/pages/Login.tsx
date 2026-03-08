@@ -159,9 +159,12 @@ export default function LoginPage() {
               onChange={handleChange("email")}
               onBlur={handleBlur("email")}
               aria-invalid={touched.email && !!errors.email}
+              aria-describedby={touched.email && errors.email ? "email-error" : undefined}
               className="rounded-xl border-white/15 bg-slate-900 text-white"
             />
-            {touched.email && errors.email && <p className="text-xs text-red-400">{errors.email}</p>}
+            {touched.email && errors.email && (
+              <p id="email-error" role="alert" className="text-xs text-red-400">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -176,17 +179,21 @@ export default function LoginPage() {
                 onChange={handleChange("password")}
                 onBlur={handleBlur("password")}
                 aria-invalid={touched.password && !!errors.password}
+                aria-describedby={touched.password && errors.password ? "password-error" : undefined}
                 className="rounded-xl border-white/15 bg-slate-900 pr-11 text-white"
               />
               <button
                 type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                {showPassword ? <EyeOffIcon aria-hidden="true" className="h-4 w-4" /> : <EyeIcon aria-hidden="true" className="h-4 w-4" />}
               </button>
             </div>
-            {touched.password && errors.password && <p className="text-xs text-red-400">{errors.password}</p>}
+            {touched.password && errors.password && (
+              <p id="password-error" role="alert" className="text-xs text-red-400">{errors.password}</p>
+            )}
           </div>
 
           <Button

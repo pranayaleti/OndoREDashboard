@@ -279,7 +279,7 @@ function SidebarLayout({
             >
               <Avatar className="h-10 w-10 border border-slate-700 dark:border-slate-800">
                 <AvatarImage 
-                  src={user.avatar || user.profilePicture} 
+                  src={user.profilePicture} 
                   alt={`${user.firstName} ${user.lastName}`} 
                 />
                 <AvatarFallback className="bg-slate-700 dark:bg-slate-800 text-white">{getInitials(user.firstName, user.lastName)}</AvatarFallback>

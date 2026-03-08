@@ -35,27 +35,25 @@ const Terms = lazy(() => import('@/pages/Terms'))
 const Handoff = lazy(() => import('@/pages/Handoff'))
 const FreeTrial = lazy(() => import('@/pages/FreeTrial'))
 
+const HIDE_CHROME_PREFIXES = [
+  '/login',
+  '/register',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+  '/verify',
+  '/super-admin',
+  '/admin',
+  '/dashboard',
+  '/owner',
+  '/tenant',
+  '/maintenance',
+  '/handoff',
+]
+
 function App() {
   const location = useLocation()
-  // Hide global chrome on auth + portal routes so portals retain bespoke navigation
-  const hideChromePrefixes = [
-    '/login',
-    '/register',
-    '/signup',
-    '/forgot-password',
-    '/reset-password',
-    '/verify',
-    '/super-admin',
-    '/admin',
-    '/dashboard',
-    '/owner',
-    '/tenant',
-    '/maintenance',
-    '/handoff',
-  ]
-
-  const shouldHideHeader = hideChromePrefixes.some(route => location.pathname.startsWith(route))
-  const shouldHideFooter = hideChromePrefixes.some(route => location.pathname.startsWith(route))
+  const shouldHideChrome = HIDE_CHROME_PREFIXES.some(route => location.pathname.startsWith(route))
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
@@ -67,8 +65,8 @@ function App() {
           >
             Skip to main content
           </a>
-          {!shouldHideHeader && <Header />}
-          <main id="main-content" className="flex-1" role="main">
+          {!shouldHideChrome && <Header />}
+          <main id="main-content" className="flex-1">
             <ErrorBoundary>
               <Suspense fallback={<Loading />}>
                 <Routes>
@@ -143,7 +141,7 @@ function App() {
               </Suspense>
             </ErrorBoundary>
           </main>
-          {!shouldHideFooter && <Footer />}
+          {!shouldHideChrome && <Footer />}
         </div>
         <Toaster />
       </AuthProvider>

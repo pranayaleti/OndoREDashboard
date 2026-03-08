@@ -17,13 +17,6 @@ export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
 }
 
 /**
- * Normalize role from API (handles legacy role mappings)
- */
-export function normalizeRole(role: string): UserRole {
-  return LEGACY_ROLE_MAP[role.toLowerCase()] || (role.toLowerCase() as UserRole)
-}
-
-/**
  * Role hierarchy for permission checks
  */
 export const ROLE_HIERARCHY: Record<UserRole, number> = {
@@ -33,6 +26,19 @@ export const ROLE_HIERARCHY: Record<UserRole, number> = {
   owner: 3,
   tenant: 2,
   maintenance: 1,
+}
+
+const KNOWN_ROLES = new Set<string>(Object.keys(ROLE_HIERARCHY))
+
+/**
+ * Normalize role from API (handles legacy role mappings).
+ * Falls back to "tenant" for unknown roles to prevent privilege escalation.
+ */
+export function normalizeRole(role: string): UserRole {
+  const normalized = role.toLowerCase()
+  if (LEGACY_ROLE_MAP[normalized]) return LEGACY_ROLE_MAP[normalized]
+  if (KNOWN_ROLES.has(normalized)) return normalized as UserRole
+  return "tenant"
 }
 
 /**
