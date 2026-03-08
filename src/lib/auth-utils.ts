@@ -254,3 +254,16 @@ export function hasPermission(userRole: UserRole, permission: keyof typeof FEATU
   return FEATURE_PERMISSIONS[userRole]?.[permission] ?? false
 }
 
+/**
+ * Extract a user-friendly error message from unknown error types.
+ * Use in catch blocks instead of `error: any` for type safety.
+ */
+export function getErrorMessage(error: unknown, fallback = "An error occurred"): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const msg = (error as { message: unknown }).message;
+    return typeof msg === "string" ? msg : fallback;
+  }
+  return typeof error === "string" ? error : fallback;
+}
+

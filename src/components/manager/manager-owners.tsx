@@ -23,6 +23,7 @@ import {
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { authApi } from "@/lib/api"
+import { getErrorMessage } from "@/lib/auth-utils"
 import { useApi } from "@/hooks/useApi"
 
 // Mock owners data
@@ -405,10 +406,10 @@ function AddOwner() {
         console.log("Invitation URL:", response.inviteUrl)
       }
       navigate("/dashboard/owners")
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Invitation Failed",
-        description: error.message || "Failed to send invitation. Please try again.",
+        description: getErrorMessage(error, "Failed to send invitation. Please try again."),
         variant: "destructive",
       })
     }

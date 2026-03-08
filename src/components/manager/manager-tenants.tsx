@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Users, Plus, Search, Mail, Phone, MapPin, Calendar, DollarSign, AlertTriangle, UserPlus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { authApi } from "@/lib/api"
+import { getErrorMessage } from "@/lib/auth-utils"
 import { useApi } from "@/hooks/useApi"
 
 // Mock tenants data
@@ -393,10 +394,10 @@ function AddTenant() {
         console.log("Invitation URL:", response.inviteUrl)
       }
       navigate("/dashboard/tenants")
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Invitation Failed",
-        description: error.message || "Failed to send invitation. Please try again.",
+        description: getErrorMessage(error, "Failed to send invitation. Please try again."),
         variant: "destructive",
       })
     }

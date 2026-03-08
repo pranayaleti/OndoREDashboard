@@ -12,6 +12,7 @@ import Loading from "@/components/loading"
 import { Logo } from "@/components/logo"
 import { useValidatedForm } from "@/hooks/useValidatedForm"
 import type { FormValidationSchema } from "@/utils/validation.utils"
+import { getErrorMessage } from "@/lib/auth-utils"
 import { formatters, sanitize, validators } from "@/utils/validation.utils"
 import { ERROR_MESSAGES, REGEX_PATTERNS, validationPresets } from "@/constants"
 import { AddressForm, type AddressFormValues } from "@/components/forms/address-form"
@@ -164,9 +165,7 @@ export default function Signup() {
 
   const handleAddressBlur = () => {
     const formatted = updateFormattedAddress(addressValue)
-    handleBlur("address")({
-      target: { value: formatted },
-    } as any)
+    setFieldValue("address", formatted)
   }
 
   useEffect(() => {
@@ -242,10 +241,10 @@ export default function Signup() {
         navigate(redirectPath)
       }, 2000)
 
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Signup failed",
-        description: error.message || "An error occurred during signup.",
+        description: getErrorMessage(error, "An error occurred during signup."),
         variant: "destructive",
       })
     }
