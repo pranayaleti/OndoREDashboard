@@ -21,6 +21,9 @@ export { assistantApi } from "./clients/assistant";
 export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
 export { tenantScreeningApi } from "./clients/tenant-screening";
+export { documentsApi } from "./clients/documents";
+export { vendorsApi } from "./clients/vendors";
+export { rentSchedulesApi } from "./clients/rent-schedules";
 
 // Re-export types from @ondo/types for convenience
 export type {
@@ -69,3 +72,16 @@ export type {
   TenantScreening,
   ScreeningReport,
 } from "./clients/tenant-screening";
+export type {
+  Document,
+  CreateDocumentPayload,
+} from "./clients/documents";
+export type {
+  Vendor,
+  CreateVendorPayload,
+  VendorAssignment,
+} from "./clients/vendors";
+export type {
+  RentSchedule,
+  RentSummary,
+} from "./clients/rent-schedules";

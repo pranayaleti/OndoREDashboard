@@ -854,6 +854,80 @@ export interface SubscriptionRecord {
   createdAt: string;
 }
 
+// ─── Vendor Types ─────────────────────────────────────────────────────────────
+
+export type VendorSpecialty =
+  | 'plumbing' | 'electrical' | 'hvac' | 'appliances' | 'flooring'
+  | 'windows' | 'structural' | 'pest_control' | 'cleaning' | 'general'
+  | 'landscaping' | 'roofing' | 'painting';
+
+export type VendorStatus = 'active' | 'inactive' | 'suspended';
+
+export interface Vendor {
+  id: string;
+  name: string;
+  company?: string;
+  email?: string;
+  phone?: string;
+  specialty: VendorSpecialty;
+  secondary_specialties?: VendorSpecialty[];
+  license_number?: string;
+  insurance_info?: string;
+  hourly_rate?: number;
+  rating: number;
+  review_count: number;
+  status: VendorStatus;
+  notes?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  service_radius_miles: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateVendorPayload {
+  name: string;
+  company?: string;
+  email?: string;
+  phone?: string;
+  specialty: VendorSpecialty;
+  secondary_specialties?: VendorSpecialty[];
+  license_number?: string;
+  insurance_info?: string;
+  hourly_rate?: number;
+  notes?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  service_radius_miles?: number;
+}
+
+export interface VendorAssignment {
+  id: string;
+  vendor_id: string;
+  maintenance_request_id: string;
+  assigned_by: string;
+  estimated_cost?: number;
+  actual_cost?: number;
+  scheduled_date?: string;
+  completed_date?: string;
+  notes?: string;
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  created_at: string;
+  vendor?: Vendor;
+}
+
+export interface AssignVendorPayload {
+  vendor_id: string;
+  maintenance_request_id: string;
+  estimated_cost?: number;
+  scheduled_date?: string;
+  notes?: string;
+}
+
 // API Error Class
 export class ApiError extends Error {
   constructor(
@@ -1818,6 +1892,53 @@ export const featureApi = {
     },
     resume(): Promise<{ success: boolean; message: string }> {
       return apiRequest('/subscriptions/resume', { method: 'POST' });
+    },
+  },
+  vendors: {
+    list(params?: { specialty?: VendorSpecialty; status?: VendorStatus; city?: string }): Promise<Vendor[]> {
+      const query = params
+        ? '?' + new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v != null) as [string, string][]
+          ).toString()
+        : '';
+      return apiRequest<{ vendors: Vendor[] } | Vendor[]>(`/vendors${query}`).then((r) =>
+        Array.isArray(r) ? r : (r as { vendors: Vendor[] }).vendors ?? []
+      );
+    },
+    get(id: string): Promise<Vendor> {
+      return apiRequest<Vendor>(`/vendors/${id}`);
+    },
+    create(payload: CreateVendorPayload): Promise<Vendor> {
+      return apiRequest<{ vendor: Vendor } | Vendor>('/vendors', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }).then((r) => ('vendor' in r ? (r as { vendor: Vendor }).vendor : r as Vendor));
+    },
+    update(id: string, payload: Partial<CreateVendorPayload>): Promise<Vendor> {
+      return apiRequest<{ vendor: Vendor } | Vendor>(`/vendors/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      }).then((r) => ('vendor' in r ? (r as { vendor: Vendor }).vendor : r as Vendor));
+    },
+    deactivate(id: string): Promise<{ message: string }> {
+      return apiRequest(`/vendors/${id}`, { method: 'DELETE' });
+    },
+    assign(payload: AssignVendorPayload): Promise<VendorAssignment> {
+      return apiRequest<{ assignment: VendorAssignment } | VendorAssignment>('/vendors/assign', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }).then((r) => ('assignment' in r ? (r as { assignment: VendorAssignment }).assignment : r as VendorAssignment));
+    },
+    suggest(category: string, city?: string): Promise<Vendor[]> {
+      const query = new URLSearchParams({ category, ...(city ? { city } : {}) }).toString();
+      return apiRequest<{ vendors: Vendor[] } | Vendor[]>(`/vendors/suggest?${query}`).then((r) =>
+        Array.isArray(r) ? r : (r as { vendors: Vendor[] }).vendors ?? []
+      );
+    },
+    getAssignments(vendorId: string): Promise<VendorAssignment[]> {
+      return apiRequest<{ assignments: VendorAssignment[] } | VendorAssignment[]>(`/vendors/${vendorId}/assignments`).then((r) =>
+        Array.isArray(r) ? r : (r as { assignments: VendorAssignment[] }).assignments ?? []
+      );
     },
   },
 };
