@@ -14,20 +14,25 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting — migrate toward strict: true incrementally.
-       Step 1 (done): enable null checks + switch safety.
-       Step 2: fix all resulting type errors in src/.
-       Step 3: set strict: true and remove the overrides below. */
-    "strict": false,
+    /* Strict type checking enabled */
+    "strict": true,
+    "noImplicitAny": true,
     "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
 
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@ondo/types": ["../packages/types/src/index.ts"]
     }
   },
   "include": ["src"],

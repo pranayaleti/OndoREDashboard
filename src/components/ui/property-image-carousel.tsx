@@ -94,6 +94,7 @@ export function PropertyImageCarousel({
       }, autoPlayInterval)
       return () => clearInterval(interval)
     }
+    return undefined
   }, [autoPlay, images.length, autoPlayInterval])
 
   if (images.length === 0) {

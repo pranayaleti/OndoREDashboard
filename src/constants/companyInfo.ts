@@ -170,7 +170,7 @@ export function getOpeningHoursSchema() {
   return companyInfo.hours
     .filter(schedule => !schedule.closed)
     .map(schedule => {
-      const dayMap = {
+      const dayMap: Record<string, string> = {
         "Mon-Fri": "Mo-Fr",
         "Sat": "Sa",
         "Sun": "Su"

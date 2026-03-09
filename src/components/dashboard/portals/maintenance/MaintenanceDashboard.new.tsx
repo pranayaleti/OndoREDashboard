@@ -5,6 +5,7 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createMaintenanceConfig } from "./maintenance.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
+import type { MaintenanceRequest } from "@/lib/api"
 /**
  * New MaintenanceDashboard using BaseDashboard architecture
  */
@@ -24,7 +25,7 @@ function MaintenanceDashboardContent() {
     const maintenanceRequests = data.maintenanceRequests || []
 
     return maintenanceRequests
-      .filter(r => r.assignedTo) // Only show assigned tickets
+      .filter((r: MaintenanceRequest) => r.assignedTo)
       .slice(0, 5)
       .map((r: any, idx: number) => ({
         id: `ticket-${idx}`,

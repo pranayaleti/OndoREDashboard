@@ -43,7 +43,7 @@ export function useWelcomeToast() {
   const { user } = useAuth()
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return undefined
 
     // Show welcome toast once per session when visiting dashboard
     const welcomeKey = `welcome_shown_${user.id}_${user.role}`
@@ -65,6 +65,7 @@ export function useWelcomeToast() {
 
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [user, toast])
 }
 
