@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { authApi, propertyApi } from '../lib/api';
+import { authApi } from '../lib/api';
 import { useToast } from './use-toast';
 
 interface ProfileUploadOptions {
@@ -29,16 +29,20 @@ export function useProfilePictureUpload() {
       const blob = await fetch(imageDataUrl).then(res => res.blob());
       const file = new File([blob], `profile-${options.userId}.jpg`, { type: 'image/jpeg' });
 
-      // Generate presigned URL for upload using the new auth endpoint
+      // Generate presigned URL for upload using the auth endpoint
       setUploadProgress(20);
-      const presignedData = await authApi.generateProfilePictureUploadUrl(
-        file.name,
-        file.type
-      );
+      const presignedData = await authApi.getProfilePictureUploadUrl({
+        contentType: file.type,
+        fileName: file.name,
+      });
 
-      // Upload to S3
+      // Upload to storage
       setUploadProgress(40);
-      await propertyApi.uploadToS3(presignedData.presignedUrl, file);
+      await fetch(presignedData.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
 
       setUploadProgress(100);
       
@@ -47,7 +51,7 @@ export function useProfilePictureUpload() {
         description: "Profile picture uploaded successfully.",
       });
 
-      return { success: true, url: presignedData.publicUrl };
+      return { success: true, url: presignedData.publicUrl ?? presignedData.uploadUrl };
     } catch (error: unknown) {
       console.error('Profile picture upload error:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to upload profile picture. Please try again."

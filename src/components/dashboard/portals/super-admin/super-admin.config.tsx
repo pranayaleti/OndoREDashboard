@@ -403,8 +403,8 @@ export function createSuperAdminConfig(
     
     // Data configuration
     dataFetchers: {
-      properties: () => propertyApi.getProperties().catch(() => []),
-      invitedUsers: () => authApi.getInvitedUsers().catch(() => []),
+      properties: () => propertyApi.getProperties().then((r) => r.properties).catch(() => []),
+      invitedUsers: () => authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
       maintenanceRequests: () => maintenanceApi.getManagerMaintenanceRequests().catch(() => []),
     },
     

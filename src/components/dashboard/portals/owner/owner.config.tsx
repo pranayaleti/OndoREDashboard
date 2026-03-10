@@ -363,7 +363,7 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
     
     // Data configuration
     dataFetchers: {
-      properties: () => propertyApi.getProperties().catch(() => []),
+      properties: () => propertyApi.getProperties().then((r) => r.properties).catch(() => []),
     },
     
     // Theme

@@ -78,13 +78,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false)
         // Return the redirect path so the Login page can handle navigation and toasts itself
         return { success: true, redirectPath: getDashboardPath(userData.role) }
-      } catch (error) {
+      } catch (err: unknown) {
         setIsLoading(false)
         let errorMessage = "An unexpected error occurred. Please try again."
-        if (error instanceof ApiError) {
-          errorMessage = error.message
-        } else if (error instanceof Error) {
-          errorMessage = error.message
+        if (err instanceof ApiError) {
+          errorMessage = err.message
+        } else if (err instanceof Error) {
+          errorMessage = err.message
         }
         return { success: false, message: errorMessage }
       }
@@ -96,9 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const apiUser = await authApi.me()
       setUser(convertUser(apiUser))
-    } catch (error) {
+    } catch (err: unknown) {
       // Only log out on auth errors (401/403); transient errors should not clear the session
-      if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
         logout()
       }
     }

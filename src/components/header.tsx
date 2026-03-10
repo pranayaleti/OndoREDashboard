@@ -53,8 +53,8 @@ export default function Header() {
       if (!user || (user.role !== "manager" && user.role !== "super_admin" && user.role !== "admin")) return
       try {
         setIsLoadingInvited(true)
-        const users = await authApi.getInvitedUsers()
-        setInvitedUsers(users)
+        const usersRes = await authApi.getInvitedUsers()
+        setInvitedUsers(usersRes.users)
       } catch (error) {
         console.error("Error fetching invited users:", error)
         setInvitedUsers([])

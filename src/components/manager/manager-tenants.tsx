@@ -379,7 +379,7 @@ function AddTenant() {
     e.preventDefault()
     
     try {
-      const response = await sendInvitation({
+      await sendInvitation({
         email: formData.email,
         role: formData.role
       })
@@ -390,9 +390,6 @@ function AddTenant() {
         duration: 3000,
       })
       
-      if (response) {
-        console.log("Invitation URL:", response.inviteUrl)
-      }
       navigate("/dashboard/tenants")
     } catch (error) {
       toast({

@@ -35,13 +35,10 @@ function MaintenanceList() {
     try {
       setLoading(true)
       setError(null)
-      console.log("🔍 Fetching maintenance requests...")
       const requests = await maintenanceApi.getTenantMaintenanceRequests()
-      console.log("📊 Received maintenance requests:", requests)
       setMaintenanceRequests(requests)
     } catch (err: any) {
-      console.error("❌ Error fetching maintenance requests:", err)
-      console.error("❌ Error details:", err.message)
+      console.error("Error fetching maintenance requests:", err)
       setError("Failed to load maintenance requests")
       toast({
         title: "Error",

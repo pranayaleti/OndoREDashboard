@@ -3,19 +3,9 @@
  */
 
 import { apiGet, apiPost, apiPut, getAuthHeaders } from "../http";
+import type { Lead } from "../clients/legacy-types";
 
-export interface Lead {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  propertyId?: string;
-  status: string;
-  source?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Lead } from "../clients/legacy-types";
 
 export interface LeadListResponse {
   leads: Lead[];
@@ -68,5 +58,10 @@ export const leadApi = {
   async getLeadsByProperty(propertyId: string): Promise<Lead[]> {
     const headers = getAuthHeaders();
     return apiGet<Lead[]>(`/leads/property/${propertyId}`, headers);
+  },
+
+  async getManagerLeads(): Promise<Lead[]> {
+    const res = await this.getLeads(1, 500);
+    return res.leads;
   },
 };

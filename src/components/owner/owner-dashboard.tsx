@@ -89,10 +89,10 @@ export default function OwnerDashboard() {
 
     try {
       setLoading(true)
-      const data = await propertyApi.getProperties()
-      
+      const res = await propertyApi.getProperties()
+      const data = res.properties
       // Filter for owner's properties (all statuses - pending, approved, rejected)
-      const ownerProperties = data.filter(property => 
+      const ownerProperties = data.filter((property: Property) => 
         property.ownerId === user.id
       )
       
@@ -117,27 +117,19 @@ export default function OwnerDashboard() {
         }
       })
       
-      // Calculate portfolio statistics from real data
-      const stats = dashboardProperties.reduce((acc, property) => {
-        acc.totalProperties += 1
-        acc.totalUnits += property.units || 0
-        acc.occupiedUnits += property.occupied || 0
-        acc.monthlyRevenue += property.monthlyRevenue || 0
-        acc.monthlyExpenses += property.monthlyExpenses || 0
-        acc.netIncome += property.netIncome || 0
-        
-        // Count property types
-        const propertyType = property.type?.toLowerCase() || ""
-        if (propertyType.includes("single") || propertyType.includes("family") || propertyType.includes("house")) {
-          acc.propertyTypeBreakdown.singleFamily += 1
-        } else if (propertyType.includes("apartment") || propertyType.includes("unit")) {
-          acc.propertyTypeBreakdown.apartments += 1
-        } else {
-          acc.propertyTypeBreakdown.other += 1
-        }
-        
-        return acc
-      }, {
+      type PortfolioStatsState = {
+        totalProperties: number;
+        totalUnits: number;
+        occupiedUnits: number;
+        monthlyRevenue: number;
+        monthlyExpenses: number;
+        netIncome: number;
+        occupancyRate: number;
+        propertyTypeBreakdown: { singleFamily: number; apartments: number; other: number };
+        revenueTrend: number;
+        expenseBreakdown: { maintenance: number; utilities: number; propertyManagement: number; insurance: number };
+      };
+      const initialState: PortfolioStatsState = {
         totalProperties: 0,
         totalUnits: 0,
         occupiedUnits: 0,
@@ -153,7 +145,26 @@ export default function OwnerDashboard() {
           propertyManagement: 0,
           insurance: 0
         }
-      })
+      };
+      const stats = dashboardProperties.reduce<PortfolioStatsState>((acc, property) => {
+        acc.totalProperties += 1;
+        acc.totalUnits += property.units ?? 0;
+        acc.occupiedUnits += property.occupied ?? 0;
+        acc.monthlyRevenue += property.monthlyRevenue ?? 0;
+        acc.monthlyExpenses += property.monthlyExpenses ?? 0;
+        acc.netIncome += property.netIncome ?? 0;
+
+        const propertyType = property.type?.toLowerCase() ?? "";
+        if (propertyType.includes("single") || propertyType.includes("family") || propertyType.includes("house")) {
+          acc.propertyTypeBreakdown.singleFamily += 1;
+        } else if (propertyType.includes("apartment") || propertyType.includes("unit")) {
+          acc.propertyTypeBreakdown.apartments += 1;
+        } else {
+          acc.propertyTypeBreakdown.other += 1;
+        }
+
+        return acc;
+      }, initialState);
       
       // Calculate occupancy rate based on actual occupancy
       stats.occupancyRate = stats.totalProperties > 0 ? (stats.occupiedUnits / stats.totalProperties) * 100 : 0

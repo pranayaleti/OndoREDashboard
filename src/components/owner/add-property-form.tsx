@@ -378,10 +378,7 @@ export function AddPropertyForm() {
             orderIndex: 0,
           })
           
-          const failedUploads = uploadResults.filter(result => !result.success)
-          if (failedUploads.length > 0) {
-            console.warn(`${failedUploads.length} photos failed to upload`)
-          }
+          uploadResults.filter(result => !result.success)
         } catch (photoError) {
           console.error("Failed to upload photos:", photoError)
         }

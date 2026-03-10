@@ -34,35 +34,28 @@ export default function OwnerProperties() {
     if (!user?.id) return
 
     try {
-      console.log("Fetching properties...")
-      const data = await propertyApi.getProperties()
-      console.log("Properties received:", data.length)
-      console.log("Properties with photos:", data.map(p => ({ 
-        id: p.id, 
-        title: p.title, 
-        photosCount: p.photos?.length || 0,
-        photos: p.photos?.map(photo => ({ url: photo.url, orderIndex: photo.orderIndex }))
-      })))
+      const res = await propertyApi.getProperties()
+      const data = res.properties
       // Filter properties based on search and status if needed
       let filteredProperties = data
       
       if (search) {
-        filteredProperties = filteredProperties.filter(property => 
+        filteredProperties = filteredProperties.filter((property: Property) =>
           property.title.toLowerCase().includes(search.toLowerCase()) ||
           property.city.toLowerCase().includes(search.toLowerCase()) ||
           property.addressLine1.toLowerCase().includes(search.toLowerCase())
         )
       }
-      
+
       if (statusFilter && statusFilter !== "all") {
-        filteredProperties = filteredProperties.filter(property => 
+        filteredProperties = filteredProperties.filter((property: Property) =>
           property.status === statusFilter
         )
       }
-      
+
       // For owners, only show their own properties
       if (user.role === "owner") {
-        filteredProperties = filteredProperties.filter(property => 
+        filteredProperties = filteredProperties.filter((property: Property) =>
           property.ownerId === user.id
         )
         // When "all" is selected, show all statuses (pending, approved, rejected)

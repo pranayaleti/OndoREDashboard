@@ -2,7 +2,17 @@
  * Dashboard API client (Stats, Metrics, Analytics)
  */
 
-import { apiGet, getAuthHeaders } from "../http";
+import { apiGet, apiPost, getAuthHeaders } from "../http";
+import type {
+  RiskAnalytics,
+  RiskRecommendation,
+  AtRiskTenant,
+  TenantRiskHistory,
+  InlineRecommendation,
+  CreateRiskInterventionRequest,
+  PropertyReminderItem,
+} from "./legacy-types";
+import { assistantApi } from "./assistant";
 
 export interface DashboardStats {
   propertiesCount: number;
@@ -86,6 +96,81 @@ export const dashboardApi = {
     const headers = getAuthHeaders();
     return apiGet(
       `/dashboard/property/${propertyId}/trends?months=${months}`,
+      headers,
+    );
+  },
+
+  async getRiskAnalytics(windowDays?: number): Promise<RiskAnalytics> {
+    const headers = getAuthHeaders();
+    const query = windowDays != null ? `?windowDays=${windowDays}` : "";
+    return apiGet<RiskAnalytics>(`/dashboard/at-risk/analytics${query}`, headers);
+  },
+
+  async getRecommendations(): Promise<RiskRecommendation[]> {
+    const headers = getAuthHeaders();
+    return apiGet<RiskRecommendation[]>("/dashboard/at-risk/recommendations", headers);
+  },
+
+  async approveRecommendation(id: string): Promise<RiskRecommendation> {
+    const headers = getAuthHeaders();
+    return apiPost<RiskRecommendation>(`/dashboard/at-risk/recommendations/${id}/approve`, {}, headers);
+  },
+
+  async dismissRecommendation(id: string): Promise<RiskRecommendation> {
+    const headers = getAuthHeaders();
+    return apiPost<RiskRecommendation>(`/dashboard/at-risk/recommendations/${id}/dismiss`, {}, headers);
+  },
+
+  async getReminders(): Promise<PropertyReminderItem[]> {
+    const headers = getAuthHeaders();
+    return apiGet<PropertyReminderItem[]>("/dashboard/reminders", headers);
+  },
+
+  async completeReminder(propertyId: string, reminderType: string): Promise<{ message: string }> {
+    const headers = getAuthHeaders();
+    return apiPost<{ message: string }>(
+      "/dashboard/reminders/complete",
+      { propertyId, reminderType },
+      headers,
+    );
+  },
+
+  async assistantChat(messages: { role: string; content: string }[]): Promise<{ reply: string }> {
+    const chatMessages = messages.map((m) => ({
+      role: m.role as "user" | "assistant" | "system",
+      content: m.content,
+    }));
+    const res = await assistantApi.chat({ messages: chatMessages });
+    return { reply: typeof res.message === "object" && res.message?.content != null ? res.message.content : "" };
+  },
+
+  async getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {
+    const headers = getAuthHeaders();
+    return apiGet<InlineRecommendation>(`/dashboard/at-risk/${tenantId}/recommend`, headers);
+  },
+
+  async getTenantRiskHistory(tenantId: string): Promise<TenantRiskHistory> {
+    const headers = getAuthHeaders();
+    return apiGet<TenantRiskHistory>(`/dashboard/at-risk/${tenantId}/history`, headers);
+  },
+
+  async getAtRiskTenants(): Promise<AtRiskTenant[]> {
+    const headers = getAuthHeaders();
+    return apiGet<AtRiskTenant[]>("/dashboard/at-risk", headers);
+  },
+
+  async refreshAtRiskScores(): Promise<{ message: string; tenantsScored?: number }> {
+    const headers = getAuthHeaders();
+    return apiPost<{ message: string; tenantsScored?: number }>("/dashboard/at-risk/refresh", {}, headers);
+  },
+
+  async createRiskIntervention(
+    request: CreateRiskInterventionRequest,
+  ): Promise<{ id: string; message?: string }> {
+    const headers = getAuthHeaders();
+    return apiPost<{ id: string; message?: string }>(
+      "/dashboard/at-risk/interventions",
+      request,
       headers,
     );
   },

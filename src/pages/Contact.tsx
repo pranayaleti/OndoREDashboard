@@ -83,17 +83,7 @@ export default function ContactPage() {
       return
     }
 
-    // In lieu of a backend endpoint, log sanitized payload for now.
-    const payload = {
-      firstName: sanitize.trim(values.firstName),
-      lastName: sanitize.trim(values.lastName),
-      email: sanitize.trim(values.email).toLowerCase(),
-      phone: values.phone.replace(/\D/g, ""),
-      subject: sanitize.trim(values.subject),
-      message: sanitize.trim(values.message),
-    }
-
-    console.table(payload)
+    // In lieu of a backend endpoint, sanitized values are ready for future API integration.
 
     toast({
       title: "Message sent",

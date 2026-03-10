@@ -62,4 +62,27 @@ export const maintenanceApi = {
     const headers = getAuthHeaders();
     return apiDelete<{ message: string }>(`/maintenance/${id}`, headers);
   },
+
+  async getManagerMaintenanceRequests(): Promise<MaintenanceRequest[]> {
+    const headers = getAuthHeaders();
+    return apiGet<MaintenanceRequest[]>("/dashboard/maintenance", headers);
+  },
+
+  async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {
+    const res = await this.getRequests(undefined, 1, 100);
+    return res.requests;
+  },
+
+  async updateMaintenanceRequest(
+    id: string,
+    request: Partial<MaintenanceRequest>,
+  ): Promise<MaintenanceRequest> {
+    return this.updateRequest(id, request);
+  },
+
+  async createMaintenanceRequest(
+    request: Partial<MaintenanceRequest>,
+  ): Promise<MaintenanceRequest> {
+    return this.createRequest(request);
+  },
 };

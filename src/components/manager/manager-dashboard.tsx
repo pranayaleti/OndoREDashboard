@@ -94,14 +94,12 @@ export default function ManagerDashboard() {
     try {
       setLoading(true)
       // Fetch all properties and filter for pending ones
-      const allProps = await propertyApi.getProperties()
-      const pendingProps = allProps.filter(p => p.status === "pending")
+      const res = await propertyApi.getProperties()
+      const allProps = res.properties
+      const pendingProps = allProps.filter((p: { status: string }) => p.status === "pending")
       
       setProperties(allProps)
       setPendingProperties(pendingProps)
-      
-      console.log("Fetched properties:", allProps)
-      console.log("Properties with owners:", allProps.filter(p => p.owner))
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
       toast({
@@ -117,9 +115,8 @@ export default function ManagerDashboard() {
   const fetchInvitedUsers = async () => {
     try {
       setLoadingUsers(true)
-      const users = await authApi.getInvitedUsers()
-      console.log("Fetched users:", users) // Debug log
-      setInvitedUsers(users)
+      const usersRes = await authApi.getInvitedUsers()
+      setInvitedUsers(usersRes.users)
     } catch (error) {
       console.error("Failed to fetch invited users:", error)
       toast({
@@ -227,9 +224,8 @@ export default function ManagerDashboard() {
     }
     try {
       setIsSendingInvite(true)
-      const res = await authApi.invite({ email: inviteModalData.email, role: inviteModalData.role })
+      await authApi.invite({ email: inviteModalData.email, role: inviteModalData.role })
       toast({ title: "Invitation Sent", description: `Invitation sent to ${inviteModalData.email}.`, duration: 3000 })
-      console.log("Invitation URL:", (res as any)?.inviteUrl)
       setShowInviteModal(false)
       setInviteModalData({ email: "", role: "tenant" })
       fetchInvitedUsers()
@@ -243,7 +239,7 @@ export default function ManagerDashboard() {
 
   const handleUserStatusUpdate = async (userId: string, isActive: boolean) => {
     try {
-      await authApi.updateUserStatus(userId, isActive)
+      await authApi.updateUserStatus(userId, { isActive })
       
       toast({
         title: "User Status Updated",
@@ -892,7 +888,6 @@ export default function ManagerDashboard() {
                 ) : invitedUsers.length > 0 ? (
                   <div className="space-y-3 md:space-y-4 max-h-96 overflow-y-auto">
                     {invitedUsers.map((user) => {
-                      console.log(`User ${user.firstName} ${user.lastName} - isActive:`, user.isActive) // Debug log
                       return (
                       <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 border rounded-lg gap-3">
                         <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">

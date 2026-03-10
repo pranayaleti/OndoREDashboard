@@ -78,9 +78,8 @@ export default function ManagerMaintenance() {
 
   const fetchProperties = async () => {
     try {
-      const allProperties = await propertyApi.getProperties()
-      // Managers see all properties
-      setProperties(allProperties)
+      const res = await propertyApi.getProperties()
+      setProperties(res.properties)
     } catch (err: any) {
       console.error("Error fetching properties:", err)
     }
@@ -402,11 +401,10 @@ export default function ManagerMaintenance() {
                   <div className="flex space-x-2">
                     <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => {
-                            console.log("Opening update dialog for request:", request);
                             setSelectedRequest(request);
                             setUpdateData({
                               status: request.status || "",
@@ -433,9 +431,8 @@ export default function ManagerMaintenance() {
                               Current status: {updateData.status || "none"} | Selected request: {selectedRequest?.id || "none"}
                             </div>
                             <Select 
-                              value={updateData.status} 
+                              value={updateData.status}
                               onValueChange={(value) => {
-                                console.log("Status changed to:", value);
                                 setUpdateData(prev => ({ ...prev, status: value }));
                               }}
                             >

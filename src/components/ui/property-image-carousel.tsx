@@ -34,14 +34,8 @@ export function PropertyImageCarousel({
   autoPlay = false,
   autoPlayInterval = 5000
 }: PropertyImageCarouselProps) {
-  // Debug logging
-  console.log(`PropertyImageCarousel for ${propertyTitle}:`, {
-    photosCount: photos.length,
-    photos: photos.map(p => ({ url: p.url, orderIndex: p.orderIndex }))
-  })
-  
   // Use photos if available, otherwise use single placeholder image
-  const images = photos.length > 0 
+  const images = photos.length > 0
     ? photos.sort((a, b) => a.orderIndex - b.orderIndex).map(photo => ({
         url: photo.url,
         caption: photo.caption,
@@ -52,8 +46,6 @@ export function PropertyImageCarousel({
         caption: `${propertyTitle} - No images available`,
         isPlaceholder: true
       }]
-  
-  console.log(`Images processed for ${propertyTitle}:`, images.length)
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [imageLoadErrors, setImageLoadErrors] = useState<Set<number>>(new Set())

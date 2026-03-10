@@ -17,9 +17,8 @@ export default function AdminMaintenance() {
 
   const fetchProperties = async () => {
     try {
-      const allProperties = await propertyApi.getProperties()
-      // Admins see all properties
-      setProperties(allProperties)
+      const res = await propertyApi.getProperties()
+      setProperties(res.properties)
     } catch (err: any) {
       console.error("Error fetching properties:", err)
     }

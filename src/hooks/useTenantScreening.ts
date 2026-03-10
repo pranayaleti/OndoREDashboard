@@ -105,7 +105,7 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
       setSummary(summaryResponse)
       setApplicants(applicantsResponse)
       setError(null)
-    } catch (err) {
+    } catch (err: unknown) {
       let message =
         err instanceof ApiError
           ? err.message
@@ -113,7 +113,7 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
             ? err.message
             : "Unable to load tenant screening data"
 
-      if (err instanceof ApiError && err.status === 404) {
+      if (err instanceof ApiError && (err as ApiError).status === 404) {
         message =
           "Tenant screening service not found (404). Verify VITE_TENANT_SCREENING_API_BASE_URL or your proxy configuration."
       } else if (typeof message === "string" && message.includes("<html")) {

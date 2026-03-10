@@ -3,7 +3,8 @@
  * Handles authentication, timeout, error parsing, and retry logic
  */
 
-import { ApiErrorResponse, ApiError as OntoApiError } from "@ondo/types";
+import type { ApiErrorResponse } from "@ondo/types";
+import { ApiError as OntoApiError } from "@ondo/types";
 
 const API_BASE_URL =
   (import.meta.env?.VITE_API_BASE_URL as string | undefined) ||
@@ -61,8 +62,8 @@ export async function apiRequest<T>(
     if (!response.ok) {
       const errorData = parseApiError(data, response.status);
       throw new OntoApiError(
-        response.status,
         errorData.message,
+        response.status,
         errorData.code,
         errorData.errors,
         errorData.correlationId,
@@ -77,8 +78,8 @@ export async function apiRequest<T>(
 
     if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
       throw new OntoApiError(
-        0,
         "Network error. Please check your connection.",
+        0,
         "NETWORK_ERROR",
       );
     }

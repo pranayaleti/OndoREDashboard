@@ -103,9 +103,8 @@ function OwnersList() {
     }
   }
 
-  const handleResendInvitation = (ownerEmail: string) => {
+  const handleResendInvitation = (_ownerEmail: string) => {
     // Mock resend invitation
-    console.log(`Resending invitation to ${ownerEmail}`)
   }
 
   return (
@@ -391,7 +390,7 @@ function AddOwner() {
     e.preventDefault()
     
     try {
-      const response = await sendInvitation({
+      await sendInvitation({
         email: formData.email,
         role: formData.role
       })
@@ -402,9 +401,6 @@ function AddOwner() {
         duration: 3000,
       })
       
-      if (response) {
-        console.log("Invitation URL:", response.inviteUrl)
-      }
       navigate("/dashboard/owners")
     } catch (error) {
       toast({

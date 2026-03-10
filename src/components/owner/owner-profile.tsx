@@ -123,7 +123,6 @@ export default function OwnerProfile() {
 
   // Update profile data when user data changes
   useEffect(() => {
-    console.log("Owner Profile - User data changed:", user)
     setProfileData(getInitialProfileData(user))
     setAddressFormValue(buildAddressFormValue(user?.address))
   }, [user])
@@ -135,19 +134,18 @@ export default function OwnerProfile() {
 
       try {
         setIsLoadingStats(true)
-        console.log("Fetching portfolio stats for owner:", user.id)
-        
+
         // Get properties data to calculate stats
-        const properties = await propertyApi.getProperties()
-        console.log("Properties received:", properties)
-        
+        const res = await propertyApi.getProperties()
+        const properties = res.properties
+
         // Calculate stats from properties data
         const propertiesOwned = properties.length
-        const propertiesWithTenants = properties.filter(p => p.tenantId)
+        const propertiesWithTenants = properties.filter((p: { tenantId?: string }) => p.tenantId)
         const activeTenants = propertiesWithTenants.length
-        
+
         // Calculate total monthly rent (portfolio value)
-        const totalMonthlyRent = propertiesWithTenants.reduce((sum, property) => {
+        const totalMonthlyRent = propertiesWithTenants.reduce((sum: number, property: { price?: number }) => {
           return sum + (property.price || 0)
         }, 0)
         
@@ -162,8 +160,7 @@ export default function OwnerProfile() {
           portfolioValue: totalMonthlyRent,
           formattedPortfolioValue
         }
-        
-        console.log("Calculated portfolio stats:", stats)
+
         setPortfolioStats(stats)
       } catch (error) {
         console.error("Error fetching portfolio stats:", error)
@@ -256,10 +253,10 @@ export default function OwnerProfile() {
       })
       
       await refreshUser()
-    } catch (error) {
-      const errorMessage = error instanceof ApiError 
-        ? error.message 
-        : "Failed to update profile. Please try again."
+    } catch (err: unknown) {
+      const errorMessage = err instanceof ApiError
+        ? err.message
+        : err instanceof Error ? err.message : "Failed to update profile. Please try again."
       
       toast({
         title: "Error",

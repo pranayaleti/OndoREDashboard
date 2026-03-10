@@ -143,9 +143,9 @@ export default function TenantProfile() {
     const fetchAssignedProperty = async () => {
       try {
         setLoadingProperty(true)
-        const property = await propertyApi.getTenantProperty()
+        const res = await propertyApi.getTenantProperty()
+        const property = res.property
         setAssignedProperty(property)
-        console.log("Fetched assigned property:", property)
       } catch (error) {
         console.error("Error fetching assigned property:", error)
         setAssignedProperty(null)

@@ -29,8 +29,8 @@ export default function TenantDashboard() {
   const fetchAssignedProperty = async () => {
     try {
       setLoadingProperty(true)
-      const property = await propertyApi.getTenantProperty()
-      setAssignedProperty(property)
+      const res = await propertyApi.getTenantProperty()
+      setAssignedProperty(res.property)
     } catch (error) {
       console.error("Error fetching assigned property:", error)
       // Property might not be assigned yet

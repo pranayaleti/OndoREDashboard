@@ -30,14 +30,14 @@ export default function ManagerReports() {
   const fetchAllData = async () => {
     try {
       setLoading(true)
-      const [props, users, leadsData, maintenance] = await Promise.all([
-        propertyApi.getProperties().catch(() => []),
-        authApi.getInvitedUsers().catch(() => []),
+      const [propsRes, usersRes, leadsData, maintenance] = await Promise.all([
+        propertyApi.getProperties().then((r) => r.properties).catch(() => []),
+        authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
         leadApi.getManagerLeads().catch(() => []),
         maintenanceApi.getManagerMaintenanceRequests().catch(() => [])
       ])
-      setProperties(props)
-      setInvitedUsers(users)
+      setProperties(propsRes)
+      setInvitedUsers(usersRes)
       setLeads(leadsData)
       setMaintenanceRequests(maintenance)
     } catch (error) {
@@ -372,7 +372,7 @@ export default function ManagerReports() {
                 {Object.keys(propertyTypes).length > 0 ? (
                   <div className="space-y-3">
                     {Object.entries(propertyTypes)
-                      .sort(([, a], [, b]) => b - a)
+                      .sort(([, a]: [string, unknown], [, b]: [string, unknown]) => (b as number) - (a as number))
                       .map(([type, count]) => (
                         <div key={type} className="flex items-center justify-between">
                           <span className="text-sm font-medium capitalize">{type}</span>
@@ -381,11 +381,11 @@ export default function ManagerReports() {
                               <div 
                                 className="bg-blue-500 h-2 rounded-full" 
                                 style={{ 
-                                  width: `${(count / stats.totalProperties) * 100}%` 
+                                  width: `${((count as number) / stats.totalProperties) * 100}%`
                                 }}
                               ></div>
                             </div>
-                            <span className="text-sm font-bold w-8 text-right">{count}</span>
+                            <span className="text-sm font-bold w-8 text-right">{String(count)}</span>
                           </div>
                         </div>
                       ))}
@@ -406,11 +406,11 @@ export default function ManagerReports() {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.entries(propertiesByCity)
-                    .sort(([, a], [, b]) => b - a)
+                    .sort(([, a]: [string, unknown], [, b]: [string, unknown]) => (b as number) - (a as number))
                     .slice(0, 8)
                     .map(([city, count]) => (
                       <div key={city} className="text-center p-3 border rounded-lg">
-                        <p className="text-2xl font-bold">{count}</p>
+                        <p className="text-2xl font-bold">{String(count)}</p>
                         <p className="text-xs text-muted-foreground mt-1">{city}</p>
                       </div>
                     ))}

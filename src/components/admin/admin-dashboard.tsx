@@ -37,8 +37,8 @@ export default function AdminDashboard() {
     try {
       setLoading(true)
       const [propertiesData, usersData, maintenanceData] = await Promise.all([
-        propertyApi.getProperties().catch(() => []),
-        authApi.getInvitedUsers().catch(() => []),
+        propertyApi.getProperties().then((r) => r.properties).catch(() => []),
+        authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
         maintenanceApi.getManagerMaintenanceRequests().catch(() => []),
       ])
       setProperties(propertiesData)

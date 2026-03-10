@@ -280,20 +280,18 @@ export default function Handoff() {
 
       try {
         setLoadingProperties(true)
-        const allProperties = await propertyApi.getProperties()
-        
+        const res = await propertyApi.getProperties()
+        const allProperties = res.properties
+
         let userProperties: Property[] = []
         const userRole = user.role
         
         if (userRole === 'owner') {
-          // Owners see only their properties
-          userProperties = allProperties.filter(p => p.ownerId === user.id)
+          userProperties = allProperties.filter((p: Property) => p.ownerId === user.id)
         } else if (userRole === 'super_admin' || userRole === 'admin' || userRole === 'manager') {
-          // Managers/Admins see all properties
           userProperties = allProperties
         } else if (userRole === 'tenant') {
-          // Tenants see only their assigned property
-          userProperties = allProperties.filter(p => p.tenantId === user.id)
+          userProperties = allProperties.filter((p: Property) => p.tenantId === user.id)
         } else {
           // Maintenance sees properties they have tickets for (simplified - show all for now)
           userProperties = allProperties
@@ -755,9 +753,6 @@ export default function Handoff() {
         const propertyAddress = `${handoffData.propertyAddress}${handoffData.unitNumber ? ` - ${handoffData.unitNumber}` : ''}`
         
         handoffApi.notifyChecklistCompletion(selectedPropertyId, tenantName, propertyAddress)
-          .then(() => {
-            console.log('Property manager notified successfully')
-          })
           .catch((error) => {
             console.error('Failed to notify property manager:', error)
             // Don't show error to user, just log it

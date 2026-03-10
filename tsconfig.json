@@ -32,7 +32,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@ondo/types": ["../packages/types/src/index.ts"]
+      "@ondo/types": ["./src/lib/api/types/ondo-types.ts"]
     }
   },
   "include": ["src"],

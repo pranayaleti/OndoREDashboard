@@ -22,6 +22,7 @@ import {
   UpdateUserStatusRequest,
   UpdateUserStatusResponse,
 } from "@ondo/types";
+import type { OwnerOnboardingRequest, OwnerOnboardingResponse } from "./legacy-types";
 import {
   apiPost,
   apiGet,
@@ -41,6 +42,11 @@ export const authApi = {
   async getMe(): Promise<User> {
     const headers = getAuthHeaders();
     return apiGet<User>("/auth/me", headers);
+  },
+
+  /** @deprecated Use getMe() */
+  async me(): Promise<User> {
+    return this.getMe();
   },
 
   async getInvitation(token: string): Promise<GetInvitationResponse> {
@@ -100,6 +106,13 @@ export const authApi = {
   async invite(request: InviteRequest): Promise<InviteResponse> {
     const headers = getAuthHeaders();
     return apiPost<InviteResponse>("/auth/invite", request, headers);
+  },
+
+  async requestOwnerOnboarding(
+    request: OwnerOnboardingRequest,
+  ): Promise<OwnerOnboardingResponse> {
+    const headers = getAuthHeaders();
+    return apiPost<OwnerOnboardingResponse>("/auth/owner-onboarding", request, headers);
   },
 
   /**

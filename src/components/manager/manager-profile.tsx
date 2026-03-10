@@ -193,8 +193,8 @@ export default function ManagerProfile() {
       if (!user || user.role !== "manager") return
       try {
         setIsLoadingInvited(true)
-        const users = await authApi.getInvitedUsers()
-        setInvitedUsers(users)
+        const usersRes = await authApi.getInvitedUsers()
+        setInvitedUsers(usersRes.users)
       } catch (error) {
         console.error("Error fetching invited users:", error)
         setInvitedUsers([])
@@ -253,10 +253,10 @@ export default function ManagerProfile() {
       
       await refreshUser()
       setIsEditing(false)
-    } catch (error) {
-      const errorMessage = error instanceof ApiError 
-        ? error.message 
-        : "Failed to update profile. Please try again."
+    } catch (err: unknown) {
+      const errorMessage = err instanceof ApiError
+        ? err.message
+        : err instanceof Error ? err.message : "Failed to update profile. Please try again."
       
       toast({
         title: "Error",

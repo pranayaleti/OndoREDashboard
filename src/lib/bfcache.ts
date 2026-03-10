@@ -16,9 +16,6 @@ export function isBFCacheRestoreEvent(e: Event): e is PageTransitionEvent & { pe
  */
 function handlePageShow(e: PageTransitionEvent) {
   if (e.persisted) {
-    if (import.meta.env.DEV) {
-      console.debug('[bfcache] Page restored from back-forward cache')
-    }
     window.dispatchEvent(new CustomEvent(BFCACHE_RESTORE_EVENT))
   }
 }

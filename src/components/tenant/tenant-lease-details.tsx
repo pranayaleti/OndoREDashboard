@@ -36,7 +36,8 @@ export default function TenantLeaseDetails() {
     const fetchLease = async () => {
       try {
         setIsLoading(true)
-        const assignedProperty = await propertyApi.getTenantProperty()
+        const res = await propertyApi.getTenantProperty()
+        const assignedProperty = res.property
         setProperty(assignedProperty)
       } catch (error) {
         console.error("Failed to load lease details", error)

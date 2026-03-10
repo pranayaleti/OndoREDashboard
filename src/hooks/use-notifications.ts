@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { notificationsApi, type AppNotification } from "@/lib/api";
+import { notificationsApi, type Notification } from "@/lib/api";
 import { toast } from "sonner";
 
 const POLL_INTERVAL_MS = 60_000; // poll every 60 s (checks run every 15 min)
 
 interface UseNotificationsReturn {
-  notifications: AppNotification[];
+  notifications: Notification[];
   unreadCount: number;
   markRead: (id: string) => Promise<void>;
   markAllRead: () => Promise<void>;
@@ -13,7 +13,7 @@ interface UseNotificationsReturn {
 }
 
 export function useNotifications(enabled: boolean): UseNotificationsReturn {
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   // Track IDs seen this session to fire toasts only for truly new arrivals
   const seenIds = useRef<Set<string>>(new Set());
@@ -22,10 +22,10 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
   const fetchAll = useCallback(async () => {
     if (!enabled) return;
     try {
-      const { notifications: data } = await notificationsApi.list();
+      const { notifications: data } = await notificationsApi.getNotifications();
       setNotifications(data);
 
-      const newUnread = data.filter((n) => !n.is_read);
+      const newUnread = data.filter((n: Notification) => !n.read);
       setUnreadCount(newUnread.length);
 
       if (initialized.current) {
@@ -60,17 +60,17 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
   }, [enabled, fetchAll]);
 
   const markRead = useCallback(async (id: string) => {
-    await notificationsApi.markRead(id);
+    await notificationsApi.markAsRead(id);
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
     setUnreadCount((c) => Math.max(0, c - 1));
     seenIds.current.delete(id);
   }, []);
 
   const markAllRead = useCallback(async () => {
-    await notificationsApi.markAllRead();
-    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    await notificationsApi.markAllAsRead();
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setUnreadCount(0);
     seenIds.current.clear();
   }, []);

@@ -72,21 +72,15 @@ export default function ManagerPropertyReview() {
     setLoading(true)
     try {
       // Get all properties and filter by status
-      const allProperties = await propertyApi.getProperties()
-      console.log("All properties fetched:", allProperties.length)
-      console.log("Properties by status:", allProperties.reduce((acc, p) => {
-        acc[p.status] = (acc[p.status] || 0) + 1
-        return acc
-      }, {} as Record<string, number>))
-      
+      const res = await propertyApi.getProperties()
+      const allProperties = res.properties
+
       let data: Property[]
-      
+
       if (statusFilter === "all") {
         data = allProperties
-        console.log("Showing all properties:", data.length)
       } else {
-        data = allProperties.filter(p => p.status === statusFilter)
-        console.log(`Showing ${statusFilter} properties:`, data.length)
+        data = allProperties.filter((p: Property) => p.status === statusFilter)
       }
 
       setProperties(data)

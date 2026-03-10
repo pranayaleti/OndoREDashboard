@@ -3,6 +3,13 @@
  */
 
 import { apiGet, apiPost, apiPut, getAuthHeaders } from "../http";
+import type {
+  TenantScreeningSummary,
+  TenantScreeningSummaryParams,
+  TenantScreeningApplicant,
+  TenantScreeningApplicantParams,
+  TenantScreeningReport,
+} from "./legacy-types";
 
 export interface TenantScreening {
   id: string;
@@ -105,6 +112,40 @@ export const tenantScreeningApi = {
     return apiPut<TenantScreening>(
       `/tenant-screening/${id}/request-info`,
       { requiredInfo },
+      headers,
+    );
+  },
+
+  async getSummary(
+    params: TenantScreeningSummaryParams,
+  ): Promise<TenantScreeningSummary> {
+    const headers = getAuthHeaders();
+    const query = new URLSearchParams(
+      params as Record<string, string>,
+    ).toString();
+    return apiGet<TenantScreeningSummary>(
+      `/tenant-screening/summary?${query}`,
+      headers,
+    );
+  },
+
+  async getApplicants(
+    params: TenantScreeningApplicantParams,
+  ): Promise<TenantScreeningApplicant[]> {
+    const headers = getAuthHeaders();
+    const query = new URLSearchParams(
+      params as Record<string, string>,
+    ).toString();
+    return apiGet<TenantScreeningApplicant[]>(
+      `/tenant-screening/applicants?${query}`,
+      headers,
+    );
+  },
+
+  async getReport(reportId: string): Promise<TenantScreeningReport> {
+    const headers = getAuthHeaders();
+    return apiGet<TenantScreeningReport>(
+      `/tenant-screening/${reportId}/report`,
       headers,
     );
   },

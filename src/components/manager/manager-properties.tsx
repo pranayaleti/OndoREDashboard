@@ -30,8 +30,9 @@ export default function ManagerProperties() {
 
   const fetchReviewQueue = async () => {
     try {
-      const allProperties = await propertyApi.getProperties()
-      const data = allProperties.filter(p => p.status === "pending")
+      const res = await propertyApi.getProperties()
+      const allProperties = res.properties
+      const data = allProperties.filter((p: { status: string }) => p.status === "pending")
       let filteredProperties = data
       
       // Apply client-side filtering

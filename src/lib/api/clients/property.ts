@@ -14,7 +14,8 @@ import {
   UploadPropertyPhotoResponse,
   DeletePropertyPhotoResponse,
 } from "@ondo/types";
-import { apiGet, apiPost, apiPut, apiDelete, getAuthHeaders } from "../http";
+import { apiGet, apiPost, apiPut, apiDelete, apiRequest, getAuthHeaders } from "../http";
+import type { OwnerTenantsResponse, Tenant } from "./legacy-types";
 
 export const propertyApi = {
   async getProperties(
@@ -63,10 +64,77 @@ export const propertyApi = {
     );
   },
 
-  async deletePhoto(propertyId: string, photoId: string): Promise<DeletePropertyPhotoResponse> {
+  async deletePhoto(propertyIdOrPhotoId: string, photoId?: string): Promise<DeletePropertyPhotoResponse> {
     const headers = getAuthHeaders();
-    return apiDelete<DeletePropertyPhotoResponse>(
-      `/properties/${propertyId}/photos/${photoId}`,
+    const id = photoId ?? propertyIdOrPhotoId;
+    return apiDelete<DeletePropertyPhotoResponse>(`/properties/photos/${id}`, headers);
+  },
+
+  async updatePropertyStatus(
+    propertyId: string,
+    status: string,
+    reviewComment?: string,
+  ): Promise<GetPropertyResponse> {
+    const headers = getAuthHeaders();
+    return apiRequest<GetPropertyResponse>(
+      "PATCH",
+      `/properties/${propertyId}/status`,
+      { status, comment: reviewComment },
+      headers,
+    );
+  },
+
+  async getTenantProperty(): Promise<GetPropertyResponse> {
+    const headers = getAuthHeaders();
+    return apiGet<GetPropertyResponse>("/properties/tenant-property", headers);
+  },
+
+  async getOwnerTenants(): Promise<OwnerTenantsResponse> {
+    const headers = getAuthHeaders();
+    const data = await apiGet<Tenant[]>("/dashboard/tenants", headers);
+    return {
+      summary: {
+        totalTenants: data.length,
+        occupiedUnits: String(data.length),
+        occupancyRate: "0",
+        avgRent: "0",
+      },
+      tenants: data,
+    };
+  },
+
+  async generatePresignedUploadUrl(
+    propertyId: string,
+    fileName: string,
+    contentType: string,
+  ): Promise<{ presignedUrl: string; publicUrl: string; key: string }> {
+    const headers = getAuthHeaders();
+    return apiPost(
+      "/properties/photos/presigned-url",
+      { propertyId, fileName, contentType },
+      headers,
+    );
+  },
+
+  async uploadToS3(presignedUrl: string, file: File): Promise<void> {
+    await fetch(presignedUrl, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": file.type },
+    });
+  },
+
+  async confirmPhotoUpload(
+    propertyId: string,
+    url: string,
+    key: string,
+    caption?: string,
+    orderIndex: number = 0,
+  ): Promise<UploadPropertyPhotoResponse> {
+    const headers = getAuthHeaders();
+    return apiPost<UploadPropertyPhotoResponse>(
+      "/properties/photos/confirm",
+      { propertyId, url, s3Key: key, caption, orderIndex: String(orderIndex) },
       headers,
     );
   },

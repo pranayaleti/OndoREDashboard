@@ -42,21 +42,12 @@ export function LeadForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const formattedAddress = formatAddressFields({
+    formatAddressFields({
       line1: addressValue.addressLine1,
       line2: addressValue.addressLine2,
       city: addressValue.city,
       state: addressValue.state,
       postalCode: addressValue.postalCode,
-    })
-
-    console.log("Form submitted:", {
-      ...formData,
-      address: formattedAddress,
-      city: addressValue.city,
-      state: addressValue.state,
-      zipCode: addressValue.postalCode,
-      addressType: addressValue.addressType,
     })
     // Here you would typically send the data to your API
     alert("Lead added successfully!")

@@ -196,9 +196,9 @@ export function OwnerMaintenanceManagement() {
   const fetchProperties = async () => {
     if (!user?.id) return
     try {
-      const allProperties = await propertyApi.getProperties()
-      // Owners see only their properties
-      const ownerProperties = allProperties.filter(p => p.ownerId === user.id)
+      const res = await propertyApi.getProperties()
+      const allProperties = res.properties
+      const ownerProperties = allProperties.filter((p: { ownerId: string }) => p.ownerId === user.id)
       setProperties(ownerProperties)
     } catch (err: any) {
       console.error("Error fetching properties:", err)
