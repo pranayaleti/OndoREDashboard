@@ -16,6 +16,10 @@ import {
 } from "@ondo/types";
 import { apiGet, apiPost, apiPut, apiDelete, apiRequest, getAuthHeaders } from "../http";
 import type { OwnerTenantsResponse, Tenant } from "./legacy-types";
+import {
+  GetPropertyResponseSchema,
+  GetPropertiesResponseSchema,
+} from "../schemas";
 
 export const propertyApi = {
   async getProperties(
@@ -23,15 +27,17 @@ export const propertyApi = {
     pageSize: number = 20,
   ): Promise<GetPropertiesResponse> {
     const headers = getAuthHeaders();
-    return apiGet<GetPropertiesResponse>(
+    const raw = await apiGet<unknown>(
       `/properties?page=${page}&pageSize=${pageSize}`,
       headers,
     );
+    return GetPropertiesResponseSchema.parse(raw) as GetPropertiesResponse;
   },
 
   async getProperty(id: string): Promise<GetPropertyResponse> {
     const headers = getAuthHeaders();
-    return apiGet<GetPropertyResponse>(`/properties/${id}`, headers);
+    const raw = await apiGet<unknown>(`/properties/${id}`, headers);
+    return GetPropertyResponseSchema.parse(raw) as GetPropertyResponse;
   },
 
   async createProperty(request: CreatePropertyRequest): Promise<CreatePropertyResponse> {

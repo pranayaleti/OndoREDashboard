@@ -8,6 +8,7 @@ import Footer from '@/components/footer'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Loading from '@/components/loading'
+import { useSessionExpiry } from '@/hooks/useSessionExpiry'
 
 // Lazy load page components for code splitting
 const About = lazy(() => import('@/pages/About'))
@@ -54,6 +55,9 @@ const HIDE_CHROME_PREFIXES = [
 function App() {
   const location = useLocation()
   const shouldHideChrome = HIDE_CHROME_PREFIXES.some(route => location.pathname.startsWith(route))
+
+  // Redirect to /login when the HTTP layer detects an unrecoverable session
+  useSessionExpiry()
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

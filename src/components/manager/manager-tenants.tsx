@@ -12,6 +12,9 @@ import { useToast } from "@/hooks/use-toast"
 import { authApi } from "@/lib/api"
 import { getErrorMessage } from "@/lib/auth-utils"
 import { useApi } from "@/hooks/useApi"
+import { usePagination } from "@/hooks/usePagination"
+import { DataPagination } from "@/components/ui/DataPagination"
+import { PageSizeSelector } from "@/components/ui/PageSizeSelector"
 
 // Mock tenants data
 const mockTenants = [
@@ -76,7 +79,7 @@ function TenantsList() {
                          tenant.property.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || tenant.status === statusFilter
     const matchesPayment = paymentFilter === "all" || tenant.paymentStatus === paymentFilter
-    
+
     // Apply card filter
     let matchesCard = true
     if (cardFilter === "current") {
@@ -88,9 +91,20 @@ function TenantsList() {
     } else if (cardFilter === "total") {
       matchesCard = true // Show all for total
     }
-    
+
     return matchesSearch && matchesStatus && matchesPayment && matchesCard
   })
+
+  const {
+    items: pagedTenants,
+    currentPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    goToPage,
+    changePageSize,
+    reset: resetPage,
+  } = usePagination(filteredTenants, { pageSize: 10 })
 
   const handleCardClick = (filter: string) => {
     if (cardFilter === filter) {
@@ -110,6 +124,7 @@ function TenantsList() {
         setPaymentFilter("all")
       }
     }
+    resetPage()
   }
 
   const getPaymentStatusColor = (status: string) => {
@@ -217,11 +232,11 @@ function TenantsList() {
               <Input
                 placeholder="Search tenants..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); resetPage() }}
                 className="pl-10"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); resetPage() }}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
@@ -236,6 +251,7 @@ function TenantsList() {
               value={paymentFilter} 
               onValueChange={(value) => {
                 setPaymentFilter(value)
+                resetPage()
                 // Sync card filter when payment filter changes
                 if (value === "current") {
                   setCardFilter("current")
@@ -263,8 +279,14 @@ function TenantsList() {
       </Card>
 
       {/* Tenants List */}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm text-gray-500">
+          {filteredTenants.length} tenant{filteredTenants.length !== 1 ? "s" : ""} found
+        </p>
+        <PageSizeSelector pageSize={pageSize} onChange={changePageSize} options={[5, 10, 25]} />
+      </div>
       <div className="space-y-4">
-        {filteredTenants.map((tenant) => (
+        {pagedTenants.map((tenant) => (
           <Card key={tenant.id} className="hover:shadow-lg transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
@@ -340,6 +362,15 @@ function TenantsList() {
         ))}
       </div>
 
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        pageSize={pageSize}
+        onPageChange={goToPage}
+        className="mt-4"
+      />
+
       {filteredTenants.length === 0 && (
         <Card>
           <CardContent className="text-center py-8">
@@ -348,8 +379,8 @@ function TenantsList() {
               No tenants found
             </h3>
             <p className="text-gray-500 mb-4">
-              {searchTerm || statusFilter !== "all" || paymentFilter !== "all" 
-                ? "Try adjusting your filters" 
+              {searchTerm || statusFilter !== "all" || paymentFilter !== "all"
+                ? "Try adjusting your filters"
                 : "No tenants have been added yet"}
             </p>
             <Link to="/dashboard/tenants/new">

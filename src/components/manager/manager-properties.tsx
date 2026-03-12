@@ -11,6 +11,9 @@ import { useToast } from "@/hooks/use-toast"
 import { propertyApi, type Property } from "@/lib/api"
 import { ModernPropertyCard } from "@/components/owner/modern-property-card"
 import { PropertyDetailModal } from "@/components/property-detail-modal"
+import { usePagination } from "@/hooks/usePagination"
+import { DataPagination } from "@/components/ui/DataPagination"
+import { PageSizeSelector } from "@/components/ui/PageSizeSelector"
 
 export default function ManagerProperties() {
   const [properties, setProperties] = useState<Property[]>([])
@@ -96,6 +99,16 @@ export default function ManagerProperties() {
     }
   }
 
+  const {
+    items: pagedProperties,
+    currentPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    goToPage,
+    changePageSize,
+  } = usePagination(properties, { pageSize: 9 })
+
   if (loading) {
     return <div className="flex justify-center py-8">Loading review queue...</div>
   }
@@ -139,9 +152,17 @@ export default function ManagerProperties() {
         </CardContent>
       </Card>
 
+      {/* Count + page size */}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-sm text-gray-500">
+          {properties.length} propert{properties.length !== 1 ? "ies" : "y"} pending review
+        </p>
+        <PageSizeSelector pageSize={pageSize} onChange={changePageSize} options={[9, 18, 36]} />
+      </div>
+
       {/* Properties Grid - Modern Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.map((property) => (
+        {pagedProperties.map((property) => (
           <ModernPropertyCard
             key={property.id}
             property={property}
@@ -149,6 +170,15 @@ export default function ManagerProperties() {
           />
         ))}
       </div>
+
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        pageSize={pageSize}
+        onPageChange={goToPage}
+        className="mt-4"
+      />
 
       {properties.length === 0 && (
         <div className="text-center py-12">

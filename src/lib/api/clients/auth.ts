@@ -29,10 +29,30 @@ import {
   apiPut,
   getAuthHeaders,
 } from "../http";
+import {
+  LoginResponseSchema,
+  UserSchema,
+  GetPortfolioStatsResponseSchema,
+  GetInvitedUsersResponseSchema,
+  UpdateProfileResponseSchema,
+} from "../schemas";
+import { getAccessToken } from "./token-manager";
+
+// ---------------------------------------------------------------------------
+// Extended login response — includes refresh token rotation fields
+// ---------------------------------------------------------------------------
+
+export interface LoginResponseWithTokens extends LoginResponse {
+  accessToken: string;
+  expiresIn: number;
+  tokenType?: string;
+  csrfToken?: string;
+}
 
 export const authApi = {
-  async login(request: LoginRequest): Promise<LoginResponse> {
-    return apiPost<LoginResponse>("/auth/login", request);
+  async login(request: LoginRequest): Promise<LoginResponseWithTokens> {
+    const raw = await apiPost<unknown>("/auth/login", request);
+    return LoginResponseSchema.parse(raw) as unknown as LoginResponseWithTokens;
   },
 
   async signup(request: SignupWithInviteRequest): Promise<SignupWithInviteResponse> {
@@ -41,12 +61,26 @@ export const authApi = {
 
   async getMe(): Promise<User> {
     const headers = getAuthHeaders();
-    return apiGet<User>("/auth/me", headers);
+    const raw = await apiGet<unknown>("/auth/me", headers);
+    return UserSchema.parse(raw) as User;
   },
 
   /** @deprecated Use getMe() */
   async me(): Promise<User> {
     return this.getMe();
+  },
+
+  async logout(): Promise<void> {
+    // Best-effort — ignore errors so the UI logout always completes
+    try {
+      await apiPost<unknown>("/auth/logout");
+    } catch {
+      // Silently ignore — cookie will expire on its own
+    }
+  },
+
+  async logoutAll(): Promise<void> {
+    await apiPost<unknown>("/auth/logout-all");
   },
 
   async getInvitation(token: string): Promise<GetInvitationResponse> {
@@ -57,7 +91,8 @@ export const authApi = {
     request: UpdateProfileRequest,
   ): Promise<UpdateProfileResponse> {
     const headers = getAuthHeaders();
-    return apiPut<UpdateProfileResponse>("/auth/profile", request, headers);
+    const raw = await apiPut<unknown>("/auth/profile", request, headers);
+    return UpdateProfileResponseSchema.parse(raw) as UpdateProfileResponse;
   },
 
   async changePassword(
@@ -80,15 +115,17 @@ export const authApi = {
 
   async getPortfolioStats(): Promise<GetPortfolioStatsResponse> {
     const headers = getAuthHeaders();
-    return apiGet<GetPortfolioStatsResponse>("/auth/portfolio-stats", headers);
+    const raw = await apiGet<unknown>("/auth/portfolio-stats", headers);
+    return GetPortfolioStatsResponseSchema.parse(raw) as GetPortfolioStatsResponse;
   },
 
   async getInvitedUsers(page: number = 1, pageSize: number = 20): Promise<GetInvitedUsersResponse> {
     const headers = getAuthHeaders();
-    return apiGet<GetInvitedUsersResponse>(
+    const raw = await apiGet<unknown>(
       `/auth/invited-users?page=${page}&pageSize=${pageSize}`,
       headers,
     );
+    return GetInvitedUsersResponseSchema.parse(raw) as GetInvitedUsersResponse;
   },
 
   async updateUserStatus(
@@ -115,18 +152,24 @@ export const authApi = {
     return apiPost<OwnerOnboardingResponse>("/auth/owner-onboarding", request, headers);
   },
 
-  /**
-   * Utility to get and store token
-   */
+  // -------------------------------------------------------------------------
+  // Deprecated token helpers — kept for backward compatibility only.
+  // New code should use setAccessToken / getAccessToken from token-manager.
+  // -------------------------------------------------------------------------
+
+  /** @deprecated Read access token from token-manager instead. */
   getToken(): string | null {
-    return localStorage.getItem("auth_token");
+    return getAccessToken();
   },
 
-  setToken(token: string): void {
-    localStorage.setItem("auth_token", token);
+  /** @deprecated Use setAccessToken(token, expiresIn) from token-manager. */
+  setToken(_token: string): void {
+    // No-op: token storage is now handled by auth-context via setAccessToken().
+    // This stub prevents runtime errors in any code that still calls this.
   },
 
+  /** @deprecated Use clearAccessToken() from token-manager. */
   clearToken(): void {
-    localStorage.removeItem("auth_token");
+    // No-op: token is cleared by auth-context on logout.
   },
 };

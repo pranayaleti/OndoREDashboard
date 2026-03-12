@@ -12,8 +12,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Search, ChevronLeft, ChevronRight, Filter, Clock, AlertTriangle } from "lucide-react"
+import { MoreHorizontal, Search, Filter, Clock, AlertTriangle } from "lucide-react"
 import { Link } from "react-router-dom"
+import { usePagination } from "@/hooks/usePagination"
+import { DataPagination } from "@/components/ui/DataPagination"
 
 // Sample data for maintenance requests
 const maintenanceRequests = [
@@ -181,8 +183,6 @@ const getStatusColor = (status: string) => {
 
 export function MaintenanceTable({ status }: { status?: string }) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
 
   // Filter requests based on search term and status
   const filteredRequests = maintenanceRequests.filter(
@@ -194,10 +194,7 @@ export function MaintenanceTable({ status }: { status?: string }) {
         request.id.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedRequests = filteredRequests.slice(startIndex, startIndex + itemsPerPage)
+  const { items: paginatedRequests, currentPage, totalPages, totalItems, pageSize, goToPage } = usePagination(filteredRequests, { pageSize: 5 })
 
   return (
     <div className="space-y-4">
@@ -298,35 +295,13 @@ export function MaintenanceTable({ status }: { status?: string }) {
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredRequests.length)} of{" "}
-          {filteredRequests.length} requests
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Previous page</span>
-          </Button>
-          <div className="text-sm">
-            Page {currentPage} of {totalPages}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Next page</span>
-          </Button>
-        </div>
-      </div>
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={goToPage}
+        totalItems={totalItems}
+        pageSize={pageSize}
+      />
     </div>
   )
 }

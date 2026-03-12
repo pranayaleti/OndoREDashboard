@@ -13,6 +13,9 @@ import { maintenanceApi, propertyApi, type MaintenanceRequest, type Property } f
 import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-maintenance-request-dialog"
 import { useAuth } from "@/lib/auth-context"
 import { useRealtimeTable } from "@/hooks/useRealtimeTable"
+import { usePagination } from "@/hooks/usePagination"
+import { DataPagination } from "@/components/ui/DataPagination"
+import { PageSizeSelector } from "@/components/ui/PageSizeSelector"
 
 export default function ManagerMaintenance() {
   const { user } = useAuth()
@@ -92,6 +95,17 @@ export default function ManagerMaintenance() {
     const matchesPriority = priorityFilter === "all" || request.priority === priorityFilter
     return matchesSearch && matchesStatus && matchesPriority
   })
+
+  const {
+    items: pagedRequests,
+    currentPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    goToPage,
+    changePageSize,
+    reset: resetPage,
+  } = usePagination(filteredRequests, { pageSize: 10 })
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -239,7 +253,7 @@ export default function ManagerMaintenance() {
                   id="search"
                   placeholder="Search requests..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => { setSearchTerm(e.target.value); resetPage() }}
                   className="pl-10"
                 />
               </div>

@@ -10,6 +10,7 @@ import type {
   TenantScreeningApplicantParams,
   TenantScreeningReport,
 } from "./legacy-types";
+import { TenantScreeningSchema, ScreeningReportSchema } from "../schemas";
 
 export interface TenantScreening {
   id: string;
@@ -67,7 +68,8 @@ export const tenantScreeningApi = {
 
   async getScreening(id: string): Promise<TenantScreening> {
     const headers = getAuthHeaders();
-    return apiGet<TenantScreening>(`/tenant-screening/${id}`, headers);
+    const raw = await apiGet<unknown>(`/tenant-screening/${id}`, headers);
+    return TenantScreeningSchema.parse(raw) as TenantScreening;
   },
 
   async getScreeningsByProperty(propertyId: string): Promise<TenantScreening[]> {
@@ -80,10 +82,11 @@ export const tenantScreeningApi = {
 
   async getScreeningReport(screeningId: string): Promise<ScreeningReport> {
     const headers = getAuthHeaders();
-    return apiGet<ScreeningReport>(
+    const raw = await apiGet<unknown>(
       `/tenant-screening/${screeningId}/report`,
       headers,
     );
+    return ScreeningReportSchema.parse(raw) as ScreeningReport;
   },
 
   async approveScreening(id: string, notes?: string): Promise<TenantScreening> {

@@ -10,6 +10,15 @@
 
 import { apiRequest, getAuthHeaders } from "../http";
 import { tokenManager } from "./token-manager";
+import {
+  ListPaymentMethodsResponseSchema,
+  CreatePaymentIntentResponseSchema,
+  CreateSetupIntentResponseSchema,
+  PaymentHistoryResponseSchema,
+  GetCurrentSubscriptionResponseSchema,
+  MaintenanceRequestSchema,
+  MaintenanceRequestArraySchema,
+} from "../schemas";
 
 // ─── URL helpers ──────────────────────────────────────────────────────────────
 
@@ -465,11 +474,25 @@ async function rawAuthRequest<T>(
   const contentType = response.headers.get('content-type');
   const isJson = contentType?.includes('application/json');
   const text = await response.text();
-  const data = isJson && text ? (JSON.parse(text) as Record<string, unknown>) : { message: text };
+
+  let data: Record<string, unknown>;
+  if (isJson && text) {
+    try {
+      data = JSON.parse(text) as Record<string, unknown>;
+    } catch {
+      data = { message: text };
+    }
+  } else {
+    data = { message: text };
+  }
+
   if (!response.ok) {
     throw new Error(typeof data.message === 'string' ? data.message : `HTTP ${response.status}`);
   }
-  return data as unknown as T;
+
+  // Type assertion is safe here because we control the return type T
+  // Callers are responsible for validating the shape matches T
+  return data as T;
 }
 
 // ─── featureApi ───────────────────────────────────────────────────────────────
@@ -639,28 +662,33 @@ export const featureApi = {
   maintenance: {
     async createMaintenanceRequest(data: CreateMaintenanceRequestRequest): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
-      return apiRequest<MaintenanceRequest>('POST', '/maintenance', data, headers);
+      const raw = await apiRequest<unknown>('POST', '/maintenance', data, headers);
+      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
     },
     async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {
       const headers = getAuthHeaders();
-      const result = await apiRequest<MaintenanceRequest[]>('GET', '/maintenance/tenant', undefined, headers);
-      return Array.isArray(result) ? result : [];
+      const raw = await apiRequest<unknown>('GET', '/maintenance/tenant', undefined, headers);
+      const result = MaintenanceRequestArraySchema.safeParse(raw);
+      return result.success ? result.data as MaintenanceRequest[] : [];
     },
     async getManagerMaintenanceRequests(): Promise<MaintenanceRequest[]> {
       const headers = getAuthHeaders();
-      const result = await apiRequest<MaintenanceRequest[]>('GET', '/maintenance/manager/all', undefined, headers);
-      return Array.isArray(result) ? result : [];
+      const raw = await apiRequest<unknown>('GET', '/maintenance/manager/all', undefined, headers);
+      const result = MaintenanceRequestArraySchema.safeParse(raw);
+      return result.success ? result.data as MaintenanceRequest[] : [];
     },
     async getMaintenanceRequestById(id: string): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
-      return apiRequest<MaintenanceRequest>('GET', `/maintenance/${id}`, undefined, headers);
+      const raw = await apiRequest<unknown>('GET', `/maintenance/${id}`, undefined, headers);
+      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
     },
     async updateMaintenanceRequest(
       id: string,
       data: UpdateMaintenanceRequestRequest,
     ): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
-      return apiRequest<MaintenanceRequest>('PUT', `/maintenance/${id}`, data, headers);
+      const raw = await apiRequest<unknown>('PUT', `/maintenance/${id}`, data, headers);
+      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
     },
   },
 
@@ -797,23 +825,25 @@ export const featureApi = {
   },
 
   stripe: {
-    createSetupIntent(): Promise<{ success: boolean; clientSecret: string }> {
+    async createSetupIntent(): Promise<{ success: boolean; clientSecret: string }> {
       const headers = getAuthHeaders();
-      return apiRequest<{ success: boolean; clientSecret: string }>(
+      const raw = await apiRequest<unknown>(
         'POST',
         '/payments/setup-intent',
         undefined,
         headers,
       );
+      return CreateSetupIntentResponseSchema.parse(raw);
     },
-    listPaymentMethods(): Promise<{ success: boolean; data: StripePaymentMethod[] }> {
+    async listPaymentMethods(): Promise<{ success: boolean; data: StripePaymentMethod[] }> {
       const headers = getAuthHeaders();
-      return apiRequest<{ success: boolean; data: StripePaymentMethod[] }>(
+      const raw = await apiRequest<unknown>(
         'GET',
         '/payments/payment-methods',
         undefined,
         headers,
       );
+      return ListPaymentMethodsResponseSchema.parse(raw);
     },
     attachPaymentMethod(
       stripePaymentMethodId: string,
@@ -844,18 +874,19 @@ export const featureApi = {
         headers,
       );
     },
-    createPaymentIntent(
+    async createPaymentIntent(
       params: CreatePaymentIntentParams,
     ): Promise<{ success: boolean; clientSecret: string; paymentId: string }> {
       const headers = getAuthHeaders();
-      return apiRequest<{ success: boolean; clientSecret: string; paymentId: string }>(
+      const raw = await apiRequest<unknown>(
         'POST',
         '/payments/create-payment-intent',
         params,
         headers,
       );
+      return CreatePaymentIntentResponseSchema.parse(raw);
     },
-    getPaymentHistory(
+    async getPaymentHistory(
       page?: number,
       limit?: number,
     ): Promise<{
@@ -864,12 +895,13 @@ export const featureApi = {
       pagination: { page: number; limit: number; total: number; hasMore: boolean };
     }> {
       const headers = getAuthHeaders();
-      return apiRequest(
+      const raw = await apiRequest<unknown>(
         'GET',
         `/payments/history${buildQueryString({ page, limit })}`,
         undefined,
         headers,
       );
+      return PaymentHistoryResponseSchema.parse(raw);
     },
   },
 
@@ -885,14 +917,15 @@ export const featureApi = {
         headers,
       );
     },
-    getCurrent(): Promise<{ success: boolean; data: SubscriptionRecord | null }> {
+    async getCurrent(): Promise<{ success: boolean; data: SubscriptionRecord | null }> {
       const headers = getAuthHeaders();
-      return apiRequest<{ success: boolean; data: SubscriptionRecord | null }>(
+      const raw = await apiRequest<unknown>(
         'GET',
         '/subscriptions/current',
         undefined,
         headers,
       );
+      return GetCurrentSubscriptionResponseSchema.parse(raw);
     },
     cancel(): Promise<{ success: boolean; message: string }> {
       const headers = getAuthHeaders();
@@ -932,7 +965,16 @@ export const featureApi = {
         `/vendors${query}`,
         undefined,
         headers,
-      ).then((r) => (Array.isArray(r) ? r : (r as { vendors: Vendor[] }).vendors ?? []));
+      ).then((r) => {
+        // Type narrowing: check response shape
+        if (Array.isArray(r)) {
+          return r;
+        }
+        if (typeof r === 'object' && r !== null && 'vendors' in r) {
+          return (r as { vendors: Vendor[] }).vendors ?? [];
+        }
+        return [];
+      });
     },
     get(id: string): Promise<Vendor> {
       const headers = getAuthHeaders();
@@ -945,7 +987,14 @@ export const featureApi = {
         '/vendors',
         payload,
         headers,
-      ).then((r) => ('vendor' in r ? (r as { vendor: Vendor }).vendor : (r as Vendor)));
+      ).then((r) => {
+        // Type narrowing: check for nested vendor object
+        if (typeof r === 'object' && r !== null && 'vendor' in r) {
+          return (r as { vendor: Vendor }).vendor;
+        }
+        // Assume it's a direct Vendor object
+        return r as Vendor;
+      });
     },
     update(id: string, payload: Partial<CreateVendorPayload>): Promise<Vendor> {
       const headers = getAuthHeaders();
@@ -954,7 +1003,14 @@ export const featureApi = {
         `/vendors/${id}`,
         payload,
         headers,
-      ).then((r) => ('vendor' in r ? (r as { vendor: Vendor }).vendor : (r as Vendor)));
+      ).then((r) => {
+        // Type narrowing: check for nested vendor object
+        if (typeof r === 'object' && r !== null && 'vendor' in r) {
+          return (r as { vendor: Vendor }).vendor;
+        }
+        // Assume it's a direct Vendor object
+        return r as Vendor;
+      });
     },
     deactivate(id: string): Promise<{ message: string }> {
       const headers = getAuthHeaders();
