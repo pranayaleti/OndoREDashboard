@@ -10,6 +10,8 @@ import OwnerTenants from "@/components/owner/owner-tenants"
 import OwnerProfile from "@/components/owner/owner-profile"
 import OwnerMessages from "@/components/owner/owner-messages"
 import OwnerDocuments from "@/components/owner/owner-documents"
+import OwnerOccupancy from "@/components/owner/owner-occupancy"
+import OwnerPropertyDetail from "@/components/owner/owner-property-detail"
 import { AddPropertyForm } from "@/components/owner/add-property-form"
 import { OwnerMaintenanceManagement } from "@/components/owner/maintenance-management"
 import OwnerCalendar from "@/components/owner/owner-calendar"
@@ -27,12 +29,14 @@ export default function Owner() {
             {/* Property creation routes - both old and new URLs */}
             <Route path="/properties/add" element={<AddPropertyForm />} />
             <Route path="/property-management/add" element={<AddPropertyForm />} />
+            <Route path="/properties/:id" element={<OwnerPropertyDetail />} />
             <Route path="/properties/*" element={<OwnerProperties />} />
             <Route path="/finances/*" element={<OwnerFinances />} />
             <Route path="/reports/*" element={<OwnerReports />} />
             <Route path="/tenants" element={<OwnerTenants />} />
             <Route path="/maintenance/*" element={<OwnerMaintenanceManagement />} />
             <Route path="/messages/*" element={<OwnerMessages />} />
+            <Route path="/occupancy/*" element={<OwnerOccupancy />} />
             <Route path="/documents/*" element={<OwnerDocuments />} />
             <Route path="/calendar" element={<OwnerCalendar />} />
             <Route path="/notifications" element={<OwnerNotifications />} />

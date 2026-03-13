@@ -157,7 +157,7 @@ export const PropertySchema = z.object({
   specialties: z.array(z.string()).optional(),
   services: z.array(z.string()).optional(),
   valueRanges: z.array(z.string()).optional(),
-  status: z.enum(["pending", "approved", "rejected"]),
+  status: z.enum(["pending", "approved", "rejected", "occupied", "vacant"]),
   createdAt: z.string(),
   updatedAt: z.string(),
   photos: z.array(PropertyPhotoSchema).optional(),
@@ -171,10 +171,17 @@ export const GetPropertyResponseSchema = z.object({
 });
 
 export const GetPropertiesResponseSchema = z.object({
-  properties: z.array(PropertySchema),
-  total: z.number(),
-  page: z.number(),
-  pageSize: z.number(),
+  data: z.array(PropertySchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    totalPages: z.number(),
+    hasMore: z.boolean(),
+    hasNextPage: z.boolean(),
+    hasPreviousPage: z.boolean(),
+    nextPage: z.number().optional(),
+  }),
 });
 
 // ─── Maintenance schemas ───────────────────────────────────────────────────────

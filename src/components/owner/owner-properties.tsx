@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,7 +8,6 @@ import { Building, Plus, Search, Filter } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, type Property } from "@/lib/api"
 import { ModernPropertyCard } from "./modern-property-card"
-import { PropertyDetailModal } from "@/components/property-detail-modal"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 
 export default function OwnerProperties() {
@@ -16,9 +15,8 @@ export default function OwnerProperties() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
-  const [showPropertyDetail, setShowPropertyDetail] = useState(false)
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchProperties()
@@ -75,8 +73,7 @@ export default function OwnerProperties() {
   }
 
   const handleViewProperty = (property: Property) => {
-    setSelectedProperty(property)
-    setShowPropertyDetail(true)
+    navigate(`/owner/properties/${property.id}`)
   }
 
   if (loading) {
@@ -160,13 +157,7 @@ export default function OwnerProperties() {
         </div>
       )}
 
-      {/* Property Detail Modal */}
-      <PropertyDetailModal
-        property={selectedProperty}
-        open={showPropertyDetail}
-        onOpenChange={setShowPropertyDetail}
-        showActions={false}
-      />
+      {/* Property details are now handled by routing to /owner/properties/:id */}
     </div>
   )
 }

@@ -31,7 +31,14 @@ export const propertyApi = {
       `/properties?page=${page}&pageSize=${pageSize}`,
       headers,
     );
-    return GetPropertiesResponseSchema.parse(raw) as GetPropertiesResponse;
+    const parsed = GetPropertiesResponseSchema.parse(raw);
+    // Remap backend envelope { data, pagination } → consumer shape { properties, total, page, pageSize }
+    return {
+      properties: parsed.data,
+      total: parsed.pagination.total,
+      page: parsed.pagination.page,
+      pageSize: parsed.pagination.limit,
+    } as GetPropertiesResponse;
   },
 
   async getProperty(id: string): Promise<GetPropertyResponse> {

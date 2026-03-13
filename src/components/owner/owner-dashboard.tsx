@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building, DollarSign, Users, FileText, BarChart3, AlertTriangle, Plus, MessageSquare, Wrench, ArrowUp, Calendar, Home, FolderOpen, Loader2 } from "lucide-react"
+import { Building, DollarSign, Users, FileText, BarChart3, AlertTriangle, Plus, MessageSquare, Wrench, ArrowUp, Calendar, Home, FolderOpen, Loader2, ChevronRight } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, type Property } from "@/lib/api"
 import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
@@ -387,57 +387,56 @@ export default function OwnerDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
+          {/* Financial Overview — full width */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            {/* Financial Overview */}
-            <Card>
+            <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>Financial Overview</CardTitle>
                 <CardDescription>Revenue and expenses for the current month</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Total Revenue */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Total Revenue</span>
-                    <span className="text-lg font-bold">${portfolioStats.monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                {/* Top row: Revenue + Expenses side-by-side on large screens */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Total Revenue */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Total Revenue</span>
+                      <span className="text-lg font-bold">${portfolioStats.monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full" 
-                      style={{ width: '100%' }}
-                    ></div>
+
+                  {/* Expenses */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Expenses</span>
+                      <span className="text-lg font-bold">${portfolioStats.monthlyExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min((portfolioStats.monthlyExpenses / Math.max(portfolioStats.monthlyRevenue, 1)) * 100, 100)}%` }}></div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Expenses */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Expenses</span>
-                    <span className="text-lg font-bold">${portfolioStats.monthlyExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                {/* Expense breakdown */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Maintenance:</span>
+                    <span className="font-medium">${portfolioStats.expenseBreakdown.maintenance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-red-500 h-2 rounded-full" 
-                      style={{ width: `${Math.min((portfolioStats.monthlyExpenses / Math.max(portfolioStats.monthlyRevenue, 1)) * 100, 100)}%` }}
-                    ></div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Utilities:</span>
+                    <span className="font-medium">${portfolioStats.expenseBreakdown.utilities.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
-                  <div className="space-y-2 pt-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Maintenance:</span>
-                      <span className="font-medium">${portfolioStats.expenseBreakdown.maintenance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Utilities:</span>
-                      <span className="font-medium">${portfolioStats.expenseBreakdown.utilities.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Property Management:</span>
-                      <span className="font-medium">${portfolioStats.expenseBreakdown.propertyManagement.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Insurance:</span>
-                      <span className="font-medium">${portfolioStats.expenseBreakdown.insurance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Property Mgmt:</span>
+                    <span className="font-medium">${portfolioStats.expenseBreakdown.propertyManagement.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Insurance:</span>
+                    <span className="font-medium">${portfolioStats.expenseBreakdown.insurance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 
@@ -450,53 +449,86 @@ export default function OwnerDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Property Occupancy */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Property Occupancy</CardTitle>
-                <CardDescription>Current occupancy status</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Overall Occupancy */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Overall Occupancy</span>
-                    <span className="text-lg font-bold">{Math.round(portfolioStats.occupancyRate)}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full" 
-                      style={{ width: `${portfolioStats.occupancyRate}%` }}
-                    ></div>
-                  </div>
+          {/* Property Occupancy — full width with clickable rows */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Occupancy</CardTitle>
+              <CardDescription>Current occupancy status — click a property to view details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Overall Occupancy Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Overall Occupancy</span>
+                  <span className="text-lg font-bold">{Math.round(portfolioStats.occupancyRate)}%</span>
                 </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div
+                    className="bg-orange-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${portfolioStats.occupancyRate}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {portfolioStats.occupiedUnits} of {portfolioStats.totalProperties} units occupied
+                </p>
+              </div>
 
-                {/* Individual Properties */}
-                <div className="space-y-3 pt-2">
-                  {properties.slice(0, 4).map((property) => {
-                    const isOccupied = property.tenantId ? true : false
-                    const propertyName = property.addressLine1 || `${property.type} - ${property.id.slice(-4)}`
+              {/* Individual Properties — clickable rows in a scrollable grid */}
+              {properties.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No properties found</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {properties.map((property) => {
+                    const isOccupied = Boolean(property.tenantId)
+                    const propertyName = property.addressLine1 || `${property.type} — ${property.id.slice(-4)}`
+                    const propertyType = property.type
+                      ? property.type.charAt(0).toUpperCase() + property.type.slice(1).replace(/_/g, " ")
+                      : "Property"
+                    const rent = property.price
+                      ? `$${property.price.toLocaleString()}/mo`
+                      : null
                     return (
-                      <div key={property.id} className="flex justify-between items-center p-2 border rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Home className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{propertyName}</span>
-                          <span className="text-xs text-muted-foreground">({property.type})</span>
+                      <button
+                        key={property.id}
+                        onClick={() => handleViewProperty(property)}
+                        className="w-full text-left group flex items-center justify-between p-3 border rounded-xl hover:border-orange-500/60 hover:bg-orange-500/5 dark:hover:bg-orange-500/10 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                        aria-label={`View details for ${propertyName}`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`p-2 rounded-lg flex-shrink-0 ${
+                            isOccupied
+                              ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                              : "bg-orange-500/10 text-orange-500"
+                          }`}>
+                            <Home className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium truncate">{propertyName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {propertyType}{rent ? ` · ${rent}` : ""}
+                            </p>
+                          </div>
                         </div>
-                        <Badge variant={isOccupied ? "default" : "destructive"} className={isOccupied ? "bg-green-500" : ""}>
-                          {isOccupied ? "Occupied" : "Vacant"}
-                        </Badge>
-                      </div>
+                        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                          <Badge
+                            variant={isOccupied ? "default" : "destructive"}
+                            className={isOccupied ? "bg-green-500 hover:bg-green-500" : ""}
+                          >
+                            {isOccupied ? "Occupied" : "Vacant"}
+                          </Badge>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </button>
                     )
                   })}
-                  {properties.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">No properties found</p>
-                  )}
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </CardContent>
+          </Card>
 
+          <div className="grid grid-cols-1 gap-4 md:gap-6">
             {/* Home care reminders */}
             <HomeCareRemindersCard />
           </div>

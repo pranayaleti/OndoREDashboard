@@ -75,20 +75,25 @@ export default function Header() {
       const urlParams = new URLSearchParams(location.search)
       const currentTab = urlParams.get("tab")
       
-      // If item has a tab, check if it matches the current tab
-      if (item.tab) {
-        // For overview, it's active if no tab is specified or tab is "overview"
-        if (item.tab === "overview") {
-          return !currentTab || currentTab === "overview"
-        }
-        return currentTab === item.tab
+      // If the location matches the item's path exactly or starts with it (except for root /dashboard)
+      if (item.path !== "/dashboard" && (location.pathname === item.path || location.pathname.startsWith(item.path + "/"))) {
+        return true
       }
       
-      // For paths that don't have tabs, check path match
-      return location.pathname === item.path || location.pathname.startsWith(item.path + "/")
+      if (item.path === "/dashboard" && location.pathname === "/dashboard") {
+         if (!currentTab && item.tab === "overview") return true
+         if (currentTab === item.tab) return true
+      }
+      
+      // If item has a tab, check if it matches the current tab parameter
+      if (item.tab && currentTab === item.tab) {
+        return true
+      }
+      
+      return false
     }
     
-    // For non-dashboard paths, check path match
+    // For non-dashboard paths
     return location.pathname === item.path || location.pathname.startsWith(item.path + "/")
   }
 
@@ -258,7 +263,7 @@ export default function Header() {
                       ? "text-gray-900 dark:text-gray-900"
                       : "text-gray-400 dark:text-gray-400"
                   )} />
-                  <span>Active Owners</span>
+                  <span>Owners</span>
                   <span className={cn(
                     "font-bold",
                     location.pathname === "/dashboard/owners" || location.pathname.startsWith("/dashboard/owners/")
@@ -281,7 +286,7 @@ export default function Header() {
                       ? "text-gray-900 dark:text-gray-900"
                       : "text-gray-400 dark:text-gray-400"
                   )} />
-                  <span>Active Tenants</span>
+                  <span>Tenants</span>
                   <span className={cn(
                     "font-bold",
                     location.pathname === "/dashboard/tenants" || location.pathname.startsWith("/dashboard/tenants/")
@@ -377,7 +382,7 @@ export default function Header() {
                                     ? "text-gray-900 dark:text-gray-900"
                                     : "text-gray-400 dark:text-gray-400"
                                 )} />
-                                <span>Active Owners</span>
+                                <span>Owners</span>
                               </div>
                               <span className={cn(
                                 "font-bold",
@@ -403,7 +408,7 @@ export default function Header() {
                                     ? "text-gray-900 dark:text-gray-900"
                                     : "text-gray-400 dark:text-gray-400"
                                 )} />
-                                <span>Active Tenants</span>
+                                <span>Tenants</span>
                               </div>
                               <span className={cn(
                                 "font-bold",
