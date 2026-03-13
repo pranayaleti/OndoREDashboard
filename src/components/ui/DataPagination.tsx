@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface DataPaginationProps {
   currentPage: number;       // 1-indexed
   totalPages: number;
@@ -64,11 +62,10 @@ export function DataPagination({
               key={p}
               onClick={() => onPageChange(p as number)}
               aria-current={p === currentPage ? 'page' : undefined}
-              className={`px-3 py-1 rounded text-sm transition-colors ${
-                p === currentPage
+              className={`px-3 py-1 rounded text-sm transition-colors ${p === currentPage
                   ? 'bg-blue-600 text-white font-medium'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
+                }`}
             >
               {p}
             </button>

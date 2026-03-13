@@ -90,7 +90,7 @@ export default function ManagerMaintenance() {
 
   const filteredRequests = maintenanceRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         request.description.toLowerCase().includes(searchTerm.toLowerCase())
+      request.description.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || request.status === statusFilter
     const matchesPriority = priorityFilter === "all" || request.priority === priorityFilter
     return matchesSearch && matchesStatus && matchesPriority
@@ -292,6 +292,14 @@ export default function ManagerMaintenance() {
         </CardContent>
       </Card>
 
+      {/* Count + page size */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">
+          {totalItems} request{totalItems !== 1 ? "s" : ""} found
+        </p>
+        <PageSizeSelector pageSize={pageSize} onChange={changePageSize} options={[10, 25, 50]} />
+      </div>
+
       {/* Requests List */}
       <div className="space-y-4">
         {loading ? (
@@ -315,7 +323,7 @@ export default function ManagerMaintenance() {
             <p className="text-gray-600">No maintenance requests found matching your criteria.</p>
           </div>
         ) : (
-          filteredRequests.map((request) => (
+          pagedRequests.map((request) => (
             <Card key={request.id} className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
                 <div className="flex justify-between items-start mb-4">
@@ -324,23 +332,23 @@ export default function ManagerMaintenance() {
                     <div>
                       <h3 className="font-semibold text-lg">{request.title}</h3>
                       <p className="text-gray-600 dark:text-gray-400 mt-1">{request.description}</p>
-                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                         <span className="flex items-center">
-                           <Building className="h-4 w-4 mr-1" />
-                           {request.propertyTitle || `Property ${request.propertyId?.slice(-8)}`}
-                         </span>
-                         <span className="flex items-center">
-                           <User className="h-4 w-4 mr-1" />
-                           {request.tenantFirstName && request.tenantLastName 
-                             ? `${request.tenantFirstName} ${request.tenantLastName}`
-                             : `Tenant ${request.tenantId?.slice(-8)}`
-                           }
-                         </span>
-                         <span className="flex items-center">
-                           <Calendar className="h-4 w-4 mr-1" />
-                           {new Date(request.createdAt).toLocaleDateString()}
-                         </span>
-                       </div>
+                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                        <span className="flex items-center">
+                          <Building className="h-4 w-4 mr-1" />
+                          {request.propertyTitle || `Property ${request.propertyId?.slice(-8)}`}
+                        </span>
+                        <span className="flex items-center">
+                          <User className="h-4 w-4 mr-1" />
+                          {request.tenantFirstName && request.tenantLastName
+                            ? `${request.tenantFirstName} ${request.tenantLastName}`
+                            : `Tenant ${request.tenantId?.slice(-8)}`
+                          }
+                        </span>
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {new Date(request.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col items-end space-y-2">
@@ -352,56 +360,56 @@ export default function ManagerMaintenance() {
                     </Badge>
                   </div>
                 </div>
-                
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                   <div>
-                     <span className="text-gray-500">Category:</span>
-                     <p className="font-medium capitalize">{request.category}</p>
-                   </div>
-                   <div>
-                     <span className="text-gray-500">Assigned To:</span>
-                     <p className="font-medium">{request.assignedTo || "Not assigned"}</p>
-                   </div>
-                   <div>
-                     <span className="text-gray-500">Scheduled:</span>
-                     <p className="font-medium">
-                       {request.dateScheduled ? new Date(request.dateScheduled).toLocaleDateString() : "Not scheduled"}
-                     </p>
-                   </div>
-                   <div>
-                     <span className="text-gray-500">Completed:</span>
-                     <p className="font-medium">
-                       {request.dateCompleted ? new Date(request.dateCompleted).toLocaleDateString() : "Not completed"}
-                     </p>
-                   </div>
-                 </div>
 
-                 {/* Property and Tenant Details */}
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                   <div>
-                     <span className="text-gray-500 font-medium">Property Details:</span>
-                     <p className="font-medium">{request.propertyTitle || "Property Title N/A"}</p>
-                     <p className="text-gray-600 text-xs">
-                       {request.propertyAddress && request.propertyCity 
-                         ? `${request.propertyAddress}, ${request.propertyCity}`
-                         : "Address not available"
-                       }
-                     </p>
-                   </div>
-                   <div>
-                     <span className="text-gray-500 font-medium">Tenant Details:</span>
-                     <p className="font-medium">
-                       {request.tenantFirstName && request.tenantLastName 
-                         ? `${request.tenantFirstName} ${request.tenantLastName}`
-                         : "Tenant Name N/A"
-                       }
-                     </p>
-                     <p className="text-gray-600 text-xs">
-                       {request.tenantEmail || "Email not available"}
-                       {request.tenantPhone && ` • ${request.tenantPhone}`}
-                     </p>
-                   </div>
-                 </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
+                  <div>
+                    <span className="text-gray-500">Category:</span>
+                    <p className="font-medium capitalize">{request.category}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Assigned To:</span>
+                    <p className="font-medium">{request.assignedTo || "Not assigned"}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Scheduled:</span>
+                    <p className="font-medium">
+                      {request.dateScheduled ? new Date(request.dateScheduled).toLocaleDateString() : "Not scheduled"}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Completed:</span>
+                    <p className="font-medium">
+                      {request.dateCompleted ? new Date(request.dateCompleted).toLocaleDateString() : "Not completed"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Property and Tenant Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div>
+                    <span className="text-gray-500 font-medium">Property Details:</span>
+                    <p className="font-medium">{request.propertyTitle || "Property Title N/A"}</p>
+                    <p className="text-gray-600 text-xs">
+                      {request.propertyAddress && request.propertyCity
+                        ? `${request.propertyAddress}, ${request.propertyCity}`
+                        : "Address not available"
+                      }
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 font-medium">Tenant Details:</span>
+                    <p className="font-medium">
+                      {request.tenantFirstName && request.tenantLastName
+                        ? `${request.tenantFirstName} ${request.tenantLastName}`
+                        : "Tenant Name N/A"
+                      }
+                    </p>
+                    <p className="text-gray-600 text-xs">
+                      {request.tenantEmail || "Email not available"}
+                      {request.tenantPhone && ` • ${request.tenantPhone}`}
+                    </p>
+                  </div>
+                </div>
 
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -444,7 +452,7 @@ export default function ManagerMaintenance() {
                             <div className="text-xs text-gray-500 mb-2">
                               Current status: {updateData.status || "none"} | Selected request: {selectedRequest?.id || "none"}
                             </div>
-                            <Select 
+                            <Select
                               value={updateData.status}
                               onValueChange={(value) => {
                                 setUpdateData(prev => ({ ...prev, status: value }));
@@ -493,8 +501,8 @@ export default function ManagerMaintenance() {
 
                     <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           size="sm"
                           onClick={() => setSelectedRequest(request)}
                         >
@@ -532,8 +540,8 @@ export default function ManagerMaintenance() {
                     </Dialog>
 
                     {request.status !== "completed" && (
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleCompleteRequest(request.id)}
                       >
@@ -543,11 +551,19 @@ export default function ManagerMaintenance() {
                     )}
                   </div>
                 </div>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
           ))
         )}
       </div>
+
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        pageSize={pageSize}
+        onPageChange={goToPage}
+      />
 
       {/* New Maintenance Request Dialog */}
       <NewMaintenanceRequestDialog

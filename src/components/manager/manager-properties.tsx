@@ -88,7 +88,7 @@ export default function ManagerProperties() {
           p.city.toLowerCase().includes(q) ||
           p.addressLine1.toLowerCase().includes(q) ||
           (p.state && p.state.toLowerCase().includes(q)) ||
-          (p.zipCode && p.zipCode.includes(q))
+          (p.zipcode && p.zipcode.includes(q))
       )
     }
 
