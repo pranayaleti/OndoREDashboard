@@ -16,10 +16,9 @@ export interface ChatRequest {
   context?: Record<string, unknown>;
 }
 
+/** Backend returns { reply: string }. */
 export interface ChatResponse {
-  message: ChatMessage;
-  suggestions?: string[];
-  context?: Record<string, unknown>;
+  reply: string;
 }
 
 export const assistantApi = {

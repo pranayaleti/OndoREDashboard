@@ -62,6 +62,7 @@ src/
 - **Components**: Check `components/ui/` before creating new primitives. Radix UI covers most needs.
 - **Forms**: Use React Hook Form + Zod for all form validation.
 - **No `any`**: TypeScript strict mode — avoid `any` unless absolutely unavoidable.
+- **Assistant chat**: Client-side AI guardrails in `lib/aiGuardrails.ts` (`validateChatInput`) run before sending messages; backend enforces the same limits. Handle 400 (guardrail/validation) and 429 (rate limit) in the assistant UI.
 
 ## Auth & test users
 

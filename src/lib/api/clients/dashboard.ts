@@ -156,7 +156,7 @@ export const dashboardApi = {
       content: m.content,
     }));
     const res = await assistantApi.chat({ messages: chatMessages });
-    return { reply: typeof res.message === "object" && res.message?.content != null ? res.message.content : "" };
+    return { reply: res.reply ?? "" };
   },
 
   async getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {

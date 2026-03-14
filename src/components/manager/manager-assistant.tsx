@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Send, Loader2, User, Bot } from "lucide-react"
-import { dashboardApi } from "@/lib/api"
+import { dashboardApi, ApiError } from "@/lib/api"
+import { validateChatInput } from "@/lib/aiGuardrails"
 
 type MessageRole = "user" | "assistant"
 
@@ -43,17 +44,25 @@ export default function ManagerAssistant() {
       content: text,
       createdAt: new Date(),
     }
+    const conversation = [...messages, userMessage].map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    }))
+
+    // Client-side AI guardrails: validate before sending (matches backend limits)
+    const guardrail = validateChatInput(conversation)
+    if (!guardrail.ok) {
+      setError(guardrail.error)
+      return
+    }
+
     setMessages((prev) => [...prev, userMessage])
     setInput("")
     setIsLoading(true)
     setError(null)
 
     try {
-      const conversation = [...messages, userMessage].map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      }))
-      const { reply } = await dashboardApi.assistantChat(conversation)
+      const { reply } = await dashboardApi.assistantChat(guardrail.messages)
       const assistantMessage: Message = {
         id: createId(),
         role: "assistant",
@@ -62,7 +71,14 @@ export default function ManagerAssistant() {
       }
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      const message = err && typeof err === "object" && "message" in err ? String((err as { message: string }).message) : "Failed to get reply"
+      const message =
+        err instanceof ApiError
+          ? err.status === 429
+            ? "Too many requests. Please wait a few minutes before sending more messages."
+            : err.message
+          : err && typeof err === "object" && "message" in err
+            ? String((err as { message: string }).message)
+            : "Failed to get reply"
       setError(message)
     } finally {
       setIsLoading(false)
