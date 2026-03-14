@@ -72,7 +72,6 @@ OnDo/
 ### **🔥 Super Admin** (Backend Seeded)
 - **Purpose**: System administrator
 - **Access**: Can invite managers
-- **Login**: `iamharikrishnaa@gmail.com` / `Hari@123`
 
 ### **🏢 Manager** (Property Management Company)
 - **Purpose**: Property management company staff
@@ -119,7 +118,6 @@ npm run dev                  # Start frontend (:3001)
 
 ### **3. Test the System**
 1. **Login**: `https://pranayaleti.github.io/ondorealestateui/login`
-2. **Super Admin**: `iamharikrishnaa@gmail.com` / `Hari@123`
 3. **Invite Manager**: Use admin interface
 4. **Complete Signup**: Use invitation URL
 5. **Test All Roles**: Manager → Owner → Tenant flow
@@ -179,6 +177,31 @@ npm run start        # Start production server
 npm run db:push      # Apply database migrations
 npm run seed         # Seed database with admin user
 ```
+
+---
+
+## 🔧 **Troubleshooting: Login / CORS / 404**
+
+If the login page shows **CORS error** or **404** on `login` and `refresh` in the Network tab:
+
+1. **Run the Node backend**  
+   The Dashboard calls the API at `VITE_API_BASE_URL`. For local dev, that must be the OndoREBackend server:
+   ```bash
+   cd ../OndoREBackend   # or your backend repo
+   npm run dev          # listens on port 3000 by default
+   ```
+
+2. **Use `http://localhost:3000/api` for local dev**  
+   In the Dashboard `.env`, set:
+   ```bash
+   VITE_API_BASE_URL=http://localhost:3000/api
+   ```
+   Do **not** use `http://api.localhost:3000/api` unless you have a proxy that forwards that host to the same backend (otherwise you get 404).
+
+3. **Restart the Dashboard** after changing `.env` (Vite reads env at startup).
+
+4. **Check the backend**  
+   Open `http://localhost:3000/health` in the browser; you should see `{"ok":true,...}`. If that fails, the backend isn’t running or is on a different port.
 
 ---
 
