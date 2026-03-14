@@ -6,30 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ondo Real Estate - Property Management Platform</title>
 
-    <!-- Speculation Rules API: prefetch public same-origin pages for faster navigation -->
+    <!-- Speculation Rules API: prefetch public same-origin pages. Paths are relative to app base (root in dev, or VITE_BASE_PATH in production). -->
     <script type="speculationrules">
       {
         "prefetch": [
           {
             "source": "list",
-            "urls": [
-              "/ondorealestateui/",
-              "/ondorealestateui/pricing"
-            ],
+            "urls": ["/", "/pricing"],
             "eagerness": "eager"
           },
           {
             "source": "list",
-            "urls": [
-              "/ondorealestateui/about",
-              "/ondorealestateui/contact",
-              "/ondorealestateui/faq",
-              "/ondorealestateui/free-trial",
-              "/ondorealestateui/login",
-              "/ondorealestateui/register",
-              "/ondorealestateui/privacy",
-              "/ondorealestateui/terms"
-            ],
+            "urls": ["/about", "/contact", "/faq", "/free-trial", "/login", "/register", "/privacy", "/terms"],
             "eagerness": "moderate"
           }
         ]

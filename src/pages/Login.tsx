@@ -16,6 +16,9 @@ import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
 import { OnboardingCard } from "@/components/auth/onboarding-card"
 import { companyInfo } from "@/constants/companyInfo"
 
+/** Seeded test users (npm run seed in OndoREBackend) — dev only */
+const DEMO_PASSWORD = "ondo1234"
+
 const ownerSteps = [
   "Invite owners + tenants",
   "Trigger SmartMove / Checkr",
@@ -177,6 +180,7 @@ export default function LoginPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 value={values.password}
                 maxLength={128}
                 onChange={handleChange("password")}
@@ -240,12 +244,9 @@ export default function LoginPage() {
             </button>
             {showTestAccounts && (
               <div className="mt-3 space-y-2">
-                <CredentialButton label="Owner" email={import.meta.env.VITE_TEST_OWNER_EMAIL ?? ""} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
-                <CredentialButton label="Tenant" email={import.meta.env.VITE_TEST_TENANT_EMAIL ?? ""} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
-                <CredentialButton label="Manager" email={`manager@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
-                <CredentialButton label="Admin" email={`admin@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
-                <CredentialButton label="Super Admin" email={`superadmin@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
-                <CredentialButton label="Maintenance" email={`maintenance@${companyInfo.social.twitterDomain}`} password={import.meta.env.VITE_TEST_PASSWORD ?? ""} onFill={handleFillCredentials} />
+                <CredentialButton label="Manager/Admin" email={`admin@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
+                <CredentialButton label="Owner" email={`owner@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
+                <CredentialButton label="Tenant" email={`tenant@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
               </div>
             )}
           </div>

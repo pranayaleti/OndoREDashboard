@@ -19,14 +19,20 @@ import { z } from "zod";
 
 // ─── Primitives ────────────────────────────────────────────────────────────────
 
-const UserRoleSchema = z.enum([
+const ROLES = [
   "super_admin",
   "admin",
   "manager",
   "owner",
   "tenant",
   "maintenance",
-]);
+] as const;
+
+/** Accepts API role in any case and normalizes to lowercase enum. */
+const UserRoleSchema = z
+  .string()
+  .transform((s) => s.toLowerCase())
+  .pipe(z.enum(ROLES));
 
 // ─── Auth / User schemas ───────────────────────────────────────────────────────
 
@@ -36,19 +42,37 @@ export const UserSchema = z.object({
   lastName: z.string(),
   email: z.string().email(),
   role: UserRoleSchema,
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  profilePicture: z.string().optional(),
+  phone: z.string().nullish().transform((v) => v ?? undefined),
+  address: z.string().nullish().transform((v) => v ?? undefined),
+  profilePicture: z.string().nullish().transform((v) => v ?? undefined),
 });
 
-export const LoginResponseSchema = z.object({
-  message: z.string(),
-  accessToken: z.string(),
-  expiresIn: z.number(),
-  tokenType: z.string().optional(),
-  csrfToken: z.string().optional(),
-  user: UserSchema,
-});
+/** Accepts accessToken or legacy "token" and expiresIn as number or string. */
+export const LoginResponseSchema = z
+  .object({
+    message: z.string(),
+    accessToken: z.string().optional(),
+    token: z.string().optional(),
+    expiresIn: z.union([z.number(), z.string().transform(Number)]).optional(),
+    tokenType: z.string().optional(),
+    csrfToken: z.string().optional(),
+    user: UserSchema,
+  })
+  .transform((data) => {
+    const accessToken = (data.accessToken ?? data.token ?? "").trim();
+    const expiresIn =
+      typeof data.expiresIn === "number"
+        ? data.expiresIn
+        : data.expiresIn != null
+          ? Number(data.expiresIn)
+          : 900;
+    if (!accessToken) {
+      throw new z.ZodError([
+        { code: "custom", path: ["accessToken"], message: "Missing accessToken or token in login response" },
+      ]);
+    }
+    return { ...data, accessToken, expiresIn };
+  });
 
 export const UpdateProfileResponseSchema = z.object({
   message: z.string(),

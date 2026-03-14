@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:prod-like": "vite --port 3101",
     "build": "tsc && vite build",
     "clean": "rm -rf dist",
     "build:clean": "npm run clean && npm run build",

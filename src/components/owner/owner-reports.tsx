@@ -49,7 +49,7 @@ function ReportsList() {
     sessionStorage.setItem('pdfPreviewData', JSON.stringify(reportData))
     
     // Get base URL and construct full path
-    const baseUrl = import.meta.env.BASE_URL || '/ondorealestateui/'
+    const baseUrl = import.meta.env.BASE_URL || '/'
     // Remove trailing slash from baseUrl and ensure proper path construction
     const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
     // Use window.location.origin to get the full URL
