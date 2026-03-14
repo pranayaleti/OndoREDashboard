@@ -23,6 +23,7 @@ interface NewMaintenanceRequestDialogProps {
     property?: string
     tenant?: string
     photos: File[]
+    photoUrl?: string
   }) => void | Promise<void>
   defaultProperty?: string
   defaultTenant?: string
@@ -50,6 +51,7 @@ export function NewMaintenanceRequestDialog({
     property: defaultProperty || "",
     tenant: defaultTenant || "",
     photos: [] as File[],
+    photoUrl: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -90,6 +92,7 @@ export function NewMaintenanceRequestDialog({
           property: showPropertyField ? formData.property : undefined,
           tenant: showTenantField ? formData.tenant : undefined,
           photos: formData.photos,
+          photoUrl: formData.photoUrl.trim() || undefined,
         })
       }
 
@@ -102,6 +105,7 @@ export function NewMaintenanceRequestDialog({
         property: defaultProperty || "",
         tenant: defaultTenant || "",
         photos: [],
+        photoUrl: "",
       })
 
       toast({
@@ -150,6 +154,7 @@ export function NewMaintenanceRequestDialog({
         property: defaultProperty || "",
         tenant: defaultTenant || "",
         photos: [],
+        photoUrl: "",
       })
     } else if (newOpen) {
       // Reset property/tenant when dialog opens
@@ -316,6 +321,17 @@ export function NewMaintenanceRequestDialog({
               placeholder="Please provide a detailed description of the issue, including when it started, what you've tried, and any other relevant information..."
               rows={4}
               required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="photoUrl">Photo URL (optional)</Label>
+            <Input
+              id="photoUrl"
+              type="url"
+              value={formData.photoUrl}
+              onChange={(e) => setFormData((prev) => ({ ...prev, photoUrl: e.target.value }))}
+              placeholder="https://… (link to a photo of the issue)"
             />
           </div>
 

@@ -4,12 +4,13 @@ export default function ManagerDocuments() {
   return (
     <DocumentsPage
       role="manager"
+      fetchFromApi={true}
       showPropertyFilter={true}
-      showUpload={true}
+      showUpload={false}
       showDownload={true}
-      showDelete={true}
-      showShare={true}
-      showFolders={true}
+      showDelete={false}
+      showShare={false}
+      showFolders={false}
     />
   )
 }

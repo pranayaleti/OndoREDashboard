@@ -25,6 +25,12 @@ export interface NotificationPreferences {
   reportNotifications: boolean;
 }
 
+/** Backend returns { message, data }; list items may have isRead (camelCase). */
+interface GetNotificationsApiResponse {
+  message?: string;
+  data?: Array<Omit<Notification, "read"> & { isRead?: boolean; read?: boolean }>;
+}
+
 export const notificationsApi = {
   async getNotifications(
     unreadOnly: boolean = false,
@@ -33,11 +39,22 @@ export const notificationsApi = {
   ): Promise<{ notifications: Notification[]; total: number; page: number }> {
     const headers = getAuthHeaders();
     const query = new URLSearchParams();
-    if (unreadOnly) query.append("unreadOnly", "true");
-    query.append("page", String(page));
-    query.append("pageSize", String(pageSize));
+    if (unreadOnly) query.append("unread", "true");
+    query.append("limit", String(pageSize));
 
-    return apiGet(`/notifications?${query.toString()}`, headers);
+    const res = await apiGet<GetNotificationsApiResponse>(`/notifications?${query.toString()}`, headers);
+    const raw = res.data ?? [];
+    const notifications: Notification[] = raw.map((n) => ({
+      id: n.id,
+      userId: n.userId,
+      type: n.type,
+      title: n.title,
+      message: n.message,
+      read: Boolean(n.isRead ?? (n as Notification).read),
+      actionUrl: n.actionUrl,
+      createdAt: n.createdAt,
+    }));
+    return { notifications, total: notifications.length, page };
   },
 
   async getNotification(id: string): Promise<Notification> {

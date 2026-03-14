@@ -24,151 +24,67 @@ import { UpdateStatusDialog } from "@/components/maintenance/update-status-dialo
 import { AssignTechnicianDialog } from "@/components/maintenance/assign-technician-dialog"
 import { ScheduleServiceDialog } from "@/components/maintenance/schedule-service-dialog"
 import { useToast } from "@/hooks/use-toast"
-import { CheckCircle, Clock, PenToolIcon as Tool, Search, Calendar, Home, AlertCircle, Wrench, PlusCircle, Info, AlertTriangle, FileText, MoreVertical, LayoutGrid, List, ChevronLeft, ChevronRight, ChevronDown, Filter, X } from "lucide-react"
+import { CheckCircle, Clock, PenToolIcon as Tool, Search, Calendar, Home, AlertCircle, Wrench, PlusCircle, Info, AlertTriangle, FileText, MoreVertical, LayoutGrid, List, ChevronLeft, ChevronRight, ChevronDown, Filter, X, Loader2 } from "lucide-react"
 import { MAINTENANCE_STATUSES, MAINTENANCE_PRIORITIES, MAINTENANCE_CATEGORIES } from "@/constants/maintenance.constants"
-import { propertyApi, type Property } from "@/lib/api"
+import { propertyApi, maintenanceApi, type Property } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 
-// Mock data for maintenance requests
-const MOCK_REQUESTS = [
-  {
-    id: "M-1001",
-    title: "Leaking faucet in kitchen",
-    property: "123 Main St, Apt 4B",
-    tenant: "John Smith",
-    dateSubmitted: "2023-04-25",
-    status: "pending",
-    priority: "low",
-    category: "plumbing",
-    lastUpdated: "2023-04-25",
-    scheduledDate: null,
-    description: "The kitchen faucet has been leaking steadily for the past two days.",
-  },
-  {
-    id: "M-1002",
-    title: "AC not working properly",
-    property: "456 Park Ave, Unit 7",
-    tenant: "Sarah Johnson",
-    dateSubmitted: "2023-04-24",
-    status: "in-progress",
-    priority: "urgent",
-    category: "hvac",
-    lastUpdated: "2023-04-24",
-    scheduledDate: null,
-    description: "The AC unit is not cooling properly and making strange noises.",
-  },
-  {
-    id: "M-1003",
-    title: "Broken window in living room",
-    property: "789 Oak St, Apt 12",
-    tenant: "Michael Brown",
-    dateSubmitted: "2023-04-23",
-    status: "scheduled",
-    priority: "normal",
-    category: "structural",
-    lastUpdated: "2023-04-23",
-    scheduledDate: "2023-04-28",
-    description: "The light fixture in the main bathroom doesn't turn on even after replacing the bulb.",
-  },
-  {
-    id: "M-1004",
-    title: "Dishwasher not draining",
-    property: "321 Pine St, Unit 3",
-    tenant: "Emily Davis",
-    dateSubmitted: "2023-04-22",
-    status: "completed",
-    priority: "normal",
-    category: "appliance",
-    lastUpdated: "2023-04-22",
-    scheduledDate: "2023-04-22",
-    description: "The dishwasher isn't draining properly after cycles and leaves standing water.",
-  },
-  {
-    id: "M-1005",
-    title: "Smoke detector beeping",
-    property: "567 Oak St, Apt 8",
-    tenant: "Robert Wilson",
-    dateSubmitted: "2023-04-21",
-    status: "pending",
-    priority: "urgent",
-    category: "electrical",
-    lastUpdated: "2023-04-21",
-    scheduledDate: null,
-    description: "Smoke detector has been beeping intermittently for the past week.",
-  },
-  {
-    id: "M-1006",
-    title: "Leaking Kitchen Faucet",
-    property: "123 Main St, Apt 4B",
-    tenant: "John Smith",
-    dateSubmitted: "2023-05-10",
-    status: "in-progress",
-    priority: "normal",
-    category: "plumbing",
-    lastUpdated: "2023-05-12",
-    scheduledDate: "2023-05-15",
-    description: "The kitchen faucet has been leaking steadily for the past two days.",
-  },
-  {
-    id: "M-1007",
-    title: "Broken Air Conditioning",
-    property: "456 Oak Ave, Unit 7",
-    tenant: "Sarah Johnson",
-    dateSubmitted: "2023-05-08",
-    status: "scheduled",
-    priority: "urgent",
-    category: "hvac",
-    lastUpdated: "2023-05-09",
-    scheduledDate: "2023-05-11",
-    description: "The AC unit is not cooling properly and making strange noises.",
-  },
-  {
-    id: "M-1008",
-    title: "Bathroom Light Fixture Not Working",
-    property: "789 Pine St, Apt 2C",
-    tenant: "Michael Brown",
-    dateSubmitted: "2023-05-05",
-    status: "completed",
-    priority: "normal",
-    category: "electrical",
-    lastUpdated: "2023-05-07",
-    scheduledDate: "2023-05-06",
-    description: "The light fixture in the main bathroom doesn't turn on even after replacing the bulb.",
-  },
-  {
-    id: "M-1009",
-    title: "Dishwasher Not Draining",
-    property: "123 Main St, Apt 2A",
-    tenant: "Emily Wilson",
-    dateSubmitted: "2023-05-01",
-    status: "pending",
-    priority: "normal",
-    category: "appliance",
-    lastUpdated: "2023-05-01",
-    scheduledDate: null,
-    description: "The dishwasher isn't draining properly after cycles and leaves standing water.",
-  },
-  {
-    id: "M-1010",
-    title: "Heater not working",
-    property: "890 Elm St, Unit 5",
-    tenant: "David Martinez",
-    dateSubmitted: "2023-04-20",
-    status: "completed",
-    priority: "urgent",
-    category: "hvac",
-    lastUpdated: "2023-04-21",
-    scheduledDate: "2023-04-21",
-    description: "The heater stopped working completely yesterday.",
-  },
-]
+// Display shape for Owner maintenance list (maps from API response for filters/table)
+export type OwnerMaintenanceRequest = {
+  id: string
+  title: string
+  description: string
+  category: string
+  priority: string
+  status: string
+  property: string
+  tenant: string
+  dateSubmitted: string
+  lastUpdated: string
+  scheduledDate: string | null
+}
 
-type MaintenanceRequest = (typeof MOCK_REQUESTS)[0]
+type MaintenanceRequest = OwnerMaintenanceRequest
+
+function mapApiToOwnerRequest(api: {
+  id: string
+  title: string
+  description: string
+  category: string
+  priority: string
+  status: string
+  propertyTitle?: string | null
+  propertyAddress?: string | null
+  tenantFirstName?: string | null
+  tenantLastName?: string | null
+  tenantEmail?: string | null
+  createdAt: string
+}): OwnerMaintenanceRequest {
+  const property = (api.propertyTitle ?? api.propertyAddress ?? "").trim() || "—"
+  const tenant = [api.tenantFirstName, api.tenantLastName].filter(Boolean).join(" ").trim() || (api.tenantEmail ?? "") || "—"
+  const date = api.createdAt ?? ""
+  const status = api.status === "in_progress" ? "in-progress" : api.status
+  return {
+    id: api.id,
+    title: api.title,
+    description: api.description ?? "",
+    category: api.category,
+    priority: api.priority,
+    status,
+    property,
+    tenant,
+    dateSubmitted: date,
+    lastUpdated: date,
+    scheduledDate: null,
+  }
+}
 
 export function OwnerMaintenanceManagement() {
   const { toast } = useToast()
   const { user } = useAuth()
-  const [requests, setRequests] = useState<MaintenanceRequest[]>(MOCK_REQUESTS)
+  const [requests, setRequests] = useState<OwnerMaintenanceRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [properties, setProperties] = useState<Property[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [filterProperty, setFilterProperty] = useState<string[]>([])
@@ -191,7 +107,42 @@ export function OwnerMaintenanceManagement() {
 
   useEffect(() => {
     fetchProperties()
+    fetchMaintenanceRequests()
   }, [])
+
+  const fetchMaintenanceRequests = async () => {
+    if (!user?.id) return
+    try {
+      setLoading(true)
+      setError(null)
+      const list = await maintenanceApi.getManagerMaintenanceRequests()
+      setRequests(list.map((r) => mapApiToOwnerRequest({
+        id: r.id,
+        title: r.title,
+        description: r.description ?? "",
+        category: r.category,
+        priority: r.priority,
+        status: r.status,
+        propertyTitle: r.propertyTitle ?? null,
+        propertyAddress: r.propertyAddress ?? null,
+        tenantFirstName: r.tenantFirstName ?? null,
+        tenantLastName: r.tenantLastName ?? null,
+        tenantEmail: r.tenantEmail ?? null,
+        createdAt: r.createdAt ?? "",
+      })))
+    } catch (err: unknown) {
+      console.error("Error fetching maintenance requests:", err)
+      setError("Failed to load maintenance requests")
+      setRequests([])
+      toast({
+        title: "Error",
+        description: "Failed to load maintenance requests. Try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchProperties = async () => {
     if (!user?.id) return
@@ -705,6 +656,29 @@ export function OwnerMaintenanceManagement() {
         </Button>
       </div>
 
+      {loading && (
+        <Card className="w-full shadow-md mb-6">
+          <CardContent className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            <span className="ml-3 text-gray-600">Loading maintenance requests…</span>
+          </CardContent>
+        </Card>
+      )}
+
+      {error && !loading && (
+        <Card className="w-full shadow-md mb-6">
+          <CardContent className="py-12 text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <p className="text-gray-700 dark:text-gray-300 mb-4">{error}</p>
+            <Button onClick={fetchMaintenanceRequests} variant="outline">
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {!loading && !error && (
+      <>
       {/* Main Content Card */}
       <Card className="w-full shadow-md mb-6">
         <CardHeader className="bg-muted/50">
@@ -1474,6 +1448,8 @@ export function OwnerMaintenanceManagement() {
           )}
         </DialogContent>
       </Dialog>
+      </>
+      )}
     </div>
   )
 }

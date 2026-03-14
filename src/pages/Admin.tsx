@@ -17,6 +17,7 @@ import AdminCalendar from "@/components/admin/admin-calendar"
 import AdminNotifications from "@/components/admin/admin-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
+import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
 
 export default function Admin() {
   return (
@@ -31,6 +32,7 @@ export default function Admin() {
             <Route path="/owners/*" element={<AdminOwners />} />
             <Route path="/tenants/*" element={<AdminTenants />} />
             <Route path="/maintenance/*" element={<AdminMaintenance />} />
+            <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
             <Route path="/properties/*" element={<AdminProperties />} />
             <Route path="/finances/*" element={<AdminFinances />} />
             <Route path="/reports/*" element={<AdminReports />} />

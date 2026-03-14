@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { propertyApi, type Property } from "@/lib/api"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
+import { PropertyRentScheduleSection } from "@/components/shared/property-rent-schedule-section"
 
 export default function OwnerPropertyDetail() {
   const { id } = useParams<{ id: string }>()
@@ -182,12 +183,20 @@ export default function OwnerPropertyDetail() {
       )}
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 mb-8 bg-slate-100/50 dark:bg-slate-800/50 p-1">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 bg-slate-100/50 dark:bg-slate-800/50 p-1">
           <TabsTrigger value="details">Property Details</TabsTrigger>
+          <TabsTrigger value="rent-schedule">Rent schedule</TabsTrigger>
           <TabsTrigger value="location">Location</TabsTrigger>
           <TabsTrigger value="amenities">Amenities</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
         </TabsList>
+        <TabsContent value="rent-schedule" className="space-y-6">
+          {property?.id ? (
+            <PropertyRentScheduleSection propertyId={property.id} />
+          ) : (
+            <p className="text-sm text-muted-foreground">Select a property to view rent schedule.</p>
+          )}
+        </TabsContent>
         <TabsContent value="details" className="space-y-6">
           {/* Property Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

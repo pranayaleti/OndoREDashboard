@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, CheckCircle, Clock, AlertCircle, Wrench, Calendar, MessageSquare, User, Building, Loader2, Edit, Plus, Radio } from "lucide-react"
+import { Search, CheckCircle, Clock, AlertCircle, Wrench, Calendar, MessageSquare, User, Building, Loader2, Edit, Plus, Radio, Users, ImageIcon } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { maintenanceApi, propertyApi, type MaintenanceRequest, type Property } from "@/lib/api"
+import { maintenanceApi, propertyApi, vendorsApi, type MaintenanceRequest, type Property } from "@/lib/api"
+import type { Vendor } from "@/lib/api/clients/vendors"
 import { NewMaintenanceRequestDialog } from "@/components/maintenance/new-maintenance-request-dialog"
 import { useAuth } from "@/lib/auth-context"
 import { useRealtimeTable } from "@/hooks/useRealtimeTable"
@@ -30,6 +31,9 @@ export default function ManagerMaintenance() {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false)
   const [isNewRequestDialogOpen, setIsNewRequestDialogOpen] = useState(false)
+  const [suggestVendorsRequest, setSuggestVendorsRequest] = useState<MaintenanceRequest | null>(null)
+  const [suggestedVendors, setSuggestedVendors] = useState<Vendor[]>([])
+  const [suggestVendorsLoading, setSuggestVendorsLoading] = useState(false)
   const [updateData, setUpdateData] = useState({
     status: "",
     assignedTo: "",
@@ -87,6 +91,20 @@ export default function ManagerMaintenance() {
       console.error("Error fetching properties:", err)
     }
   }
+
+  useEffect(() => {
+    if (!suggestVendorsRequest) {
+      setSuggestedVendors([])
+      return
+    }
+    let cancelled = false
+    setSuggestVendorsLoading(true)
+    vendorsApi.suggest(suggestVendorsRequest.category)
+      .then((res) => { if (!cancelled) setSuggestedVendors(res.data ?? []) })
+      .catch(() => { if (!cancelled) toast({ title: "Error", description: "Failed to load vendor suggestions.", variant: "destructive" }) })
+      .finally(() => { if (!cancelled) setSuggestVendorsLoading(false) })
+    return () => { cancelled = true }
+  }, [suggestVendorsRequest?.id, suggestVendorsRequest?.category])
 
   const filteredRequests = maintenanceRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -413,6 +431,17 @@ export default function ManagerMaintenance() {
 
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    {(request as { photoUrl?: string }).photoUrl && (
+                      <a
+                        href={(request as { photoUrl?: string }).photoUrl!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-orange-600 hover:underline"
+                      >
+                        <ImageIcon className="h-4 w-4 mr-1" />
+                        View photo
+                      </a>
+                    )}
                     {request.photos && request.photos.length > 0 && (
                       <span className="flex items-center">
                         <MessageSquare className="h-4 w-4 mr-1" />
@@ -539,6 +568,14 @@ export default function ManagerMaintenance() {
                       </DialogContent>
                     </Dialog>
 
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSuggestVendorsRequest(request)}
+                    >
+                      <Users className="h-4 w-4 mr-1" />
+                      Suggest vendors
+                    </Button>
                     {request.status !== "completed" && (
                       <Button
                         variant="outline"
@@ -556,6 +593,41 @@ export default function ManagerMaintenance() {
           ))
         )}
       </div>
+
+      {/* Suggest vendors dialog */}
+      <Dialog open={!!suggestVendorsRequest} onOpenChange={(open) => { if (!open) setSuggestVendorsRequest(null) }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Suggest vendors</DialogTitle>
+            <DialogDescription>
+              {suggestVendorsRequest
+                ? `Vendors for ${suggestVendorsRequest.category} — ${suggestVendorsRequest.title}`
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
+          {suggestVendorsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+            </div>
+          ) : suggestedVendors.length === 0 ? (
+            <p className="text-sm text-gray-500 py-4">No vendors suggested for this category.</p>
+          ) : (
+            <ul className="space-y-2 max-h-64 overflow-y-auto">
+              {suggestedVendors.map((v) => (
+                <li key={v.id} className="flex items-start gap-2 p-2 rounded border text-sm">
+                  <div>
+                    <p className="font-medium">{v.name}{v.company ? ` · ${v.company}` : ""}</p>
+                    <p className="text-gray-500 capitalize">{v.specialty}</p>
+                    {(v.phone || v.email) && (
+                      <p className="text-xs text-gray-400 mt-0.5">{[v.phone, v.email].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <DataPagination
         currentPage={currentPage}
@@ -576,8 +648,8 @@ export default function ManagerMaintenance() {
               description: data.description,
               category: data.category as any,
               priority: data.priority as any,
-              photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
-            })
+              ...(data.photoUrl && { photoUrl: data.photoUrl }),
+            } as Parameters<typeof maintenanceApi.createMaintenanceRequest>[0])
 
             toast({
               title: "Request Created",

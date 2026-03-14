@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { propertyApi, authApi, leadApi, maintenanceApi, type Property, type InvitedUser, type Lead, type MaintenanceRequest } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { FinancialReportsView, type OwnerOption } from "@/components/shared/financial-reports-view"
 
 export default function ManagerReports() {
   const [loading, setLoading] = useState(true)
@@ -21,7 +22,12 @@ export default function ManagerReports() {
   const [invitedUsers, setInvitedUsers] = useState<InvitedUser[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([])
+  const [financialOwnerId, setFinancialOwnerId] = useState<string | null>(null)
   const { toast } = useToast()
+
+  const ownerOptions: OwnerOption[] = invitedUsers
+    .filter((u) => u.role === "owner" && u.isActive)
+    .map((u) => ({ id: u.id, label: `${u.firstName} ${u.lastName} (${u.email})` }))
 
   useEffect(() => {
     fetchAllData()
@@ -144,12 +150,23 @@ export default function ManagerReports() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="financial">Financial</TabsTrigger>
           <TabsTrigger value="properties">Properties</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="financial" className="space-y-6">
+          <FinancialReportsView
+            requireOwnerSelection
+            owners={ownerOptions}
+            selectedOwnerId={financialOwnerId}
+            onOwnerIdChange={setFinancialOwnerId}
+            title="Financial reports (by owner)"
+          />
+        </TabsContent>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">

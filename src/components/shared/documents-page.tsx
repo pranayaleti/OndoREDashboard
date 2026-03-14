@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -38,6 +38,7 @@ import { CreateFolderDialog } from "@/components/owner/create-folder-dialog"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 import type { UserRole } from "@/lib/auth-utils"
+import { documentsApi, type DocumentListRecord } from "@/lib/api"
 
 export interface Document {
   id: string
@@ -73,6 +74,8 @@ interface DocumentsPageProps {
   showShare?: boolean
   showFolders?: boolean
   customCategories?: string[]
+  /** When true, fetch list from API and use real download; ignores passed documents. */
+  fetchFromApi?: boolean
 }
 
 // Default mock data
@@ -270,6 +273,33 @@ const DEFAULT_FOLDERS: DocumentFolder[] = [
 
 const DEFAULT_CATEGORIES = ["lease", "insurance", "tax", "maintenance", "inspection", "financial"]
 
+function mapRecordToDocument(r: DocumentListRecord): Document {
+  const typeFromMime = (mime?: string): "pdf" | "image" | "spreadsheet" | "document" => {
+    if (!mime) return "document"
+    if (mime === "application/pdf") return "pdf"
+    if (mime.startsWith("image/")) return "image"
+    if (["application/vnd.ms-excel", "text/csv"].some((x) => mime.includes(x))) return "spreadsheet"
+    return "document"
+  }
+  const formatBytes = (b?: number) => {
+    if (b == null) return "—"
+    if (b < 1024) return `${b} B`
+    if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`
+    return `${(b / (1024 * 1024)).toFixed(1)} MB`
+  }
+  const cat = r.docType ?? "other"
+  return {
+    id: r.id,
+    name: r.name,
+    type: typeFromMime(r.mimeType),
+    category: cat,
+    size: formatBytes(r.sizeBytes),
+    uploadedAt: r.createdAt ?? "",
+    uploadedBy: "—",
+    tag: cat.charAt(0).toUpperCase() + cat.slice(1),
+  }
+}
+
 export function DocumentsPage({
   role: _role,
   documents = DEFAULT_DOCUMENTS,
@@ -282,17 +312,41 @@ export function DocumentsPage({
   showShare = true,
   showFolders = true,
   customCategories,
+  fetchFromApi = false,
 }: DocumentsPageProps) {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState("all")
-  const [documentsState, setDocumentsState] = useState<Document[]>(documents)
-  const [foldersState, setFoldersState] = useState<DocumentFolder[]>(folders)
+  const [documentsState, setDocumentsState] = useState<Document[]>(fetchFromApi ? [] : documents)
+  const [foldersState, setFoldersState] = useState<DocumentFolder[]>(fetchFromApi ? [] : folders)
+  const [apiLoading, setApiLoading] = useState(fetchFromApi)
+  const [apiError, setApiError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [propertyFilter, setPropertyFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [folderFilter, setFolderFilter] = useState("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { toast } = useToast()
+
+  const loadFromApi = useCallback(async () => {
+    if (!fetchFromApi) return
+    setApiLoading(true)
+    setApiError(null)
+    try {
+      const { data } = await documentsApi.list()
+      setDocumentsState(data.map(mapRecordToDocument))
+      setFoldersState([])
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to load documents"
+      setApiError(msg)
+      setDocumentsState([])
+    } finally {
+      setApiLoading(false)
+    }
+  }, [fetchFromApi])
+
+  useEffect(() => {
+    loadFromApi()
+  }, [loadFromApi])
 
   const categories = customCategories || DEFAULT_CATEGORIES
 
@@ -419,7 +473,17 @@ export function DocumentsPage({
     })
   }
 
-  const handleDownload = (doc: Document) => {
+  const handleDownload = async (doc: Document) => {
+    if (fetchFromApi) {
+      try {
+        const url = await documentsApi.getDownloadUrl(doc.id)
+        if (url) window.open(url, "_blank", "noopener,noreferrer")
+        else toast({ title: "Download failed", variant: "destructive" })
+      } catch {
+        toast({ title: "Download failed", description: "Could not get download link.", variant: "destructive" })
+      }
+      return
+    }
     toast({
       title: "Download started",
       description: `Downloading ${doc.name}...`,
@@ -476,6 +540,32 @@ export function DocumentsPage({
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
+  }
+
+  if (fetchFromApi && apiLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-muted-foreground">Loading documents...</div>
+      </div>
+    )
+  }
+
+  if (fetchFromApi && apiError) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-4 py-6">
+          <Card className="border-destructive/50">
+            <CardContent className="pt-6">
+              <p className="text-destructive font-medium">Could not load documents</p>
+              <p className="text-sm text-muted-foreground mt-1">{apiError}</p>
+              <Button variant="outline" size="sm" className="mt-3" onClick={loadFromApi}>
+                Try again
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -1,77 +1,67 @@
 /**
  * Documents API client
+ * Aligned with backend: GET /documents (list), GET /documents/:id/download (signed URL).
  */
 
-import { apiGet, apiPost, apiDelete, getAuthHeaders } from "../http";
+import { apiGet, apiDelete, getAuthHeaders } from "../http";
 
-export interface Document {
+/** Backend document shape (camelCase from getDocumentsByUser / getDocumentById). Avoids conflict with feature-api DocumentRecord. */
+export interface DocumentListRecord {
   id: string;
-  propertyId?: string;
-  tenantId?: string;
   ownerId?: string;
-  uploadedBy: string;
-  title: string;
-  description?: string;
-  documentType: string;
-  fileUrl: string;
-  s3Key?: string;
-  fileSize?: number;
+  propertyId?: string;
+  name: string;
+  storagePath?: string;
+  bucket?: string;
   mimeType?: string;
-  folder?: string;
-  isShared?: boolean;
-  createdAt: string;
-  updatedAt: string;
+  sizeBytes?: number;
+  docType?: string;
+  isDeleted?: boolean;
+  createdAt?: string;
 }
 
-export interface CreateDocumentPayload {
-  propertyId?: string;
-  tenantId?: string;
-  ownerId?: string;
-  title: string;
-  description?: string;
-  documentType: string;
-  fileUrl: string;
-  s3Key?: string;
-  fileSize?: number;
-  mimeType?: string;
-  folder?: string;
-  isShared?: boolean;
+/** Response from GET /documents — list. */
+export interface ListDocumentsResponse {
+  message?: string;
+  data: DocumentListRecord[];
+}
+
+/** Response from GET /documents/:id/download. */
+export interface DownloadDocumentResponse {
+  message?: string;
+  data: {
+    url: string;
+    expiresIn: number | null;
+    document: DocumentListRecord;
+  };
 }
 
 export const documentsApi = {
-  async list(propertyId?: string): Promise<{ data: Document[] }> {
+  /**
+   * List documents for the authenticated user.
+   * Backend returns { message, data: documents }.
+   */
+  async list(): Promise<{ data: DocumentListRecord[] }> {
     const headers = getAuthHeaders();
-    return apiGet<{ data: Document[] }>(
-      `/documents${propertyId ? `?propertyId=${propertyId}` : ""}`,
-      headers,
-    );
+    const response = await apiGet<ListDocumentsResponse>("/documents", headers);
+    return { data: response.data ?? [] };
   },
 
-  async get(id: string): Promise<{ data: Document }> {
+  /**
+   * Get a signed (or public) download URL for a document.
+   * Caller can open the URL in a new tab or set location.href.
+   */
+  async getDownloadUrl(id: string): Promise<string> {
     const headers = getAuthHeaders();
-    return apiGet<{ data: Document }>(`/documents/${id}`, headers);
+    const response = await apiGet<DownloadDocumentResponse>(`/documents/${id}/download`, headers);
+    return response.data?.url ?? "";
   },
 
-  async create(payload: CreateDocumentPayload): Promise<{ data: Document }> {
-    const headers = getAuthHeaders();
-    return apiPost<{ data: Document }>("/documents", payload, headers);
-  },
-
+  /**
+   * Soft-delete a document (backend sets is_deleted = true).
+   */
   async delete(id: string): Promise<{ message: string }> {
     const headers = getAuthHeaders();
     return apiDelete<{ message: string }>(`/documents/${id}`, headers);
-  },
-
-  async getUploadUrl(
-    fileName: string,
-    mimeType: string,
-    folder?: string,
-  ): Promise<{ data: { uploadUrl: string; s3Key: string; publicUrl: string } }> {
-    const headers = getAuthHeaders();
-    return apiPost<{ data: { uploadUrl: string; s3Key: string; publicUrl: string } }>(
-      "/documents/upload-url",
-      { fileName, mimeType, folder },
-      headers,
-    );
   },
 };

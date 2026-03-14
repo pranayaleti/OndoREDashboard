@@ -18,6 +18,7 @@ import SuperAdminCalendar from "@/components/super-admin/super-admin-calendar"
 import SuperAdminNotifications from "@/components/super-admin/super-admin-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
+import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
 
 export default function SuperAdmin() {
   return (
@@ -33,6 +34,7 @@ export default function SuperAdmin() {
             <Route path="/owners/*" element={<SuperAdminOwners />} />
             <Route path="/tenants/*" element={<SuperAdminTenants />} />
             <Route path="/maintenance/*" element={<SuperAdminMaintenance />} />
+            <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
             <Route path="/properties/*" element={<SuperAdminProperties />} />
             <Route path="/finances/*" element={<SuperAdminFinances />} />
             <Route path="/reports/*" element={<SuperAdminReports />} />

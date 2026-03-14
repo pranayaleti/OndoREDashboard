@@ -351,6 +351,7 @@ function NewMaintenanceRequest() {
     property?: string
     tenant?: string
     photos: File[]
+    photoUrl?: string
   }) => {
     try {
       await maintenanceApi.createMaintenanceRequest({
@@ -358,8 +359,8 @@ function NewMaintenanceRequest() {
         description: data.description,
         category: data.category as any,
         priority: data.priority as any,
-        photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
-      })
+        ...(data.photoUrl && { photoUrl: data.photoUrl }),
+      } as Parameters<typeof maintenanceApi.createMaintenanceRequest>[0])
 
       toast({
         title: "Request Submitted",

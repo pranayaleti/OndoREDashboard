@@ -57,6 +57,21 @@ export interface RiskMetrics {
   recommendations: string[];
 }
 
+export interface DashboardPaymentItem {
+  id: string;
+  amountCents: number;
+  currency: string;
+  status: string;
+  paymentType: string;
+  propertyId: string | null;
+  userId: string | null;
+  description: string | null;
+  createdAt: string | null;
+  propertyTitle: string | null;
+  propertyAddress: string | null;
+  payerEmail: string | null;
+}
+
 export const dashboardApi = {
   async getStats(): Promise<DashboardStats> {
     const headers = getAuthHeaders();
@@ -171,6 +186,18 @@ export const dashboardApi = {
     return apiPost<{ id: string; message?: string }>(
       "/dashboard/at-risk/interventions",
       request,
+      headers,
+    );
+  },
+
+  /** Rent payments for scoped properties (Owner/Manager/Admin). */
+  async getDashboardPayments(page = 1, limit = 20): Promise<{
+    data: DashboardPaymentItem[];
+    pagination: { page: number; limit: number; total: number };
+  }> {
+    const headers = getAuthHeaders();
+    return apiGet<{ data: DashboardPaymentItem[]; pagination: { page: number; limit: number; total: number } }>(
+      `/dashboard/payments?page=${page}&limit=${limit}`,
       headers,
     );
   },

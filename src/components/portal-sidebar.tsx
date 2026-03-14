@@ -76,6 +76,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
@@ -96,6 +97,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
@@ -116,8 +118,10 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Owners", href: `${basePath}/owners`, icon: <Users className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
@@ -130,10 +134,13 @@ const getNavItems = (role: UserRole): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
+        { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Occupancy", href: `${basePath}/occupancy`, icon: <Home className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
@@ -147,11 +154,12 @@ const getNavItems = (role: UserRole): NavItem[] => {
     case "tenant":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
+        { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
         { title: "Lease Details", href: `${basePath}/lease-details`, icon: <FileText className="h-5 w-5" /> },
         { title: "Property Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
-        { title: "Documents", href: `${basePath}/documents`, icon: <FileText className="h-5 w-5" /> },
+        { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
@@ -162,6 +170,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Tickets", href: `${basePath}/tickets`, icon: <Wrench className="h-5 w-5" /> },
+        { title: "Vendor suggestions", href: `${basePath}/vendors`, icon: <Building className="h-5 w-5" /> },
         { title: "Property Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
@@ -177,8 +186,6 @@ const getNavItems = (role: UserRole): NavItem[] => {
 interface PortalSidebarProps {
   children: React.ReactNode
 }
-
-const MANAGER_LIKE_ROLES: UserRole[] = ["manager", "admin", "super_admin"]
 
 function SidebarLayout({
   children,
@@ -198,7 +205,7 @@ function SidebarLayout({
   const { expanded } = useSidebar()
   const { theme, setTheme } = useTheme()
 
-  const canAccessNotifications = MANAGER_LIKE_ROLES.includes(user.role)
+  const canAccessNotifications = true
   const { unreadCount } = useNotifications(canAccessNotifications)
 
   const getInitials = (firstName: string, lastName: string) => {

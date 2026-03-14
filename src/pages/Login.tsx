@@ -1,6 +1,6 @@
 import type React from "react"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { EyeIcon, EyeOffIcon, Loader2, ArrowRight, KeyRound, ShieldCheck } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,6 +32,7 @@ const tenantSteps = [
 
 export default function LoginPage() {
   const { login } = useAuth()
+  const navigate = useNavigate()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -87,7 +88,9 @@ export default function LoginPage() {
       const sanitizedEmail = sanitize.trim(values.email).toLowerCase()
       const result = await login(sanitizedEmail, values.password)
 
-      if (!result.success) {
+      if (result.success && result.redirectPath) {
+        navigate(result.redirectPath, { replace: true })
+      } else if (!result.success) {
         toast({
           title: "Login failed",
           description: result.message || "Invalid email or password. Please try again.",

@@ -25,6 +25,8 @@ export { tenantScreeningApi } from "./clients/tenant-screening";
 export { documentsApi } from "./clients/documents";
 export { vendorsApi } from "./clients/vendors";
 export { rentSchedulesApi } from "./clients/rent-schedules";
+export { reportsApi } from "./clients/reports";
+export { screeningApi } from "./clients/screening";
 
 // New modules extracted from the legacy api.ts monolith
 export { tokenManager } from "./clients/token-manager";
@@ -65,6 +67,7 @@ export type {
 export type { ChatMessage, ChatRequest, ChatResponse } from "./clients/assistant";
 export type {
   DashboardStats,
+  DashboardPaymentItem,
   PropertyMetrics,
   TenantAnalytics,
   FinancialMetrics,
@@ -78,10 +81,7 @@ export type {
   TenantScreening,
   ScreeningReport,
 } from "./clients/tenant-screening";
-export type {
-  Document,
-  CreateDocumentPayload,
-} from "./clients/documents";
+export type { DocumentListRecord } from "./clients/documents";
 // Vendor types: feature-api.ts is the canonical source (snake_case fields match component usage).
 // vendors.ts (camelCase) is the REST client implementation; its types are NOT exported to avoid
 // conflicts with the snake_case shape that all vendor components and featureApi.vendors depend on.
