@@ -8,10 +8,17 @@ import {
 import { apiGet, apiPost, apiPut, apiDelete, getAuthHeaders } from "../http";
 
 export interface MaintenanceListResponse {
-  requests: MaintenanceRequest[];
-  total: number;
-  page: number;
-  pageSize: number;
+  data: MaintenanceRequest[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    nextPage?: number;
+  };
 }
 
 export const maintenanceApi = {
@@ -22,14 +29,32 @@ export const maintenanceApi = {
   ): Promise<MaintenanceListResponse> {
     const headers = getAuthHeaders();
     const query = new URLSearchParams();
-    if (propertyId) query.append("propertyId", propertyId);
     query.append("page", String(page));
-    query.append("pageSize", String(pageSize));
+    query.append("limit", String(pageSize));
 
-    return apiGet<MaintenanceListResponse>(
-      `/maintenance?${query.toString()}`,
+    const response = await apiGet<MaintenanceListResponse>(
+      `/maintenance/tenant?${query.toString()}`,
       headers,
     );
+
+    if (!propertyId) {
+      return response;
+    }
+
+    const filtered = response.data.filter((request) => request.propertyId === propertyId);
+    return {
+      ...response,
+      data: filtered,
+      pagination: {
+        ...response.pagination,
+        total: filtered.length,
+        totalPages: filtered.length === 0 ? 0 : Math.ceil(filtered.length / pageSize),
+        hasMore: false,
+        hasNextPage: false,
+        hasPreviousPage: page > 1,
+        nextPage: undefined,
+      },
+    };
   },
 
   async getRequest(id: string): Promise<MaintenanceRequest> {
@@ -70,7 +95,7 @@ export const maintenanceApi = {
 
   async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {
     const res = await this.getRequests(undefined, 1, 100);
-    return res.requests;
+    return res.data;
   },
 
   async updateMaintenanceRequest(

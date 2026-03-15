@@ -38,6 +38,22 @@ function buildQueryString(params?: Record<string, unknown>): string {
   return serialized ? `?${serialized}` : '';
 }
 
+function extractMaintenanceRequests(raw: unknown): MaintenanceRequest[] {
+  const directList = MaintenanceRequestArraySchema.safeParse(raw);
+  if (directList.success) {
+    return directList.data as MaintenanceRequest[];
+  }
+
+  if (typeof raw === "object" && raw !== null && "data" in raw) {
+    const nested = MaintenanceRequestArraySchema.safeParse((raw as { data?: unknown }).data);
+    if (nested.success) {
+      return nested.data as MaintenanceRequest[];
+    }
+  }
+
+  return [];
+}
+
 // ─── Screening types ─────────────────────────────────────────────────────────
 
 export type TenantScreeningStatus = 'approved' | 'in_review' | 'flagged' | 'pending';
@@ -668,14 +684,12 @@ export const featureApi = {
     async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {
       const headers = getAuthHeaders();
       const raw = await apiRequest<unknown>('GET', '/maintenance/tenant', undefined, headers);
-      const result = MaintenanceRequestArraySchema.safeParse(raw);
-      return result.success ? result.data as MaintenanceRequest[] : [];
+      return extractMaintenanceRequests(raw);
     },
     async getManagerMaintenanceRequests(): Promise<MaintenanceRequest[]> {
       const headers = getAuthHeaders();
-      const raw = await apiRequest<unknown>('GET', '/maintenance/manager/all', undefined, headers);
-      const result = MaintenanceRequestArraySchema.safeParse(raw);
-      return result.success ? result.data as MaintenanceRequest[] : [];
+      const raw = await apiRequest<unknown>('GET', '/dashboard/maintenance', undefined, headers);
+      return extractMaintenanceRequests(raw);
     },
     async getMaintenanceRequestById(id: string): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
