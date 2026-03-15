@@ -428,7 +428,7 @@ export interface MaintenanceRequest {
   id: string;
   title: string;
   description: string;
-  category: 'plumbing' | 'electrical' | 'hvac' | 'appliance' | 'structural' | 'pest_control' | 'cleaning' | 'other';
+  category: 'plumbing' | 'electrical' | 'hvac' | 'appliances' | 'flooring' | 'windows' | 'structural' | 'pest_control' | 'cleaning' | 'other';
   priority: 'low' | 'medium' | 'high' | 'emergency';
   status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   propertyId: string;
@@ -453,7 +453,7 @@ export interface MaintenanceRequest {
 export interface CreateMaintenanceRequestRequest {
   title: string;
   description: string;
-  category: 'plumbing' | 'electrical' | 'hvac' | 'appliance' | 'structural' | 'pest_control' | 'cleaning' | 'other';
+  category: 'plumbing' | 'electrical' | 'hvac' | 'appliances' | 'flooring' | 'windows' | 'structural' | 'pest_control' | 'cleaning' | 'other';
   priority?: 'low' | 'medium' | 'high' | 'emergency';
   photos?: string[];
 }

@@ -205,9 +205,9 @@ export function OwnerMaintenanceManagement() {
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case "emergency":
-      case "urgent":
+      case "high":
         return <AlertTriangle className="h-4 w-4 text-red-500" />
-      case "normal":
+      case "medium":
         return <Clock className="h-4 w-4 text-yellow-500" />
       case "low":
         return <Clock className="h-4 w-4 text-blue-500" />
@@ -220,9 +220,9 @@ export function OwnerMaintenanceManagement() {
     switch (priority) {
       case "emergency":
         return "Emergency"
-      case "urgent":
+      case "high":
         return "High"
-      case "normal":
+      case "medium":
         return "Medium"
       case "low":
         return "Low"
@@ -235,10 +235,10 @@ export function OwnerMaintenanceManagement() {
     switch (priority) {
       case "emergency":
         return <Badge className="bg-red-500">Emergency</Badge>
-      case "urgent":
-        return <Badge className="bg-orange-500">Urgent</Badge>
-      case "normal":
-        return <Badge className="bg-blue-500">Normal</Badge>
+      case "high":
+        return <Badge className="bg-orange-500">High</Badge>
+      case "medium":
+        return <Badge className="bg-blue-500">Medium</Badge>
       case "low":
         return <Badge className="bg-gray-500">Low</Badge>
       default:
@@ -472,9 +472,10 @@ export function OwnerMaintenanceManagement() {
     // Map priority values
     const priorityMap: Record<string, MaintenanceRequest["priority"]> = {
       low: "low",
-      normal: "normal",
-      medium: "normal",
-      urgent: "urgent",
+      normal: "medium",
+      medium: "medium",
+      urgent: "high",
+      high: "high",
       emergency: "emergency",
     }
 
@@ -485,7 +486,7 @@ export function OwnerMaintenanceManagement() {
       tenant: data.tenant || "Unknown Tenant",
       dateSubmitted: today,
       status: "pending",
-      priority: priorityMap[data.priority] || "normal",
+      priority: priorityMap[data.priority] || "medium",
       category: data.category as MaintenanceRequest["category"],
       lastUpdated: today,
       scheduledDate: null,
