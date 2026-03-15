@@ -8,12 +8,16 @@ import {
   BarChart3,
   Building2,
   Check,
+  CheckCircle,
   CreditCard,
+  DollarSign,
   FileSignature,
   Layers,
   MessageSquare,
   ShieldCheck,
   Sparkles,
+  Users,
+  Shield,
 } from "lucide-react"
 
 const featureHighlights = [
@@ -98,6 +102,36 @@ const moduleCards = [
     description: "Ledger entries, expense logging, profit/loss snapshots, and CSV exports.",
     tag: "features/accounting",
   },
+]
+
+const propertyManagementServices = [
+  {
+    icon: Users,
+    title: "Tenant Screening & Placement",
+    description: "Comprehensive background checks, credit analysis, and reference verification to find quality tenants.",
+  },
+  {
+    icon: DollarSign,
+    title: "Rent Collection & Financial Reporting",
+    description: "Automated rent collection, late fee management, and detailed monthly financial reports.",
+  },
+  {
+    icon: Shield,
+    title: "Maintenance & Repairs",
+    description: "24/7 emergency response, vendor coordination, and preventive maintenance programs.",
+  },
+  {
+    icon: Building2,
+    title: "Property Marketing",
+    description: "Professional photography, online listings, and marketing strategies to minimize vacancy time.",
+  },
+]
+
+const propertyManagementWhy = [
+  { title: "Local Expertise", description: "Deep knowledge of Utah real estate market and local regulations" },
+  { title: "Technology-Driven", description: "Online portals for owners and tenants with real-time reporting" },
+  { title: "Proven Track Record", description: "Over 95% tenant retention rate and 99% on-time rent collection" },
+  { title: "24/7 Support", description: "Round-the-clock emergency response and tenant support" },
 ]
 
 const stats = [
@@ -216,7 +250,63 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-16" id="workflows">
+      <section className="bg-slate-950 px-4 py-16" id="property-management">
+        <div className="container mx-auto space-y-10">
+          <div className="text-center">
+            <p className="text-xs uppercase tracking-[0.3em] text-orange-400">Utah property management</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Complete property management solutions</h2>
+            <p className="mt-3 text-white/70 max-w-2xl mx-auto">
+              Full-service rental management across the Wasatch Front: tenant screening, rent collection, maintenance, and reporting. Let us handle the day-to-day so you enjoy passive income.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {propertyManagementServices.map((service) => (
+              <Card key={service.title} className="border-white/10 bg-white/5">
+                <CardHeader className="text-center">
+                  <div className="mx-auto mb-2 rounded-full bg-white/10 p-3 w-fit">
+                    <service.icon className="h-6 w-6 text-orange-300" />
+                  </div>
+                  <CardTitle className="text-lg text-white">{service.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-white/70 text-center">{service.description}</CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="grid gap-8 lg:grid-cols-2 items-start">
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-4">Why choose our property management</h3>
+              <ul className="space-y-4">
+                {propertyManagementWhy.map((item) => (
+                  <li key={item.title} className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-white">{item.title}</p>
+                      <p className="text-sm text-white/70">{item.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Card className="border-white/10 bg-white/5">
+              <CardHeader>
+                <CardTitle className="text-white">Ready to simplify property management?</CardTitle>
+                <CardDescription className="text-white/70">
+                  Get a free consultation and see how our services can increase your rental income while reducing your workload.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full bg-orange-500 text-black hover:bg-orange-400">
+                  <Link to="/contact">Get free consultation</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-900 px-4 py-16" id="workflows">
         <div className="container mx-auto grid gap-8 lg:grid-cols-2">
           {workflowTracks.map((track) => (
             <Card key={track.title} className="border-white/10 bg-white/5">
