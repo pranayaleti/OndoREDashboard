@@ -99,7 +99,7 @@ export const authApi = {
     request: ChangePasswordRequest,
   ): Promise<ChangePasswordResponse> {
     const headers = getAuthHeaders();
-    return apiPost<ChangePasswordResponse>("/auth/change-password", request, headers);
+    return apiPost<ChangePasswordResponse>("/password/change-password", request, headers);
   },
 
   async getProfilePictureUploadUrl(
@@ -107,7 +107,7 @@ export const authApi = {
   ): Promise<ProfilePictureUploadUrlResponse> {
     const headers = getAuthHeaders();
     return apiPost<ProfilePictureUploadUrlResponse>(
-      "/auth/profile-picture-upload-url",
+      "/auth/profile-picture/upload-url",
       request,
       headers,
     );
