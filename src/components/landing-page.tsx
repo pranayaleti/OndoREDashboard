@@ -175,7 +175,7 @@ export default function LandingPage() {
               <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
                 <Link to="/free-trial">Start free trial</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
                 <Link to="/register">Owner sign up</Link>
               </Button>
               <Button asChild size="lg" variant="ghost" className="text-white/70 hover:text-white">
@@ -413,7 +413,7 @@ export default function LandingPage() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10">
               <Link to="/contact">Talk to our team — we're your first point of contact</Link>
             </Button>
           </div>

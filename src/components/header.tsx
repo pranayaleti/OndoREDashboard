@@ -22,8 +22,8 @@ const managerNavItems = [
 ]
 
 const marketingNavItems = [
-  { label: "Product", path: "/#product" },
-  { label: "Features", path: "/#features" },
+  { label: "Product", path: "/product" },
+  { label: "Features", path: "/features" },
   { label: "Pricing", path: "/pricing" },
   { label: "About", path: "/about" },
   { label: "Contact", path: "/contact" },
@@ -144,7 +144,7 @@ export default function Header() {
               </Button>
             </Link>
             <Link to="/register">
-              <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
+              <Button variant="outline" size="sm" className="border-gray-700 bg-transparent text-white hover:bg-gray-800">
                 Owner sign up
               </Button>
             </Link>
@@ -186,7 +186,7 @@ export default function Header() {
                       </Button>
                     </Link>
                     <Link to="/register" onClick={() => setIsMarketingMenuOpen(false)}>
-                      <Button variant="outline" className="w-full border-gray-700 text-white hover:bg-gray-800">
+                      <Button variant="outline" className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800">
                         Owner sign up
                       </Button>
                     </Link>
