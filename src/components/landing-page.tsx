@@ -94,7 +94,7 @@ const moduleCards = [
   },
   {
     title: "Communication",
-    description: "In-app messaging plus SendGrid/Resend + Twilio placeholders for omni-channel alerts.",
+    description: "In-app messaging plus email and SMS delivery for omni-channel alerts.",
     tag: "features/communication",
   },
   {

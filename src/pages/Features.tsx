@@ -89,7 +89,7 @@ const featureSections = [
     color: "text-pink-400",
     title: "One inbox for every conversation",
     description:
-      "In-app messaging keeps owners, tenants, and vendors in their own thread. SendGrid/Resend and Twilio placeholders give you omni-channel reach without third-party clutter.",
+      "In-app messaging keeps owners, tenants, and vendors in their own thread. Email and SMS delivery keep updates moving without third-party clutter.",
     bullets: [
       "Role-scoped in-app message threads",
       "Email notifications via Resend / SendGrid",

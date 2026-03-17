@@ -43,7 +43,7 @@ const planHighlights = [
   },
   {
     title: "Payments ready",
-    description: "Stripe + Plaid autopay placeholders with late-fee automation.",
+    description: "Stripe + Plaid-ready autopay with late-fee automation.",
     icon: <CreditCard className="h-6 w-6" />,
   },
   {

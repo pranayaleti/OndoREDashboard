@@ -173,7 +173,7 @@ export default function PricingPage() {
           <CardHeader>
             <CardTitle className="text-white">What every plan includes</CardTitle>
             <CardDescription className="text-white/70">
-              Screening, rent payments, maintenance, leases, documents, communication, accounting-lite, owner + tenant dashboards, notification placeholders, and React Query-powered hooks.
+              Screening, rent payments, maintenance, leases, documents, communication, accounting-lite, owner + tenant dashboards, and notification workflows.
             </CardDescription>
           </CardHeader>
         </Card>

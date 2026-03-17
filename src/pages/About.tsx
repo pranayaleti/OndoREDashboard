@@ -27,7 +27,7 @@ const values = [
 const milestones = [
   { year: "2022", detail: "Initial landlord + tenant portal launched" },
   { year: "2023", detail: "Micro-feature architecture + maintenance hub" },
-  { year: "2024", detail: "Stripe ACH, DocuSign placeholders, tenant screening hooks" },
+  { year: "2024", detail: "Stripe ACH, eSign integrations, and tenant screening workflows launched" },
   { year: "Today", detail: "Full SaaS blueprint for Ondo Property Management" },
   { year: "Roadmap", detail: "Conversational AI assistant (lease review, portfolio insights, marketing, maintenance routing); outbound sales engine and GTM from zero" },
 ]

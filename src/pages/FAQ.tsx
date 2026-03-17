@@ -12,7 +12,7 @@ const tenantQuestions = [
   },
   {
     q: "What if I need maintenance support?",
-    a: "Open a ticket inside the portal, attach photos/video, and choose a priority. Owners see the same timeline, can assign vendors, and both parties receive notifications via email/SMS placeholders.",
+    a: "Open a ticket inside the portal, attach photos/video, and choose a priority. Owners see the same timeline, can assign vendors, and both parties receive email or SMS updates as the request moves.",
   },
 ]
 
@@ -23,7 +23,7 @@ const ownerQuestions = [
   },
   {
     q: "How do integrations work?",
-    a: "We scaffold every feature with API hooks and TODOs for SmartMove, Checkr, Stripe, Plaid, DocuSign, HelloSign, SendGrid/Resend, and Twilio. You supply the keys when you're ready.",
+    a: "Ondo connects through provider APIs for SmartMove, Checkr, Stripe, Plaid, DocuSign, HelloSign, Resend/SendGrid, and Twilio. You can launch with the built-in workflows and add credentials as your stack matures.",
   },
   {
     q: "Can I export my financial data?",
