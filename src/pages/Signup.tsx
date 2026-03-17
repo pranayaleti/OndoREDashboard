@@ -230,22 +230,24 @@ export default function Signup() {
         password: values.password,
       })
 
-      if (response?.accessToken && response?.user) {
-        authenticateUser(
-          {
-            id: response.user.id,
-            firstName: response.user.firstName,
-            lastName: response.user.lastName,
-            email: response.user.email,
-            role: response.user.role,
-            phone: response.user.phone,
-            address: response.user.address,
-            profilePicture: response.user.profilePicture,
-          },
-          response.accessToken,
-          response.expiresIn ?? 900
-        )
+      if (!response?.accessToken || !response?.user) {
+        throw new Error("Signup succeeded but no session token was returned.")
       }
+
+      authenticateUser(
+        {
+          id: response.user.id,
+          firstName: response.user.firstName,
+          lastName: response.user.lastName,
+          email: response.user.email,
+          role: response.user.role,
+          phone: response.user.phone,
+          address: response.user.address,
+          profilePicture: response.user.profilePicture,
+        },
+        response.accessToken,
+        response.expiresIn ?? 900
+      )
       setIsSuccess(true)
       toast({
         title: "Account created successfully!",
@@ -253,11 +255,13 @@ export default function Signup() {
       })
 
       // Auto-navigate after successful signup
-      setTimeout(() => {
-        const redirectPath = response?.user.role === "manager" ? "/dashboard" :
-                           response?.user.role === "owner" ? "/owner" : "/tenant"
-        navigate(redirectPath)
-      }, 2000)
+      const role = response.user.role
+      const redirectPath =
+        role === "manager" || role === "admin" || role === "super_admin" ? "/dashboard" :
+        role === "owner" ? "/owner" :
+        role === "maintenance" ? "/maintenance" :
+        "/tenant"
+      setTimeout(() => navigate(redirectPath), 2000)
 
     } catch (error) {
       toast({

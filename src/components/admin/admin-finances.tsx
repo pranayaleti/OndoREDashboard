@@ -10,12 +10,10 @@ export default function AdminFinances() {
             <DollarSign className="h-6 w-6" />
             System Finances
           </CardTitle>
-          <CardDescription>View financial data across the entire system</CardDescription>
+          <CardDescription>System-wide financial overview</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 dark:text-gray-400">
-            Financial overview - connect to API to display system-wide financial data
-          </p>
+          <p className="text-muted-foreground">Financial reporting is coming soon.</p>
         </CardContent>
       </Card>
     </div>

@@ -10,15 +10,12 @@ export default function SuperAdminProperties() {
             <Building className="h-6 w-6" />
             System Properties
           </CardTitle>
-          <CardDescription>View all properties across the system</CardDescription>
+          <CardDescription>All properties across the system</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 dark:text-gray-400">
-            Properties overview - connect to API to display all properties
-          </p>
+          <p className="text-muted-foreground">Property management is coming soon.</p>
         </CardContent>
       </Card>
     </div>
   )
 }
-

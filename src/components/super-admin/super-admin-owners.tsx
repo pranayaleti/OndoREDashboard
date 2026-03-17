@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Building } from "lucide-react"
+import { Users } from "lucide-react"
 
 export default function SuperAdminOwners() {
   return (
@@ -7,18 +7,15 @@ export default function SuperAdminOwners() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Building className="h-6 w-6" />
+            <Users className="h-6 w-6" />
             Owner Management
           </CardTitle>
-          <CardDescription>Manage all owner accounts in the system</CardDescription>
+          <CardDescription>Manage all owner accounts</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 dark:text-gray-400">
-            Owner management interface - connect to API to display and manage owners
-          </p>
+          <p className="text-muted-foreground">Owner management is coming soon.</p>
         </CardContent>
       </Card>
     </div>
   )
 }
-
