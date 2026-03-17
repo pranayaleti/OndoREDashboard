@@ -27,6 +27,8 @@ interface AuthContextType {
   logout: () => void
   isLoading: boolean
   refreshUser: () => Promise<void>
+  /** Call immediately after a successful signup to hydrate auth state without a round-trip. */
+  authenticateUser: (user: UserData, accessToken: string, expiresIn?: number) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -119,6 +121,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   )
 
+  const authenticateUser = useCallback((userData: UserData, accessToken: string, expiresIn = 900) => {
+    setAccessToken(accessToken, expiresIn)
+    setUser(userData)
+  }, [])
+
   const refreshUser = useCallback(async (): Promise<void> => {
     try {
       const apiUser = await authApi.getMe()
@@ -132,7 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [logout])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading, refreshUser }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, refreshUser, authenticateUser }}>
       {children}
     </AuthContext.Provider>
   )

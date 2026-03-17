@@ -6,7 +6,6 @@
 import type {
   User as UserType,
   SignupRequest,
-  SignupResponse,
   InvitedUser as InvitedUserType,
   Property as PropertyType,
   PortfolioStats as PortfolioStatsType,
@@ -43,8 +42,25 @@ export type {
 
 export type UserRole = "super_admin" | "admin" | "manager" | "owner" | "tenant" | "maintenance";
 
+export const USER_ROLES: readonly UserRole[] = [
+  "super_admin", "admin", "manager", "owner", "tenant", "maintenance",
+] as const;
+
+export const ROLE_REDIRECT_PATHS: Record<UserRole, string> = {
+  super_admin: "/super-admin",
+  admin:       "/admin",
+  manager:     "/dashboard",
+  owner:       "/owner",
+  tenant:      "/tenant",
+  maintenance: "/maintenance",
+};
+
 export type SignupWithInviteRequest = SignupRequest;
-export type SignupWithInviteResponse = SignupResponse;
+export interface SignupWithInviteResponse {
+  user: UserType;
+  accessToken: string;
+  expiresIn: number;
+}
 
 export interface GetInvitationResponse {
   email: string;

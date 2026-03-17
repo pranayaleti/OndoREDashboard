@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, useParams, useNavigate } from "react-router-dom"
+import { useAuth } from "@/lib/auth-context"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
@@ -59,6 +60,7 @@ export default function Signup() {
   const { token } = useParams<{ token: string }>()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { authenticateUser } = useAuth()
 
   const schema: FormValidationSchema<{
     firstName: string
@@ -228,15 +230,31 @@ export default function Signup() {
         password: values.password,
       })
 
+      if (response?.accessToken && response?.user) {
+        authenticateUser(
+          {
+            id: response.user.id,
+            firstName: response.user.firstName,
+            lastName: response.user.lastName,
+            email: response.user.email,
+            role: response.user.role,
+            phone: response.user.phone,
+            address: response.user.address,
+            profilePicture: response.user.profilePicture,
+          },
+          response.accessToken,
+          response.expiresIn ?? 900
+        )
+      }
       setIsSuccess(true)
       toast({
         title: "Account created successfully!",
         description: `Welcome to ${companyInfo.name}. You're now logged in.`,
       })
 
-      // Auto-login after successful signup
+      // Auto-navigate after successful signup
       setTimeout(() => {
-        const redirectPath = response?.user.role === "manager" ? "/dashboard" : 
+        const redirectPath = response?.user.role === "manager" ? "/dashboard" :
                            response?.user.role === "owner" ? "/owner" : "/tenant"
         navigate(redirectPath)
       }, 2000)

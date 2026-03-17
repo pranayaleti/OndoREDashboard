@@ -25,8 +25,6 @@ const Register = lazy(() => import('@/pages/Register'))
 const Manager = lazy(() => import('@/pages/Manager'))
 const SuperAdmin = lazy(() => import('@/pages/SuperAdmin'))
 const Admin = lazy(() => import('@/pages/Admin'))
-const Properties = lazy(() => import('@/pages/Properties'))
-const Search = lazy(() => import('@/pages/Search'))
 const Owner = lazy(() => import('@/pages/Owner'))
 const Tenant = lazy(() => import('@/pages/Tenant'))
 const Maintenance = lazy(() => import('@/pages/Maintenance'))
@@ -127,16 +125,6 @@ function App() {
                 } />
                 
                 {/* Semi-protected routes (available to logged-in users) */}
-                <Route path="/properties/*" element={
-                  <ProtectedRoute>
-                    <Properties />
-                  </ProtectedRoute>
-                } />
-                <Route path="/search/*" element={
-                  <ProtectedRoute>
-                    <Search />
-                  </ProtectedRoute>
-                } />
                 <Route path="/handoff/:propertyId?" element={
                   <ProtectedRoute>
                     <Handoff />

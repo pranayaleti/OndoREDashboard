@@ -1,11 +1,13 @@
 /**
  * Centralized Authorization Utility
- * 
+ *
  * This module provides a single source of truth for role definitions,
  * permissions, and authorization checks across the application.
  */
 
-export type UserRole = "super_admin" | "admin" | "manager" | "owner" | "tenant" | "maintenance"
+export type { UserRole } from "@ondo/types"
+import type { UserRole } from "@ondo/types"
+import { ROLE_REDIRECT_PATHS } from "@ondo/types"
 
 // Legacy role mapping for backward compatibility
 export const LEGACY_ROLE_MAP: Record<string, UserRole> = {
@@ -68,15 +70,7 @@ export function canManageRole(actorRole: UserRole, targetRole: UserRole): boolea
  * Get dashboard path for a role
  */
 export function getDashboardPath(role: UserRole): string {
-  const paths: Record<UserRole, string> = {
-    super_admin: "/super-admin",
-    admin: "/admin", // Admin uses same portal structure as super_admin
-    manager: "/dashboard",
-    owner: "/owner",
-    tenant: "/tenant",
-    maintenance: "/maintenance",
-  }
-  return paths[role]
+  return ROLE_REDIRECT_PATHS[role]
 }
 
 /**
