@@ -253,7 +253,7 @@ function HistoryDialog({ tenantId, onClose }: HistoryDialogProps) {
       .then(setHistory)
       .catch(() => toast({ title: "Error", description: "Failed to load history.", variant: "destructive" }))
       .finally(() => setLoading(false))
-  }, [tenantId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tenantId])
 
   const scores = history?.scoreHistory ?? []
   const sparklineData = [...scores].reverse().map((s) => ({ value: s.score }))
@@ -373,7 +373,7 @@ export default function ManagerAtRisk() {
     }
   }
 
-  useEffect(() => { fetchList() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchList() }, [])
 
   const handleRefreshScores = async () => {
     try {

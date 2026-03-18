@@ -127,7 +127,7 @@ export default function RiskAnalytics() {
     }
   }
 
-  useEffect(() => { fetchData() }, [windowDays]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchData() }, [windowDays])
 
   const handleApprove = async (id: string) => {
     try {
