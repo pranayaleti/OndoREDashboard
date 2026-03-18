@@ -11,7 +11,7 @@
 import type { ApiErrorResponse } from "@ondo/types";
 import { ApiError as OntoApiError } from "@ondo/types";
 import { ApiErrorFieldArraySchema } from "./schemas";
-import { getValidAccessToken, refreshAccessToken, clearAccessToken } from "./clients/token-manager";
+import { getValidAccessToken, refreshAccessToken, clearAccessToken, getAccessToken } from "./clients/token-manager";
 
 const API_BASE_URL: string =
   (import.meta.env?.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:3000/api";
@@ -189,8 +189,6 @@ export async function apiDelete<T>(
  * the token via `getValidAccessToken()`.
  */
 export function getAuthHeaders(token?: string): Record<string, string> {
-  // Import getAccessToken synchronously (non-async, no refresh attempt)
-  const { getAccessToken } = require("./clients/token-manager") as typeof import("./clients/token-manager");
   const auth = token ?? getAccessToken();
   return auth ? { Authorization: `Bearer ${auth}` } : {};
 }
