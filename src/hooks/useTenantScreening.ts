@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   ApiError,
+  getTenantScreeningWidgetData,
   tenantScreeningApi,
   type TenantScreeningApplicant,
   type TenantScreeningApplicantParams,
@@ -46,10 +47,8 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
 
     switch (user.role) {
       case "owner":
-        base.ownerId = user.id
-        break
       case "manager":
-        base.managerId = user.id
+        // Backend scopes list by JWT userId (initiated_by). Do not send ownerId unless admin uses ?ownerId.
         break
       case "tenant":
         base.tenantId = options?.tenantId ?? user.id
@@ -58,7 +57,6 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
         }
         break
       case "maintenance":
-        base.managerId = user.id
         break
       default:
         break
@@ -84,23 +82,12 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
     user,
   ])
 
-  const summaryParams = useMemo<TenantScreeningSummaryParams | null>(() => {
-    if (!derivedParams) return null
-    // Exclude limit/status from summary params
-    const { limit, status, ...rest } = derivedParams
-    void limit
-    void status
-    return rest
-  }, [derivedParams])
-
   const fetchData = useCallback(async () => {
-    if (!derivedParams || !summaryParams) return
+    if (!derivedParams) return
     setLoading(true)
     try {
-      const [summaryResponse, applicantsResponse] = await Promise.all([
-        tenantScreeningApi.getSummary(summaryParams),
-        tenantScreeningApi.getApplicants(derivedParams),
-      ])
+      const { summary: summaryResponse, applicants: applicantsResponse } =
+        await getTenantScreeningWidgetData(derivedParams)
 
       setSummary(summaryResponse)
       setApplicants(applicantsResponse)
@@ -115,7 +102,7 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
 
       if (err instanceof ApiError && (err as ApiError).status === 404) {
         message =
-          "Tenant screening service not found (404). Verify VITE_TENANT_SCREENING_API_BASE_URL or your proxy configuration."
+          "Tenant screening endpoint not found (404). Ensure OndoREBackend is running and VITE_API_BASE_URL includes /api (e.g. http://localhost:3030/api)."
       } else if (typeof message === "string" && message.includes("<html")) {
         message =
           "Tenant screening service returned an unexpected response. Double-check the proxy URL or backend deployment."
@@ -125,13 +112,13 @@ export function useTenantScreening(options?: UseTenantScreeningOptions): TenantS
     } finally {
       setLoading(false)
     }
-  }, [derivedParams, summaryParams])
+  }, [derivedParams])
 
   useEffect(() => {
-    if ((options?.auto ?? true) && derivedParams && summaryParams) {
+    if ((options?.auto ?? true) && derivedParams) {
       fetchData()
     }
-  }, [derivedParams, summaryParams, fetchData, options?.auto])
+  }, [derivedParams, fetchData, options?.auto])
 
   const fetchReport = useCallback(async (reportId: string) => {
     if (!reportId) {

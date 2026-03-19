@@ -188,20 +188,21 @@ If the login page shows **CORS error** or **404** on `login` and `refresh` in th
    The Dashboard calls the API at `VITE_API_BASE_URL`. For local dev, that must be the OndoREBackend server:
    ```bash
    cd ../OndoREBackend   # or your backend repo
-   npm run dev          # listens on port 3000 by default
+   npm run dev          # listens on PORT from .env (default 3030 per env.ts / .env.example)
    ```
 
-2. **Use `http://localhost:3000/api` for local dev**  
+2. **Use `http://localhost:3030/api` for local dev** (or match your backend `PORT`)  
    In the Dashboard `.env`, set:
    ```bash
-   VITE_API_BASE_URL=http://localhost:3000/api
+   VITE_API_BASE_URL=http://localhost:3030/api
    ```
+   If you omit it, the Dashboard now defaults to **3030** so it matches the backend out of the box.  
    Do **not** use `http://api.localhost:3000/api` unless you have a proxy that forwards that host to the same backend (otherwise you get 404).
 
 3. **Restart the Dashboard** after changing `.env` (Vite reads env at startup).
 
 4. **Check the backend**  
-   Open `http://localhost:3000/health` in the browser; you should see `{"ok":true,...}`. If that fails, the backend isn’t running or is on a different port.
+   Open `http://localhost:3030/health` (or your `PORT`) in the browser; you should see `{"ok":true,...}`. If that fails, the backend isn’t running or the Dashboard `VITE_API_BASE_URL` port is wrong.
 
 ---
 

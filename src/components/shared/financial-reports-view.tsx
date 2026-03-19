@@ -26,11 +26,11 @@ import {
   FileText,
 } from "lucide-react"
 import { reportsApi, type PnLStatement, type RentRollRow, type VacancyReport } from "@/lib/api/clients/reports"
+import { getApiBaseUrl } from "@/lib/api/base-url"
 import { getAuthHeaders } from "@/lib/api/http"
 import { useToast } from "@/hooks/use-toast"
 
-const API_BASE_URL =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:3000/api"
+const API_BASE_URL = getApiBaseUrl()
 
 function formatDateRange(start: string, end: string): string {
   return `${start} to ${end}`

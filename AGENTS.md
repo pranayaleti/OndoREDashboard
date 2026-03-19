@@ -28,7 +28,7 @@ npm run lint      # ESLint
 npm run clean     # Remove dist/
 ```
 
-No backend setup needed for the dashboard itself — it calls the `OndoREBackend` API. Set `VITE_API_URL` in `.env` to point to the backend.
+No backend setup needed for the dashboard itself — it calls the `OndoREBackend` API. Set `VITE_API_BASE_URL` in `.env` (defaults to `http://localhost:3030/api` when unset; backend default `PORT` is 3030).
 
 ## Project structure
 

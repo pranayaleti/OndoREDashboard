@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from "../base-url";
+
 /**
  * Token Manager — access token storage, expiry detection, and silent refresh.
  *
@@ -19,8 +21,7 @@
  *   over session recovery from this point forward.
  */
 
-const API_BASE_URL: string =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:3000/api";
+const API_BASE_URL: string = getApiBaseUrl();
 
 // ---------------------------------------------------------------------------
 // In-memory state

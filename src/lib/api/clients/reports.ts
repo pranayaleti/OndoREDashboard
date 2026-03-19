@@ -4,6 +4,7 @@
  * Owner: no ownerId. Manager/Admin: pass ownerId in query.
  */
 
+import { getApiBaseUrl } from "../base-url";
 import { apiGet, getAuthHeaders } from "../http";
 
 export interface PnLIncome {
@@ -150,9 +151,7 @@ export const reportsApi = {
    * Caller must open in new window or use fetch with credentials to download.
    */
   buildPnLExportUrl(params: GetPnLParams, ownerId?: string): string {
-    const base =
-      (import.meta.env?.VITE_API_BASE_URL as string | undefined) ??
-      "http://localhost:3000/api";
+    const base = getApiBaseUrl();
     const query = buildQuery({
       startDate: params.startDate,
       endDate: params.endDate,
@@ -169,9 +168,7 @@ export const reportsApi = {
     params: GetRentRollParams = {},
     ownerId?: string
   ): string {
-    const base =
-      (import.meta.env?.VITE_API_BASE_URL as string | undefined) ??
-      "http://localhost:3000/api";
+    const base = getApiBaseUrl();
     const query = buildQuery({
       month: params.month,
       year: params.year,

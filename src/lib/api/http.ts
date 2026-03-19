@@ -12,9 +12,9 @@ import type { ApiErrorResponse } from "@ondo/types";
 import { ApiError as OntoApiError } from "@ondo/types";
 import { ApiErrorFieldArraySchema } from "./schemas";
 import { getValidAccessToken, refreshAccessToken, clearAccessToken, getAccessToken } from "./clients/token-manager";
+import { getApiBaseUrl } from "./base-url";
 
-const API_BASE_URL: string =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:3000/api";
+const API_BASE_URL: string = getApiBaseUrl();
 
 const REQUEST_TIMEOUT_MS = 30_000;
 

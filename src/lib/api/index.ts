@@ -21,7 +21,10 @@ export { accountingApi } from "./clients/accounting";
 export { assistantApi } from "./clients/assistant";
 export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
-export { tenantScreeningApi } from "./clients/tenant-screening";
+export {
+  tenantScreeningApi,
+  getTenantScreeningWidgetData,
+} from "./clients/tenant-screening";
 export { documentsApi } from "./clients/documents";
 export { vendorsApi } from "./clients/vendors";
 export { rentSchedulesApi } from "./clients/rent-schedules";

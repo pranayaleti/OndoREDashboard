@@ -9,6 +9,7 @@
  */
 
 import { apiRequest, getAuthHeaders } from "../http";
+import { getApiBaseUrl } from "../base-url";
 import { tokenManager } from "./token-manager";
 import {
   ListPaymentMethodsResponseSchema,
@@ -22,9 +23,7 @@ import {
 
 // ─── URL helpers ──────────────────────────────────────────────────────────────
 
-const API_BASE_URL =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined) ||
-  "http://localhost:3000/api";
+const API_BASE_URL = getApiBaseUrl();
 
 function buildQueryString(params?: Record<string, unknown>): string {
   if (!params) return '';

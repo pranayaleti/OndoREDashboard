@@ -10,8 +10,9 @@ import { useValidatedForm } from "@/hooks/useValidatedForm"
 import type { FormValidationSchema } from "@/utils/validation.utils"
 import { sanitize } from "@/utils/validation.utils"
 import { ERROR_MESSAGES, REGEX_PATTERNS } from "@/constants/regex.constants"
+import { getApiBaseUrl } from "@/lib/api/base-url"
 
-const API_BASE_URL = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = getApiBaseUrl()
 
 export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false)

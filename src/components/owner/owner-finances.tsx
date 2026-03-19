@@ -14,6 +14,7 @@ import {
   Download,
 } from "lucide-react"
 import { reportsApi, type PnLStatement } from "@/lib/api/clients/reports"
+import { getApiBaseUrl } from "@/lib/api/base-url"
 import { getAuthHeaders } from "@/lib/api/http"
 import { useToast } from "@/hooks/use-toast"
 
@@ -28,8 +29,7 @@ function getDefaultDateRange(): { startDate: string; endDate: string } {
   return { startDate, endDate }
 }
 
-const API_BASE_URL =
-  (import.meta.env?.VITE_API_BASE_URL as string | undefined) ?? "http://localhost:3000/api"
+const API_BASE_URL = getApiBaseUrl()
 
 export default function OwnerFinances() {
   const { toast } = useToast()
