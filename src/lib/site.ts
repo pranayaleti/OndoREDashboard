@@ -20,6 +20,9 @@ export const SITE_ADDRESS_POSTAL_CODE = companyInfo.address.postalCode
 // Phone
 export const SITE_PHONE = companyInfo.phoneDisplay
 
+/** 30-minute scheduling — single source: `companyInfo.calendlyUrl` */
+export const SITE_CALENDLY_URL = companyInfo.calendlyUrl
+
 // Emails
 export const SITE_EMAILS = {
   primary: companyInfo.email,

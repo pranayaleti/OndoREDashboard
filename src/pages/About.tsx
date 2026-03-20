@@ -42,7 +42,7 @@ export default function AboutPage() {
 
       <section className="container mx-auto px-4 py-12">
         <TenantScreeningSection
-          ctaHref="/contact"
+          ctaHref={companyInfo.calendlyUrl}
           ctaLabel="Book a platform tour"
           title="Product vision"
           description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing). We're building a conversational AI assistant for lease review, portfolio insights, marketing, and auto-routing maintenance — and we build outbound sales from the ground up: prospecting, lead qualification, CRM from zero, and representing Ondo RE as your first point of contact."

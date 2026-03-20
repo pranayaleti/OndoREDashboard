@@ -377,7 +377,7 @@ export default function LandingPage() {
               title="Tenant screening built for SaaS"
               description="Plug into the screening provider you choose. We store the metadata, surface statuses, and leave the API key wiring flexible for SmartMove, ApplyConnect, RentPrep, or Checkr."
               ctaLabel="Book screening prep"
-              ctaHref="/contact"
+              ctaHref={companyInfo.calendlyUrl}
             />
             <Card className="border-white/10 bg-slate-900">
               <CardHeader>
