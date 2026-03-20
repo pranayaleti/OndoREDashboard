@@ -4,6 +4,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+function isExternalHref(href: string): boolean {
+  return /^https?:\/\//i.test(href)
+}
+
 type FeatureBadge = {
   label: string
   icon: React.ReactNode
@@ -122,7 +126,13 @@ export function TenantScreeningSection({
             </div>
             <div className="mt-10">
               <Button asChild size="lg" className="bg-white text-slate-900 hover:bg-slate-100">
-                <Link to={ctaHref}>{ctaLabel}</Link>
+                {isExternalHref(ctaHref) ? (
+                  <a href={ctaHref} target="_blank" rel="noopener noreferrer">
+                    {ctaLabel}
+                  </a>
+                ) : (
+                  <Link to={ctaHref}>{ctaLabel}</Link>
+                )}
               </Button>
             </div>
           </div>

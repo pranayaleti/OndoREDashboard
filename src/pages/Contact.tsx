@@ -104,7 +104,7 @@ export default function ContactPage() {
         <section className="py-10">
           <div className="container px-4 md:px-6">
             <TenantScreeningSection
-              ctaHref="/contact"
+              ctaHref={companyInfo.calendlyUrl}
               ctaLabel="Book a screening demo"
               description="Share a few details with our team and we’ll configure screening workflows that match your portfolio."
               title="Deploy modern screening across every portfolio"
@@ -311,6 +311,37 @@ export default function ContactPage() {
                   </Button>
                 </CardFooter>
               </Card>
+            </div>
+
+            <div
+              id="book-a-call"
+              className="mt-12 scroll-mt-24 rounded-xl border bg-card p-4 md:p-6"
+            >
+              <h2 className="text-2xl font-bold tracking-tighter mb-2 text-center">
+                Schedule a call
+              </h2>
+              <p className="text-muted-foreground text-center text-sm mb-6 max-w-lg mx-auto">
+                Book a free 30-minute slot — demos, onboarding, or general questions.
+              </p>
+              <div className="mx-auto max-w-3xl min-h-[420px] rounded-lg border overflow-hidden bg-background">
+                <iframe
+                  title="Schedule a call with Ondo Real Estate"
+                  src={`${companyInfo.calendlyUrl}${companyInfo.calendlyUrl.includes("?") ? "&" : "?"}embed_type=Inline`}
+                  className="h-[520px] w-full border-0 block"
+                  loading="lazy"
+                  allow="camera; microphone; fullscreen; payment"
+                />
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-3">
+                <a
+                  href={companyInfo.calendlyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Open Calendly in a new tab
+                </a>
+              </p>
             </div>
           </div>
         </section>

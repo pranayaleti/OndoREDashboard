@@ -1,7 +1,7 @@
 export const companyInfo = {
   name: "Ondo Real Estate",
   email: "pranay1917@gmail.com",
-  calendlyUrl: "https://calendly.com/scheduleondo",
+  calendlyUrl: "https://calendly.com/scheduleondo/30min",
   timezoneAbbr: "MST",
   timezoneIANA: "America/Denver",
 
