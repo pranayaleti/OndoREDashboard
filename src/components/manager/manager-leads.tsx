@@ -20,9 +20,25 @@ import {
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { leadApi, authApi, type Lead } from "@/lib/api"
+import { type LeadScore } from "@/lib/api/clients/lead"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 import { useAuth } from "@/lib/auth-context"
 import { useRealtimeTable } from "@/hooks/useRealtimeTable"
+import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
+
+function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
+  if (!temperature) return <span className="text-xs text-gray-400">—</span>;
+  const styles = {
+    HOT: "bg-red-100 text-red-700 border border-red-200",
+    WARM: "bg-amber-100 text-amber-700 border border-amber-200",
+    COLD: "bg-blue-100 text-blue-700 border border-blue-200",
+  };
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${styles[temperature]}`}>
+      {temperature}
+    </span>
+  );
+}
 
 export default function ManagerLeads() {
   const { user } = useAuth()
@@ -30,6 +46,8 @@ export default function ManagerLeads() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [scoreMap, setScoreMap] = useState<Map<string, LeadScore | null>>(new Map())
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -60,6 +78,12 @@ export default function ManagerLeads() {
       setLoading(true)
       const fetchedLeads = await leadApi.getManagerLeads()
       setLeads(fetchedLeads)
+      // Fetch scores in parallel after leads load
+      const scores = await Promise.all(
+        fetchedLeads.map((lead) => leadApi.getLeadScore(lead.id))
+      )
+      const newScoreMap = new Map(fetchedLeads.map((lead, i) => [lead.id, scores[i]]))
+      setScoreMap(newScoreMap)
     } catch (error) {
       console.error("Error fetching leads:", error)
       toast({
@@ -201,15 +225,27 @@ export default function ManagerLeads() {
         </Card>
       ) : filteredLeads.length > 0 ? (
         <div className="space-y-4">
-          {filteredLeads.map((lead) => (
-            <Card key={lead.id} className="hover:shadow-md transition-shadow">
+          {filteredLeads.map((lead) => {
+            const score = scoreMap.get(lead.id)
+            return (
+            <Card
+              key={lead.id}
+              className="hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              onClick={() => setSelectedLead(lead)}
+            >
               <CardContent className="pt-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-1">
-                      {lead.tenantName}
-                    </h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+                        {lead.tenantName}
+                      </h3>
+                      <TemperatureBadge temperature={score?.temperature} />
+                      {score && (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{score.score}/100</span>
+                      )}
+                    </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <Mail className="h-4 w-4" />
@@ -306,7 +342,7 @@ export default function ManagerLeads() {
                     <span>Source: {lead.source}</span>
                   </div>
 
-                  <div className="flex gap-2 w-full sm:w-auto">
+                  <div className="flex gap-2 w-full sm:w-auto" onClick={(e) => e.stopPropagation()}>
                     <Select
                       value={lead.status}
                       onValueChange={(newStatus) => handleLeadStatusUpdate(lead.id, newStatus as Lead['status'])}
@@ -335,7 +371,7 @@ export default function ManagerLeads() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )})}
         </div>
       ) : (
         <Card>
@@ -354,6 +390,8 @@ export default function ManagerLeads() {
           </CardContent>
         </Card>
       )}
+
+      <LeadDetailDrawer lead={selectedLead} onClose={() => setSelectedLead(null)} />
     </div>
   )
 }
