@@ -122,7 +122,7 @@ export const authApi = {
   async getInvitedUsers(page: number = 1, pageSize: number = 20): Promise<GetInvitedUsersResponse> {
     const headers = getAuthHeaders();
     const raw = await apiGet<unknown>(
-      `/auth/invited-users?page=${page}&pageSize=${pageSize}`,
+      `/auth/invited-users?page=${page}&limit=${pageSize}`,
       headers,
     );
     return GetInvitedUsersResponseSchema.parse(raw) as GetInvitedUsersResponse;

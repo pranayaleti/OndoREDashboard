@@ -25,14 +25,19 @@ export interface ProfileShellProps {
   children: ReactNode
 }
 
+/** Page titles follow portal appearance (light / dark via `next-themes`). */
 export function ProfileShell({ title, description, summary, children }: ProfileShellProps) {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-muted-foreground mt-2">{description}</p>}
+        <h1 className="text-3xl font-bold tracking-tight text-foreground dark:text-zinc-50">
+          {title}
+        </h1>
+        {description && (
+          <p className="mt-2 text-muted-foreground dark:text-zinc-400">{description}</p>
+        )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         <div className="lg:col-span-1">{summary}</div>
         <div className="lg:col-span-3">{children}</div>
       </div>

@@ -1,21 +1,26 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Calendar, Plus, Clock } from "lucide-react"
-import { format } from "date-fns"
+import { compareAsc, format } from "date-fns"
+import { SUPER_ADMIN_CALENDAR_SCHEDULE_TYPES } from "@/lib/calendar-schedule-presets"
+import { seedEventToVM, storedToVM, uniqueEventDates, type CalendarEventVM } from "@/lib/calendar-events"
+import { usePersistedCalendarEvents } from "@/hooks/use-persisted-calendar-events"
+import { ScheduleEventDialog } from "@/components/shared/schedule-event-dialog"
 
-// Mock events for super admin
-const mockEvents = [
+const STORAGE_KEY = "ondo-dashboard:calendar-events:super-admin"
+
+const seedEvents = [
   {
     id: 1,
     title: "System Maintenance Window",
     date: new Date(2024, 0, 25),
     time: "2:00 AM - 4:00 AM",
     type: "system",
-    description: "Scheduled system maintenance and updates"
+    description: "Scheduled system maintenance and updates",
   },
   {
     id: 2,
@@ -23,7 +28,7 @@ const mockEvents = [
     date: new Date(2024, 0, 22),
     time: "10:00 AM - 11:30 AM",
     type: "meeting",
-    description: "Monthly admin team review meeting"
+    description: "Monthly admin team review meeting",
   },
   {
     id: 3,
@@ -31,18 +36,28 @@ const mockEvents = [
     date: new Date(2024, 0, 28),
     time: "2:00 PM - 4:00 PM",
     type: "security",
-    description: "Quarterly security audit review session"
-  }
+    description: "Quarterly security audit review session",
+  },
 ]
 
 export default function SuperAdminCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month")
+  const [scheduleOpen, setScheduleOpen] = useState(false)
+  const { userEvents, addEvent } = usePersistedCalendarEvents(STORAGE_KEY)
+
+  const allEvents = useMemo((): CalendarEventVM[] => {
+    return [...seedEvents.map(seedEventToVM), ...userEvents.map(storedToVM)]
+  }, [userEvents])
+
+  const datesWithEvents = useMemo(() => uniqueEventDates(allEvents), [allEvents])
+
+  const upcomingEvents = useMemo(() => {
+    return [...allEvents].sort((a, b) => compareAsc(a.date, b.date)).slice(0, 5)
+  }, [allEvents])
 
   const getEventsForDate = (date: Date) => {
-    return mockEvents.filter(event => 
-      event.date.toDateString() === date.toDateString()
-    )
+    return allEvents.filter((event) => event.date.toDateString() === date.toDateString())
   }
 
   const getEventTypeColor = (type: string) => {
@@ -62,6 +77,15 @@ export default function SuperAdminCalendar() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ScheduleEventDialog
+        open={scheduleOpen}
+        onOpenChange={setScheduleOpen}
+        defaultDate={selectedDate}
+        title="New event"
+        typeOptions={SUPER_ADMIN_CALENDAR_SCHEDULE_TYPES}
+        showPropertyField={false}
+        onScheduled={addEvent}
+      />
       <div className="mb-6">
         <Breadcrumb items={[{ label: "Calendar", icon: Calendar }]} />
       </div>
@@ -83,7 +107,7 @@ export default function SuperAdminCalendar() {
           <Button variant={viewMode === "day" ? "default" : "outline"} onClick={() => setViewMode("day")}>
             Day
           </Button>
-          <Button>
+          <Button onClick={() => setScheduleOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Event
           </Button>
@@ -91,7 +115,6 @@ export default function SuperAdminCalendar() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -106,18 +129,16 @@ export default function SuperAdminCalendar() {
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 className="rounded-md border"
-                modifiers={{
-                  hasEvents: mockEvents.map(e => e.date)
-                }}
+                modifiers={{ hasEvents: datesWithEvents }}
                 modifiersClassNames={{
-                  hasEvents: "bg-purple-100 dark:bg-purple-900"
+                  hasEvents:
+                    "relative after:absolute after:bottom-1 after:left-1/2 after:z-10 after:-translate-x-1/2 after:rounded-full after:bg-primary after:size-1.5",
                 }}
               />
             </CardContent>
           </Card>
         </div>
 
-        {/* Events List */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
@@ -132,20 +153,18 @@ export default function SuperAdminCalendar() {
               {selectedDateEvents.length > 0 ? (
                 <div className="space-y-3">
                   {selectedDateEvents.map((event) => (
-                    <div key={event.id} className="p-3 border rounded-lg">
+                    <div key={String(event.id)} className="p-3 border rounded-lg">
                       <div className="flex items-start justify-between mb-2">
                         <h4 className="font-medium">{event.title}</h4>
-                        <Badge className={getEventTypeColor(event.type)}>
-                          {event.type}
-                        </Badge>
+                        <Badge className={getEventTypeColor(event.type)}>{event.type}</Badge>
                       </div>
                       <div className="flex items-center text-sm text-gray-500 mb-2">
                         <Clock className="h-3 w-3 mr-1" />
                         {event.time}
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {event.description}
-                      </p>
+                      {event.description ? (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -158,15 +177,26 @@ export default function SuperAdminCalendar() {
             </CardContent>
           </Card>
 
-          {/* Upcoming Events */}
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Upcoming Events</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockEvents.slice(0, 5).map((event) => (
-                  <div key={event.id} className="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+                {upcomingEvents.map((event) => (
+                  <div
+                    key={String(event.id)}
+                    className="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                    onClick={() => setSelectedDate(new Date(event.date))}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        setSelectedDate(new Date(event.date))
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                  >
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 flex flex-col items-center justify-center bg-purple-100 dark:bg-purple-900 rounded">
                         <span className="text-xs font-medium">{format(event.date, "MMM")}</span>
@@ -190,4 +220,3 @@ export default function SuperAdminCalendar() {
     </div>
   )
 }
-

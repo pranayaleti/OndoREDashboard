@@ -1,21 +1,12 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign } from "lucide-react"
+import { RoleFinancesView } from "@/components/shared/role-finances-view"
 
 export default function AdminFinances() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <DollarSign className="h-6 w-6" />
-            System Finances
-          </CardTitle>
-          <CardDescription>System-wide financial overview</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Financial reporting is coming soon.</p>
-        </CardContent>
-      </Card>
-    </div>
+    <RoleFinancesView
+      title="System Finances"
+      description="Review portfolio-wide financial performance, recent payment activity, and drill into owner-level reports from the admin dashboard."
+      requireOwnerSelection
+      ownerPickerTitle="Owner financial reports"
+    />
   )
 }

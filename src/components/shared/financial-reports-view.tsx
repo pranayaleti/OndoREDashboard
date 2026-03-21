@@ -331,22 +331,22 @@ export function FinancialReportsView({
                   </CardHeader>
                   <CardContent>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                      <table className="w-full text-sm border-separate border-spacing-0">
                         <thead>
                           <tr className="border-b">
-                            <th className="text-left py-2">Property</th>
-                            <th className="text-right py-2">Income</th>
-                            <th className="text-right py-2">Expenses</th>
-                            <th className="text-right py-2">Net</th>
+                            <th className="text-left py-2.5 px-3">Property</th>
+                            <th className="text-right py-2.5 px-3">Income</th>
+                            <th className="text-right py-2.5 px-3">Expenses</th>
+                            <th className="text-right py-2.5 px-3">Net</th>
                           </tr>
                         </thead>
                         <tbody>
                           {pnl.properties.map((p) => (
                             <tr key={p.propertyId} className="border-b">
-                              <td className="py-2">{p.propertyAddress || p.propertyId}</td>
-                              <td className="text-right">${p.income.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                              <td className="text-right">${p.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                              <td className="text-right font-medium">${p.netIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                              <td className="py-2.5 px-3">{p.propertyAddress || p.propertyId}</td>
+                              <td className="text-right py-2.5 px-3">${p.income.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                              <td className="text-right py-2.5 px-3">${p.expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                              <td className="text-right py-2.5 px-3 font-medium">${p.netIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -369,26 +369,30 @@ export function FinancialReportsView({
                   </CardHeader>
                   <CardContent>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
+                      <table className="w-full text-sm border-separate border-spacing-0">
                         <thead>
                           <tr className="border-b">
-                            <th className="text-left py-2">Property</th>
-                            <th className="text-left py-2">Unit</th>
-                            <th className="text-left py-2">Tenant</th>
-                            <th className="text-right py-2">Rent</th>
-                            <th className="text-right py-2">Balance due</th>
-                            <th className="text-left py-2">Status</th>
+                            <th className="text-left py-2.5 px-3">Property</th>
+                            <th className="text-left py-2.5 px-3">Unit</th>
+                            <th className="text-left py-2.5 px-3">Tenant</th>
+                            <th className="text-right py-2.5 px-3">Rent</th>
+                            <th className="text-right py-2.5 px-3 whitespace-nowrap">Balance due</th>
+                            <th className="text-left py-2.5 px-3 pl-8 min-w-[8rem]">Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           {rentRoll.map((r, i) => (
                             <tr key={r.propertyId + (r.unitNumber ?? "") + i} className="border-b">
-                              <td className="py-2">{r.propertyAddress}</td>
-                              <td className="py-2">{r.unitNumber ?? "—"}</td>
-                              <td className="py-2">{r.tenantName ?? r.tenantEmail ?? "—"}</td>
-                              <td className="text-right">${r.monthlyRent.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                              <td className="text-right">${r.balanceDue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                              <td className="py-2">{r.status}</td>
+                              <td className="py-2.5 px-3">{r.propertyAddress}</td>
+                              <td className="py-2.5 px-3">{r.unitNumber ?? "—"}</td>
+                              <td className="py-2.5 px-3">{r.tenantName ?? r.tenantEmail ?? "—"}</td>
+                              <td className="text-right py-2.5 px-3 whitespace-nowrap tabular-nums">
+                                ${r.monthlyRent.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                              </td>
+                              <td className="text-right py-2.5 px-3 whitespace-nowrap tabular-nums">
+                                ${r.balanceDue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                              </td>
+                              <td className="py-2.5 px-3 pl-8">{r.status}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -414,20 +418,20 @@ export function FinancialReportsView({
                   <CardContent>
                     {vacancy.properties.length > 0 ? (
                       <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <table className="w-full text-sm border-separate border-spacing-0">
                           <thead>
                             <tr className="border-b">
-                              <th className="text-left py-2">Property</th>
-                              <th className="text-left py-2">Status</th>
-                              <th className="text-left py-2">Tenant</th>
+                              <th className="text-left py-2.5 px-3">Property</th>
+                              <th className="text-left py-2.5 px-3">Status</th>
+                              <th className="text-left py-2.5 px-3">Tenant</th>
                             </tr>
                           </thead>
                           <tbody>
                             {vacancy.properties.map((p) => (
                               <tr key={p.propertyId} className="border-b">
-                                <td className="py-2">{p.propertyAddress}</td>
-                                <td className="py-2">{p.isOccupied ? "Occupied" : "Vacant"}</td>
-                                <td className="py-2">{p.tenantName ?? "—"}</td>
+                                <td className="py-2.5 px-3">{p.propertyAddress}</td>
+                                <td className="py-2.5 px-3">{p.isOccupied ? "Occupied" : "Vacant"}</td>
+                                <td className="py-2.5 px-3">{p.tenantName ?? "—"}</td>
                               </tr>
                             ))}
                           </tbody>

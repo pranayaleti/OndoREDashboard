@@ -1,4 +1,17 @@
-import { Shield, Users, Building, Wrench, Clock, CheckCircle, XCircle } from "lucide-react"
+import {
+  Shield,
+  Users,
+  Building,
+  Wrench,
+  Clock,
+  CheckCircle,
+  XCircle,
+  DollarSign,
+  BadgeCheck,
+  BarChart3,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, maintenanceApi, type Property, type InvitedUser, type MaintenanceRequest } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -126,6 +139,13 @@ export function createSuperAdminConfig(
       description: "Staff & requests",
       icon: <Wrench className="h-8 w-8 text-orange-500" />,
       href: "/super-admin/maintenance",
+    },
+    {
+      id: "finances",
+      title: "Finances",
+      description: "P&L & payments",
+      icon: <DollarSign className="h-8 w-8 text-emerald-500" />,
+      href: "/super-admin/finances",
     },
   ]
 
@@ -367,6 +387,31 @@ export function createSuperAdminConfig(
           ctaLabel="Audit finances"
           ctaHref="/super-admin/finances"
           subtitle="Roll-up company-wide books, approvals, and tax packages."
+          transactionsHref="/super-admin/finances?tab=payments"
+          cashFlowHref="/super-admin/finances?tab=overview"
+          taxPackageCardHref="/super-admin/finances?tab=reports"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/super-admin/finances?tab=payments",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/super-admin/finances?tab=overview",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/super-admin/reports",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/super-admin/finances?tab=reports",
+            },
+          ]}
           taxSummary={{
             timePeriod: "Quarter to Date",
             properties: `${stats.totalProperties} Properties`,
@@ -374,7 +419,7 @@ export function createSuperAdminConfig(
             uncategorized: Math.max(1, stats.pendingProperties),
             attachments: stats.totalManagers + stats.totalMaintenance,
             ctaLabel: "Download compliance pack",
-            ctaHref: "/super-admin/reports",
+            ctaHref: "/super-admin/finances?tab=reports",
           }}
         />
       ),

@@ -40,11 +40,11 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
 
   if (loading && config.dataFetchers && Object.keys(config.dataFetchers).length > 0) {
     return (
-      <div className={cn("min-h-screen bg-gray-50 dark:bg-gray-900", className)} style={getThemeStyle()}>
+      <div className={cn("min-h-screen bg-transparent", className)} style={getThemeStyle()}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
             <Loader2 className="h-8 w-8 animate-spin" style={{ color: primaryColor }} />
-            <div className="text-lg text-gray-600 dark:text-gray-400">Loading dashboard...</div>
+            <div className="text-lg text-muted-foreground">Loading dashboard...</div>
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
   }
 
   return (
-    <div className={cn("min-h-screen bg-gray-50 dark:bg-gray-900", className)} style={getThemeStyle()}>
+    <div className={cn("min-h-screen bg-transparent", className)} style={getThemeStyle()}>
       {/* Header Section */}
       {config.showHeader !== false && (
         <div className="bg-white dark:bg-gray-800 border-b">

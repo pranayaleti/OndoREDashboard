@@ -73,6 +73,12 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Slightly larger type on desktop (matches portal `lg` layout) for readability */
+  @media (min-width: 1024px) {
+    html {
+      font-size: 17px;
+    }
+  }
 }
 
 @layer utilities {

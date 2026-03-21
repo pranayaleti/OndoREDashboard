@@ -1,4 +1,14 @@
-import { Wrench, Clock, CheckCircle, AlertTriangle, Building } from "lucide-react"
+import {
+  Wrench,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Building,
+  BadgeCheck,
+  BarChart3,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { maintenanceApi, type MaintenanceRequest } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -248,7 +258,32 @@ export function createMaintenanceConfig(
           title="Know exactly where service dollars go."
           subtitle="Tie labor hours and material costs to properties, and deliver audit-ready breakdowns."
           ctaLabel="Review cost reports"
-          ctaHref="/maintenance/reports"
+          ctaHref="/maintenance/documents"
+          transactionsHref="/maintenance/tickets"
+          cashFlowHref="/maintenance/tickets"
+          taxPackageCardHref="/maintenance/documents"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/maintenance/tickets",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/maintenance/tickets",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/maintenance/documents",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/maintenance/documents",
+            },
+          ]}
           taxSummary={{
             timePeriod: "This Week",
             properties: `${assignedRequests.length} Active Jobs`,

@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
 import ManagerDashboard from "@/components/dashboard/portals/manager/ManagerDashboard.new"
@@ -23,7 +23,7 @@ import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-h
 export default function Manager() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<ManagerDashboard />} />
@@ -36,6 +36,18 @@ export default function Manager() {
             <Route path="/tenants/*" element={<ManagerTenants />} />
             <Route path="/maintenance/*" element={<ManagerMaintenance />} />
             <Route path="/finances/*" element={<ManagerFinances />} />
+            <Route
+              path="/transactions"
+              element={<Navigate to="/dashboard/finances?tab=payments" replace />}
+            />
+            <Route
+              path="/cash-flow"
+              element={<Navigate to="/dashboard/finances?tab=overview" replace />}
+            />
+            <Route
+              path="/taxes"
+              element={<Navigate to="/dashboard/finances?tab=reports" replace />}
+            />
             <Route path="/reports" element={<ManagerReports />} />
             <Route path="/messages/*" element={<ManagerMessages />} />
             <Route path="/documents" element={<ManagerDocuments />} />

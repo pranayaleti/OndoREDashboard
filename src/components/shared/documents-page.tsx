@@ -544,7 +544,7 @@ export function DocumentsPage({
 
   if (fetchFromApi && apiLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-transparent flex items-center justify-center">
         <div className="text-muted-foreground">Loading documents...</div>
       </div>
     )
@@ -552,7 +552,7 @@ export function DocumentsPage({
 
   if (fetchFromApi && apiError) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-transparent">
         <div className="container mx-auto px-4 py-6">
           <Card className="border-destructive/50">
             <CardContent className="pt-6">
@@ -569,7 +569,7 @@ export function DocumentsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-transparent">
       <div className="container mx-auto px-4 py-6">
         {/* Breadcrumbs */}
         <Breadcrumb items={[{ label: "Documents" }]} className="mb-4" />

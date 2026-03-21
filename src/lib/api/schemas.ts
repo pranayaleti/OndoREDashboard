@@ -86,35 +86,61 @@ export const PortfolioStatsSchema = z.object({
   formattedPortfolioValue: z.string(),
 });
 
+/** Manager stats from GET /auth/portfolio-stats (API may omit totalUnits / occupancyRate). */
 export const ManagerPortfolioStatsSchema = z.object({
   propertiesManaged: z.number(),
-  totalUnits: z.number(),
+  totalUnits: z.number().default(0),
   activeTenants: z.number(),
   monthlyRevenue: z.number(),
   formattedMonthlyRevenue: z.string(),
-  occupancyRate: z.number(),
+  occupancyRate: z.number().default(0),
 });
 
-export const GetPortfolioStatsResponseSchema = PortfolioStatsSchema;
+export const GetPortfolioStatsResponseSchema = z.union([
+  PortfolioStatsSchema,
+  ManagerPortfolioStatsSchema,
+]);
 
-export const GetInvitedUsersResponseSchema = z.object({
-  users: z.array(
-    z.object({
-      id: z.string(),
-      firstName: z.string(),
-      lastName: z.string(),
-      email: z.string().email(),
-      role: z.enum(["owner", "tenant"]),
-      createdAt: z.string(),
-      invitedBy: z.string(),
-      propertyCount: z.number(),
-      isActive: z.boolean(),
-    }),
-  ),
+const InvitedUserRecordSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  role: z.enum(["owner", "tenant"]),
+  createdAt: z.string(),
+  invitedBy: z.string(),
+  propertyCount: z.number(),
+  isActive: z.boolean(),
+});
+
+/** Backend paginated shape from `createPaginatedResponse` (Node + Edge). */
+const GetInvitedUsersPaginatedBackendSchema = z.object({
+  data: z.array(InvitedUserRecordSchema),
+  pagination: z
+    .object({
+      page: z.number(),
+      limit: z.number(),
+      total: z.number(),
+    })
+    .passthrough(),
+});
+
+const GetInvitedUsersLegacyFlatSchema = z.object({
+  users: z.array(InvitedUserRecordSchema),
   total: z.number(),
   page: z.number(),
   pageSize: z.number(),
 });
+
+export const GetInvitedUsersResponseSchema = z.union([
+  GetInvitedUsersPaginatedBackendSchema.transform((raw) => ({
+    users: raw.data,
+    total: raw.pagination.total,
+    page: raw.pagination.page,
+    pageSize: raw.pagination.limit,
+  })),
+  GetInvitedUsersLegacyFlatSchema,
+]);
 
 // ─── Property schemas ──────────────────────────────────────────────────────────
 
@@ -139,7 +165,7 @@ const PropertyManagerSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),
-  phone: z.string().optional(),
+  phone: z.string().nullish(),
 });
 
 const PropertyTenantSchema = z.object({
@@ -147,47 +173,47 @@ const PropertyTenantSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string(),
-  phone: z.string().optional(),
+  phone: z.string().nullish(),
   createdAt: z.string(),
 });
 
 export const PropertySchema = z.object({
   id: z.string(),
   ownerId: z.string(),
-  tenantId: z.string().optional(),
+  tenantId: z.string().nullish(),
   title: z.string(),
   type: z.string(),
   addressLine1: z.string(),
-  addressLine2: z.string().optional(),
+  addressLine2: z.string().nullish(),
   city: z.string(),
-  state: z.string().optional(),
+  state: z.string().nullish(),
   country: z.string(),
-  zipcode: z.string().optional(),
-  latitude: z.string().optional(),
-  longitude: z.string().optional(),
-  description: z.string().optional(),
-  price: z.number().optional(),
-  bedrooms: z.number().optional(),
-  bathrooms: z.number().optional(),
-  sqft: z.number().optional(),
-  phone: z.string().optional(),
-  website: z.string().optional(),
-  leaseTerms: z.string().optional(),
-  fees: z.string().optional(),
-  availability: z.string().optional(),
-  rating: z.number().optional(),
-  reviewCount: z.number().optional(),
-  amenities: z.array(z.string()).optional(),
-  specialties: z.array(z.string()).optional(),
-  services: z.array(z.string()).optional(),
-  valueRanges: z.array(z.string()).optional(),
+  zipcode: z.string().nullish(),
+  latitude: z.union([z.string(), z.number()]).nullish().transform((v) => v != null ? String(v) : v),
+  longitude: z.union([z.string(), z.number()]).nullish().transform((v) => v != null ? String(v) : v),
+  description: z.string().nullish(),
+  price: z.number().nullish(),
+  bedrooms: z.number().nullish(),
+  bathrooms: z.number().nullish(),
+  sqft: z.number().nullish(),
+  phone: z.string().nullish(),
+  website: z.string().nullish(),
+  leaseTerms: z.string().nullish(),
+  fees: z.string().nullish(),
+  availability: z.string().nullish(),
+  rating: z.number().nullish(),
+  reviewCount: z.number().nullish(),
+  amenities: z.array(z.string()).nullish(),
+  specialties: z.array(z.string()).nullish(),
+  services: z.array(z.string()).nullish(),
+  valueRanges: z.array(z.string()).nullish(),
   status: z.enum(["pending", "approved", "rejected", "occupied", "vacant"]),
   createdAt: z.string(),
   updatedAt: z.string(),
-  photos: z.array(PropertyPhotoSchema).optional(),
-  owner: PropertyOwnerSchema.optional(),
-  manager: PropertyManagerSchema.optional(),
-  tenant: PropertyTenantSchema.optional(),
+  photos: z.array(PropertyPhotoSchema).nullish(),
+  owner: PropertyOwnerSchema.nullish(),
+  manager: PropertyManagerSchema.nullish(),
+  tenant: PropertyTenantSchema.nullish(),
 });
 
 export const GetPropertyResponseSchema = z.object({

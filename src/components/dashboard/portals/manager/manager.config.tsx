@@ -1,4 +1,18 @@
-import { Building, Users, Clock, CheckCircle, XCircle, UserPlus, Mail, AlertTriangle } from "lucide-react"
+import {
+  Building,
+  Users,
+  Clock,
+  CheckCircle,
+  XCircle,
+  UserPlus,
+  Mail,
+  AlertTriangle,
+  DollarSign,
+  BadgeCheck,
+  BarChart3,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, leadApi, type Property, type InvitedUser, type Lead } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -117,6 +131,13 @@ export function createManagerConfig(
       description: "Requests & staff",
       icon: <AlertTriangle className="h-8 w-8 text-orange-500" />,
       href: "/dashboard/maintenance",
+    },
+    {
+      id: "finances",
+      title: "Finances",
+      description: "P&L & payments",
+      icon: <DollarSign className="h-8 w-8 text-emerald-500" />,
+      href: "/dashboard/finances",
     },
     {
       id: "invite",
@@ -315,6 +336,31 @@ export function createManagerConfig(
           ctaLabel="Go to finances"
           ctaHref="/dashboard/finances"
           subtitle="Keep every property ledger synchronized automatically."
+          transactionsHref="/dashboard/transactions"
+          cashFlowHref="/dashboard/cash-flow"
+          taxPackageCardHref="/dashboard/taxes"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/dashboard/transactions",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/dashboard/cash-flow",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/dashboard/reports",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/dashboard/taxes",
+            },
+          ]}
           taxSummary={{
             timePeriod: "Month to Date",
             properties: `${stats.totalProperties} Properties`,
@@ -322,7 +368,7 @@ export function createManagerConfig(
             uncategorized: Math.max(1, stats.pendingReview),
             attachments: stats.totalTenants + stats.activeLeads,
             ctaLabel: "Export manager pack",
-            ctaHref: "/dashboard/reports",
+            ctaHref: "/dashboard/taxes",
           }}
         />
       ),

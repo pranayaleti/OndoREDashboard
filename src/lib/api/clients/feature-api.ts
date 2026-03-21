@@ -37,6 +37,107 @@ function buildQueryString(params?: Record<string, unknown>): string {
   return serialized ? `?${serialized}` : '';
 }
 
+/** Many OndoREBackend handlers return `{ message?, data: T }` instead of a bare array. */
+function unwrapDataArray(raw: unknown): Record<string, unknown>[] {
+  if (Array.isArray(raw)) return raw as Record<string, unknown>[];
+  if (typeof raw === 'object' && raw !== null && 'data' in raw) {
+    const d = (raw as { data: unknown }).data;
+    if (Array.isArray(d)) return d as Record<string, unknown>[];
+  }
+  return [];
+}
+
+function defaultPnLDateRange(): { startDate: string; endDate: string } {
+  const end = new Date();
+  const start = new Date();
+  start.setUTCMonth(start.getUTCMonth() - 1);
+  return {
+    startDate: start.toISOString().slice(0, 10),
+    endDate: end.toISOString().slice(0, 10),
+  };
+}
+
+function mapBackendScreeningStatus(
+  status: string,
+  result: Record<string, unknown> | null | undefined,
+): TenantScreeningStatus {
+  if (status === 'completed') {
+    const rec = result?.recommendation as string | undefined;
+    if (rec === 'denied') return 'flagged';
+    if (rec === 'conditional') return 'in_review';
+    return 'approved';
+  }
+  if (status === 'failed' || status === 'cancelled') return 'flagged';
+  if (status === 'in_progress') return 'in_review';
+  return 'pending';
+}
+
+function screeningRowToPayload(row: Record<string, unknown>): ScreeningRequestPayload {
+  const result = row.result as Record<string, unknown> | null | undefined;
+  const status = mapBackendScreeningStatus(String(row.status ?? 'invited'), result);
+  const email = String(row.tenantEmail ?? '');
+  return {
+    id: String(row.id),
+    ownerId: String(row.initiatedBy ?? ''),
+    tenantName: email.includes('@') ? email.split('@')[0]! : email || 'Applicant',
+    tenantEmail: email,
+    propertyId: String(row.propertyId ?? ''),
+    status,
+    invitationSentAt: String(row.createdAt ?? ''),
+    completedAt: result?.completedAt != null ? String(result.completedAt) : undefined,
+    reportId: row.externalId != null ? String(row.externalId) : undefined,
+    createdAt: String(row.createdAt ?? new Date().toISOString()),
+    updatedAt: String(row.updatedAt ?? row.createdAt ?? new Date().toISOString()),
+  };
+}
+
+function rentScheduleRowToUi(row: Record<string, unknown>): RentSchedule {
+  const dueRaw = row.dueDate != null ? String(row.dueDate) : '';
+  const amountCents = Number(row.amountCents ?? 0);
+  const dueDay = dueRaw
+    ? new Date(`${dueRaw}T12:00:00Z`).getUTCDate()
+    : 1;
+  return {
+    tenantId: String(row.tenantId ?? ''),
+    propertyId: String(row.propertyId ?? ''),
+    monthlyAmount: amountCents / 100,
+    dueDay: Number.isNaN(dueDay) ? 1 : dueDay,
+    autopayEnabled: false,
+    upcomingDueDates: dueRaw ? [dueRaw] : [],
+  };
+}
+
+function documentRowToLease(row: Record<string, unknown>): LeaseDocument {
+  const created = String(row.createdAt ?? new Date().toISOString());
+  return {
+    id: String(row.id),
+    propertyId: String(row.propertyId ?? ''),
+    tenantId: '',
+    ownerId: String(row.ownerId ?? ''),
+    status: row.docType === 'lease' ? 'active' : 'draft',
+    createdAt: created,
+    updatedAt: created,
+    storageKey: row.storagePath != null ? String(row.storagePath) : undefined,
+  };
+}
+
+function documentRowToRecord(row: Record<string, unknown>): DocumentRecord {
+  const created = String(row.createdAt ?? new Date().toISOString());
+  return {
+    id: String(row.id),
+    propertyId: row.propertyId != null ? String(row.propertyId) : undefined,
+    tenantId: undefined,
+    ownerId: row.ownerId != null ? String(row.ownerId) : undefined,
+    categoryId: String(row.docType ?? 'general'),
+    fileName: String(row.name ?? 'document'),
+    fileSize: Number(row.sizeBytes ?? 0),
+    storageKey: String(row.storagePath ?? ''),
+    tags: [],
+    uploadedBy: String(row.ownerId ?? ''),
+    uploadedAt: created,
+  };
+}
+
 function extractMaintenanceRequests(raw: unknown): MaintenanceRequest[] {
   const directList = MaintenanceRequestArraySchema.safeParse(raw);
   if (directList.success) {
@@ -227,15 +328,23 @@ export interface MessageParticipant {
   userId: string;
   role: string;
   lastReadAt?: string;
+  joinedAt?: string;
 }
 
 export interface MessageThread {
   id: string;
   subject: string;
-  participants: MessageParticipant[];
-  lastMessagePreview?: string;
+  propertyId?: string;
+  createdBy: string;
+  createdAt: string;
   lastMessageAt?: string;
-  unreadCount?: number;
+  status: 'open' | 'pending' | 'closed' | 'resolved';
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  category: 'general' | 'maintenance' | 'billing' | 'lease' | 'other';
+  assignedTo?: string;
+  vendorRecipients?: { vendorId: string; name: string; email: string }[];
+  participants: MessageParticipant[];
+  unreadCount: number;
 }
 
 export interface MessagePayload {
@@ -246,10 +355,25 @@ export interface MessagePayload {
   channel: CommunicationChannel;
 }
 
-export interface MessageRecord extends MessagePayload {
+export interface MessageRecord {
   id: string;
+  threadId: string;
   senderId: string;
+  body: string;
+  mentions: string[];
+  templateId?: string;
+  channel: string;
   sentAt: string;
+}
+
+export interface MessageTemplate {
+  id: string;
+  title: string;
+  body: string;
+  quickReplies: string[];
+  isPublic: boolean;
+  createdBy: string;
+  createdAt: string;
 }
 
 export interface NotificationPreference {
@@ -518,52 +642,90 @@ async function rawAuthRequest<T>(
  */
 export const featureApi = {
   screening: {
-    listRequests(params?: Record<string, string | number>): Promise<ScreeningRequestPayload[]> {
+    async listRequests(params?: Record<string, string | number>): Promise<ScreeningRequestPayload[]> {
       const headers = getAuthHeaders();
-      return apiRequest<ScreeningRequestPayload[]>(
+      const raw = await apiRequest<{ screenings?: unknown[] }>(
         'GET',
-        `/screening/requests${buildQueryString(params)}`,
+        `/screening${buildQueryString(params)}`,
         undefined,
         headers,
       );
+      const list = Array.isArray(raw.screenings) ? raw.screenings : [];
+      return list
+        .map((r) => screeningRowToPayload(r as Record<string, unknown>));
     },
-    createRequest(payload: CreateScreeningRequestInput): Promise<ScreeningRequestPayload> {
-      // ROADMAP: Integrate actual SmartMove/Checkr provider IDs once backend wiring is ready (Q3 2026).
+    async createRequest(payload: CreateScreeningRequestInput): Promise<ScreeningRequestPayload> {
       const headers = getAuthHeaders();
-      return apiRequest<ScreeningRequestPayload>('POST', '/screening/requests', payload, headers);
+      const raw = await apiRequest<{
+        screeningId: string;
+        externalId?: string;
+        inviteUrl?: string;
+        status?: string;
+      }>(
+        'POST',
+        '/screening/initiate',
+        {
+          tenantEmail: payload.tenantEmail,
+          tenantName: payload.tenantName,
+          propertyId: payload.propertyId,
+        },
+        headers,
+      );
+      const now = new Date().toISOString();
+      return {
+        id: raw.screeningId,
+        ownerId: '',
+        tenantName: payload.tenantName,
+        tenantEmail: payload.tenantEmail,
+        propertyId: payload.propertyId,
+        monthlyRent: payload.monthlyRent,
+        dueDate: payload.dueDate,
+        notes: payload.notes,
+        status: 'pending',
+        createdAt: now,
+        updatedAt: now,
+      };
     },
     sendScreeningLink(
-      requestId: string,
-      channel: CommunicationChannel = 'email',
+      _requestId: string,
+      _channel: CommunicationChannel = 'email',
     ): Promise<{ message: string }> {
-      const headers = getAuthHeaders();
-      return apiRequest<{ message: string }>(
-        'POST',
-        `/screening/requests/${requestId}/send-link`,
-        { channel },
-        headers,
-      );
+      return Promise.resolve({
+        message: 'Invite link is created when screening is initiated; resend is not yet exposed by the API.',
+      });
     },
-    fetchReportMetadata(requestId: string): Promise<ScreeningReportMetadata> {
+    async fetchReportMetadata(requestId: string): Promise<ScreeningReportMetadata> {
       const headers = getAuthHeaders();
-      return apiRequest<ScreeningReportMetadata>(
+      const raw = await apiRequest<{ screening?: Record<string, unknown> }>(
         'GET',
-        `/screening/requests/${requestId}/report`,
+        `/screening/${requestId}`,
         undefined,
         headers,
       );
+      const s = raw.screening ?? {};
+      const result = s.result as Record<string, unknown> | undefined;
+      const bc = result?.backgroundCheck as Record<string, unknown> | undefined;
+      return {
+        id: requestId,
+        requestId,
+        vendor: 'mock',
+        score: typeof result?.creditScore === 'number' ? result.creditScore : undefined,
+        summary: typeof bc?.summary === 'string' ? bc.summary : undefined,
+        downloadUrl: typeof result?.reportUrl === 'string' ? result.reportUrl : undefined,
+        retrievedAt:
+          typeof result?.completedAt === 'string' ? result.completedAt : undefined,
+      };
     },
   },
 
   rentPayments: {
-    getSchedule(propertyId?: string): Promise<RentSchedule[]> {
+    async getSchedule(propertyId?: string): Promise<RentSchedule[]> {
       const headers = getAuthHeaders();
-      return apiRequest<RentSchedule[]>(
-        'GET',
-        `/rent/schedules${buildQueryString(propertyId ? { propertyId } : undefined)}`,
-        undefined,
-        headers,
-      );
+      const endpoint = propertyId
+        ? `/rent-schedules/property/${encodeURIComponent(propertyId)}`
+        : '/rent-schedules/my-schedule';
+      const raw = await apiRequest<unknown>('GET', endpoint, undefined, headers);
+      return unwrapDataArray(raw).map(rentScheduleRowToUi);
     },
     updateSchedule(scheduleId: string, partial: Partial<RentSchedule>): Promise<RentSchedule> {
       const headers = getAuthHeaders();
@@ -592,32 +754,14 @@ export const featureApi = {
         headers,
       );
     },
-    listPayments(params?: { propertyId?: string; tenantId?: string }): Promise<RentPayment[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<RentPayment[]>(
-        'GET',
-        `/rent/payments${buildQueryString(params)}`,
-        undefined,
-        headers,
-      );
+    listPayments(_params?: { propertyId?: string; tenantId?: string }): Promise<RentPayment[]> {
+      return Promise.resolve([]);
     },
-    listReceipts(tenantId?: string): Promise<RentReceipt[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<RentReceipt[]>(
-        'GET',
-        `/rent/receipts${buildQueryString(tenantId ? { tenantId } : undefined)}`,
-        undefined,
-        headers,
-      );
+    listReceipts(_tenantId?: string): Promise<RentReceipt[]> {
+      return Promise.resolve([]);
     },
-    getLandlordStatements(ownerId?: string): Promise<LandlordStatement[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<LandlordStatement[]>(
-        'GET',
-        `/rent/statements${buildQueryString(ownerId ? { ownerId } : undefined)}`,
-        undefined,
-        headers,
-      );
+    getLandlordStatements(_ownerId?: string): Promise<LandlordStatement[]> {
+      return Promise.resolve([]);
     },
   },
 
@@ -646,18 +790,23 @@ export const featureApi = {
       const headers = getAuthHeaders();
       return apiRequest<LeaseDocument>('POST', '/leases/documents', metadata, headers);
     },
-    listLeases(params?: {
+    async listLeases(params?: {
       propertyId?: string;
       tenantId?: string;
       status?: LeaseStatus;
     }): Promise<LeaseDocument[]> {
       const headers = getAuthHeaders();
-      return apiRequest<LeaseDocument[]>(
+      const raw = await apiRequest<unknown>(
         'GET',
-        `/leases/documents${buildQueryString(params)}`,
+        `/documents${buildQueryString({
+          propertyId: params?.propertyId,
+          tenantId: params?.tenantId,
+        })}`,
         undefined,
         headers,
       );
+      const rows = unwrapDataArray(raw).filter((r) => String(r.docType ?? '') === 'lease');
+      return rows.map(documentRowToLease);
     },
     sendForSignature(
       documentId: string,
@@ -707,21 +856,21 @@ export const featureApi = {
 
   documents: {
     listCategories(): Promise<DocumentCategory[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<DocumentCategory[]>('GET', '/documents/categories', undefined, headers);
+      return Promise.resolve([]);
     },
-    listDocuments(params?: {
+    async listDocuments(params?: {
       propertyId?: string;
       tenantId?: string;
       ownerId?: string;
     }): Promise<DocumentRecord[]> {
       const headers = getAuthHeaders();
-      return apiRequest<DocumentRecord[]>(
+      const raw = await apiRequest<unknown>(
         'GET',
         `/documents${buildQueryString(params)}`,
         undefined,
         headers,
       );
+      return unwrapDataArray(raw).map(documentRowToRecord);
     },
     uploadDocument(record: Partial<DocumentRecord>): Promise<DocumentRecord> {
       const headers = getAuthHeaders();
@@ -734,88 +883,226 @@ export const featureApi = {
   },
 
   communication: {
-    listThreads(): Promise<MessageThread[]> {
+    listThreads(filters?: {
+      propertyId?: string;
+      priority?: string;
+      status?: string;
+      category?: string;
+      from?: string;
+      to?: string;
+      sort?: string;
+      order?: string;
+    }): Promise<MessageThread[]> {
       const headers = getAuthHeaders();
-      return apiRequest<MessageThread[]>('GET', '/communication/threads', undefined, headers);
-    },
-    listMessages(threadId: string): Promise<MessageRecord[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<MessageRecord[]>(
+      const params = filters
+        ? '?' +
+          new URLSearchParams(
+            Object.fromEntries(
+              Object.entries(filters).filter(([, v]) => v !== undefined)
+            ) as Record<string, string>
+          ).toString()
+        : '';
+      return apiRequest<{ data: MessageThread[] }>(
         'GET',
-        `/communication/threads/${threadId}/messages`,
+        `/communication/threads${params}`,
         undefined,
-        headers,
+        headers
+      ).then((r) => (r as any).data || []);
+    },
+
+    getThread(threadId: string): Promise<MessageThread> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageThread }>(
+        'GET',
+        `/communication/threads/${threadId}`,
+        undefined,
+        headers
+      ).then((r) => (r as any).data);
+    },
+
+    createThread(payload: {
+      subject: string;
+      propertyId?: string;
+      participantIds?: string[];
+      status?: string;
+      priority?: string;
+      category?: string;
+    }): Promise<MessageThread> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageThread }>(
+        'POST',
+        '/communication/threads',
+        payload,
+        headers
+      ).then((r) => (r as any).data);
+    },
+
+    updateThread(
+      threadId: string,
+      updates: {
+        status?: string;
+        priority?: string;
+        category?: string;
+        assignedTo?: string | null;
+      }
+    ): Promise<MessageThread> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageThread }>(
+        'PATCH',
+        `/communication/threads/${threadId}`,
+        updates,
+        headers
+      ).then((r) => (r as any).data);
+    },
+
+    listMessages(threadId: string, page = 1): Promise<MessageRecord[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageRecord[] }>(
+        'GET',
+        `/communication/threads/${threadId}/messages?page=${page}`,
+        undefined,
+        headers
+      ).then((r) => (r as any).data || []);
+    },
+
+    sendMessage(payload: {
+      threadId: string;
+      body: string;
+      templateId?: string;
+    }): Promise<MessageRecord> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageRecord }>(
+        'POST',
+        `/communication/threads/${payload.threadId}/messages`,
+        { body: payload.body, templateId: payload.templateId },
+        headers
+      ).then((r) => (r as any).data);
+    },
+
+    markRead(threadId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>(
+        'PATCH',
+        `/communication/threads/${threadId}/read`,
+        {},
+        headers
       );
     },
-    sendMessage(payload: MessagePayload): Promise<MessageRecord> {
+
+    addParticipant(threadId: string, userId: string): Promise<void> {
       const headers = getAuthHeaders();
-      return apiRequest<MessageRecord>('POST', '/communication/messages', payload, headers);
+      return apiRequest<void>(
+        'POST',
+        `/communication/threads/${threadId}/participants`,
+        { userId },
+        headers
+      );
     },
-    updatePreferences(preferences: NotificationPreference[]): Promise<NotificationPreference[]> {
+
+    listTemplates(): Promise<MessageTemplate[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageTemplate[] }>(
+        'GET',
+        '/communication/templates',
+        undefined,
+        headers
+      ).then((r) => (r as any).data || []);
+    },
+
+    createTemplate(payload: {
+      title: string;
+      body: string;
+      quickReplies: string[];
+      isPublic: boolean;
+    }): Promise<MessageTemplate> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ data: MessageTemplate }>(
+        'POST',
+        '/communication/templates',
+        payload,
+        headers
+      ).then((r) => (r as any).data);
+    },
+
+    updatePreferences(
+      preferences: NotificationPreference[]
+    ): Promise<NotificationPreference[]> {
       const headers = getAuthHeaders();
       return apiRequest<NotificationPreference[]>(
         'PUT',
         '/communication/preferences',
         preferences,
-        headers,
+        headers
       );
-    },
-    triggerNotification(payload: {
-      template: string;
-      channel: CommunicationChannel;
-      targetId: string;
-    }): Promise<{ message: string }> {
-      // ROADMAP: Integrate SendGrid/Resend + Twilio credentials here (Q2 2026 - notifications).
-      const headers = getAuthHeaders();
-      return apiRequest<{ message: string }>('POST', '/communication/notify', payload, headers);
     },
   },
 
   accounting: {
-    listLedgerEntries(params?: {
+    listLedgerEntries(_params?: {
       propertyId?: string;
       startDate?: string;
       endDate?: string;
     }): Promise<LedgerEntry[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<LedgerEntry[]>(
-        'GET',
-        `/accounting/ledger${buildQueryString(params)}`,
-        undefined,
-        headers,
-      );
+      return Promise.resolve([]);
     },
-    createLedgerEntry(entry: LedgerEntry): Promise<LedgerEntry> {
-      const headers = getAuthHeaders();
-      return apiRequest<LedgerEntry>('POST', '/accounting/ledger', entry, headers);
+    createLedgerEntry(_entry: LedgerEntry): Promise<LedgerEntry> {
+      return Promise.reject(new Error('Ledger API is not wired to the backend yet.'));
     },
     recordExpense(
-      entry: Omit<LedgerEntry, 'id' | 'type'> & { type?: LedgerEntry['type'] },
+      _entry: Omit<LedgerEntry, 'id' | 'type'> & { type?: LedgerEntry['type'] },
     ): Promise<LedgerEntry> {
-      const headers = getAuthHeaders();
-      return apiRequest<LedgerEntry>(
-        'POST',
-        '/accounting/expenses',
-        { ...entry, type: entry.type ?? 'expense' },
-        headers,
-      );
+      return Promise.reject(new Error('Expense API is not wired to the backend yet.'));
     },
-    getProfitLoss(params?: {
+    async getProfitLoss(params?: {
       propertyId?: string;
       startDate?: string;
       endDate?: string;
     }): Promise<ProfitLossSummary> {
       const headers = getAuthHeaders();
-      return apiRequest<ProfitLossSummary>(
+      const range = defaultPnLDateRange();
+      const startDate = params?.startDate ?? range.startDate;
+      const endDate = params?.endDate ?? range.endDate;
+      const raw = await apiRequest<{
+        data?: {
+          startDate: string;
+          endDate: string;
+          income: { total: number };
+          expenses: { total: number };
+          netIncome: number;
+          properties: unknown[];
+        };
+      }>(
         'GET',
-        `/accounting/profit-loss${buildQueryString(params)}`,
+        `/reports/pnl${buildQueryString({
+          startDate,
+          endDate,
+          propertyId: params?.propertyId,
+        })}`,
         undefined,
         headers,
       );
+      const d = raw.data;
+      if (!d) {
+        return {
+          totalIncome: 0,
+          totalExpenses: 0,
+          netIncome: 0,
+          startDate,
+          endDate,
+          propertiesIncluded: 0,
+        };
+      }
+      return {
+        totalIncome: d.income.total,
+        totalExpenses: d.expenses.total,
+        netIncome: d.netIncome,
+        startDate: d.startDate,
+        endDate: d.endDate,
+        propertiesIncluded: Array.isArray(d.properties) ? d.properties.length : 0,
+      };
     },
-    exportLedger(payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
-      const headers = getAuthHeaders();
-      return apiRequest<{ downloadUrl: string }>('POST', '/accounting/export', payload, headers);
+    exportLedger(_payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
+      return Promise.reject(new Error('Accounting export is not wired to the backend yet.'));
     },
   },
 

@@ -22,7 +22,7 @@ import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-
 export default function Admin() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<AdminDashboard />} />

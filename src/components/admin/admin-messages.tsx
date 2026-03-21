@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Routes, Route, Link } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,71 +11,112 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { MessageSquare, Send, Search, Plus, Reply, User, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { companyInfo } from "@/constants/companyInfo"
-
-// Helper function to generate email addresses based on company domain
-const getEmail = (prefix: string) => `${prefix}@${companyInfo.social.twitterDomain}`
-
-// Mock messages data for admin
-const mockAdminMessages = [
-  {
-    id: 1,
-    subject: "Property Approval Request",
-    from: "Manager Team",
-    fromEmail: getEmail("manager"),
-    fromRole: "manager",
-    date: "2024-01-20",
-    time: "2:30 PM",
-    content: "We have a new property submission that requires admin approval. The property details have been reviewed and meet all requirements.",
-    isRead: false,
-    category: "property",
-    priority: "high"
-  },
-  {
-    id: 2,
-    subject: "User Management Update",
-    from: "Super Admin",
-    fromEmail: getEmail("superadmin"),
-    fromRole: "super_admin",
-    date: "2024-01-18",
-    time: "10:15 AM",
-    content: "Please review the new user management policies. There have been updates to the invitation system that affect admin workflows.",
-    isRead: false,
-    category: "admin",
-    priority: "medium"
-  },
-  {
-    id: 3,
-    subject: "Monthly Report Ready",
-    from: "System",
-    fromEmail: getEmail("system"),
-    fromRole: "system",
-    date: "2024-01-15",
-    time: "4:45 PM",
-    content: "Your monthly administrative report is ready for review. It includes user activity, property approvals, and system usage statistics.",
-    isRead: true,
-    category: "report",
-    priority: "low"
-  }
-]
+import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
 
 function MessagesList() {
+  const { toast } = useToast()
+  const [threads, setThreads] = useState<MessageThread[]>([])
+  const [messages, setMessages] = useState<MessageRecord[]>([])
+  const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedMessage, setSelectedMessage] = useState<number | null>(null)
   const [categoryFilter, setCategoryFilter] = useState("all")
+  const [replyBody, setReplyBody] = useState("")
+  const [sending, setSending] = useState(false)
+  const [loadingThreads, setLoadingThreads] = useState(true)
+  const [loadingMessages, setLoadingMessages] = useState(false)
 
-  const filteredMessages = mockAdminMessages.filter(message => {
-    const matchesSearch = message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.content.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || message.category === categoryFilter
+  // Load threads on mount
+  useEffect(() => {
+    setLoadingThreads(true)
+    featureApi.communication
+      .listThreads()
+      .then((data) => setThreads(data))
+      .catch(() => {
+        toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
+      })
+      .finally(() => setLoadingThreads(false))
+  }, [])
+
+  // Load messages when thread selected
+  useEffect(() => {
+    if (!selectedThreadId) {
+      setMessages([])
+      setReplyBody("")
+      return
+    }
+    setLoadingMessages(true)
+    Promise.all([
+      featureApi.communication.listMessages(selectedThreadId),
+      featureApi.communication.markRead(selectedThreadId).catch(() => {}),
+    ])
+      .then(([msgs]) => {
+        setMessages(msgs)
+        setThreads((prev) =>
+          prev.map((t) => (t.id === selectedThreadId ? { ...t, unreadCount: 0 } : t))
+        )
+      })
+      .catch(() => {
+        toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
+      })
+      .finally(() => setLoadingMessages(false))
+  }, [selectedThreadId])
+
+  const selectedThread = threads.find((t) => t.id === selectedThreadId) ?? null
+
+  const filteredThreads = threads.filter((thread) => {
+    const matchesSearch =
+      thread.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      thread.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = categoryFilter === "all" || thread.category === categoryFilter
     return matchesSearch && matchesCategory
   })
+
+  const handleReply = async () => {
+    if (!selectedThreadId || !replyBody.trim()) return
+    setSending(true)
+    try {
+      const msg = await featureApi.communication.sendMessage({
+        threadId: selectedThreadId,
+        body: replyBody,
+      })
+      setMessages((prev) => [...prev, msg])
+      setReplyBody("")
+      toast({ title: "Message Sent", description: "Your reply has been sent.", duration: 3000 })
+    } catch {
+      toast({ title: "Error", description: "Failed to send reply.", duration: 3000 })
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleUpdateStatus = async (status: MessageThread["status"]) => {
+    if (!selectedThreadId) return
+    try {
+      const updated = await featureApi.communication.updateThread(selectedThreadId, { status })
+      setThreads((prev) => prev.map((t) => (t.id === selectedThreadId ? updated : t)))
+      toast({ title: "Updated", description: `Thread status set to ${status}.`, duration: 3000 })
+    } catch {
+      toast({ title: "Error", description: "Failed to update status.", duration: 3000 })
+    }
+  }
+
+  const handleUpdatePriority = async (priority: MessageThread["priority"]) => {
+    if (!selectedThreadId) return
+    try {
+      const updated = await featureApi.communication.updateThread(selectedThreadId, { priority })
+      setThreads((prev) => prev.map((t) => (t.id === selectedThreadId ? updated : t)))
+      toast({ title: "Updated", description: `Thread priority set to ${priority}.`, duration: 3000 })
+    } catch {
+      toast({ title: "Error", description: "Failed to update priority.", duration: 3000 })
+    }
+  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
+      case "urgent":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+      case "normal":
       case "medium":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
       case "low":
@@ -87,16 +128,30 @@ function MessagesList() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "property":
+      case "lease":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-      case "admin":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-      case "report":
+      case "maintenance":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+      case "billing":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+      case "general":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
     }
   }
+
+  const formatDate = (iso?: string) => {
+    if (!iso) return ""
+    return new Date(iso).toLocaleDateString()
+  }
+
+  const formatTime = (iso?: string) => {
+    if (!iso) return ""
+    return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+  }
+
+  const getInitials = (id: string) => id.slice(0, 2).toUpperCase()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -107,8 +162,8 @@ function MessagesList() {
         <div className="flex items-center gap-3">
           <MessageSquare className="w-8 h-8 text-blue-400" />
           <div>
-            <h1 className="text-3xl font-bold">Messages</h1>
-            <p className="text-gray-600 dark:text-gray-400">Administrative communications</p>
+            <h1 className="text-3xl lg:text-4xl font-bold">Messages</h1>
+            <p className="text-base lg:text-lg text-gray-600 dark:text-gray-400">Administrative communications</p>
           </div>
         </div>
         <Link to="/admin/messages/compose">
@@ -137,55 +192,69 @@ function MessagesList() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="property">Property</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="report">Reports</SelectItem>
+                <SelectItem value="general">General</SelectItem>
+                <SelectItem value="maintenance">Maintenance</SelectItem>
+                <SelectItem value="lease">Lease</SelectItem>
+                <SelectItem value="billing">Billing</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            {filteredMessages.map((message) => (
-              <Card 
-                key={message.id} 
+            {loadingThreads && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">Loading messages...</p>
+            )}
+            {!loadingThreads && filteredThreads.length === 0 && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No messages found.</p>
+            )}
+            {filteredThreads.map((thread) => (
+              <Card
+                key={thread.id}
                 className={`cursor-pointer transition-colors ${
-                  selectedMessage === message.id 
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
+                  selectedThreadId === thread.id
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                     : "hover:bg-gray-50 dark:hover:bg-gray-800"
-                } ${!message.isRead ? "border-l-4 border-l-blue-500" : ""}`}
-                onClick={() => setSelectedMessage(message.id)}
+                } ${thread.unreadCount > 0 ? "border-l-4 border-l-blue-500" : ""}`}
+                onClick={() => setSelectedThreadId(thread.id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className="text-xs">
-                          {message.from.split(' ').map(n => n[0]).join('')}
+                        <AvatarFallback className="text-xs lg:text-sm">
+                          {getInitials(thread.createdBy)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <span className="text-sm font-medium">{message.from}</span>
-                        <p className="text-xs text-gray-500 capitalize">{message.fromRole}</p>
+                        <span className="text-sm lg:text-base font-medium">{thread.createdBy}</span>
+                        <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 capitalize">{thread.status}</p>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-500">{message.time}</span>
+                    <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">
+                      {formatTime(thread.lastMessageAt)}
+                    </span>
                   </div>
-                  <h3 className={`font-medium mb-1 ${!message.isRead ? "font-bold" : ""}`}>
-                    {message.subject}
+                  <h3 className={`text-base lg:text-lg font-medium mb-1 ${thread.unreadCount > 0 ? "font-bold" : ""}`}>
+                    {thread.subject}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
-                    {message.content}
-                  </p>
                   <div className="flex items-center justify-between">
                     <div className="flex space-x-1">
-                      <Badge className={getCategoryColor(message.category)} variant="outline">
-                        {message.category}
+                      <Badge className={getCategoryColor(thread.category)} variant="outline">
+                        {thread.category}
                       </Badge>
-                      <Badge className={getPriorityColor(message.priority)} variant="outline">
-                        {message.priority}
+                      <Badge className={getPriorityColor(thread.priority)} variant="outline">
+                        {thread.priority}
                       </Badge>
+                      {thread.unreadCount > 0 && (
+                        <Badge className="bg-blue-500 text-white text-xs">
+                          {thread.unreadCount}
+                        </Badge>
+                      )}
                     </div>
-                    <span className="text-xs text-gray-500">{message.date}</span>
+                    <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">
+                      {formatDate(thread.lastMessageAt)}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -194,45 +263,106 @@ function MessagesList() {
         </div>
 
         <div className="lg:col-span-2">
-          {selectedMessage ? (
+          {selectedThread ? (
             <Card>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-xl">
-                      {mockAdminMessages.find(m => m.id === selectedMessage)?.subject}
-                    </CardTitle>
+                    <CardTitle className="text-xl">{selectedThread.subject}</CardTitle>
                     <div className="flex items-center space-x-4 text-sm text-gray-500 mt-2">
                       <div className="flex items-center space-x-1">
                         <User className="h-4 w-4" />
-                        <span>From: {mockAdminMessages.find(m => m.id === selectedMessage)?.from}</span>
+                        <span>From: {selectedThread.createdBy}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-4 w-4" />
-                        <span>{mockAdminMessages.find(m => m.id === selectedMessage)?.date}</span>
+                        <span>{formatDate(selectedThread.lastMessageAt)}</span>
                       </div>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => setReplyBody("")}>
                     <Reply className="h-4 w-4 mr-2" />
                     Reply
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="prose max-w-none">
-                  <div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 mb-6">
-                    {mockAdminMessages.find(m => m.id === selectedMessage)?.content}
+
+                {/* Admin controls: status and priority */}
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-gray-500 whitespace-nowrap">Status:</Label>
+                    <Select
+                      value={selectedThread.status}
+                      onValueChange={(v) => handleUpdateStatus(v as MessageThread["status"])}
+                    >
+                      <SelectTrigger className="h-8 text-xs w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="open">Open</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="resolved">Resolved</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-gray-500 whitespace-nowrap">Priority:</Label>
+                    <Select
+                      value={selectedThread.priority}
+                      onValueChange={(v) => handleUpdatePriority(v as MessageThread["priority"])}
+                    >
+                      <SelectTrigger className="h-8 text-xs w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="normal">Normal</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="urgent">Urgent</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
+              </CardHeader>
+              <CardContent>
+                {loadingMessages ? (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">Loading messages...</p>
+                ) : (
+                  <div className="space-y-4 mb-6">
+                    {messages.length === 0 && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No messages in this thread yet.</p>
+                    )}
+                    {messages.map((msg) => (
+                      <div key={msg.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {msg.senderId}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {formatDate(msg.sentAt)} at {formatTime(msg.sentAt)}
+                          </span>
+                        </div>
+                        <div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 text-sm">
+                          {msg.body}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="mt-6 pt-6 border-t">
                   <h4 className="font-medium mb-3">Quick Reply</h4>
                   <div className="space-y-4">
-                    <Textarea placeholder="Type your reply..." rows={4} />
+                    <Textarea
+                      value={replyBody}
+                      onChange={(e) => setReplyBody(e.target.value)}
+                      placeholder="Type your reply..."
+                      rows={4}
+                    />
                     <div className="flex justify-end">
-                      <Button>
+                      <Button onClick={handleReply} disabled={sending || !replyBody.trim()}>
                         <Send className="h-4 w-4 mr-2" />
-                        Send Reply
+                        {sending ? "Sending..." : "Send Reply"}
                       </Button>
                     </div>
                   </div>
@@ -243,10 +373,10 @@ function MessagesList() {
             <Card>
               <CardContent className="text-center py-12">
                 <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg lg:text-xl font-medium text-gray-900 dark:text-white mb-2">
                   Select a message
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-base lg:text-lg text-gray-500 dark:text-gray-400">
                   Choose a message from the list to view and respond
                 </p>
               </CardContent>
@@ -260,21 +390,38 @@ function MessagesList() {
 
 function ComposeMessage() {
   const { toast } = useToast()
+  const [sending, setSending] = useState(false)
   const [formData, setFormData] = useState({
-    to: "",
     toRole: "manager",
     subject: "",
-    category: "property",
-    priority: "medium",
+    category: "general" as MessageThread["category"],
+    priority: "normal" as MessageThread["priority"],
     content: ""
   })
 
-  const handleSend = () => {
-    toast({
-      title: "Message Sent",
-      description: "Your message has been sent successfully.",
-      duration: 3000,
-    })
+  const handleSend = async () => {
+    if (!formData.subject.trim() || !formData.content.trim()) {
+      toast({ title: "Validation", description: "Subject and message are required.", duration: 3000 })
+      return
+    }
+    setSending(true)
+    try {
+      const thread = await featureApi.communication.createThread({
+        subject: formData.subject,
+        category: formData.category,
+        priority: formData.priority,
+      })
+      await featureApi.communication.sendMessage({
+        threadId: thread.id,
+        body: formData.content,
+      })
+      toast({ title: "Message Sent", description: "Your message has been sent successfully.", duration: 3000 })
+      setFormData({ toRole: "manager", subject: "", category: "general", priority: "normal", content: "" })
+    } catch {
+      toast({ title: "Error", description: "Failed to send message.", duration: 3000 })
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -308,17 +455,33 @@ function ComposeMessage() {
               </div>
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
+                <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as MessageThread["category"] }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="property">Property</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="report">Report</SelectItem>
+                    <SelectItem value="general">General</SelectItem>
+                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                    <SelectItem value="lease">Lease</SelectItem>
+                    <SelectItem value="billing">Billing</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div>
+              <Label htmlFor="priority">Priority</Label>
+              <Select value={formData.priority} onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value as MessageThread["priority"] }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label htmlFor="subject">Subject</Label>
@@ -343,9 +506,9 @@ function ComposeMessage() {
               <Link to="/admin/messages">
                 <Button variant="outline">Cancel</Button>
               </Link>
-              <Button onClick={handleSend}>
+              <Button onClick={handleSend} disabled={sending}>
                 <Send className="h-4 w-4 mr-2" />
-                Send Message
+                {sending ? "Sending..." : "Send Message"}
               </Button>
             </div>
           </CardContent>
@@ -363,4 +526,3 @@ export default function AdminMessages() {
     </Routes>
   )
 }
-

@@ -1,4 +1,17 @@
-import { Shield, Users, Building, Wrench, Clock, CheckCircle, XCircle } from "lucide-react"
+import {
+  Shield,
+  Users,
+  Building,
+  Wrench,
+  Clock,
+  CheckCircle,
+  XCircle,
+  DollarSign,
+  BadgeCheck,
+  BarChart3,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, ActivityItem, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, maintenanceApi, type Property, type InvitedUser, type MaintenanceRequest } from "@/lib/api"
 import { formatUSDate } from "@/lib/us-format"
@@ -127,6 +140,13 @@ export function createAdminConfig(
       description: "Staff & requests",
       icon: <Wrench className="h-8 w-8 text-orange-500" />,
       href: "/admin/maintenance",
+    },
+    {
+      id: "finances",
+      title: "Finances",
+      description: "P&L & payments",
+      icon: <DollarSign className="h-8 w-8 text-emerald-500" />,
+      href: "/admin/finances",
     },
   ]
 
@@ -323,6 +343,31 @@ export function createAdminConfig(
         <BookkeepingReportingWidget
           ctaLabel="Open finances"
           ctaHref="/admin/finances"
+          transactionsHref="/admin/finances?tab=payments"
+          cashFlowHref="/admin/finances?tab=overview"
+          taxPackageCardHref="/admin/finances?tab=reports"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/admin/finances?tab=payments",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/admin/finances?tab=overview",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/admin/reports",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/admin/finances?tab=reports",
+            },
+          ]}
           taxSummary={{
             timePeriod: "Last Month",
             properties: `${stats.totalProperties} Properties`,
@@ -330,7 +375,7 @@ export function createAdminConfig(
             uncategorized: Math.max(1, stats.pendingProperties),
             attachments: stats.totalMaintenance + 3,
             ctaLabel: "Download tax pack",
-            ctaHref: "/admin/reports",
+            ctaHref: "/admin/finances?tab=reports",
           }}
         />
       ),

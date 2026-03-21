@@ -25,7 +25,6 @@ import { Link } from "react-router-dom"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { authApi, ApiError, type ManagerPortfolioStats, type InvitedUser } from "@/lib/api"
-import { ManagerPortfolioStatsSchema } from "@/lib/api/schemas"
 import { ProfileShell, ProfileSummaryCard, type SummaryMetric } from "@/components/portal/profile"
 import { AddressForm, type AddressFormValues } from "@/components/forms/address-form"
 import { parseAddressString, formatAddressFields } from "@/utils/address"
@@ -167,8 +166,10 @@ export default function ManagerProfile() {
 
       try {
         setIsLoadingStats(true)
-        const raw = await authApi.getPortfolioStats()
-        const stats = ManagerPortfolioStatsSchema.parse(raw) as ManagerPortfolioStats
+        const stats = await authApi.getPortfolioStats()
+        if (!("propertiesManaged" in stats)) {
+          throw new Error("Expected manager portfolio stats from API")
+        }
         setPortfolioStats(stats)
       } catch (error) {
         console.error("Error fetching manager portfolio stats:", error)

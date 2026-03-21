@@ -28,10 +28,14 @@ export interface SiteVisit {
 }
 
 export interface LeadListResponse {
-  leads: Lead[];
-  total: number;
-  page: number;
-  pageSize: number;
+  data: Lead[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
 }
 
 export interface SubmitLeadRequest {
@@ -82,7 +86,7 @@ export const leadApi = {
 
   async getManagerLeads(): Promise<Lead[]> {
     const res = await this.getLeads(1, 500);
-    return res.leads;
+    return res.data ?? [];
   },
 
   async getLeadScore(leadId: string): Promise<LeadScore | null> {

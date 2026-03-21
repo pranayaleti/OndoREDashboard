@@ -9,6 +9,7 @@ import type {
   InvitedUser as InvitedUserType,
   Property as PropertyType,
   PortfolioStats as PortfolioStatsType,
+  ManagerPortfolioStats as ManagerPortfolioStatsType,
   CreatePropertyRequest as CreatePropertyRequestType,
 } from "../clients/legacy-types";
 
@@ -78,7 +79,9 @@ export interface ProfilePictureUploadUrlResponse {
   key?: string;
 }
 
-export type GetPortfolioStatsResponse = PortfolioStatsType;
+export type GetPortfolioStatsResponse =
+  | PortfolioStatsType
+  | ManagerPortfolioStatsType;
 export interface GetInvitedUsersResponse {
   users: InvitedUserType[];
   total: number;

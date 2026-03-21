@@ -32,7 +32,8 @@ export function useOwnerDashboardData() {
       .then(([portfolio, screening, payments, maintenance, leases]) => {
         if (isMounted) {
           setData({
-            portfolio,
+            // Owner dashboard: token is owner; API returns owner portfolio shape.
+            portfolio: portfolio as PortfolioStats,
             screening,
             rentPayments: payments,
             maintenanceTickets: maintenance,

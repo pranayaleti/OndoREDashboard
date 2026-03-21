@@ -144,7 +144,7 @@ export function SidebarMenuButton({
         {React.cloneElement(child, {
           className: cn(
             child.props.className,
-            "flex w-full items-center rounded-md px-3 py-3 text-sm font-medium transition-colors gap-3",
+            "flex w-full items-center rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors gap-3",
             isActive
               ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
               : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",
@@ -165,7 +165,7 @@ export function SidebarMenuButton({
     <button
       {...props}
       className={cn(
-        "group relative flex w-full items-center rounded-md px-3 py-3 text-sm font-medium transition-colors gap-3",
+        "group relative flex w-full items-center rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors gap-3",
         isActive
           ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
           : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",

@@ -8,9 +8,9 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { 
-  Users, 
-  Plus, 
-  Search, 
+  Users,
+  Plus,
+  Search,
   Mail,
   Phone,
   Building,
@@ -19,7 +19,8 @@ import {
   Send,
   UserPlus,
   Eye,
-  Edit
+  Edit,
+  MapPin
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { authApi } from "@/lib/api"
@@ -33,6 +34,7 @@ const mockOwners = [
     name: "John Doe",
     email: "john.doe@email.com",
     phone: "(555) 123-4567",
+    address: "742 Evergreen Terrace, Springfield, IL 62704",
     joinDate: "2020-03-15",
     status: "active",
     properties: 3,
@@ -46,6 +48,7 @@ const mockOwners = [
     name: "Sarah Wilson",
     email: "sarah.wilson@email.com",
     phone: "(555) 987-6543",
+    address: "1200 Main St, Dallas, TX 75201",
     joinDate: "2019-08-22",
     status: "active",
     properties: 2,
@@ -59,6 +62,7 @@ const mockOwners = [
     name: "Michael Chen",
     email: "michael.chen@email.com",
     phone: "(555) 456-7890",
+    address: "88 Market St, San Francisco, CA 94105",
     joinDate: "2021-01-10",
     status: "pending_invitation",
     properties: 0,
@@ -66,6 +70,90 @@ const mockOwners = [
     monthlyRevenue: 0,
     investmentValue: 0,
     lastLogin: null
+  },
+  {
+    id: 4,
+    name: "Rachel Thompson",
+    email: "rachel.thompson@email.com",
+    phone: "(801) 555-2341",
+    address: "450 S State St, Salt Lake City, UT 84111",
+    joinDate: "2022-06-10",
+    status: "active",
+    properties: 4,
+    totalUnits: 32,
+    monthlyRevenue: 52800,
+    investmentValue: 7500000,
+    lastLogin: "2024-01-19"
+  },
+  {
+    id: 5,
+    name: "David Martinez",
+    email: "david.martinez@email.com",
+    phone: "(801) 555-8912",
+    address: "1025 E Tabernacle St, St. George, UT 84770",
+    joinDate: "2021-11-05",
+    status: "active",
+    properties: 2,
+    totalUnits: 12,
+    monthlyRevenue: 19600,
+    investmentValue: 3100000,
+    lastLogin: "2024-01-17"
+  },
+  {
+    id: 6,
+    name: "Emily Sorensen",
+    email: "emily.sorensen@email.com",
+    phone: "(385) 555-4478",
+    address: "3200 N University Ave, Provo, UT 84604",
+    joinDate: "2023-02-18",
+    status: "active",
+    properties: 3,
+    totalUnits: 20,
+    monthlyRevenue: 34500,
+    investmentValue: 5200000,
+    lastLogin: "2024-01-20"
+  },
+  {
+    id: 7,
+    name: "Brandon Hale",
+    email: "brandon.hale@email.com",
+    phone: "(801) 555-6634",
+    address: "780 W Riverdale Rd, Ogden, UT 84405",
+    joinDate: "2020-09-30",
+    status: "active",
+    properties: 5,
+    totalUnits: 40,
+    monthlyRevenue: 61200,
+    investmentValue: 9400000,
+    lastLogin: "2024-01-21"
+  },
+  {
+    id: 8,
+    name: "Jessica Navarro",
+    email: "jessica.navarro@email.com",
+    phone: "(435) 555-1190",
+    address: "215 N Main St, Park City, UT 84060",
+    joinDate: "2022-04-12",
+    status: "pending_invitation",
+    properties: 0,
+    totalUnits: 0,
+    monthlyRevenue: 0,
+    investmentValue: 0,
+    lastLogin: null
+  },
+  {
+    id: 9,
+    name: "Tyler Jensen",
+    email: "tyler.jensen@email.com",
+    phone: "(801) 555-3327",
+    address: "560 S 100 E, Logan, UT 84321",
+    joinDate: "2023-08-25",
+    status: "active",
+    properties: 1,
+    totalUnits: 8,
+    monthlyRevenue: 12400,
+    investmentValue: 1800000,
+    lastLogin: "2024-01-15"
   }
 ]
 
@@ -85,7 +173,8 @@ function OwnersList() {
 
   const filteredOwners = mockOwners.filter(owner => {
     const matchesSearch = owner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         owner.email.toLowerCase().includes(searchTerm.toLowerCase())
+                         owner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         owner.address.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || owner.status === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -231,6 +320,12 @@ function OwnersList() {
                         <Phone className="h-4 w-4" />
                         <span>{owner.phone}</span>
                       </div>
+                      {owner.address && (
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="h-4 w-4" />
+                          <span>{owner.address}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

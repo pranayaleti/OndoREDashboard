@@ -25,17 +25,21 @@ import {
   MessageSquare,
   FolderOpen,
   ClipboardList,
+  ClipboardCheck,
   Home,
   Moon,
   Sun,
   Laptop,
   Bell,
   Calendar,
-  UserPlus,
   Settings,
   HelpCircle,
   AlertTriangle,
   Sparkles,
+  Target,
+  Briefcase,
+  KeyRound,
+  CreditCard,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -48,7 +52,10 @@ import { useTheme } from "next-themes"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Toaster } from "sonner"
@@ -73,10 +80,10 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
         { title: "Admins", href: `${basePath}/admins`, icon: <Shield className="h-5 w-5" /> },
-        { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
-        { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
+        { title: "Owners", href: `${basePath}/owners`, icon: <Briefcase className="h-5 w-5" /> },
+        { title: "Tenants", href: `${basePath}/tenants`, icon: <KeyRound className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
-        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <ClipboardCheck className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
@@ -94,10 +101,10 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
-        { title: "Owners", href: `${basePath}/owners`, icon: <Building className="h-5 w-5" /> },
-        { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
+        { title: "Owners", href: `${basePath}/owners`, icon: <Briefcase className="h-5 w-5" /> },
+        { title: "Tenants", href: `${basePath}/tenants`, icon: <KeyRound className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
-        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <ClipboardCheck className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
@@ -114,14 +121,14 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
-        { title: "Leads", href: `${basePath}/leads`, icon: <UserPlus className="h-5 w-5" /> },
-        { title: "Owners", href: `${basePath}/owners`, icon: <Users className="h-5 w-5" /> },
-        { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
+        { title: "Leads", href: `${basePath}/leads`, icon: <Target className="h-5 w-5" /> },
+        { title: "Owners", href: `${basePath}/owners`, icon: <Briefcase className="h-5 w-5" /> },
+        { title: "Tenants", href: `${basePath}/tenants`, icon: <KeyRound className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
-        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <ClipboardCheck className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
-        { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
@@ -138,9 +145,9 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Occupancy", href: `${basePath}/occupancy`, icon: <Home className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
-        { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
-        { title: "Screening", href: `${basePath}/screening`, icon: <UserPlus className="h-5 w-5" /> },
+        { title: "Screening", href: `${basePath}/screening`, icon: <ClipboardCheck className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
@@ -158,7 +165,7 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Lease Details", href: `${basePath}/lease-details`, icon: <FileText className="h-5 w-5" /> },
         { title: "Property Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
-        { title: "Payments", href: `${basePath}/payments`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
@@ -203,7 +210,7 @@ function SidebarLayout({
   user: NonNullable<ReturnType<typeof useAuth>["user"]>
 }) {
   const { expanded } = useSidebar()
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, resolvedTheme } = useTheme()
 
   const canAccessNotifications = true
   const { unreadCount } = useNotifications(canAccessNotifications)
@@ -212,10 +219,14 @@ function SidebarLayout({
     return `${firstName[0]}${lastName[0]}`.toUpperCase()
   }
 
+  /** Reflects the actual UI (system → follow OS light/dark). */
   const getThemeIcon = () => {
-    if (theme === "dark") return <Moon className="h-4 w-4" />
-    if (theme === "system") return <Laptop className="h-4 w-4" />
-    return <Sun className="h-4 w-4" />
+    const looksDark = theme === "system" ? resolvedTheme === "dark" : theme === "dark"
+    return looksDark ? (
+      <Moon className="h-4 w-4 shrink-0" />
+    ) : (
+      <Sun className="h-4 w-4 shrink-0" />
+    )
   }
 
   return (
@@ -279,7 +290,7 @@ function SidebarLayout({
             <Link
               to={`${basePath}/profile`}
               className={cn(
-                "flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors group",
+                "flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors group",
                 location.pathname === `${basePath}/profile` || location.pathname.startsWith(`${basePath}/profile`)
                   ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
                   : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",
@@ -295,8 +306,8 @@ function SidebarLayout({
               </Avatar>
               {expanded && (
                 <div className="flex flex-col text-left leading-tight">
-                  <span className="text-sm font-semibold text-white">{user.firstName} {user.lastName}</span>
-                  <span className="text-xs text-slate-400 capitalize">{user.role.replace("_", " ")}</span>
+                  <span className="text-sm lg:text-base font-semibold text-white">{user.firstName} {user.lastName}</span>
+                  <span className="text-xs lg:text-sm text-slate-400 capitalize">{user.role.replace("_", " ")}</span>
                 </div>
               )}
             </Link>
@@ -312,34 +323,58 @@ function SidebarLayout({
               <Button
                 variant="ghost"
                 className={cn(
-                  "gap-2 text-sm text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
+                  "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
                   expanded ? "justify-start w-full" : "justify-center w-full"
                 )}
               >
                 {getThemeIcon()}
-                {expanded && <span>Theme</span>}
+                {expanded && <span>Appearance</span>}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" side={expanded ? "right" : "right"} className="w-40">
-              <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
-                <Sun className="h-4 w-4 mr-2" />
-                Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
-                <Moon className="h-4 w-4 mr-2" />
-                Dark
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
-                <Laptop className="h-4 w-4 mr-2" />
-                System
-              </DropdownMenuItem>
+            <DropdownMenuContent align="end" side={expanded ? "right" : "right"} className="w-56">
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                Main workspace
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                value={theme ?? "light"}
+                onValueChange={(value) => setTheme(value)}
+              >
+                <DropdownMenuRadioItem value="light" className="cursor-pointer gap-2">
+                  <Sun className="h-4 w-4 shrink-0" />
+                  <div className="flex flex-col gap-0.5 py-0.5">
+                    <span>Light</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      Warm off-white canvas
+                    </span>
+                  </div>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="dark" className="cursor-pointer gap-2">
+                  <Moon className="h-4 w-4 shrink-0" />
+                  <div className="flex flex-col gap-0.5 py-0.5">
+                    <span>Dark</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      Zinc panel with brand glow
+                    </span>
+                  </div>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="system" className="cursor-pointer gap-2">
+                  <Laptop className="h-4 w-4 shrink-0" />
+                  <div className="flex flex-col gap-0.5 py-0.5">
+                    <span>System</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      Match this device
+                    </span>
+                  </div>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="relative">
             <Link
               to="/contact"
               className={cn(
-                "flex items-center gap-2 text-sm text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30 rounded-md px-3 py-2 transition-colors group",
+                "flex items-center gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30 rounded-md px-3 py-2 transition-colors group",
                 expanded ? "justify-start w-full" : "justify-center w-full"
               )}
             >
@@ -356,7 +391,7 @@ function SidebarLayout({
             variant="ghost"
             onClick={logout}
             className={cn(
-              "gap-2 text-sm text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
+              "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
               expanded ? "justify-start w-full" : "justify-center w-full"
             )}
           >
@@ -366,8 +401,16 @@ function SidebarLayout({
         </SidebarFooter>
       </Sidebar>
       
-      <main className="flex-1 overflow-auto">
-        {children}
+      <main className="relative flex-1 overflow-auto bg-stone-50 dark:bg-zinc-950">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.07),transparent_55%)] dark:bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.12),transparent_55%)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-stone-100/80 to-stone-100 dark:from-transparent dark:via-zinc-950/40 dark:to-zinc-950"
+          aria-hidden
+        />
+        <div className="relative z-[1] min-h-full">{children}</div>
       </main>
       <Toaster position="bottom-right" richColors closeButton />
     </div>

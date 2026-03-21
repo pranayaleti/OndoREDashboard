@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -6,10 +7,31 @@ import { Loader2, Bell, CheckCircle, Calendar, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { dashboardApi, type PropertyReminderItem } from "@/lib/api"
 import { formatUSDate } from "@/lib/us-format"
+import { useAuth } from "@/lib/auth-context"
+import type { UserRole } from "@/lib/auth-context"
 
 const MAX_VISIBLE = 6
 
+function reminderDetailHref(role: UserRole | undefined, propertyId: string): string {
+  switch (role) {
+    case "owner":
+      return `/owner/properties/${propertyId}`
+    case "manager":
+      return "/dashboard/maintenance"
+    case "admin":
+      return "/admin/maintenance"
+    case "super_admin":
+      return "/super-admin/maintenance"
+    case "tenant":
+      return "/tenant/maintenance"
+    default:
+      return "/dashboard/maintenance"
+  }
+}
+
 export function HomeCareRemindersCard() {
+  const { user } = useAuth()
+  const role = user?.role
   const [reminders, setReminders] = useState<PropertyReminderItem[]>([])
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(false)
@@ -141,20 +163,30 @@ export function HomeCareRemindersCard() {
           {visible.map((r) => {
             const key = `${r.propertyId}:${r.reminderType}`
             const isCompleting = completing === key
+            const detailTo = reminderDetailHref(role, r.propertyId)
+            const locationLabel = (r.propertyAddress || r.propertyTitle || "").trim()
+            const detailLabel = locationLabel
+              ? `View ${r.title} for ${locationLabel}`
+              : `View details for ${r.title}`
+
             return (
               <li
                 key={key}
                 className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 rounded-lg border bg-muted/30"
               >
-                <div className="min-w-0 flex-1">
+                <Link
+                  to={detailTo}
+                  className="min-w-0 flex-1 rounded-md -m-1 p-1 text-left ring-offset-background transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label={detailLabel}
+                >
                   <div className="font-medium text-sm">{r.title}</div>
                   {r.propertyTitle && (
                     <div className="text-xs text-muted-foreground truncate">
                       {r.propertyAddress || r.propertyTitle}
                     </div>
                   )}
-                  <div className="flex items-center gap-2 mt-1">
-                    <Calendar aria-hidden="true" className="h-3 w-3 text-muted-foreground" />
+                  <div className="flex flex-wrap items-center gap-2 mt-1">
+                    <Calendar aria-hidden="true" className="h-3 w-3 shrink-0 text-muted-foreground" />
                     <span className="text-xs">
                       Due {formatUSDate(r.nextDue)}
                       {r.overdue && (
@@ -164,7 +196,7 @@ export function HomeCareRemindersCard() {
                       )}
                     </span>
                   </div>
-                </div>
+                </Link>
                 <Button
                   size="sm"
                   variant="outline"

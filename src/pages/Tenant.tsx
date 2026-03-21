@@ -16,7 +16,7 @@ import TenantNotifications from "@/components/tenant/tenant-notifications"
 export default function Tenant() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<TenantDashboard />} />

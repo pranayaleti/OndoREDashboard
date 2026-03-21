@@ -135,8 +135,8 @@ function MessagesList() {
         <div className="flex items-center gap-3">
           <MessageSquare className="w-8 h-8 text-purple-400" />
           <div>
-            <h1 className="text-3xl font-bold">Messages</h1>
-            <p className="text-gray-600 dark:text-gray-400">System-wide communications and alerts</p>
+            <h1 className="text-3xl lg:text-4xl font-bold">Messages</h1>
+            <p className="text-base lg:text-lg text-gray-600 dark:text-gray-400">System-wide communications and alerts</p>
           </div>
         </div>
         <Link to="/super-admin/messages/compose">
@@ -191,21 +191,21 @@ function MessagesList() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center space-x-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarFallback className="text-xs">
+                        <AvatarFallback className="text-xs lg:text-sm">
                           {getRoleIcon(message.fromRole)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <span className="text-sm font-medium">{message.from}</span>
-                        <p className="text-xs text-gray-500 capitalize">{message.fromRole}</p>
+                        <span className="text-sm lg:text-base font-medium">{message.from}</span>
+                        <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 capitalize">{message.fromRole}</p>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-500">{message.time}</span>
+                    <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{message.time}</span>
                   </div>
-                  <h3 className={`font-medium mb-1 ${!message.isRead ? "font-bold" : ""}`}>
+                  <h3 className={`text-base lg:text-lg font-medium mb-1 ${!message.isRead ? "font-bold" : ""}`}>
                     {message.subject}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
+                  <p className="text-sm lg:text-base text-gray-600 dark:text-gray-300 line-clamp-2 mb-2">
                     {message.content}
                   </p>
                   <div className="flex items-center justify-between">
@@ -217,7 +217,7 @@ function MessagesList() {
                         {message.priority}
                       </Badge>
                     </div>
-                    <span className="text-xs text-gray-500">{message.date}</span>
+                    <span className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{message.date}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -306,10 +306,10 @@ function MessagesList() {
             <Card>
               <CardContent className="text-center py-12">
                 <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg lg:text-xl font-medium text-gray-900 dark:text-white mb-2">
                   Select a message
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-base lg:text-lg text-gray-500 dark:text-gray-400">
                   Choose a message from the list to view and respond
                 </p>
               </CardContent>

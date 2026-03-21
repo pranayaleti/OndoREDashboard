@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
+import { useSearchParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -31,8 +32,30 @@ function getDefaultDateRange(): { startDate: string; endDate: string } {
 
 const API_BASE_URL = getApiBaseUrl()
 
+type OwnerFinanceTab = "overview" | "income" | "expenses"
+
+function parseOwnerFinanceTab(param: string | null): OwnerFinanceTab {
+  if (param === "income" || param === "expenses" || param === "overview") return param
+  return "overview"
+}
+
 export default function OwnerFinances() {
   const { toast } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = parseOwnerFinanceTab(searchParams.get("tab"))
+
+  const setOwnerFinanceTab = (value: string) => {
+    const next = parseOwnerFinanceTab(value)
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev)
+        if (next === "overview") p.delete("tab")
+        else p.set("tab", next)
+        return p
+      },
+      { replace: true }
+    )
+  }
   const [dateRange, setDateRange] = useState(getDefaultDateRange)
   const [pnl, setPnl] = useState<PnLStatement | null>(null)
   const [loading, setLoading] = useState(true)
@@ -218,7 +241,7 @@ export default function OwnerFinances() {
         ) : null}
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setOwnerFinanceTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="income">Income Analysis</TabsTrigger>

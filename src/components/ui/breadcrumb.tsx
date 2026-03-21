@@ -50,12 +50,12 @@ const getIconForLabel = (label: string): LucideIcon | undefined => {
 
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
-    <nav className={cn("flex items-center space-x-2 text-sm", className)} aria-label="Breadcrumb">
+    <nav className={cn("flex items-center space-x-2 text-sm lg:text-base", className)} aria-label="Breadcrumb">
       <Link 
         to="/owner" 
         className="flex items-center gap-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
       >
-        <Home className="h-4 w-4" />
+        <Home className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />
         <span>Dashboard</span>
       </Link>
       
@@ -65,13 +65,13 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
         
         return (
           <div key={index} className="flex items-center space-x-2">
-            <ChevronRight className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+            <ChevronRight className="h-4 w-4 shrink-0 lg:h-5 lg:w-5 text-gray-400 dark:text-gray-500" />
             {item.href ? (
               <Link
                 to={item.href}
                 className="flex items-center gap-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
               >
-                {Icon && <Icon className="h-4 w-4" />}
+                {Icon && <Icon className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />}
                 <span>{item.label}</span>
               </Link>
             ) : (
@@ -81,7 +81,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                   ? "text-gray-900 dark:text-gray-100 font-medium" 
                   : "text-gray-500 dark:text-gray-400"
               )}>
-                {Icon && <Icon className="h-4 w-4" />}
+                {Icon && <Icon className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />}
                 <span>{item.label}</span>
               </span>
             )}

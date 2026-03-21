@@ -1,4 +1,19 @@
-import { Wrench, CreditCard, FileText, MessageSquare, DollarSign, Calendar, Building, TrendingUp, CheckCircle, Clock } from "lucide-react"
+import {
+  Wrench,
+  CreditCard,
+  FileText,
+  MessageSquare,
+  DollarSign,
+  Calendar,
+  Building,
+  TrendingUp,
+  CheckCircle,
+  Clock,
+  BadgeCheck,
+  BarChart3,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, maintenanceApi, type Property, type MaintenanceRequest } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -501,6 +516,31 @@ export function createTenantConfig(
           subtitle="Centralize rent history, categorize reimbursements, and export statements when you need them."
           ctaLabel="View payments"
           ctaHref="/tenant/payments"
+          transactionsHref="/tenant/payments"
+          cashFlowHref="/tenant/payments"
+          taxPackageCardHref="/tenant/documents"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/tenant/payments",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/tenant/payments",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/tenant/documents",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/tenant/documents",
+            },
+          ]}
           taxSummary={{
             timePeriod: "Lease Term",
             properties: assignedProperty ? assignedProperty.addressLine1 ?? "Current Property" : "Pending Assignment",

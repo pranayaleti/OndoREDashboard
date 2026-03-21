@@ -24,7 +24,7 @@ import { ScreeningListPage } from "@/components/shared/screening-list-page"
 export default function Owner() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<OwnerDashboard />} />

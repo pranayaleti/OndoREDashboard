@@ -1,4 +1,17 @@
-import { Building, DollarSign, Users, FileText, BarChart3, Wrench, Plus, MessageSquare, FolderOpen } from "lucide-react"
+import {
+  Building,
+  DollarSign,
+  Users,
+  FileText,
+  BarChart3,
+  Wrench,
+  Plus,
+  MessageSquare,
+  FolderOpen,
+  BadgeCheck,
+  FileSpreadsheet,
+  Receipt,
+} from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, type Property } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -322,6 +335,31 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
           ctaLabel="Review finances"
           ctaHref="/owner/finances"
           subtitle="Track NOI, cash flow, and export accountant-ready statements."
+          transactionsHref="/owner/finances?tab=overview"
+          cashFlowHref="/owner/finances?tab=income"
+          taxPackageCardHref="/owner/reports"
+          features={[
+            {
+              label: "Auto-categorize transactions",
+              icon: <BadgeCheck className="h-4 w-4" />,
+              href: "/owner/finances?tab=overview",
+            },
+            {
+              label: "Monitor income & expenses",
+              icon: <BarChart3 className="h-4 w-4" />,
+              href: "/owner/finances?tab=income",
+            },
+            {
+              label: "Auto-generate reports",
+              icon: <FileSpreadsheet className="h-4 w-4" />,
+              href: "/owner/reports",
+            },
+            {
+              label: "Make tax time simple",
+              icon: <Receipt className="h-4 w-4" />,
+              href: "/owner/reports",
+            },
+          ]}
           cashFlow={{
             netCashFlow: `$${portfolioStats.netIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
             cashInflow: `$${portfolioStats.monthlyRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
