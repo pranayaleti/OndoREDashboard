@@ -24,6 +24,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { propertyApi, type Property } from "@/lib/api"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 import { PropertyRentScheduleSection } from "@/components/shared/property-rent-schedule-section"
+import { ScreeningConfigWizard } from "@/components/owner/screening-config-wizard"
+import { ApplicationsDashboard } from "@/components/owner/applications-dashboard"
+import { LeaseManagement } from "@/components/owner/lease-management"
+import { CoOwnerManagement } from "@/components/owner/co-owner-management"
+import { ApplicationAnalytics } from "@/components/owner/application-analytics"
+import { ExpenseTracker } from "@/components/owner/expense-tracker"
+import { InspectionManager } from "@/components/owner/inspection-manager"
+import { AnnouncementBoard } from "@/components/owner/announcement-board"
+import { SurveyManager } from "@/components/owner/survey-manager"
+import { RentIncreaseManager } from "@/components/owner/rent-increase-manager"
+import { LateFeeConfig } from "@/components/owner/late-fee-config"
 
 export default function OwnerPropertyDetail() {
   const { id } = useParams<{ id: string }>()
@@ -183,11 +194,19 @@ export default function OwnerPropertyDetail() {
       )}
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 bg-slate-100/50 dark:bg-slate-800/50 p-1">
-          <TabsTrigger value="details">Property Details</TabsTrigger>
-          <TabsTrigger value="rent-schedule">Rent schedule</TabsTrigger>
+        <TabsList className="flex flex-wrap mb-8 bg-slate-100/50 dark:bg-slate-800/50 p-1 h-auto gap-1">
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="screening">Screening</TabsTrigger>
+          <TabsTrigger value="applications">Applications</TabsTrigger>
+          <TabsTrigger value="leases">Leases</TabsTrigger>
+          <TabsTrigger value="co-owners">Co-Owners</TabsTrigger>
+          <TabsTrigger value="rent-schedule">Rent Schedule</TabsTrigger>
           <TabsTrigger value="location">Location</TabsTrigger>
           <TabsTrigger value="amenities">Amenities</TabsTrigger>
+          <TabsTrigger value="expenses">Expenses</TabsTrigger>
+          <TabsTrigger value="inspections">Inspections</TabsTrigger>
+          <TabsTrigger value="operations">Operations</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
         </TabsList>
         <TabsContent value="rent-schedule" className="space-y-6">
@@ -196,6 +215,37 @@ export default function OwnerPropertyDetail() {
           ) : (
             <p className="text-sm text-muted-foreground">Select a property to view rent schedule.</p>
           )}
+        </TabsContent>
+        <TabsContent value="screening" className="space-y-6">
+          {property?.id && <ScreeningConfigWizard propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="applications" className="space-y-6">
+          {property?.id && <ApplicationsDashboard propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="leases" className="space-y-6">
+          {property?.id && <LeaseManagement propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="co-owners" className="space-y-6">
+          {property?.id && <CoOwnerManagement propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="expenses" className="space-y-6">
+          {property?.id && <ExpenseTracker propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="inspections" className="space-y-6">
+          {property?.id && <InspectionManager propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="operations" className="space-y-6">
+          {property?.id && (
+            <div className="space-y-6">
+              <LateFeeConfig propertyId={property.id} />
+              <RentIncreaseManager propertyId={property.id} />
+              <AnnouncementBoard propertyId={property.id} />
+              <SurveyManager propertyId={property.id} />
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="analytics" className="space-y-6">
+          <ApplicationAnalytics />
         </TabsContent>
         <TabsContent value="details" className="space-y-6">
           {/* Property Overview Cards */}

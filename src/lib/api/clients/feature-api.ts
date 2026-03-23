@@ -1351,6 +1351,1021 @@ export const featureApi = {
       );
     },
   },
+
+  // ── Plans ──────────────────────────────────────────────────────────────────
+
+  plans: {
+    list(): Promise<unknown[]> {
+      return apiRequest<unknown>('GET', '/plans').then((r) => unwrapDataArray(r));
+    },
+    getMyPlan(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/plans/my', undefined, headers);
+    },
+  },
+
+  // ── Co-Owners ──────────────────────────────────────────────────────────────
+
+  coOwners: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/co-owners`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    invite(propertyId: string, email: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/co-owners`, { email }, headers);
+    },
+    remove(propertyId: string, userId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/properties/${propertyId}/co-owners/${userId}`, undefined, headers);
+    },
+  },
+
+  // ── Screening Config ───────────────────────────────────────────────────────
+
+  screeningConfig: {
+    getTemplates(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/screening-templates', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getConfig(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/screening-config`, undefined, headers);
+    },
+    setConfig(propertyId: string, templateId: string | null, criteria: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/properties/${propertyId}/screening-config`, { templateId, criteria }, headers);
+    },
+    getQuestions(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/screening-questions`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    addQuestion(propertyId: string, question: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/screening-questions`, question, headers);
+    },
+    updateQuestion(questionId: string, updates: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/screening-questions/${questionId}`, updates, headers);
+    },
+    deleteQuestion(questionId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/screening-questions/${questionId}`, undefined, headers);
+    },
+  },
+
+  // ── Applications ───────────────────────────────────────────────────────────
+
+  applications: {
+    inviteTenant(propertyId: string, email: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/invite-tenant`, { email }, headers);
+    },
+    createPublicLink(propertyId: string, expiryDays?: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/public-link`, { expiryDays }, headers);
+    },
+    getLinks(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/application-links`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    deactivateLink(linkId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/application-links/${linkId}`, undefined, headers);
+    },
+    listForProperty(propertyId: string, status?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const query = status ? `?status=${status}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/applications${query}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(applicationId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/applications/${applicationId}`, undefined, headers);
+    },
+    approve(applicationId: string, notes?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/approve`, { notes }, headers);
+    },
+    reject(applicationId: string, notes?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/reject`, { notes }, headers);
+    },
+    triggerChecks(applicationId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/checks/trigger`, undefined, headers);
+    },
+    getChecks(applicationId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/applications/${applicationId}/checks`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Leases ─────────────────────────────────────────────────────────────────
+
+  leases: {
+    create(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/leases', data, headers);
+    },
+    get(leaseId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/leases/${leaseId}`, undefined, headers);
+    },
+    update(leaseId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/leases/${leaseId}`, data, headers);
+    },
+    sendForSignature(leaseId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/leases/${leaseId}/send-for-signature`, undefined, headers);
+    },
+    sign(leaseId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/leases/${leaseId}/sign`, undefined, headers);
+    },
+    listForProperty(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/leases`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getMyLease(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/leases/my', undefined, headers);
+    },
+    generatePdf(leaseId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/leases/${leaseId}/generate-pdf`, undefined, headers);
+    },
+    getPdfUrl(leaseId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/leases/${leaseId}/pdf-url`, undefined, headers);
+    },
+    offerRenewal(leaseId: string, terms: { leaseEnd: string; monthlyRent: number; securityDeposit?: number }): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/leases/${leaseId}/offer-renewal`, terms, headers);
+    },
+    getExpiringSoon(days?: number): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const query = days ? `?days=${days}` : '';
+      return apiRequest<unknown>('GET', `/leases/expiring-soon${query}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Application Comments ────────────────────────────────────────────────────
+
+  applicationComments: {
+    list(applicationId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/applications/${applicationId}/comments`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    add(applicationId: string, comment: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/comments`, { comment }, headers);
+    },
+    remove(commentId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/application-comments/${commentId}`, undefined, headers);
+    },
+  },
+
+  // ── Application Attachments ─────────────────────────────────────────────────
+
+  applicationAttachments: {
+    list(applicationId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/applications/${applicationId}/attachments`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    remove(attachmentId: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/application-attachments/${attachmentId}`, undefined, headers);
+    },
+  },
+
+  // ── Application Analytics ───────────────────────────────────────────────────
+
+  analytics: {
+    getApplicationFunnel(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/analytics/applications', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getPropertyFunnel(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/analytics/applications/${propertyId}`, undefined, headers);
+    },
+  },
+
+  // ── Enhanced Application Actions ────────────────────────────────────────────
+
+  applicationActions: {
+    waitlist(applicationId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/waitlist`, undefined, headers);
+    },
+    allowReapply(applicationId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/allow-reapply`, undefined, headers);
+    },
+    compare(propertyId: string, applicationIds: string[]): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/compare-applications`, { applicationIds }, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    bulkInvite(propertyId: string, emails: string[]): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/bulk-invite`, { emails }, headers);
+    },
+  },
+
+  // ── Webhook Subscriptions ───────────────────────────────────────────────────
+
+  webhooks: {
+    list(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/webhooks/subscriptions', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(eventType: string, url: string, secret?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/webhooks/subscriptions', { eventType, url, secret }, headers);
+    },
+    remove(id: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/webhooks/subscriptions/${id}`, undefined, headers);
+    },
+  },
+
+  // ── Inspections ─────────────────────────────────────────────────────────────
+
+  inspections: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/inspections`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/inspections/${id}`, undefined, headers);
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/inspections`, data, headers);
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/inspections/${id}`, data, headers);
+    },
+    addItems(id: string, items: unknown[]): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/inspections/${id}/items`, { items }, headers);
+    },
+    compare(moveInId: string, moveOutId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/inspections/${moveInId}/compare/${moveOutId}`, undefined, headers);
+    },
+  },
+
+  // ── Expenses & P&L ──────────────────────────────────────────────────────────
+
+  expenses: {
+    list(propertyId: string, filters?: Record<string, string>): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString(filters);
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/expenses${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/expenses`, data, headers);
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/expenses/${id}`, data, headers);
+    },
+    remove(id: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/expenses/${id}`, undefined, headers);
+    },
+    getPnL(propertyId: string, startDate?: string, endDate?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString({ startDate, endDate });
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/pnl${qs}`, undefined, headers);
+    },
+    getOwnerSummary(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/pnl-summary', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Late Fees ───────────────────────────────────────────────────────────────
+
+  lateFees: {
+    getRule(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/late-fee-rules`, undefined, headers);
+    },
+    setRule(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/properties/${propertyId}/late-fee-rules`, data, headers);
+    },
+    apply(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/apply-late-fees`, undefined, headers);
+    },
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/late-fees`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    waive(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/late-fees/${id}/waive`, undefined, headers);
+    },
+  },
+
+  // ── Rent Increases ──────────────────────────────────────────────────────────
+
+  rentIncreases: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/rent-increases`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/rent-increases`, data, headers);
+    },
+    sendNotice(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/rent-increases/${id}/send-notice`, undefined, headers);
+    },
+    cancel(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/rent-increases/${id}/cancel`, undefined, headers);
+    },
+  },
+
+  // ── Amenities ───────────────────────────────────────────────────────────────
+
+  amenities: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/amenities`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/amenities`, data, headers);
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/amenities/${id}`, data, headers);
+    },
+    getBookings(amenityId: string, date?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString({ date });
+      return apiRequest<unknown>('GET', `/amenities/${amenityId}/bookings${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Announcements ──────────────────────────────────────────────────────────
+
+  announcements: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/announcements`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/announcements`, data, headers);
+    },
+    remove(id: string): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', `/announcements/${id}`, undefined, headers);
+    },
+  },
+
+  // ── Surveys ─────────────────────────────────────────────────────────────────
+
+  surveys: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/surveys`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/surveys/${id}`, undefined, headers);
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/surveys`, data, headers);
+    },
+    activate(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/surveys/${id}/activate`, undefined, headers);
+    },
+    getResults(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/surveys/${id}/results`, undefined, headers);
+    },
+  },
+
+  // ── Audit Log ───────────────────────────────────────────────────────────────
+
+  auditLog: {
+    list(filters?: Record<string, string | number>): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString(filters);
+      return apiRequest<unknown>('GET', `/audit-log${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Two-Factor Auth ─────────────────────────────────────────────────────────
+
+  twoFactor: {
+    getStatus(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/auth/2fa/status', undefined, headers);
+    },
+    setup(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/auth/2fa/setup', undefined, headers);
+    },
+    verify(code: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/auth/2fa/verify', { code }, headers);
+    },
+    disable(): Promise<void> {
+      const headers = getAuthHeaders();
+      return apiRequest<void>('DELETE', '/auth/2fa', undefined, headers);
+    },
+  },
+
+  // ── Insurance ───────────────────────────────────────────────────────────────
+
+  insurance: {
+    listForProperty(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/insurance`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    verify(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/insurance/${id}/verify`, undefined, headers);
+    },
+    getExpiring(days?: number): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString({ days });
+      return apiRequest<unknown>('GET', `/insurance/expiring${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Referrals ───────────────────────────────────────────────────────────────
+
+  referrals: {
+    list(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/referrals', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(email: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/referrals', { email }, headers);
+    },
+  },
+
+  // ── Tax Documents ──────────────────────────────────────────────────────────
+
+  taxDocuments: {
+    getAnnualSummary(year: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/tax/annual-summary/${year}`, undefined, headers);
+    },
+    downloadPdf(year: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/tax/annual-summary/${year}/pdf`, undefined, headers);
+    },
+  },
+
+  // ── Checklists ──────────────────────────────────────────────────────────────
+
+  checklists: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/checklists`, data, headers);
+    },
+    list(propertyId: string, tenantId?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = tenantId ? `?tenantId=${tenantId}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/checklists${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/checklists/${id}`, undefined, headers);
+    },
+    updateItem(itemId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/checklist-items/${itemId}`, data, headers);
+    },
+    complete(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/checklists/${id}/complete`, {}, headers);
+    },
+  },
+
+  // ── Maintenance Chat ────────────────────────────────────────────────────────
+
+  maintenanceChat: {
+    send(requestId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/maintenance/${requestId}/messages`, data, headers);
+    },
+    list(requestId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/maintenance/${requestId}/messages`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Rent Splits ─────────────────────────────────────────────────────────────
+
+  rentSplits: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/rent-splits`, data, headers);
+    },
+    get(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/rent-splits`, undefined, headers);
+    },
+    updateMember(memberId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/rent-split-members/${memberId}`, data, headers);
+    },
+    deactivate(splitId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('DELETE', `/rent-splits/${splitId}`, {}, headers);
+    },
+  },
+
+  // ── Packages ────────────────────────────────────────────────────────────────
+
+  packages: {
+    log(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/packages`, data, headers);
+    },
+    list(propertyId: string, status?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = status ? `?status=${status}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/packages${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    markPickedUp(packageId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/packages/${packageId}/pickup`, {}, headers);
+    },
+  },
+
+  // ── Complaints ──────────────────────────────────────────────────────────────
+
+  complaints: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/complaints`, data, headers);
+    },
+    list(propertyId: string, params?: Record<string, string>): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = params ? `?${new URLSearchParams(params)}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/complaints${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/complaints/${id}`, undefined, headers);
+    },
+    updateStatus(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/complaints/${id}/status`, data, headers);
+    },
+    addUpdate(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/complaints/${id}/updates`, data, headers);
+    },
+  },
+
+  // ── Rewards ─────────────────────────────────────────────────────────────────
+
+  rewards: {
+    setup(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/rewards/setup`, data, headers);
+    },
+    get(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/rewards`, undefined, headers);
+    },
+    leaderboard(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/rewards/leaderboard`, undefined, headers);
+    },
+    getTenantRewards(propertyId?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = propertyId ? `?propertyId=${propertyId}` : '';
+      return apiRequest<unknown>('GET', `/tenant/rewards${qs}`, undefined, headers);
+    },
+    redeem(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/tenant/rewards/redeem', data, headers);
+    },
+    history(propertyId?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = propertyId ? `?propertyId=${propertyId}` : '';
+      return apiRequest<unknown>('GET', `/tenant/rewards/history${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Lease Renewals ──────────────────────────────────────────────────────────
+
+  leaseRenewals: {
+    create(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/lease-renewals', data, headers);
+    },
+    send(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/lease-renewals/${id}/send`, {}, headers);
+    },
+    respond(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/lease-renewals/${id}/respond`, data, headers);
+    },
+    list(propertyId: string, status?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = status ? `?status=${status}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/lease-renewals${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    upcoming(daysAhead?: number): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = daysAhead ? `?daysAhead=${daysAhead}` : '';
+      return apiRequest<unknown>('GET', `/lease-renewals/upcoming${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Vacancy Marketing ───────────────────────────────────────────────────────
+
+  vacancyMarketing: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/vacancy-listings`, data, headers);
+    },
+    list(propertyId?: string, status?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = buildQueryString({ propertyId, status });
+      return apiRequest<unknown>('GET', `/vacancy-listings${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/vacancy-listings/${id}`, undefined, headers);
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/vacancy-listings/${id}`, data, headers);
+    },
+    publish(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/vacancy-listings/${id}/publish`, data, headers);
+    },
+    markFilled(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/vacancy-listings/${id}/fill`, {}, headers);
+    },
+  },
+
+  // ── Owner Digest ────────────────────────────────────────────────────────────
+
+  ownerDigest: {
+    getPreferences(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/digest-preferences', undefined, headers);
+    },
+    updatePreferences(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', '/owner/digest-preferences', data, headers);
+    },
+    preview(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/digest-preview', undefined, headers);
+    },
+  },
+
+  // ── Bulk Operations ─────────────────────────────────────────────────────────
+
+  bulkOps: {
+    lateFeeRules(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/bulk/late-fee-rules', data, headers);
+    },
+    rentIncreases(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/bulk/rent-increases', data, headers);
+    },
+    screeningConfig(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/bulk/screening-config', data, headers);
+    },
+    announcements(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/bulk/announcements', data, headers);
+    },
+  },
+
+  // ── Turnover Costs ──────────────────────────────────────────────────────────
+
+  turnoverCosts: {
+    record(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/turnover-costs`, data, headers);
+    },
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/turnover-costs`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    estimate(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/turnover-estimate`, undefined, headers);
+    },
+    portfolioStats(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/turnover-stats', undefined, headers);
+    },
+  },
+
+  // ── Smart Pricing ───────────────────────────────────────────────────────────
+
+  smartPricing: {
+    suggestedRent(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/suggested-rent`, undefined, headers);
+    },
+    comparables(propertyId: string, limit?: number): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = limit ? `?limit=${limit}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/comparables${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    rentTrends(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/rent-trends`, undefined, headers);
+    },
+  },
+
+  // ── Scheduled Maintenance ───────────────────────────────────────────────────
+
+  scheduledMaintenance: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/scheduled-maintenance`, data, headers);
+    },
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/scheduled-maintenance`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/scheduled-maintenance/${id}`, data, headers);
+    },
+    delete(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('DELETE', `/scheduled-maintenance/${id}`, {}, headers);
+    },
+    process(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/scheduled-maintenance/${id}/process`, {}, headers);
+    },
+  },
+
+  // ── Community Events ────────────────────────────────────────────────────────
+
+  communityEvents: {
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/events`, data, headers);
+    },
+    list(propertyId: string, upcoming?: boolean): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = upcoming ? '?upcoming=true' : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/events${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    get(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/events/${id}`, undefined, headers);
+    },
+    rsvp(eventId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/events/${eventId}/rsvp`, data, headers);
+    },
+    delete(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('DELETE', `/events/${id}`, {}, headers);
+    },
+  },
+
+  // ── SMS ─────────────────────────────────────────────────────────────────────
+
+  sms: {
+    getPreferences(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/sms/preferences', undefined, headers);
+    },
+    updatePreferences(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', '/sms/preferences', data, headers);
+    },
+    requestVerification(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/sms/verify-request', data, headers);
+    },
+    verify(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/sms/verify', data, headers);
+    },
+  },
+
+  // ── Move Out ────────────────────────────────────────────────────────────────
+
+  moveOut: {
+    submit(data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/move-out', data, headers);
+    },
+    list(propertyId: string, status?: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = status ? `?status=${status}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/move-outs${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getTenantMoveOut(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/tenant/move-out', undefined, headers);
+    },
+    approve(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/approve`, data, headers);
+    },
+    scheduleInspection(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/schedule-inspection`, data, headers);
+    },
+    completeInspection(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/complete-inspection`, data, headers);
+    },
+    processDeposit(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/process-deposit`, {}, headers);
+    },
+    complete(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/complete`, data, headers);
+    },
+    cancel(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/move-outs/${id}/cancel`, {}, headers);
+    },
+  },
+
+  // ── Equipment ───────────────────────────────────────────────────────────────
+
+  equipment: {
+    add(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/equipment`, data, headers);
+    },
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/equipment`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/equipment/${id}`, data, headers);
+    },
+    logService(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/equipment/${id}/service-log`, data, headers);
+    },
+    getLog(id: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/equipment/${id}/log`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    atRisk(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/equipment/at-risk`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    health(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/equipment/${id}/health`, undefined, headers);
+    },
+    forecast(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/maintenance-forecast`, undefined, headers);
+    },
+  },
+
+  // ── Satisfaction ────────────────────────────────────────────────────────────
+
+  satisfaction: {
+    property(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/satisfaction`, undefined, headers);
+    },
+    portfolio(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/satisfaction', undefined, headers);
+    },
+    correlation(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/satisfaction/correlation', undefined, headers);
+    },
+    alerts(threshold?: number): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const qs = threshold !== undefined ? `?threshold=${threshold}` : '';
+      return apiRequest<unknown>('GET', `/owner/satisfaction/alerts${qs}`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+  },
+
+  // ── Cash Flow ───────────────────────────────────────────────────────────────
+
+  cashFlow: {
+    forecast(monthsAhead?: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = monthsAhead ? `?monthsAhead=${monthsAhead}` : '';
+      return apiRequest<unknown>('GET', `/owner/cash-flow/forecast${qs}`, undefined, headers);
+    },
+    propertyForecast(propertyId: string, monthsAhead?: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = monthsAhead ? `?monthsAhead=${monthsAhead}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/cash-flow/forecast${qs}`, undefined, headers);
+    },
+    scenario(vacancyRate: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/owner/cash-flow/scenario?vacancyRate=${vacancyRate}`, undefined, headers);
+    },
+    historical(monthsBack?: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = monthsBack ? `?monthsBack=${monthsBack}` : '';
+      return apiRequest<unknown>('GET', `/owner/cash-flow/historical${qs}`, undefined, headers);
+    },
+  },
+
+  // ── Performance ─────────────────────────────────────────────────────────────
+
+  performance: {
+    metrics(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/metrics`, undefined, headers);
+    },
+    portfolio(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/portfolio-comparison', undefined, headers);
+    },
+    benchmark(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/benchmark`, undefined, headers);
+    },
+    trends(propertyId: string, monthsBack?: number): Promise<unknown> {
+      const headers = getAuthHeaders();
+      const qs = monthsBack ? `?monthsBack=${monthsBack}` : '';
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/performance-trends${qs}`, undefined, headers);
+    },
+  },
 };
 
 // Suppress unused import warning for rawAuthRequest if not called directly
