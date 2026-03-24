@@ -11,6 +11,7 @@
 import { apiRequest, getAuthHeaders } from "../http";
 import { getApiBaseUrl } from "../base-url";
 import { tokenManager } from "./token-manager";
+import { leadApi } from "./lead";
 import {
   ListPaymentMethodsResponseSchema,
   CreatePaymentIntentResponseSchema,
@@ -2804,6 +2805,8 @@ export const featureApi = {
       return apiRequest<unknown>('GET', `/properties/${propertyId}/cam-summary${qs}`, undefined, headers);
     },
   },
+
+  leads: leadApi,
 };
 
 // Suppress unused import warning for rawAuthRequest if not called directly

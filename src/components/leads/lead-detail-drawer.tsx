@@ -11,8 +11,8 @@ interface Lead {
   tenantEmail: string;
   tenantPhone: string;
   status: string;
-  monthlyBudget: string;
-  moveInDate: string;
+  monthlyBudget?: string;
+  moveInDate?: string;
   propertyTitle?: string;
 }
 
