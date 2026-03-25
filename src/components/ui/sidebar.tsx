@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 
 interface SidebarContextProps {
   expanded: boolean
+  isMobile: boolean
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>
   toggleExpanded: () => void
 }
 
 const SidebarContext = React.createContext<SidebarContextProps>({
   expanded: true,
+  isMobile: false,
   setExpanded: () => {},
   toggleExpanded: () => {},
 })
@@ -18,14 +20,20 @@ const SidebarContext = React.createContext<SidebarContextProps>({
 export function SidebarProvider({
   children,
   defaultExpanded = true,
+  isMobile = false,
 }: {
   children: React.ReactNode
   defaultExpanded?: boolean
+  isMobile?: boolean
 }) {
   const [expanded, setExpanded] = React.useState(defaultExpanded)
   const toggleExpanded = () => setExpanded((prev) => !prev)
 
-  return <SidebarContext.Provider value={{ expanded, setExpanded, toggleExpanded }}>{children}</SidebarContext.Provider>
+  return (
+    <SidebarContext.Provider value={{ expanded, isMobile, setExpanded, toggleExpanded }}>
+      {children}
+    </SidebarContext.Provider>
+  )
 }
 
 export function useSidebar() {
@@ -39,7 +47,33 @@ export function Sidebar({
   className?: string
   children: React.ReactNode
 }) {
-  const { expanded } = useSidebar()
+  const { expanded, isMobile, setExpanded } = useSidebar()
+
+  if (isMobile) {
+    return (
+      <>
+        {/* Backdrop */}
+        {expanded && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            onClick={() => setExpanded(false)}
+            aria-hidden
+          />
+        )}
+        {/* Drawer */}
+        <aside
+          className={cn(
+            "fixed inset-y-0 left-0 z-50 flex w-72 flex-col transition-transform duration-300 ease-in-out",
+            "bg-[#1e293b] dark:bg-[#0f172a]",
+            expanded ? "translate-x-0" : "-translate-x-full",
+            className,
+          )}
+        >
+          {children}
+        </aside>
+      </>
+    )
+  }
 
   return (
     <aside

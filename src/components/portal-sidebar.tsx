@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Toaster } from "sonner"
 import { useNotifications } from "@/hooks/use-notifications"
+import { Menu } from "lucide-react"
 
 interface NavItem {
   title: string
@@ -209,7 +210,7 @@ function SidebarLayout({
   location: ReturnType<typeof useLocation>
   user: NonNullable<ReturnType<typeof useAuth>["user"]>
 }) {
-  const { expanded } = useSidebar()
+  const { expanded, isMobile, setExpanded } = useSidebar()
   const { theme, setTheme, resolvedTheme } = useTheme()
 
   const canAccessNotifications = true
@@ -231,17 +232,40 @@ function SidebarLayout({
 
   return (
     <div className="flex min-h-screen w-full">
+      {/* Mobile top bar */}
+      {isMobile && (
+        <header className="fixed top-0 left-0 right-0 z-30 flex h-14 items-center gap-3 border-b border-slate-200 dark:border-slate-800 bg-stone-50/95 dark:bg-zinc-950/95 backdrop-blur px-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setExpanded(true)}
+            className="text-slate-700 dark:text-slate-300"
+            aria-label="Open menu"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <Logo
+            size="lg"
+            showText={false}
+            linkTo={basePath}
+            variant="default"
+            textColor="default"
+            className="flex-shrink-0"
+          />
+        </header>
+      )}
+
       <Sidebar className="border-r border-slate-700/50 dark:border-slate-800/50">
         <SidebarHeader className="flex justify-between items-center p-4">
-          <Logo 
-            size="lg" 
+          <Logo
+            size="lg"
             showText={false}
             linkTo={basePath}
             variant="default"
             textColor="default"
             className="flex-shrink-0 transition-all duration-300"
           />
-          <SidebarTrigger />
+          {!isMobile && <SidebarTrigger />}
         </SidebarHeader>
         
         <SidebarContent>
@@ -262,6 +286,7 @@ function SidebarLayout({
                     <Link
                       to={item.href}
                       className="flex items-center gap-3"
+                      onClick={() => isMobile && setExpanded(false)}
                     >
                       <span className="relative inline-flex">
                         {item.icon}
@@ -289,6 +314,7 @@ function SidebarLayout({
           <div className="relative">
             <Link
               to={`${basePath}/profile`}
+              onClick={() => isMobile && setExpanded(false)}
               className={cn(
                 "flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors group",
                 location.pathname === `${basePath}/profile` || location.pathname.startsWith(`${basePath}/profile`)
@@ -401,7 +427,7 @@ function SidebarLayout({
         </SidebarFooter>
       </Sidebar>
       
-      <main className="relative flex-1 overflow-auto bg-stone-50 dark:bg-zinc-950">
+      <main className={cn("relative flex-1 overflow-auto bg-stone-50 dark:bg-zinc-950", isMobile && "pt-14")}>
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.07),transparent_55%)] dark:bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.12),transparent_55%)]"
           aria-hidden
@@ -431,7 +457,7 @@ export function PortalSidebar({ children }: PortalSidebarProps) {
   const basePath = getDashboardPath(user.role)
 
   return (
-    <SidebarProvider key={sidebarKey} defaultExpanded={isDesktop}>
+    <SidebarProvider key={sidebarKey} defaultExpanded={isDesktop} isMobile={!isDesktop}>
       <SidebarLayout
         user={user}
         navItems={navItems}
