@@ -12,6 +12,7 @@ import TenantLeaseDetails from "@/components/tenant/tenant-lease-details"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import TenantCalendar from "@/components/tenant/tenant-calendar"
 import TenantNotifications from "@/components/tenant/tenant-notifications"
+import TenantFinances from "@/components/tenant/tenant-finances"
 
 export default function Tenant() {
   return (
@@ -24,6 +25,7 @@ export default function Tenant() {
             <Route path="/lease-details" element={<TenantLeaseDetails />} />
             <Route path="/maintenance/*" element={<TenantMaintenance />} />
             <Route path="/payments" element={<TenantPayments />} />
+            <Route path="/finances" element={<TenantFinances />} />
             <Route path="/documents" element={<TenantDocuments />} />
             <Route path="/messages" element={<TenantMessages />} />
             <Route path="/calendar" element={<TenantCalendar />} />

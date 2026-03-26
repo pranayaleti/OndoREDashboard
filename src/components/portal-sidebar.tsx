@@ -167,13 +167,14 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Property Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },
+        { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
-    
+
     case "maintenance":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
