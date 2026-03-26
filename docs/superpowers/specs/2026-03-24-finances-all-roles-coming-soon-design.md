@@ -93,7 +93,8 @@ interface SharedOwnersViewProps {
 
 **Data sources:**
 - `propertyApi.getTenantProperty()` — rent amount, lease dates, address
-- `featureApi` payment records — same source as `tenant-payments.tsx`
+- `featureApi.stripe.getPaymentHistory(page, limit)` — payment records (same call as `tenant-payments.tsx`)
+- `featureApi.stripe.listPaymentMethods()` — for payment method display (read-only, no actions)
 
 **Derived metrics:**
 - YTD total paid (sum of `succeeded` payments in current year)
@@ -204,5 +205,6 @@ In the `"tenant"` case of `getNavItems()`, add after "Payments":
 | `propertyApi.getTenantProperty()` | TenantFinancesView |
 | `authApi.getInvitedUsers()` | SharedOwnersView |
 | `authApi.updateUserStatus()` | SharedOwnersView |
-| `featureApi` (payment records) | TenantFinancesView |
+| `featureApi.stripe.getPaymentHistory(page, limit)` | TenantFinancesView |
+| `featureApi.stripe.listPaymentMethods()` | TenantFinancesView (read-only) |
 | `reportsApi.getPnL()` | Dashboard home configs |
