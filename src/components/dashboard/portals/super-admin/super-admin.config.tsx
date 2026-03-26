@@ -11,13 +11,16 @@ import {
   BarChart3,
   FileSpreadsheet,
   Receipt,
+  TrendingUp,
+  CreditCard,
 } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, maintenanceApi, type Property, type InvitedUser, type MaintenanceRequest } from "@/lib/api"
+import { reportsApi, type PnLStatement } from "@/lib/api/clients/reports"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { formatUSDate } from "@/lib/us-format"
+import { formatUSDate, formatUSD } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
@@ -29,7 +32,8 @@ import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/Te
 export function createSuperAdminConfig(
   properties: Property[],
   invitedUsers: InvitedUser[],
-  maintenanceRequests: MaintenanceRequest[]
+  maintenanceRequests: MaintenanceRequest[],
+  financialSummary: PnLStatement | null = null
 ): PortalConfig {
   // Calculate stats from data
   const stats = {
@@ -100,6 +104,30 @@ export function createSuperAdminConfig(
       subtitle: `${stats.completedMaintenance} completed this month`,
       icon: <Wrench className="h-4 w-4 text-muted-foreground" />,
       href: "/super-admin/maintenance",
+    },
+    {
+      id: "revenue-mtd",
+      title: "Revenue (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.income.total) : "—",
+      subtitle: "Month-to-date income",
+      icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
+      href: "/super-admin/finances",
+    },
+    {
+      id: "expenses-mtd",
+      title: "Expenses (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.expenses.total) : "—",
+      subtitle: "Month-to-date expenses",
+      icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
+      href: "/super-admin/finances",
+    },
+    {
+      id: "net-income-mtd",
+      title: "Net Income (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.netIncome) : "—",
+      subtitle: "Month-to-date net income",
+      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      href: "/super-admin/finances",
     },
   ]
 
@@ -451,6 +479,12 @@ export function createSuperAdminConfig(
       properties: () => propertyApi.getProperties().then((r) => r.properties).catch(() => []),
       invitedUsers: () => authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
       maintenanceRequests: () => maintenanceApi.getManagerMaintenanceRequests().catch(() => []),
+      financialSummary: () => {
+        const now = new Date()
+        const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+        const endDate = now.toISOString().slice(0, 10)
+        return reportsApi.getPnL({ startDate, endDate }).catch(() => null)
+      },
     },
     
     // Theme

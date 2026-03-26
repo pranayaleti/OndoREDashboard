@@ -20,8 +20,8 @@ function AdminDashboardContent() {
     const invitedUsers = data.invitedUsers || []
     const maintenanceRequests = data.maintenanceRequests || []
 
-    return createAdminConfig(properties, invitedUsers, maintenanceRequests)
-  }, [data.properties, data.invitedUsers, data.maintenanceRequests])
+    return createAdminConfig(properties, invitedUsers, maintenanceRequests, data.financialSummary || null)
+  }, [data.properties, data.invitedUsers, data.maintenanceRequests, data.financialSummary])
 
   // Generate activities from fetched data
   const activities = useMemo(() => {

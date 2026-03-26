@@ -12,13 +12,16 @@ import {
   BarChart3,
   FileSpreadsheet,
   Receipt,
+  TrendingUp,
+  CreditCard,
 } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { propertyApi, authApi, leadApi, type Property, type InvitedUser, type Lead } from "@/lib/api"
+import { reportsApi, type PnLStatement } from "@/lib/api/clients/reports"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
-import { formatUSDate } from "@/lib/us-format"
+import { formatUSDate, formatUSD } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
@@ -30,7 +33,8 @@ import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
 export function createManagerConfig(
   properties: Property[],
   invitedUsers: InvitedUser[],
-  leads: Lead[]
+  leads: Lead[],
+  financialSummary: PnLStatement | null = null
 ): PortalConfig {
   const pendingProperties = properties.filter(p => p.status === "pending")
   
@@ -99,6 +103,30 @@ export function createManagerConfig(
       subtitle: "New inquiries",
       icon: <Users className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/leads",
+    },
+    {
+      id: "revenue-mtd",
+      title: "Revenue (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.income.total) : "—",
+      subtitle: "Month-to-date income",
+      icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
+      href: "/dashboard/finances",
+    },
+    {
+      id: "expenses-mtd",
+      title: "Expenses (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.expenses.total) : "—",
+      subtitle: "Month-to-date expenses",
+      icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
+      href: "/dashboard/finances",
+    },
+    {
+      id: "net-income-mtd",
+      title: "Net Income (MTD)",
+      value: financialSummary ? formatUSD(financialSummary.netIncome) : "—",
+      subtitle: "Month-to-date net income",
+      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
+      href: "/dashboard/finances",
     },
   ]
 
@@ -400,6 +428,12 @@ export function createManagerConfig(
       properties: () => propertyApi.getProperties().then((r) => r.properties).catch(() => []),
       invitedUsers: () => authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
       leads: () => leadApi.getManagerLeads().catch(() => []),
+      financialSummary: () => {
+        const now = new Date()
+        const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+        const endDate = now.toISOString().slice(0, 10)
+        return reportsApi.getPnL({ startDate, endDate }).catch(() => null)
+      },
     },
     
     // Theme

@@ -18,8 +18,8 @@ function ManagerDashboardContent() {
     const invitedUsers = data.invitedUsers || []
     const leads = data.leads || []
 
-    return createManagerConfig(properties, invitedUsers, leads)
-  }, [data.properties, data.invitedUsers, data.leads])
+    return createManagerConfig(properties, invitedUsers, leads, data.financialSummary || null)
+  }, [data.properties, data.invitedUsers, data.leads, data.financialSummary])
 
   // Generate activities from fetched data
   const activities = useMemo(() => {
