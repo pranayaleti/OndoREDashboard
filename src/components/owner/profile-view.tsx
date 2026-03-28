@@ -30,7 +30,7 @@ import { AddressForm, type AddressFormValues } from "@/components/forms/address-
 import { parseAddressString, formatAddressFields } from "@/utils/address"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
 import { TwoFactorAuthDialog } from "@/components/ui/two-factor-auth-dialog"
-import { PaymentMethods, type PaymentMethod } from "@/components/ui/payment-methods"
+import { PaymentMethods } from "@/components/ui/payment-methods"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { US_TIMEZONES } from "@/constants/us"
 import { useUserTimezone } from "@/hooks/use-user-timezone"
@@ -51,33 +51,6 @@ const USER = {
     app: true,
   },
   twoFactorEnabled: false,
-  paymentMethods: [
-    {
-      id: "pm1",
-      type: "credit_card",
-      last4: "4242",
-      brand: "Visa",
-      expMonth: 12,
-      expYear: 2026,
-      isDefault: true,
-    },
-    {
-      id: "pm2",
-      type: "credit_card",
-      last4: "1881",
-      brand: "Mastercard",
-      expMonth: 5,
-      expYear: 2025,
-      isDefault: false,
-    },
-    {
-      id: "pm3",
-      type: "bank_account",
-      last4: "6789",
-      bank: "Chase Operating",
-      isDefault: false,
-    },
-  ],
 }
 
 export function ProfileView() {
@@ -470,45 +443,7 @@ export function ProfileView() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
-          <PaymentMethods
-            paymentMethods={userData.paymentMethods as PaymentMethod[]}
-            onAddPaymentMethod={() => {
-              toast({
-                title: "Add Payment Method",
-                description: "Payment method dialog would open here.",
-              })
-            }}
-            onSetDefault={(id) => {
-              setUserData((prev) => ({
-                ...prev,
-                paymentMethods: prev.paymentMethods.map((pm) => ({
-                  ...pm,
-                  isDefault: pm.id === id,
-                })),
-              }))
-              toast({
-                title: "Default Updated",
-                description: "Payment method set as default.",
-                duration: 3000,
-              })
-            }}
-            onEdit={(id) => {
-              toast({
-                title: "Edit Payment Method",
-                description: `Edit dialog would open for payment method ${id}.`,
-              })
-            }}
-            onRemove={(id) => {
-              setUserData((prev) => ({
-                ...prev,
-                paymentMethods: prev.paymentMethods.filter((pm) => pm.id !== id),
-              }))
-              toast({
-                title: "Payment Method Removed",
-                description: "Payment method has been removed.",
-              })
-            }}
-          />
+          <PaymentMethods />
 
           <Card>
             <CardHeader>

@@ -61,6 +61,7 @@ export function PaymentMethods({
   const [isLoadingSetup, setIsLoadingSetup] = useState(false)
   const [pendingRemovalId, setPendingRemovalId] = useState<string | null>(null)
   const [isRemoving, setIsRemoving] = useState(false)
+  const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null)
 
   useEffect(() => {
     if (initialMethods) {
@@ -115,13 +116,16 @@ export function PaymentMethods({
   }
 
   const handleSetDefault = async (id: string) => {
+    setSettingDefaultId(id)
     try {
       await featureApi.stripe.setDefaultPaymentMethod(id)
       setMethods((prev) => prev.map((m) => ({ ...m, isDefault: m.id === id })))
-      toast({ title: "Default Updated", description: "Payment method set as default." })
+      toast({ title: "Default updated", description: "This payment method is now your default." })
       onSetDefault?.(id)
     } catch {
       toast({ title: "Error", description: "Failed to update default.", variant: "destructive" })
+    } finally {
+      setSettingDefaultId(null)
     }
   }
 
@@ -194,8 +198,21 @@ export function PaymentMethods({
                     <Button variant="secondary" size="sm" disabled>Default</Button>
                   ) : (
                     normalizedMethods.length > 1 && (
-                      <Button variant="outline" size="sm" onClick={() => handleSetDefault(method.id)}>
-                        Set as Default
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={() => void handleSetDefault(method.id)}
+                        disabled={settingDefaultId !== null}
+                      >
+                        {settingDefaultId === method.id ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+                            Updating…
+                          </>
+                        ) : (
+                          "Set as Default"
+                        )}
                       </Button>
                     )
                   )}

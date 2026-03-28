@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -133,14 +134,20 @@ export default function OwnerTenants() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {tenants.map((tenant) => (
-                <Card key={tenant.id} className="bg-gray-900 border border-gray-700 hover:border-orange-500 transition-all cursor-pointer">
+                <Card key={tenant.id} className="bg-gray-900 border border-gray-700 hover:border-orange-500/80 transition-all">
                 <CardContent className="pt-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                          {tenant.name.split(' ').map(n => n[0]).join('')}
+                          {(tenant.name || tenant.email || "?")
+                            .split(/\s+/)
+                            .filter(Boolean)
+                            .map((n) => n[0])
+                            .join("")
+                            .slice(0, 2)
+                            .toUpperCase() || "?"}
                       </div>
                       <div>
-                        <div className="text-white font-semibold">{tenant.name}</div>
+                        <div className="text-white font-semibold">{tenant.name || tenant.email || "Tenant"}</div>
                         <div className="text-gray-400 text-sm">{tenant.property} - {tenant.unit}</div>
                       </div>
                     </div>
@@ -148,30 +155,44 @@ export default function OwnerTenants() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-400">Rent:</span>
-                        <span className="text-white font-medium">${tenant.rent.toLocaleString()}/mo</span>
+                        <span className="text-white font-medium">
+                          ${(Number(tenant.rent) || 0).toLocaleString()}/mo
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Status:</span>
-                      <Badge 
+                      <Badge
                         className={
-                          tenant.paymentStatus === 'current' 
-                              ? "bg-green-600 text-white" 
-                            : tenant.paymentStatus === 'overdue'
+                          tenant.paymentStatus === "current"
+                            ? "bg-green-600 text-white"
+                            : tenant.paymentStatus === "overdue"
                               ? "bg-red-600 text-white"
                               : "bg-yellow-600 text-white"
                         }
                       >
-                        {tenant.paymentStatus}
+                        {tenant.paymentStatus ?? "pending"}
                       </Badge>
                     </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Move-in:</span>
-                        <span className="text-white">{new Date(tenant.leaseStart).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                        <span className="text-white">
+                          {tenant.leaseStart
+                            ? new Date(tenant.leaseStart).toLocaleDateString("en-US", {
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "—"}
+                        </span>
                     </div>
                   </div>
 
-                    <Button className="w-full mt-4 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg text-sm">
-                      View Details
+                    <Button
+                      asChild
+                      className="w-full mt-4 bg-gradient-to-r from-orange-500 to-red-800 hover:opacity-95 text-white shadow-md"
+                    >
+                      <Link to={`/owner/tenants/${tenant.id}`} state={{ tenant }}>
+                        View details
+                      </Link>
                     </Button>
                 </CardContent>
               </Card>

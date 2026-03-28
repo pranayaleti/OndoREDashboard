@@ -6,7 +6,6 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/lib/auth-context"
-import { useToast } from "@/hooks/use-toast"
 import { ProfileShell, ProfileSummaryCard } from "@/components/portal/profile"
 import { PaymentMethods } from "@/components/ui/payment-methods"
 import { ChangePasswordDialog } from "@/components/ui/change-password-dialog"
@@ -19,7 +18,6 @@ import { LoginHistory } from "@/components/shared/login-history"
 
 export default function AdminProfile() {
   const { user } = useAuth()
-  const { toast } = useToast()
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
   const [is2FADialogOpen, setIs2FADialogOpen] = useState(false)
   const [settings, setSettings] = useState({
@@ -95,60 +93,7 @@ export default function AdminProfile() {
         </TabsContent>
 
         <TabsContent value="billing" className="space-y-6">
-          <PaymentMethods
-            paymentMethods={[
-              {
-                id: "pm1",
-                type: "credit_card",
-                brand: "Visa",
-                last4: "4242",
-                expMonth: 12,
-                expYear: 2026,
-                isDefault: true,
-              },
-              {
-                id: "pm2",
-                type: "credit_card",
-                brand: "American Express",
-                last4: "2001",
-                expMonth: 10,
-                expYear: 2025,
-                isDefault: false,
-              },
-              {
-                id: "pm3",
-                type: "bank_account",
-                bank: "First National",
-                last4: "8899",
-                isDefault: false,
-              },
-            ]}
-            onAddPaymentMethod={() => {
-              toast({
-                title: "Add Payment Method",
-                description: "Payment method dialog would open here.",
-              })
-            }}
-            onSetDefault={(_id) => {
-              toast({
-                title: "Default Updated",
-                description: "Payment method set as default.",
-                duration: 3000,
-              })
-            }}
-            onEdit={(id) => {
-              toast({
-                title: "Edit Payment Method",
-                description: `Edit dialog would open for payment method ${id}.`,
-              })
-            }}
-            onRemove={(_id) => {
-              toast({
-                title: "Payment Method Removed",
-                description: "Payment method has been removed.",
-              })
-            }}
-          />
+          <PaymentMethods />
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-6">

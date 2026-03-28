@@ -405,61 +405,7 @@ export default function TenantProfile() {
             </TabsContent>
 
             <TabsContent value="billing" className="space-y-6">
-              <PaymentMethods
-                paymentMethods={[
-                  {
-                    id: "pm1",
-                    type: "credit_card",
-                    brand: "Visa",
-                    last4: "4242",
-                    expMonth: 12,
-                    expYear: 2026,
-                    isDefault: true,
-                  },
-                  {
-                    id: "pm2",
-                    type: "credit_card",
-                    brand: "Mastercard",
-                    last4: "5511",
-                    expMonth: 3,
-                    expYear: 2025,
-                    isDefault: false,
-                  },
-                  {
-                    id: "pm3",
-                    type: "digital_wallet",
-                    brand: "Apple Pay",
-                    handle: "tenant.apple",
-                    last4: "0025",
-                    isDefault: false,
-                  },
-                ]}
-                onAddPaymentMethod={() => {
-                  toast({
-                    title: "Add Payment Method",
-                    description: "Payment method dialog would open here.",
-                  })
-                }}
-                onSetDefault={(_id) => {
-                  toast({
-                    title: "Default Updated",
-                    description: "Payment method set as default.",
-                    duration: 3000,
-                  })
-                }}
-                onEdit={(id) => {
-                  toast({
-                    title: "Edit Payment Method",
-                    description: `Edit dialog would open for payment method ${id}.`,
-                  })
-                }}
-                onRemove={(_id) => {
-                  toast({
-                    title: "Payment Method Removed",
-                    description: "Payment method has been removed.",
-                  })
-                }}
-              />
+              <PaymentMethods />
             </TabsContent>
             <TabsContent value="notifications" className="space-y-6">
               <Card>

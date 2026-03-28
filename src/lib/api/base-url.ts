@@ -8,7 +8,18 @@
 export function getApiBaseUrl(): string {
   const fromEnv = import.meta.env.VITE_API_BASE_URL as string | undefined;
   if (fromEnv && fromEnv.trim().length > 0) {
-    return fromEnv.replace(/\/$/, "");
+    const trimmed = fromEnv.trim().replace(/\/$/, "");
+    // Common misconfig: `http://localhost:3030` without `/api` → every route 404s.
+    try {
+      const u = new URL(trimmed);
+      const path = u.pathname.replace(/\/$/, "") || "";
+      if (path === "" && !trimmed.includes("/functions/v1")) {
+        return `${u.origin}/api`;
+      }
+    } catch {
+      /* fall through */
+    }
+    return trimmed;
   }
   return "http://localhost:3030/api";
 }

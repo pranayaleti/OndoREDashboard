@@ -7,6 +7,7 @@ import OwnerProperties from "@/components/owner/owner-properties"
 import OwnerFinances from "@/components/owner/owner-finances"
 import OwnerReports from "@/components/owner/owner-reports"
 import OwnerTenants from "@/components/owner/owner-tenants"
+import OwnerTenantDetail from "@/components/owner/owner-tenant-detail"
 import OwnerProfile from "@/components/owner/owner-profile"
 import OwnerMessages from "@/components/owner/owner-messages"
 import OwnerDocuments from "@/components/owner/owner-documents"
@@ -37,6 +38,7 @@ export default function Owner() {
             <Route path="/properties/*" element={<OwnerProperties />} />
             <Route path="/finances/*" element={<OwnerFinances />} />
             <Route path="/reports/*" element={<OwnerReports />} />
+            <Route path="/tenants/:tenantId" element={<OwnerTenantDetail />} />
             <Route path="/tenants" element={<OwnerTenants />} />
             <Route path="/maintenance/*" element={<OwnerMaintenanceManagement />} />
             <Route path="/messages/*" element={<OwnerMessages />} />

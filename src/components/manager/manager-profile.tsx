@@ -542,60 +542,7 @@ export default function ManagerProfile() {
             </TabsContent>
 
             <TabsContent value="billing" className="space-y-6">
-              <PaymentMethods
-                paymentMethods={[
-                  {
-                    id: "pm1",
-                    type: "credit_card",
-                    brand: "Visa",
-                    last4: "4242",
-                    expMonth: 12,
-                    expYear: 2026,
-                    isDefault: true,
-                  },
-                  {
-                    id: "pm2",
-                    type: "credit_card",
-                    brand: "American Express",
-                    last4: "3005",
-                    expMonth: 8,
-                    expYear: 2027,
-                    isDefault: false,
-                  },
-                  {
-                    id: "pm3",
-                    type: "bank_account",
-                    bank: "Wells Fargo Business",
-                    last4: "9934",
-                    isDefault: false,
-                  },
-                ]}
-                onAddPaymentMethod={() => {
-                  toast({
-                    title: "Add Payment Method",
-                    description: "Payment method dialog would open here.",
-                  })
-                }}
-                onSetDefault={(_id) => {
-                  toast({
-                    title: "Default Updated",
-                    description: "Payment method set as default.",
-                    duration: 3000,
-                  })
-                }}
-                onEdit={(id) => {
-                  toast({
-                    title: "Edit Payment Method",
-                    description: `Edit dialog would open for payment method ${id}.`,
-                  })
-                }}
-                onRemove={(_id) => {
-                  toast({
-                    title: "Payment Method Removed",
-                    description: "Payment method has been removed.",
-                  })
-                }}
-              />
+              <PaymentMethods />
             </TabsContent>
 
             <TabsContent value="notifications" className="space-y-6">

@@ -627,60 +627,7 @@ export default function OwnerProfile() {
               </div>
               <div className="border-t pt-6">
                 <h4 className="font-semibold mb-4 text-base">Payment Methods</h4>
-                <PaymentMethods
-                  paymentMethods={[
-                    {
-                      id: "pm1",
-                      type: "credit_card",
-                      last4: "4242",
-                      brand: "Visa",
-                      expMonth: 12,
-                      expYear: 2026,
-                      isDefault: true,
-                    },
-                    {
-                      id: "pm2",
-                      type: "credit_card",
-                      last4: "1881",
-                      brand: "Mastercard",
-                      expMonth: 5,
-                      expYear: 2025,
-                      isDefault: false,
-                    },
-                    {
-                      id: "pm3",
-                      type: "bank_account",
-                      last4: "6789",
-                      bank: "Chase Operating",
-                      isDefault: false,
-                    },
-                  ]}
-                  onAddPaymentMethod={() => {
-                    toast({
-                      title: "Add Payment Method",
-                      description: "Payment method dialog would open here.",
-                    })
-                  }}
-                  onSetDefault={(_id) => {
-                    toast({
-                      title: "Default Updated",
-                      description: "Payment method set as default.",
-                      duration: 3000,
-                    })
-                  }}
-                  onEdit={(id) => {
-                    toast({
-                      title: "Edit Payment Method",
-                      description: `Edit dialog would open for payment method ${id}.`,
-                    })
-                  }}
-                  onRemove={(_id) => {
-                    toast({
-                      title: "Payment Method Removed",
-                      description: "Payment method has been removed.",
-                    })
-                  }}
-                />
+                <PaymentMethods />
               </div>
               <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/30">
                 <div className="flex-1">

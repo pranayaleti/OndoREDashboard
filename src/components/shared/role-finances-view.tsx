@@ -96,13 +96,34 @@ export function RoleFinancesView({
   }, [requireOwnerSelection, toast])
 
   const fetchOverview = useCallback(async () => {
+    if (requireOwnerSelection && ownersLoading) {
+      return
+    }
+
+    if (requireOwnerSelection && !selectedOwnerId) {
+      setLoading(false)
+      setError(null)
+      setPnl(null)
+      setVacancy(null)
+      try {
+        const paymentsData = await dashboardApi.getDashboardPayments(1, 8)
+        setPayments(paymentsData.data ?? [])
+      } catch (fetchError) {
+        console.error("Failed to load payments:", fetchError)
+        setPayments([])
+      }
+      return
+    }
+
+    const ownerScope = requireOwnerSelection ? selectedOwnerId! : undefined
+
     setLoading(true)
     setError(null)
 
     try {
       const [pnlData, vacancyData, paymentsData] = await Promise.all([
-        reportsApi.getPnL({ startDate: dateRange.startDate, endDate: dateRange.endDate }),
-        reportsApi.getVacancy(),
+        reportsApi.getPnL({ startDate: dateRange.startDate, endDate: dateRange.endDate }, ownerScope),
+        reportsApi.getVacancy(ownerScope),
         dashboardApi.getDashboardPayments(1, 8),
       ])
 
@@ -124,14 +145,21 @@ export function RoleFinancesView({
     } finally {
       setLoading(false)
     }
-  }, [dateRange.endDate, dateRange.startDate, toast])
+  }, [
+    dateRange.endDate,
+    dateRange.startDate,
+    ownersLoading,
+    requireOwnerSelection,
+    selectedOwnerId,
+    toast,
+  ])
 
   useEffect(() => {
     fetchOwners()
   }, [fetchOwners])
 
   useEffect(() => {
-    fetchOverview()
+    void fetchOverview()
   }, [fetchOverview])
 
   const paymentSummary = useMemo(() => {

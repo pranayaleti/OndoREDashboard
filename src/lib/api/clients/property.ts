@@ -16,6 +16,34 @@ import {
 } from "@ondo/types";
 import { apiGet, apiPost, apiPut, apiDelete, apiRequest, getAuthHeaders } from "../http";
 import type { OwnerTenantsResponse, Tenant } from "./legacy-types";
+
+/** `/api/dashboard/tenants` returns user rows; map to the richer `Tenant` shape the owner UI expects. */
+function mapDashboardTenantRowToTenant(row: Record<string, unknown>): Tenant {
+  const firstName = typeof row.firstName === "string" ? row.firstName : "";
+  const lastName = typeof row.lastName === "string" ? row.lastName : "";
+  const name = [firstName, lastName].filter(Boolean).join(" ").trim();
+  const displayName = name || (typeof row.email === "string" ? row.email : "Tenant");
+  const createdAt =
+    typeof row.createdAt === "string" ? row.createdAt : new Date().toISOString().slice(0, 10);
+
+  return {
+    id: String(row.id ?? ""),
+    name: displayName,
+    property: "—",
+    unit: "—",
+    rent: 0,
+    leaseStart: createdAt,
+    leaseEnd: createdAt,
+    paymentStatus: "pending",
+    email: typeof row.email === "string" ? row.email : "",
+    phone: typeof row.phone === "string" ? row.phone : undefined,
+    propertyType: "—",
+    propertyAddress: "—",
+    propertyStatus: "—",
+    tenantCreatedAt: createdAt,
+    propertyCreatedAt: createdAt,
+  };
+}
 import {
   GetPropertyResponseSchema,
   GetPropertiesResponseSchema,
@@ -104,15 +132,20 @@ export const propertyApi = {
 
   async getOwnerTenants(): Promise<OwnerTenantsResponse> {
     const headers = getAuthHeaders();
-    const data = await apiGet<Tenant[]>("/dashboard/tenants", headers);
+    const raw = await apiGet<unknown>("/dashboard/tenants", headers);
+    const rows = Array.isArray(raw) ? raw : [];
+    const tenants = rows.map((r) =>
+      mapDashboardTenantRowToTenant(r as Record<string, unknown>),
+    );
+    const n = tenants.length;
     return {
       summary: {
-        totalTenants: data.length,
-        occupiedUnits: String(data.length),
-        occupancyRate: "0",
-        avgRent: "0",
+        totalTenants: n,
+        occupiedUnits: n > 0 ? `${n}` : "0/0",
+        occupancyRate: n > 0 ? "—" : "0%",
+        avgRent: n > 0 ? "—" : "$0",
       },
-      tenants: data,
+      tenants,
     };
   },
 
