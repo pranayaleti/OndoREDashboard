@@ -150,7 +150,7 @@ export const dashboardApi = {
     );
   },
 
-  async assistantChat(messages: { role: string; content: string }[], sessionId?: string): Promise<{ reply: string; session_id: string }> {
+  async assistantChat(messages: { role: string; content: string }[], sessionId?: string): Promise<{ reply: string; session_id: string | undefined }> {
     const chatMessages = messages.map((m) => ({
       role: m.role as "user" | "assistant" | "system",
       content: m.content,

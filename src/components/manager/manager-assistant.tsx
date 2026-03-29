@@ -19,13 +19,13 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-const QUICK_PROMPTS: { label: string; icon: string; prompt: string }[] = [
-  { label: "Portfolio stats", icon: "📊", prompt: "What are my portfolio stats?" },
-  { label: "At-risk tenants", icon: "⚠️", prompt: "Show me at-risk tenants" },
-  { label: "Pending maintenance", icon: "🔧", prompt: "List pending maintenance requests" },
-  { label: "Rent collection status", icon: "💰", prompt: "What's my rent collection rate?" },
-  { label: "Risk trends", icon: "📈", prompt: "Show risk trends for my portfolio" },
-  { label: "Occupancy rate", icon: "🏢", prompt: "What's my current occupancy rate?" },
+const QUICK_PROMPTS: { id: string; label: string; icon: string; prompt: string }[] = [
+  { id: "portfolio-stats", label: "Portfolio stats", icon: "📊", prompt: "What are my portfolio stats?" },
+  { id: "at-risk-tenants", label: "At-risk tenants", icon: "⚠️", prompt: "Show me at-risk tenants" },
+  { id: "pending-maintenance", label: "Pending maintenance", icon: "🔧", prompt: "List pending maintenance requests" },
+  { id: "rent-collection", label: "Rent collection status", icon: "💰", prompt: "What's my rent collection rate?" },
+  { id: "risk-trends", label: "Risk trends", icon: "📈", prompt: "Show risk trends for my portfolio" },
+  { id: "occupancy-rate", label: "Occupancy rate", icon: "🏢", prompt: "What's my current occupancy rate?" },
 ]
 
 function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
@@ -41,13 +41,13 @@ function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
         Portfolio insights, maintenance, at-risk tenants, and more.
       </p>
       <div className="flex flex-wrap gap-2 justify-center">
-        {QUICK_PROMPTS.map(({ label, icon, prompt }) => (
+        {QUICK_PROMPTS.map(({ id, label, icon, prompt }) => (
           <button
-            key={label}
+            key={id}
             onClick={() => onSelect(prompt)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100 transition-colors"
           >
-            <span>{icon}</span>
+            <span aria-hidden="true">{icon}</span>
             <span>{label}</span>
           </button>
         ))}

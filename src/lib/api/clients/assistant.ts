@@ -17,10 +17,10 @@ export interface ChatRequest {
   context?: Record<string, unknown>;
 }
 
-/** Backend returns { reply: string, session_id: string }. */
+/** Backend returns { reply: string, session_id?: string }. */
 export interface ChatResponse {
   reply: string;
-  session_id: string;
+  session_id?: string;
 }
 
 export const assistantApi = {
