@@ -19,11 +19,49 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
+const QUICK_PROMPTS: { label: string; icon: string; prompt: string }[] = [
+  { label: "Portfolio stats", icon: "📊", prompt: "What are my portfolio stats?" },
+  { label: "At-risk tenants", icon: "⚠️", prompt: "Show me at-risk tenants" },
+  { label: "Pending maintenance", icon: "🔧", prompt: "List pending maintenance requests" },
+  { label: "Rent collection status", icon: "💰", prompt: "What's my rent collection rate?" },
+  { label: "Risk trends", icon: "📈", prompt: "Show risk trends for my portfolio" },
+  { label: "Occupancy rate", icon: "🏢", prompt: "What's my current occupancy rate?" },
+]
+
+function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
+  return (
+    <div className="text-center py-8 px-4">
+      <div className="flex justify-center mb-3">
+        <div className="rounded-lg bg-orange-500/10 p-2">
+          <Sparkles className="h-6 w-6 text-orange-500" />
+        </div>
+      </div>
+      <p className="text-sm font-medium text-foreground mb-1">Ask me anything</p>
+      <p className="text-xs text-muted-foreground mb-4">
+        Portfolio insights, maintenance, at-risk tenants, and more.
+      </p>
+      <div className="flex flex-wrap gap-2 justify-center">
+        {QUICK_PROMPTS.map(({ label, icon, prompt }) => (
+          <button
+            key={label}
+            onClick={() => onSelect(prompt)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100 transition-colors"
+          >
+            <span>{icon}</span>
+            <span>{label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function ManagerAssistant() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -34,8 +72,8 @@ export default function ManagerAssistant() {
     scrollToBottom()
   }, [messages])
 
-  const sendMessage = async () => {
-    const text = input.trim()
+  const sendMessage = async (overrideText?: string) => {
+    const text = (overrideText ?? input).trim()
     if (!text || isLoading) return
 
     const userMessage: Message = {
@@ -49,7 +87,6 @@ export default function ManagerAssistant() {
       content: m.content,
     }))
 
-    // Client-side AI guardrails: validate before sending (matches backend limits)
     const guardrail = validateChatInput(conversation)
     if (!guardrail.ok) {
       setError(guardrail.error)
@@ -62,7 +99,11 @@ export default function ManagerAssistant() {
     setError(null)
 
     try {
-      const { reply } = await dashboardApi.assistantChat(guardrail.messages)
+      const { reply, session_id } = await dashboardApi.assistantChat(
+        guardrail.messages,
+        sessionId ?? undefined,
+      )
+      if (session_id) setSessionId(session_id)
       const assistantMessage: Message = {
         id: createId(),
         role: "assistant",
@@ -117,10 +158,7 @@ export default function ManagerAssistant() {
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
           <div className="flex-1 overflow-y-auto px-6 pb-4 space-y-4">
             {messages.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                <p className="mb-2">No messages yet.</p>
-                <p className="text-sm">Try: &quot;What are my portfolio stats?&quot; or &quot;List pending maintenance&quot;</p>
-              </div>
+              <QuickPrompts onSelect={(prompt) => sendMessage(prompt)} />
             )}
             {messages.map((m) => (
               <div
@@ -177,7 +215,7 @@ export default function ManagerAssistant() {
               rows={1}
             />
             <Button
-              onClick={sendMessage}
+              onClick={() => sendMessage()}
               disabled={!input.trim() || isLoading}
               size="icon"
               className="h-11 w-11 shrink-0 bg-orange-500 hover:bg-orange-600"
