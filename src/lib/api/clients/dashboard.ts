@@ -150,13 +150,13 @@ export const dashboardApi = {
     );
   },
 
-  async assistantChat(messages: { role: string; content: string }[]): Promise<{ reply: string }> {
+  async assistantChat(messages: { role: string; content: string }[], sessionId?: string): Promise<{ reply: string; session_id: string }> {
     const chatMessages = messages.map((m) => ({
       role: m.role as "user" | "assistant" | "system",
       content: m.content,
     }));
-    const res = await assistantApi.chat({ messages: chatMessages });
-    return { reply: res.reply ?? "" };
+    const res = await assistantApi.chat({ messages: chatMessages, session_id: sessionId });
+    return { reply: res.reply ?? "", session_id: res.session_id };
   },
 
   async getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {

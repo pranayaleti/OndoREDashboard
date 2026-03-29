@@ -116,7 +116,7 @@ export function MessagesView() {
           featureApi.communication
             .listThreads()
             .then(setThreads)
-            .catch(() => {});
+            .catch((err) => console.error("Failed to refresh threads", err));
         }
       )
       .subscribe();

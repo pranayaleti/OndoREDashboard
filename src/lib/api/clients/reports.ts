@@ -90,6 +90,49 @@ function buildQuery(params: Record<string, string | number | undefined>): string
   return q ? `?${q}` : "";
 }
 
+/** Combine per-owner P&L responses into one portfolio summary (manager/admin dashboard). */
+export function mergePnLStatements(
+  statements: PnLStatement[],
+  startDate: string,
+  endDate: string,
+): PnLStatement | null {
+  if (statements.length === 0) return null;
+
+  const income: PnLIncome = { rent: 0, lateFees: 0, other: 0, total: 0 };
+  const expenses: PnLExpenses = {
+    maintenance: 0,
+    utilities: 0,
+    management: 0,
+    other: 0,
+    total: 0,
+  };
+  let netIncome = 0;
+  const properties: PnLPropertyLine[] = [];
+
+  for (const s of statements) {
+    income.rent += s.income.rent;
+    income.lateFees += s.income.lateFees;
+    income.other += s.income.other;
+    income.total += s.income.total;
+    expenses.maintenance += s.expenses.maintenance;
+    expenses.utilities += s.expenses.utilities;
+    expenses.management += s.expenses.management;
+    expenses.other += s.expenses.other;
+    expenses.total += s.expenses.total;
+    netIncome += s.netIncome;
+    properties.push(...s.properties);
+  }
+
+  return {
+    startDate,
+    endDate,
+    income,
+    expenses,
+    netIncome,
+    properties,
+  };
+}
+
 export const reportsApi = {
   /**
    * P&L statement. Owner: omit ownerId. Manager/Admin: pass ownerId.
@@ -110,6 +153,24 @@ export const reportsApi = {
       headers
     );
     return res.data;
+  },
+
+  /**
+   * P&L aggregated across many owners. Used for staff dashboard MTD cards where the API
+   * requires ?ownerId= per owner.
+   */
+  async getAggregatedPnLForStaff(
+    params: GetPnLParams,
+    ownerUserIds: string[],
+  ): Promise<PnLStatement | null> {
+    if (ownerUserIds.length === 0) return null;
+    const results = await Promise.all(
+      ownerUserIds.map((ownerId) =>
+        reportsApi.getPnL(params, ownerId).catch(() => null),
+      ),
+    );
+    const ok = results.filter((r): r is PnLStatement => r !== null);
+    return mergePnLStatements(ok, params.startDate, params.endDate);
   },
 
   /**

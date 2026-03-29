@@ -9,7 +9,7 @@ import OwnerReports from "@/components/owner/owner-reports"
 import OwnerTenants from "@/components/owner/owner-tenants"
 import OwnerTenantDetail from "@/components/owner/owner-tenant-detail"
 import OwnerProfile from "@/components/owner/owner-profile"
-import OwnerMessages from "@/components/owner/owner-messages"
+import { MessagesView } from "@/components/owner/messages-view"
 import OwnerDocuments from "@/components/owner/owner-documents"
 import OwnerOccupancy from "@/components/owner/owner-occupancy"
 import OwnerPropertyDetail from "@/components/owner/owner-property-detail"
@@ -41,7 +41,7 @@ export default function Owner() {
             <Route path="/tenants/:tenantId" element={<OwnerTenantDetail />} />
             <Route path="/tenants" element={<OwnerTenants />} />
             <Route path="/maintenance/*" element={<OwnerMaintenanceManagement />} />
-            <Route path="/messages/*" element={<OwnerMessages />} />
+            <Route path="/messages/*" element={<MessagesView />} />
             <Route path="/occupancy/*" element={<OwnerOccupancy />} />
             <Route path="/documents/*" element={<OwnerDocuments />} />
             <Route path="/payments" element={<DashboardPaymentHistory title="Rent payments" emptyMessage="No rent payments received yet." />} />

@@ -34,7 +34,7 @@ export function ApplicationComments({ applicationId }: ApplicationCommentsProps)
       const data = await featureApi.applicationComments.list(applicationId)
       setComments(data as Comment[])
     } catch {
-      // silent
+      toast({ title: "Error", description: "Failed to load comments.", duration: 3000 })
     } finally {
       setLoading(false)
     }

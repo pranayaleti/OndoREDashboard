@@ -25,12 +25,13 @@ interface FunnelMetrics {
 export function ApplicationAnalytics() {
   const [loading, setLoading] = useState(true)
   const [metrics, setMetrics] = useState<FunnelMetrics[]>([])
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     featureApi.analytics
       .getApplicationFunnel()
       .then((data) => setMetrics(data as FunnelMetrics[]))
-      .catch(() => {})
+      .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [])
 
@@ -40,6 +41,12 @@ export function ApplicationAnalytics() {
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-32 w-full" />
       </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card><CardContent className="py-8 text-center text-muted-foreground">Failed to load analytics data.</CardContent></Card>
     )
   }
 

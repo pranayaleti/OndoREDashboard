@@ -311,7 +311,7 @@ export function TwoFactorAuthDialog({
                   </p>
                   <div className="border rounded-md p-4 bg-muted/50 flex items-center justify-center">
                     {qrCode ? (
-                      <div dangerouslySetInnerHTML={{ __html: qrCode }} className="w-48 h-48" />
+                      <img src={`data:image/svg+xml;base64,${btoa(qrCode)}`} alt="Scan this QR code with your authenticator app" className="w-48 h-48" />
                     ) : (
                       <div className="flex flex-col items-center justify-center h-48 py-8 text-xs text-muted-foreground">
                         {isProcessing ? <Loader2 className="h-6 w-6 animate-spin mb-2" /> : "Failed to load QR Code"}

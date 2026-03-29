@@ -12,13 +12,15 @@ export interface ChatMessage {
 
 export interface ChatRequest {
   messages: ChatMessage[];
+  session_id?: string;
   propertyId?: string;
   context?: Record<string, unknown>;
 }
 
-/** Backend returns { reply: string }. */
+/** Backend returns { reply: string, session_id: string }. */
 export interface ChatResponse {
   reply: string;
+  session_id: string;
 }
 
 export const assistantApi = {

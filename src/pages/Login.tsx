@@ -17,7 +17,7 @@ import { OnboardingCard } from "@/components/auth/onboarding-card"
 import { companyInfo } from "@/constants/companyInfo"
 
 /** Seeded test users (npm run seed in OndoREBackend) — dev only */
-const DEMO_PASSWORD = "ondo1234"
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD ?? ""
 
 const ownerSteps = [
   "Invite owners + tenants",

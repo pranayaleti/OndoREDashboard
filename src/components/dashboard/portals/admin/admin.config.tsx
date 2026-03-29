@@ -435,11 +435,19 @@ export function createAdminConfig(
       properties: () => propertyApi.getProperties().then((r) => r.properties).catch(() => []),
       invitedUsers: () => authApi.getInvitedUsers().then((r) => r.users).catch(() => []),
       maintenanceRequests: () => maintenanceApi.getManagerMaintenanceRequests().catch(() => []),
-      financialSummary: () => {
+      financialSummary: async () => {
         const now = new Date()
         const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
         const endDate = now.toISOString().slice(0, 10)
-        return reportsApi.getPnL({ startDate, endDate }).catch(() => null)
+        try {
+          const res = await authApi.getInvitedUsers(1, 500)
+          const ownerIds = (res.users ?? [])
+            .filter((u) => u.role === "owner" && u.isActive)
+            .map((u) => u.id)
+          return await reportsApi.getAggregatedPnLForStaff({ startDate, endDate }, ownerIds)
+        } catch {
+          return null
+        }
       },
     },
 
