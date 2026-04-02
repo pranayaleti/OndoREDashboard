@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -57,6 +58,7 @@ function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
 }
 
 export default function ManagerAssistant() {
+  const location = useLocation()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -64,6 +66,7 @@ export default function ManagerAssistant() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const initialNavMessageSent = useRef(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -126,6 +129,15 @@ export default function ManagerAssistant() {
       textareaRef.current?.focus()
     }
   }
+
+  useEffect(() => {
+    if (initialNavMessageSent.current) return
+    const st = location.state as { initialMessage?: string } | undefined
+    const msg = st?.initialMessage?.trim()
+    if (!msg) return
+    initialNavMessageSent.current = true
+    void sendMessage(msg)
+  }, [location.state])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

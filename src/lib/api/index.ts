@@ -10,7 +10,7 @@
  */
 
 // Export HTTP utilities
-export { apiRequest, apiGet, apiPost, apiPut, apiDelete, getAuthHeaders } from "./http";
+export { apiRequest, apiGet, apiPost, apiPut, apiDelete, apiUpload, getAuthHeaders } from "./http";
 
 // Export client modules
 export { authApi } from "./clients/auth";
@@ -35,6 +35,21 @@ export { screeningApi } from "./clients/screening";
 export { tokenManager } from "./clients/token-manager";
 export { handoffApi } from "./clients/handoff";
 export { featureApi } from "./clients/feature-api";
+export { homeownerApi } from "./clients/homeowner-api";
+export type {
+  HomeownerSummary,
+  PropertyMortgage,
+  AdditionalLoan,
+  InsurancePolicy,
+  PropertyTaxRecord,
+  HomeImprovementProject,
+  ServiceProvider,
+  HomeownerSearchResult,
+  DocumentSource,
+  PropertyDocument,
+  PropertyDocumentType,
+  PropertyDocumentStatus,
+} from "./clients/homeowner-api";
 
 // Re-export types from @ondo/types for convenience
 export type {

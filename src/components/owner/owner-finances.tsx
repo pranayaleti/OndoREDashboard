@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -118,15 +117,12 @@ export default function OwnerFinances() {
     : null
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Breadcrumb items={[{ label: "Finances", icon: DollarSign }]} />
-      </div>
+    <div className="space-y-6 p-4 md:p-6 lg:p-8">
       <div className="flex flex-col gap-4 mb-8">
         <div className="flex flex-wrap justify-between items-start gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Financial Overview</h1>
-            <p className="text-gray-600 dark:text-gray-400">Track your investment performance and cash flow</p>
+            <h1 className="font-serif text-3xl font-semibold tracking-tight">Finances</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Track your investment performance and cash flow</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2">

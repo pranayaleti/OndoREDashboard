@@ -174,6 +174,64 @@ export async function apiDelete<T>(
 }
 
 // ---------------------------------------------------------------------------
+// Multipart upload (FormData — no Content-Type header; browser sets boundary)
+// ---------------------------------------------------------------------------
+
+export async function apiUpload<T>(
+  endpoint: string,
+  formData: FormData,
+): Promise<T> {
+  const token = await getValidAccessToken();
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60_000);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers,
+      credentials: "include",
+      body: formData,
+      signal: controller.signal,
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        headers["Authorization"] = `Bearer ${newToken}`;
+        const retry = await fetch(`${API_BASE_URL}${endpoint}`, {
+          method: "POST",
+          headers,
+          credentials: "include",
+          body: formData,
+        });
+        if (!retry.ok) {
+          const data = await retry.json().catch(() => null);
+          const err = parseApiError(data, retry.status);
+          throw new OntoApiError(err.message, retry.status, err.code, err.errors, err.correlationId);
+        }
+        return retry.json() as Promise<T>;
+      }
+      clearAccessToken();
+      throw new OntoApiError("Session expired. Please log in again.", 401, "SESSION_EXPIRED");
+    }
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => null);
+      const err = parseApiError(data, response.status);
+      throw new OntoApiError(err.message, response.status, err.code, err.errors, err.correlationId);
+    }
+
+    if (response.status === 204) return undefined as T;
+    return response.json() as Promise<T>;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Auth header helper
 // ---------------------------------------------------------------------------
 

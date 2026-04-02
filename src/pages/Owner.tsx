@@ -3,6 +3,13 @@ import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
 import OwnerDashboard from "@/components/dashboard/portals/owner/OwnerDashboard.new"
+import { HomeownerDashboard } from "@/components/homeowner/homeowner-dashboard"
+import { MortgageLoansPage } from "@/components/homeowner/mortgage-loans-page"
+import { HomeImprovementPage } from "@/components/homeowner/home-improvement-page"
+import { EquipmentGridPage } from "@/components/homeowner/equipment-grid"
+import { HomeownerSearchResults } from "@/components/homeowner/homeowner-search-results"
+import { DocumentsPanel } from "@/components/homeowner/documents-panel"
+import { HomeownerSettingsPage } from "@/components/homeowner/homeowner-settings-page"
 import OwnerProperties from "@/components/owner/owner-properties"
 import OwnerFinances from "@/components/owner/owner-finances"
 import OwnerReports from "@/components/owner/owner-reports"
@@ -28,7 +35,14 @@ export default function Owner() {
       <div className="min-h-screen">
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={<OwnerDashboard />} />
+            <Route path="/" element={<HomeownerDashboard />} />
+            <Route path="/portfolio" element={<OwnerDashboard />} />
+            <Route path="/mortgage" element={<MortgageLoansPage />} />
+            <Route path="/improvements" element={<HomeImprovementPage />} />
+            <Route path="/equipment" element={<EquipmentGridPage />} />
+            <Route path="/search" element={<HomeownerSearchResults />} />
+            <Route path="/my-documents" element={<DocumentsPanel />} />
+            <Route path="/settings" element={<HomeownerSettingsPage />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             {/* Property creation routes - both old and new URLs */}

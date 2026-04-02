@@ -40,6 +40,11 @@ import {
   Briefcase,
   KeyRound,
   CreditCard,
+  Landmark,
+  Hammer,
+  Cpu,
+  LayoutGrid,
+  Upload,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -141,8 +146,12 @@ const getNavItems = (role: UserRole): NavItem[] => {
     case "owner":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
+        { title: "Portfolio", href: `${basePath}/portfolio`, icon: <LayoutGrid className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
+        { title: "Mortgage", href: `${basePath}/mortgage`, icon: <Landmark className="h-5 w-5" /> },
+        { title: "Home improvement", href: `${basePath}/improvements`, icon: <Hammer className="h-5 w-5" /> },
+        { title: "Equipment", href: `${basePath}/equipment`, icon: <Cpu className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Occupancy", href: `${basePath}/occupancy`, icon: <Home className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
@@ -153,9 +162,11 @@ const getNavItems = (role: UserRole): NavItem[] => {
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
+        { title: "My Documents", href: `${basePath}/my-documents`, icon: <Upload className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
+        { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
     
@@ -163,11 +174,15 @@ const getNavItems = (role: UserRole): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
+        { title: "Mortgage", href: `${basePath}/mortgage`, icon: <Landmark className="h-5 w-5" /> },
+        { title: "Home improvement", href: `${basePath}/improvements`, icon: <Hammer className="h-5 w-5" /> },
+        { title: "Equipment", href: `${basePath}/equipment`, icon: <Cpu className="h-5 w-5" /> },
         { title: "Lease Details", href: `${basePath}/lease-details`, icon: <FileText className="h-5 w-5" /> },
         { title: "Property Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "My Documents", href: `${basePath}/my-documents`, icon: <Upload className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
