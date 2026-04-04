@@ -1,0 +1,44 @@
+{
+  "title": "Dashboard del Gestore",
+  "nav": {
+    "home": "Home",
+    "properties": "Proprietà",
+    "leads": "Contatti",
+    "screening": "Selezione inquilini",
+    "owners": "Proprietari",
+    "tenants": "Inquilini",
+    "maintenance": "Manutenzione",
+    "finances": "Finanze",
+    "reports": "Rapporti",
+    "messages": "Messaggi",
+    "documents": "Documenti",
+    "payments": "Affitti riscossi",
+    "calendar": "Calendario",
+    "notifications": "Notifiche",
+    "profile": "Profilo",
+    "assistant": "Assistente IA",
+    "atRisk": "A rischio"
+  },
+  "stats": {
+    "totalProperties": "Totale proprietà",
+    "activeLeads": "Contatti attivi",
+    "pendingMaintenance": "Manutenzione in attesa",
+    "monthlyRevenue": "Entrate mensili",
+    "occupancyRate": "Tasso di occupazione",
+    "activeOwners": "Proprietari attivi",
+    "activeTenants": "Inquilini attivi"
+  },
+  "empty": {
+    "noProperties": "Nessuna proprietà ancora.",
+    "noLeads": "Nessun contatto ancora.",
+    "noMaintenance": "Nessuna richiesta di manutenzione.",
+    "noPayments": "Nessun pagamento nel tuo portfolio ancora."
+  },
+  "actions": {
+    "addProperty": "Aggiungi proprietà",
+    "inviteOwner": "Invita proprietario",
+    "inviteTenant": "Invita inquilino",
+    "viewAll": "Vedi tutto",
+    "export": "Esporta"
+  }
+}

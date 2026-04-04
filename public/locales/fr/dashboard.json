@@ -1,0 +1,44 @@
+{
+  "title": "Tableau de bord du gestionnaire",
+  "nav": {
+    "home": "Accueil",
+    "properties": "Propriétés",
+    "leads": "Prospects",
+    "screening": "Sélection des locataires",
+    "owners": "Propriétaires",
+    "tenants": "Locataires",
+    "maintenance": "Maintenance",
+    "finances": "Finances",
+    "reports": "Rapports",
+    "messages": "Messages",
+    "documents": "Documents",
+    "payments": "Loyers perçus",
+    "calendar": "Calendrier",
+    "notifications": "Notifications",
+    "profile": "Profil",
+    "assistant": "Assistant IA",
+    "atRisk": "À risque"
+  },
+  "stats": {
+    "totalProperties": "Total des propriétés",
+    "activeLeads": "Prospects actifs",
+    "pendingMaintenance": "Maintenance en attente",
+    "monthlyRevenue": "Revenus mensuels",
+    "occupancyRate": "Taux d'occupation",
+    "activeOwners": "Propriétaires actifs",
+    "activeTenants": "Locataires actifs"
+  },
+  "empty": {
+    "noProperties": "Aucune propriété pour l'instant.",
+    "noLeads": "Aucun prospect pour l'instant.",
+    "noMaintenance": "Aucune demande de maintenance.",
+    "noPayments": "Aucun paiement dans votre portefeuille pour l'instant."
+  },
+  "actions": {
+    "addProperty": "Ajouter une propriété",
+    "inviteOwner": "Inviter un propriétaire",
+    "inviteTenant": "Inviter un locataire",
+    "viewAll": "Voir tout",
+    "export": "Exporter"
+  }
+}

@@ -19,6 +19,7 @@ import SuperAdminNotifications from "@/components/super-admin/super-admin-notifi
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
+import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function SuperAdmin() {
   return (
@@ -43,6 +44,7 @@ export default function SuperAdmin() {
             <Route path="/calendar" element={<SuperAdminCalendar />} />
             <Route path="/notifications" element={<SuperAdminNotifications />} />
             <Route path="/profile" element={<SuperAdminProfile />} />
+            <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>
         </Suspense>
       </div>

@@ -1,0 +1,19 @@
+{
+  "title": "Admin Portal",
+  "nav": {
+    "overview": "Overview",
+    "users": "Users",
+    "properties": "Properties",
+    "settings": "Settings",
+    "apiKeys": "API Keys",
+    "paymentConfig": "Payment Config"
+  },
+  "users": {
+    "inviteUser": "Invite User",
+    "role": "Role",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "lastLogin": "Last Login"
+  }
+}

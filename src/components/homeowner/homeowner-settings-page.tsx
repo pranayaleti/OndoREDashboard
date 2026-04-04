@@ -10,6 +10,7 @@ import {
   Bell,
   ChevronRight,
 } from "lucide-react"
+import { ReferralShareWidget } from "@/components/shared/referral-share-widget"
 
 export function HomeownerSettingsPage() {
   const { user } = useAuth()
@@ -79,6 +80,8 @@ export function HomeownerSettingsPage() {
           </Card>
         ))}
       </div>
+
+      <ReferralShareWidget />
 
       <Card className="border-border/80">
         <CardHeader>

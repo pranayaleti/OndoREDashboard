@@ -19,6 +19,7 @@ import ManagerNotifications from "@/components/manager/manager-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-history"
+import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function Manager() {
   return (
@@ -55,6 +56,7 @@ export default function Manager() {
             <Route path="/calendar" element={<ManagerCalendar />} />
             <Route path="/notifications" element={<ManagerNotifications />} />
             <Route path="/profile" element={<ManagerProfile />} />
+            <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>
         </Suspense>
       </div>

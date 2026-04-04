@@ -1,0 +1,29 @@
+{
+  "title": "యజమాని పోర్టల్",
+  "nav": {
+    "dashboard": "డాష్‌బోర్డ్",
+    "properties": "నా ఆస్తులు",
+    "statements": "స్టేట్‌మెంట్లు",
+    "maintenance": "నిర్వహణ",
+    "documents": "పత్రాలు",
+    "profile": "ప్రొఫైల్",
+    "quality": "నాణ్యత",
+    "pricing": "అద్దె ధర"
+  },
+  "stats": {
+    "totalRevenue": "మొత్తం ఆదాయం",
+    "properties": "ఆస్తులు",
+    "pendingMaintenance": "పెండింగ్ నిర్వహణ",
+    "occupancyRate": "ఆక్యుపెన్సీ రేటు"
+  },
+  "statements": {
+    "title": "యజమాని స్టేట్‌మెంట్లు",
+    "download": "డౌన్‌లోడ్",
+    "period": "కాలం",
+    "noStatements": "స్టేట్‌మెంట్లు అందుబాటులో లేవు."
+  },
+  "empty": {
+    "noProperties": "మీ ఖాతాతో ఆస్తులు లింక్ లేవు.",
+    "noMaintenance": "నిర్వహణ అభ్యర్థనలు లేవు."
+  }
+}

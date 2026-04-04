@@ -1,0 +1,44 @@
+{
+  "title": "प्रबंधक डैशबोर्ड",
+  "nav": {
+    "home": "होम",
+    "properties": "संपत्तियाँ",
+    "leads": "लीड्स",
+    "screening": "किरायेदार स्क्रीनिंग",
+    "owners": "मालिक",
+    "tenants": "किरायेदार",
+    "maintenance": "रखरखाव",
+    "finances": "वित्त",
+    "reports": "रिपोर्ट",
+    "messages": "संदेश",
+    "documents": "दस्तावेज़",
+    "payments": "एकत्रित किराया",
+    "calendar": "कैलेंडर",
+    "notifications": "सूचनाएं",
+    "profile": "प्रोफाइल",
+    "assistant": "AI सहायक",
+    "atRisk": "जोखिम में"
+  },
+  "stats": {
+    "totalProperties": "कुल संपत्तियाँ",
+    "activeLeads": "सक्रिय लीड्स",
+    "pendingMaintenance": "लंबित रखरखाव",
+    "monthlyRevenue": "मासिक आय",
+    "occupancyRate": "अधिभोग दर",
+    "activeOwners": "सक्रिय मालिक",
+    "activeTenants": "सक्रिय किरायेदार"
+  },
+  "empty": {
+    "noProperties": "अभी तक कोई संपत्ति नहीं।",
+    "noLeads": "अभी तक कोई लीड नहीं।",
+    "noMaintenance": "कोई रखरखाव अनुरोध नहीं।",
+    "noPayments": "आपके पोर्टफोलियो में अभी तक कोई भुगतान नहीं।"
+  },
+  "actions": {
+    "addProperty": "संपत्ति जोड़ें",
+    "inviteOwner": "मालिक को आमंत्रित करें",
+    "inviteTenant": "किरायेदार को आमंत्रित करें",
+    "viewAll": "सभी देखें",
+    "export": "निर्यात करें"
+  }
+}

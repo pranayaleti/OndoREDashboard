@@ -1,0 +1,51 @@
+{
+  "title": "Portal del Inquilino",
+  "nav": {
+    "dashboard": "Panel",
+    "rent": "Renta y Pagos",
+    "maintenance": "Mantenimiento",
+    "documents": "Documentos",
+    "profile": "Perfil",
+    "notifications": "Notificaciones",
+    "addons": "Complementos",
+    "moveOut": "Mudarse"
+  },
+  "rent": {
+    "dueDate": "Fecha de vencimiento",
+    "amount": "Monto",
+    "status": "Estado",
+    "payNow": "Pagar ahora",
+    "history": "Historial de pagos",
+    "nextDue": "Próximo vencimiento",
+    "overdue": "Vencido",
+    "paid": "Pagado",
+    "pending": "Pendiente"
+  },
+  "maintenance": {
+    "submit": "Enviar solicitud",
+    "title": "Título del problema",
+    "description": "Descripción",
+    "priority": "Prioridad",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Baja",
+    "status": {
+      "pending": "Pendiente",
+      "inProgress": "En progreso",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "noRequests": "Aún no hay solicitudes de mantenimiento.",
+    "submitted": "Solicitud enviada correctamente."
+  },
+  "notifications": {
+    "maintenanceUpdates": "Actualizaciones de mantenimiento",
+    "paymentReminders": "Recordatorios de pago",
+    "leaseAlerts": "Alertas de contrato",
+    "documentUploads": "Carga de documentos",
+    "communityUpdates": "Actualizaciones de la comunidad",
+    "email": "Correo electrónico",
+    "push": "Notificaciones push",
+    "sms": "SMS"
+  }
+}

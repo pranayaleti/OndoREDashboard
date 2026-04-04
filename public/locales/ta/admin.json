@@ -1,0 +1,19 @@
+{
+  "title": "நிர்வாக போர்டல்",
+  "nav": {
+    "overview": "கண்ணோட்டம்",
+    "users": "பயனர்கள்",
+    "properties": "சொத்துக்கள்",
+    "settings": "அமைப்புகள்",
+    "apiKeys": "API விசைகள்",
+    "paymentConfig": "கட்டண அமைப்பு"
+  },
+  "users": {
+    "inviteUser": "பயனரை அழைக்கவும்",
+    "role": "பாத்திரம்",
+    "status": "நிலை",
+    "active": "செயலில்",
+    "inactive": "செயலற்ற",
+    "lastLogin": "கடைசி உள்நுழைவு"
+  }
+}

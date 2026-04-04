@@ -9,25 +9,27 @@ import { Menu, LogOut, Users } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { authApi, type InvitedUser } from "@/lib/api"
+import { LanguageSwitcher } from "@/components/ui/language-switcher"
+import { useTranslation } from "react-i18next"
 
 // Navigation items - only shown for managers
 const managerNavItems = [
-  { label: "Overview", path: "/dashboard", tab: "overview" },
-  { label: "Properties", path: "/dashboard/properties", tab: "properties" },
-  { label: "Owner Properties", path: "/dashboard", tab: "owner-properties" },
-  { label: "Leads", path: "/dashboard", tab: "leads" },
-  { label: "Maintenance", path: "/dashboard/maintenance", tab: "maintenance" },
-  { label: "My Users", path: "/dashboard", tab: "my-users" },
-  { label: "User Management", path: "/dashboard", tab: "user-management" },
+  { labelKey: "nav.overview", path: "/dashboard", tab: "overview" },
+  { labelKey: "nav.properties", path: "/dashboard/properties", tab: "properties" },
+  { labelKey: "nav.ownerProperties", path: "/dashboard", tab: "owner-properties" },
+  { labelKey: "nav.leads", path: "/dashboard", tab: "leads" },
+  { labelKey: "nav.maintenance", path: "/dashboard/maintenance", tab: "maintenance" },
+  { labelKey: "nav.myUsers", path: "/dashboard", tab: "my-users" },
+  { labelKey: "nav.userManagement", path: "/dashboard", tab: "user-management" },
 ]
 
 const marketingNavItems = [
-  { label: "Product", path: "/product" },
-  { label: "Features", path: "/features" },
-  { label: "Pricing", path: "/pricing" },
-  { label: "About", path: "/about" },
-  { label: "Contact", path: "/contact" },
-  { label: "FAQ", path: "/faq" },
+  { labelKey: "nav.product", path: "/product" },
+  { labelKey: "nav.features", path: "/features" },
+  { labelKey: "nav.pricing", path: "/pricing" },
+  { labelKey: "nav.about", path: "/about" },
+  { labelKey: "nav.contact", path: "/contact" },
+  { labelKey: "nav.faq", path: "/faq" },
 ]
 
 export default function Header() {
@@ -38,6 +40,7 @@ export default function Header() {
   const location = useLocation()
   const [invitedUsers, setInvitedUsers] = useState<InvitedUser[]>([])
   const [isLoadingInvited, setIsLoadingInvited] = useState(false)
+  const { t } = useTranslation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +72,7 @@ export default function Header() {
   const activeTenantsCount = invitedUsers.filter(u => u.role === "tenant" && u.isActive).length
 
 
-  const isActive = (item: { path: string; tab?: string }) => {
+  const isActive = (item: { path: string; tab?: string; labelKey?: string }) => {
     // Check if we're on the dashboard path
     if (location.pathname.startsWith("/dashboard")) {
       const urlParams = new URLSearchParams(location.search)
@@ -119,7 +122,7 @@ export default function Header() {
           isMarketingActive(item.path) && "bg-orange-500 text-gray-900 font-semibold dark:text-gray-900"
         )}
       >
-        {item.label}
+        {t(item.labelKey)}
       </Link>
     ))
 
@@ -137,20 +140,21 @@ export default function Header() {
           </div>
           <nav className="flex items-center gap-1">{marketingLinks("desktop")}</nav>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <ModeToggle />
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800 dark:hover:bg-gray-900">
-                Log in
+                {t("auth.login")}
               </Button>
             </Link>
             <Link to="/register">
               <Button variant="outline" size="sm" className="border-gray-700 bg-transparent text-white hover:bg-gray-800">
-                Owner sign up
+                {t("auth.ownerSignup")}
               </Button>
             </Link>
             <Link to="/free-trial">
               <Button size="sm" className="bg-orange-500 text-black hover:bg-orange-400">
-                Start free trial
+                {t("auth.startFreeTrial")}
               </Button>
             </Link>
           </div>
@@ -162,7 +166,7 @@ export default function Header() {
             <ModeToggle />
             <Link to="/free-trial">
               <Button size="sm" className="bg-orange-500 text-black hover:bg-orange-400">
-                Trial
+                {t("auth.trial")}
               </Button>
             </Link>
             <Sheet open={isMarketingMenuOpen} onOpenChange={setIsMarketingMenuOpen}>
@@ -172,27 +176,27 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[260px] bg-gray-900 text-white p-0">
-                <SheetTitle className="sr-only">Navigation</SheetTitle>
-                <SheetDescription className="sr-only">Marketing navigation</SheetDescription>
+                <SheetTitle className="sr-only">{t("common.navigation")}</SheetTitle>
+                <SheetDescription className="sr-only">{t("common.marketingNav")}</SheetDescription>
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b border-gray-800">
-                    <span className="text-lg font-semibold">Menu</span>
+                    <span className="text-lg font-semibold">{t("nav.menu")}</span>
                   </div>
                   <div className="flex-1 overflow-y-auto">{marketingLinks("mobile")}</div>
                   <div className="p-4 border-t border-gray-800 space-y-2">
                     <Link to="/login" onClick={() => setIsMarketingMenuOpen(false)}>
                       <Button variant="ghost" className="w-full justify-start text-gray-300 hover:bg-gray-800">
-                        Log in
+                        {t("auth.login")}
                       </Button>
                     </Link>
                     <Link to="/register" onClick={() => setIsMarketingMenuOpen(false)}>
                       <Button variant="outline" className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800">
-                        Owner sign up
+                        {t("auth.ownerSignup")}
                       </Button>
                     </Link>
                     <Link to="/free-trial" onClick={() => setIsMarketingMenuOpen(false)}>
                       <Button className="w-full bg-orange-500 text-black hover:bg-orange-400">
-                        Start free trial
+                        {t("auth.startFreeTrial")}
                       </Button>
                     </Link>
                   </div>
@@ -240,7 +244,7 @@ export default function Header() {
                       : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
                   )}
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               )
             })}
@@ -263,7 +267,7 @@ export default function Header() {
                       ? "text-gray-900 dark:text-gray-900"
                       : "text-gray-400 dark:text-gray-400"
                   )} />
-                  <span>Owners</span>
+                  <span>{t("nav.owners")}</span>
                   <span className={cn(
                     "font-bold",
                     location.pathname === "/dashboard/owners" || location.pathname.startsWith("/dashboard/owners/")
@@ -286,7 +290,7 @@ export default function Header() {
                       ? "text-gray-900 dark:text-gray-900"
                       : "text-gray-400 dark:text-gray-400"
                   )} />
-                  <span>Tenants</span>
+                  <span>{t("nav.tenants")}</span>
                   <span className={cn(
                     "font-bold",
                     location.pathname === "/dashboard/tenants" || location.pathname.startsWith("/dashboard/tenants/")
@@ -301,6 +305,7 @@ export default function Header() {
 
         {/* Right: Mode Toggle, User Menu */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-shrink-0">
+          <LanguageSwitcher />
           <ModeToggle />
           <UserMenu />
         </div>
@@ -321,6 +326,7 @@ export default function Header() {
 
             {/* Right: Menu, Mode Toggle, User Menu */}
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <LanguageSwitcher variant="compact" />
               <ModeToggle />
               <UserMenu />
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -334,11 +340,11 @@ export default function Header() {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-gray-900 text-white p-0">
-                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">Main navigation menu with links to different sections</SheetDescription>
+                  <SheetTitle className="sr-only">{t("common.navigation")}</SheetTitle>
+                  <SheetDescription className="sr-only">{t("common.mobileNavDesc")}</SheetDescription>
                   <div className="flex flex-col h-full">
                     <div className="p-4 border-b border-gray-800">
-                      <span className="text-lg font-semibold">Menu</span>
+                      <span className="text-lg font-semibold">{t("nav.menu")}</span>
                     </div>
                     <div className="flex-1 overflow-y-auto">
                       <nav className="flex flex-col">
@@ -357,7 +363,7 @@ export default function Header() {
                                   : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
                               )}
                             >
-                              {item.label}
+                              {t(item.labelKey)}
                             </Link>
                           )
                         })}
@@ -382,7 +388,7 @@ export default function Header() {
                                     ? "text-gray-900 dark:text-gray-900"
                                     : "text-gray-400 dark:text-gray-400"
                                 )} />
-                                <span>Owners</span>
+                                <span>{t("nav.owners")}</span>
                               </div>
                               <span className={cn(
                                 "font-bold",
@@ -408,7 +414,7 @@ export default function Header() {
                                     ? "text-gray-900 dark:text-gray-900"
                                     : "text-gray-400 dark:text-gray-400"
                                 )} />
-                                <span>Tenants</span>
+                                <span>{t("nav.tenants")}</span>
                               </div>
                               <span className={cn(
                                 "font-bold",
@@ -431,7 +437,7 @@ export default function Header() {
                         className="w-full justify-start text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
+                        <span>{t("auth.logout")}</span>
                       </Button>
                     </div>
                   </div>

@@ -1,0 +1,51 @@
+{
+  "title": "Portail Locataire",
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "rent": "Loyer et Paiements",
+    "maintenance": "Maintenance",
+    "documents": "Documents",
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "addons": "Modules complémentaires",
+    "moveOut": "Déménagement"
+  },
+  "rent": {
+    "dueDate": "Date d'échéance",
+    "amount": "Montant",
+    "status": "Statut",
+    "payNow": "Payer maintenant",
+    "history": "Historique des paiements",
+    "nextDue": "Prochaine échéance",
+    "overdue": "En retard",
+    "paid": "Payé",
+    "pending": "En attente"
+  },
+  "maintenance": {
+    "submit": "Soumettre une demande",
+    "title": "Titre du problème",
+    "description": "Description",
+    "priority": "Priorité",
+    "high": "Haute",
+    "medium": "Moyenne",
+    "low": "Faible",
+    "status": {
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "noRequests": "Aucune demande de maintenance pour l'instant.",
+    "submitted": "Demande soumise avec succès."
+  },
+  "notifications": {
+    "maintenanceUpdates": "Mises à jour de maintenance",
+    "paymentReminders": "Rappels de paiement",
+    "leaseAlerts": "Alertes de bail",
+    "documentUploads": "Téléchargements de documents",
+    "communityUpdates": "Mises à jour communautaires",
+    "email": "E-mail",
+    "push": "Notifications push",
+    "sms": "SMS"
+  }
+}

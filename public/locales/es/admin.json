@@ -1,0 +1,19 @@
+{
+  "title": "Portal de Administración",
+  "nav": {
+    "overview": "Resumen",
+    "users": "Usuarios",
+    "properties": "Propiedades",
+    "settings": "Configuración",
+    "apiKeys": "Claves API",
+    "paymentConfig": "Config. de pago"
+  },
+  "users": {
+    "inviteUser": "Invitar usuario",
+    "role": "Rol",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "lastLogin": "Último acceso"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "title": "అద్దెదారు పోర్టల్",
+  "nav": {
+    "dashboard": "డాష్‌బోర్డ్",
+    "rent": "అద్దె మరియు చెల్లింపులు",
+    "maintenance": "నిర్వహణ",
+    "documents": "పత్రాలు",
+    "profile": "ప్రొఫైల్",
+    "notifications": "నోటిఫికేషన్లు",
+    "addons": "యాడ్-ఆన్లు",
+    "moveOut": "బయటకు వెళ్ళు"
+  },
+  "rent": {
+    "dueDate": "గడువు తేదీ",
+    "amount": "మొత్తం",
+    "status": "స్థితి",
+    "payNow": "ఇప్పుడు చెల్లించండి",
+    "history": "చెల్లింపు చరిత్ర",
+    "nextDue": "తదుపరి గడువు",
+    "overdue": "గడువు మించింది",
+    "paid": "చెల్లించారు",
+    "pending": "పెండింగ్"
+  },
+  "maintenance": {
+    "submit": "అభ్యర్థన సమర్పించండి",
+    "title": "సమస్య శీర్షిక",
+    "description": "వివరణ",
+    "priority": "ప్రాధాన్యత",
+    "high": "అధిక",
+    "medium": "మధ్యస్థ",
+    "low": "తక్కువ",
+    "status": {
+      "pending": "పెండింగ్",
+      "inProgress": "పురోగతిలో",
+      "completed": "పూర్తయింది",
+      "cancelled": "రద్దు చేయబడింది"
+    },
+    "noRequests": "ఇంకా నిర్వహణ అభ్యర్థనలు లేవు.",
+    "submitted": "అభ్యర్థన విజయవంతంగా సమర్పించబడింది."
+  },
+  "notifications": {
+    "maintenanceUpdates": "నిర్వహణ అప్‌డేట్‌లు",
+    "paymentReminders": "చెల్లింపు రిమైండర్లు",
+    "leaseAlerts": "లీజు హెచ్చరికలు",
+    "documentUploads": "పత్ర అప్‌లోడ్‌లు",
+    "communityUpdates": "కమ్యూనిటీ అప్‌డేట్‌లు",
+    "email": "ఇమెయిల్",
+    "push": "పుష్ నోటిఫికేషన్లు",
+    "sms": "SMS"
+  }
+}

@@ -18,6 +18,7 @@ import AdminNotifications from "@/components/admin/admin-notifications"
 import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
+import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function Admin() {
   return (
@@ -41,6 +42,7 @@ export default function Admin() {
             <Route path="/calendar" element={<AdminCalendar />} />
             <Route path="/notifications" element={<AdminNotifications />} />
             <Route path="/profile" element={<AdminProfile />} />
+            <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>
         </Suspense>
       </div>

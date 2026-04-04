@@ -1,0 +1,29 @@
+{
+  "title": "Portale Proprietario",
+  "nav": {
+    "dashboard": "Dashboard",
+    "properties": "Le Mie Proprietà",
+    "statements": "Estratti conto",
+    "maintenance": "Manutenzione",
+    "documents": "Documenti",
+    "profile": "Profilo",
+    "quality": "Qualità",
+    "pricing": "Prezzo affitto"
+  },
+  "stats": {
+    "totalRevenue": "Entrate totali",
+    "properties": "Proprietà",
+    "pendingMaintenance": "Manutenzione in attesa",
+    "occupancyRate": "Tasso di occupazione"
+  },
+  "statements": {
+    "title": "Estratti conto proprietario",
+    "download": "Scarica",
+    "period": "Periodo",
+    "noStatements": "Nessun estratto conto disponibile."
+  },
+  "empty": {
+    "noProperties": "Nessuna proprietà collegata al tuo account.",
+    "noMaintenance": "Nessuna richiesta di manutenzione."
+  }
+}

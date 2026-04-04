@@ -1,0 +1,19 @@
+{
+  "title": "एडमिन पोर्टल",
+  "nav": {
+    "overview": "अवलोकन",
+    "users": "उपयोगकर्ता",
+    "properties": "संपत्तियाँ",
+    "settings": "सेटिंग्स",
+    "apiKeys": "API कुंजियाँ",
+    "paymentConfig": "भुगतान कॉन्फिग"
+  },
+  "users": {
+    "inviteUser": "उपयोगकर्ता आमंत्रित करें",
+    "role": "भूमिका",
+    "status": "स्थिति",
+    "active": "सक्रिय",
+    "inactive": "निष्क्रिय",
+    "lastLogin": "अंतिम लॉगिन"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "title": "ಮ್ಯಾನೇಜರ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+  "nav": {
+    "home": "ಮುಖಪುಟ",
+    "properties": "ಆಸ್ತಿಗಳು",
+    "leads": "ಲೀಡ್ಸ್",
+    "screening": "ಬಾಡಿಗೆದಾರ ಶ್ರೇಣೀಕರಣ",
+    "owners": "ಮಾಲೀಕರು",
+    "tenants": "ಬಾಡಿಗೆದಾರರು",
+    "maintenance": "ನಿರ್ವಹಣೆ",
+    "finances": "ಹಣಕಾಸು",
+    "reports": "ವರದಿಗಳು",
+    "messages": "ಸಂದೇಶಗಳು",
+    "documents": "ದಾಖಲೆಗಳು",
+    "payments": "ಸಂಗ್ರಹಿಸಿದ ಬಾಡಿಗೆ",
+    "calendar": "ಕ್ಯಾಲೆಂಡರ್",
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "profile": "ಪ್ರೊಫೈಲ್",
+    "assistant": "AI ಸಹಾಯಕ",
+    "atRisk": "ಅಪಾಯದಲ್ಲಿ"
+  },
+  "stats": {
+    "totalProperties": "ಒಟ್ಟು ಆಸ್ತಿಗಳು",
+    "activeLeads": "ಸಕ್ರಿಯ ಲೀಡ್ಸ್",
+    "pendingMaintenance": "ಬಾಕಿ ನಿರ್ವಹಣೆ",
+    "monthlyRevenue": "ಮಾಸಿಕ ಆದಾಯ",
+    "occupancyRate": "ಆಕ್ಯುಪೆನ್ಸಿ ದರ",
+    "activeOwners": "ಸಕ್ರಿಯ ಮಾಲೀಕರು",
+    "activeTenants": "ಸಕ್ರಿಯ ಬಾಡಿಗೆದಾರರು"
+  },
+  "empty": {
+    "noProperties": "ಇನ್ನೂ ಯಾವುದೇ ಆಸ್ತಿಗಳಿಲ್ಲ.",
+    "noLeads": "ಇನ್ನೂ ಯಾವುದೇ ಲೀಡ್ಸ್ ಇಲ್ಲ.",
+    "noMaintenance": "ನಿರ್ವಹಣೆ ವಿನಂತಿಗಳಿಲ್ಲ.",
+    "noPayments": "ನಿಮ್ಮ ಪೋರ್ಟ್‌ಫೋಲಿಯೋದಲ್ಲಿ ಇನ್ನೂ ಯಾವುದೇ ಪಾವತಿಗಳಿಲ್ಲ."
+  },
+  "actions": {
+    "addProperty": "ಆಸ್ತಿ ಸೇರಿಸಿ",
+    "inviteOwner": "ಮಾಲೀಕರನ್ನು ಆಹ್ವಾನಿಸಿ",
+    "inviteTenant": "ಬಾಡಿಗೆದಾರರನ್ನು ಆಹ್ವಾನಿಸಿ",
+    "viewAll": "ಎಲ್ಲವನ್ನೂ ವೀಕ್ಷಿಸಿ",
+    "export": "ರಫ್ತು ಮಾಡಿ"
+  }
+}

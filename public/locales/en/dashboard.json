@@ -1,0 +1,44 @@
+{
+  "title": "Manager Dashboard",
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "leads": "Leads",
+    "screening": "Tenant screening",
+    "owners": "Owners",
+    "tenants": "Tenants",
+    "maintenance": "Maintenance",
+    "finances": "Finances",
+    "reports": "Reports",
+    "messages": "Messages",
+    "documents": "Documents",
+    "payments": "Rent collected",
+    "calendar": "Calendar",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "assistant": "AI Assistant",
+    "atRisk": "At Risk"
+  },
+  "stats": {
+    "totalProperties": "Total Properties",
+    "activeLeads": "Active Leads",
+    "pendingMaintenance": "Pending Maintenance",
+    "monthlyRevenue": "Monthly Revenue",
+    "occupancyRate": "Occupancy Rate",
+    "activeOwners": "Active Owners",
+    "activeTenants": "Active Tenants"
+  },
+  "empty": {
+    "noProperties": "No properties yet.",
+    "noLeads": "No leads yet.",
+    "noMaintenance": "No maintenance requests.",
+    "noPayments": "No payments in your portfolio yet."
+  },
+  "actions": {
+    "addProperty": "Add Property",
+    "inviteOwner": "Invite Owner",
+    "inviteTenant": "Invite Tenant",
+    "viewAll": "View All",
+    "export": "Export"
+  }
+}

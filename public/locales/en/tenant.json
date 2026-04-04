@@ -1,0 +1,51 @@
+{
+  "title": "Tenant Portal",
+  "nav": {
+    "dashboard": "Dashboard",
+    "rent": "Rent & Payments",
+    "maintenance": "Maintenance",
+    "documents": "Documents",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "addons": "Add-ons",
+    "moveOut": "Move Out"
+  },
+  "rent": {
+    "dueDate": "Due Date",
+    "amount": "Amount",
+    "status": "Status",
+    "payNow": "Pay Now",
+    "history": "Payment History",
+    "nextDue": "Next Due",
+    "overdue": "Overdue",
+    "paid": "Paid",
+    "pending": "Pending"
+  },
+  "maintenance": {
+    "submit": "Submit Request",
+    "title": "Issue Title",
+    "description": "Description",
+    "priority": "Priority",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "noRequests": "No maintenance requests yet.",
+    "submitted": "Request submitted successfully."
+  },
+  "notifications": {
+    "maintenanceUpdates": "Maintenance Updates",
+    "paymentReminders": "Payment Reminders",
+    "leaseAlerts": "Lease Alerts",
+    "documentUploads": "Document Uploads",
+    "communityUpdates": "Community Updates",
+    "email": "Email",
+    "push": "Push Notifications",
+    "sms": "SMS"
+  }
+}

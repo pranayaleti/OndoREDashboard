@@ -1,0 +1,29 @@
+{
+  "title": "ಮಾಲೀಕ ಪೋರ್ಟಲ್",
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "properties": "ನನ್ನ ಆಸ್ತಿಗಳು",
+    "statements": "ಹೇಳಿಕೆಗಳು",
+    "maintenance": "ನಿರ್ವಹಣೆ",
+    "documents": "ದಾಖಲೆಗಳು",
+    "profile": "ಪ್ರೊಫೈಲ್",
+    "quality": "ಗುಣಮಟ್ಟ",
+    "pricing": "ಬಾಡಿಗೆ ಬೆಲೆ"
+  },
+  "stats": {
+    "totalRevenue": "ಒಟ್ಟು ಆದಾಯ",
+    "properties": "ಆಸ್ತಿಗಳು",
+    "pendingMaintenance": "ಬಾಕಿ ನಿರ್ವಹಣೆ",
+    "occupancyRate": "ಆಕ್ಯುಪೆನ್ಸಿ ದರ"
+  },
+  "statements": {
+    "title": "ಮಾಲೀಕ ಹೇಳಿಕೆಗಳು",
+    "download": "ಡೌನ್‌ಲೋಡ್",
+    "period": "ಅವಧಿ",
+    "noStatements": "ಯಾವುದೇ ಹೇಳಿಕೆಗಳು ಲಭ್ಯವಿಲ್ಲ."
+  },
+  "empty": {
+    "noProperties": "ನಿಮ್ಮ ಖಾತೆಗೆ ಯಾವುದೇ ಆಸ್ತಿಗಳು ಲಿಂಕ್ ಆಗಿಲ್ಲ.",
+    "noMaintenance": "ನಿರ್ವಹಣೆ ವಿನಂತಿಗಳಿಲ್ಲ."
+  }
+}

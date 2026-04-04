@@ -37,6 +37,7 @@ import { TwoFactorAuthDialog } from "@/components/ui/two-factor-auth-dialog"
 import { US_TIMEZONES } from "@/constants"
 import { useUserTimezone } from "@/hooks/use-user-timezone"
 import { LoginHistory } from "@/components/shared/login-history"
+import { ReferralShareWidget } from "@/components/shared/referral-share-widget"
 
 export default function ManagerProfile() {
   const { user, refreshUser } = useAuth()
@@ -884,6 +885,11 @@ export default function ManagerProfile() {
               <LoginHistory />
             </TabsContent>
           </Tabs>
+
+      <div className="mt-6 max-w-4xl">
+        <ReferralShareWidget />
+      </div>
+
       <ChangePasswordDialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen} />
       <TwoFactorAuthDialog
         open={is2FADialogOpen}

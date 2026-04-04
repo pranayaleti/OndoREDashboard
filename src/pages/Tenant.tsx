@@ -19,6 +19,7 @@ import { EquipmentGridPage } from "@/components/homeowner/equipment-grid"
 import { HomeownerSearchResults } from "@/components/homeowner/homeowner-search-results"
 import { DocumentsPanel } from "@/components/homeowner/documents-panel"
 import { HomeownerSettingsPage } from "@/components/homeowner/homeowner-settings-page"
+import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function Tenant() {
   return (
@@ -43,6 +44,7 @@ export default function Tenant() {
             <Route path="/calendar" element={<TenantCalendar />} />
             <Route path="/notifications" element={<TenantNotifications />} />
             <Route path="/profile" element={<TenantProfile />} />
+            <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>
         </Suspense>
       </div>

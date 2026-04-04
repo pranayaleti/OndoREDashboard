@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
@@ -15,6 +16,7 @@ import { getApiBaseUrl } from "@/lib/api/base-url"
 const API_BASE_URL = getApiBaseUrl()
 
 export default function ResetPassword() {
+  const { t } = useTranslation('auth')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -111,8 +113,8 @@ export default function ResetPassword() {
     const isValid = validateForm()
     if (!isValid) {
       toast({
-        title: "Check the highlighted fields",
-        description: "Please resolve the validation errors before continuing.",
+        title: t('resetPassword.error'),
+        description: t('login.resolveErrors'),
         variant: "destructive",
       })
       return
@@ -120,8 +122,8 @@ export default function ResetPassword() {
 
     if (!token || tokenValid !== true) {
       toast({
-        title: "Invalid token",
-        description: "The reset token is invalid or expired.",
+        title: t('resetPassword.error'),
+        description: t('signup.invalidToken'),
         variant: "destructive",
       })
       return
@@ -157,20 +159,20 @@ export default function ResetPassword() {
       if (response.ok) {
         setIsSuccess(true)
         toast({
-          title: "Password updated",
-          description: "Your password has been successfully reset.",
+          title: t('resetPassword.success'),
+          description: t('resetPassword.successDesc'),
         })
       } else {
         toast({
-          title: "Error",
-          description: data.message || "Failed to reset password.",
+          title: t('resetPassword.error'),
+          description: data.message || t('resetPassword.unexpectedError'),
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        title: t('resetPassword.error'),
+        description: error instanceof Error ? error.message : t('resetPassword.unexpectedError'),
         variant: "destructive",
       })
     } finally {
@@ -272,18 +274,18 @@ export default function ResetPassword() {
               </div>
               
               <h1 className="text-2xl font-medium mb-4 bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-                Password Reset Successful
+                {t('resetPassword.success')}
               </h1>
               
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Your password has been successfully updated. You can now sign in with your new password.
+                {t('resetPassword.successDesc')}
               </p>
               
               <button 
                 onClick={() => navigate("/login")}
                 className="w-full bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-600 hover:to-red-900 text-white font-medium py-4 rounded-2xl text-xl transition-all duration-200 flex items-center justify-center gap-2"
               >
-                Continue to Login
+                {t('forgotPassword.backToLogin')}
                 <ArrowRight className="h-5 w-5" />
               </button>
             </CardContent>
@@ -302,19 +304,19 @@ export default function ResetPassword() {
             <Logo size="xl" variant="centered" showText={true} linkTo="/" />
           </div>
           <h1 className="text-2xl font-medium bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-            Reset Password
+            {t('resetPassword.title')}
           </h1>
         </div>
 
         <Card className="border-none shadow-lg">
           <CardContent className="pt-6">
             <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-              Enter your new password below. Make sure it's strong and secure.
+              {t('resetPassword.title')}
             </p>
             
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">New Password</Label>
+                <Label htmlFor="password" className="text-gray-700 dark:text-gray-300">{t('resetPassword.newPassword')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -342,7 +344,7 @@ export default function ResetPassword() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-gray-700 dark:text-gray-300">{t('resetPassword.confirmPassword')}</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
@@ -376,11 +378,11 @@ export default function ResetPassword() {
                 {isLoading ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Updating Password...
+                    {t('resetPassword.resetting')}
                   </>
                 ) : (
                   <>
-                    Update Password
+                    {t('resetPassword.submit')}
                     <ArrowRight className="h-5 w-5" />
                   </>
                 )}
@@ -391,9 +393,8 @@ export default function ResetPassword() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Remember your password?{" "}
             <Link to="/login" className="text-orange-600 hover:underline font-medium">
-              Sign in here
+              {t('forgotPassword.backToLogin')}
             </Link>
           </p>
         </div>

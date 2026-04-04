@@ -1,6 +1,7 @@
 import type React from "react"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { EyeIcon, EyeOffIcon, Loader2, ArrowRight, KeyRound, ShieldCheck } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,27 +20,42 @@ import { companyInfo } from "@/constants/companyInfo"
 /** Seeded test users (npm run seed in OndoREBackend) — dev only */
 const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD ?? ""
 
-const ownerSteps = [
-  "Invite owners + tenants",
-  "Trigger SmartMove / Checkr",
-  "Collect rent via ACH/Stripe",
-  "Track maintenance + docs",
-]
-
-const tenantSteps = [
-  "Accept invite + verify",
-  "Authorize background checks",
-  "Enable autopay + receipts",
-  "Submit maintenance with media",
-]
+const REFERRAL_SESSION_KEY = "ondo_referral_code"
 
 export default function LoginPage() {
+  const { t } = useTranslation('auth')
   const { login } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const ref = searchParams.get("ref")?.trim()
+    if (ref) {
+      try {
+        sessionStorage.setItem(REFERRAL_SESSION_KEY, ref)
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [searchParams])
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showTestAccounts, setShowTestAccounts] = useState(false)
+
+  const ownerSteps = [
+    t('login.ownerStep1'),
+    t('login.ownerStep2'),
+    t('login.ownerStep3'),
+    t('login.ownerStep4'),
+  ]
+
+  const tenantSteps = [
+    t('login.tenantStep1'),
+    t('login.tenantStep2'),
+    t('login.tenantStep3'),
+    t('login.tenantStep4'),
+  ]
 
   const validationSchema: FormValidationSchema<{ email: string; password: string }> = {
     email: {
@@ -79,8 +95,8 @@ export default function LoginPage() {
     const isValid = validateForm()
     if (!isValid) {
       toast({
-        title: "Check the highlighted fields",
-        description: "Please resolve validation errors before submitting.",
+        title: t('login.checkFields'),
+        description: t('login.resolveErrors'),
         variant: "destructive",
       })
       return
@@ -95,15 +111,15 @@ export default function LoginPage() {
         navigate(result.redirectPath, { replace: true })
       } else if (!result.success) {
         toast({
-          title: "Login failed",
-          description: result.message || "Invalid email or password. Please try again.",
+          title: t('login.loginFailed'),
+          description: result.message || t('login.invalidCredentials'),
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: t('login.error'),
+        description: t('login.unexpectedError'),
         variant: "destructive",
       })
     } finally {
@@ -118,34 +134,36 @@ export default function LoginPage() {
 
   return (
     <OnboardingLayout
-      title="Sign in to Ondo"
-      subtitle="Owners, tenants, admins, and maintenance teams use a single portal. Your role determines the dashboard we open."
+      title={t('login.title')}
+      subtitle={t('login.subtitle')}
       hero={
         <div className="grid gap-4 md:grid-cols-2">
-          <OnboardingChecklist title="Owners" items={ownerSteps} />
-          <OnboardingChecklist title="Tenants" items={tenantSteps} />
+          <OnboardingChecklist title={t('login.owners')} items={ownerSteps} />
+          <OnboardingChecklist title={t('login.tenants')} items={tenantSteps} />
         </div>
       }
       sidebar={
         <div className="grid gap-4">
           <OnboardingCard
-            eyebrow="Security"
-            title="Background checks + MFA"
-            description="Your invite links, passwords, and upcoming MFA settings keep roles isolated."
+            eyebrow={t('login.security')}
+            title={t('login.securityTitle')}
+            description={t('login.securityDesc')}
             icon={<ShieldCheck className="h-6 w-6" />}
           />
           <OnboardingCard
-            eyebrow="Fast access"
-            title="Need credentials?"
-            description="Owners: request onboarding. Tenants: ask your landlord for an invite."
+            eyebrow={t('login.fastAccess')}
+            title={t('login.needCredentials')}
+            description={t('login.credentialsDesc')}
             icon={<KeyRound className="h-6 w-6" />}
           >
             <div className="mt-3 space-y-2 text-sm text-white/80">
               <p>
-                No account yet? <Link to="/register" className="text-orange-300 hover:text-orange-200">Owner sign up</Link>
+                {t('login.noAccount')}{" "}
+                <Link to="/register" className="text-orange-300 hover:text-orange-200">{t('login.ownerSignup')}</Link>
               </p>
               <p>
-                Need a tenant invite? <Link to="/contact" className="text-orange-300 hover:text-orange-200">Contact support</Link>
+                {t('login.tenantInvite')}{" "}
+                <Link to="/contact" className="text-orange-300 hover:text-orange-200">{t('login.contactSupport')}</Link>
               </p>
             </div>
           </OnboardingCard>
@@ -155,11 +173,11 @@ export default function LoginPage() {
       <div className="space-y-4">
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Work email</Label>
+            <Label htmlFor="email">{t('login.emailLabel')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="your.email@company.com"
+              placeholder={t('login.emailPlaceholder')}
               value={values.email}
               maxLength={120}
               onChange={handleChange("email")}
@@ -174,7 +192,7 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('login.passwordLabel')}</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -191,7 +209,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60"
                 onClick={() => setShowPassword(!showPassword)}
               >
@@ -210,11 +228,11 @@ export default function LoginPage() {
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
-                <Loader2 className="h-5 w-5 animate-spin" /> Signing in...
+                <Loader2 className="h-5 w-5 animate-spin" /> {t('login.signingIn')}
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Continue <ArrowRight className="h-5 w-5" />
+                {t('login.continue')} <ArrowRight className="h-5 w-5" />
               </span>
             )}
           </Button>
@@ -222,13 +240,14 @@ export default function LoginPage() {
 
         <div className="text-sm text-white/60">
           <p>
-            Forgot password? {" "}
+            {t('login.forgotPassword')}{" "}
             <Link to="/forgot-password" className="text-orange-300 hover:text-orange-200">
-              Reset it here
+              {t('login.resetHere')}
             </Link>
           </p>
           <p className="mt-2">
-            Need an invite? <Link to="/contact" className="text-orange-300 hover:text-orange-200">Contact support</Link>
+            {t('login.needInvite')}{" "}
+            <Link to="/contact" className="text-orange-300 hover:text-orange-200">{t('login.contactSupport')}</Link>
           </p>
         </div>
 
@@ -239,8 +258,8 @@ export default function LoginPage() {
               className="flex w-full items-center justify-between text-left font-semibold text-white"
               onClick={() => setShowTestAccounts((prev) => !prev)}
             >
-              <span>Testing the demo? (dev only)</span>
-              <span>{showTestAccounts ? "Hide" : "Show"}</span>
+              <span>{t('login.testingDemo')}</span>
+              <span>{showTestAccounts ? t('login.hide') : t('login.show')}</span>
             </button>
             {showTestAccounts && (
               <div className="mt-3 space-y-2">

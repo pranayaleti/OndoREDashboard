@@ -74,7 +74,6 @@ function SearchResultsInner({ propertyId }: { propertyId: string }) {
     if (initialQuestion.trim().length >= 3) {
       runSearch(initialQuestion)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleFollowUp = (q: string) => {

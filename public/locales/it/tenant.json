@@ -1,0 +1,51 @@
+{
+  "title": "Portale Inquilino",
+  "nav": {
+    "dashboard": "Dashboard",
+    "rent": "Affitto e Pagamenti",
+    "maintenance": "Manutenzione",
+    "documents": "Documenti",
+    "profile": "Profilo",
+    "notifications": "Notifiche",
+    "addons": "Componenti aggiuntivi",
+    "moveOut": "Trasloco"
+  },
+  "rent": {
+    "dueDate": "Data di scadenza",
+    "amount": "Importo",
+    "status": "Stato",
+    "payNow": "Paga ora",
+    "history": "Cronologia pagamenti",
+    "nextDue": "Prossima scadenza",
+    "overdue": "Scaduto",
+    "paid": "Pagato",
+    "pending": "In attesa"
+  },
+  "maintenance": {
+    "submit": "Invia richiesta",
+    "title": "Titolo del problema",
+    "description": "Descrizione",
+    "priority": "Priorità",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Bassa",
+    "status": {
+      "pending": "In attesa",
+      "inProgress": "In corso",
+      "completed": "Completato",
+      "cancelled": "Annullato"
+    },
+    "noRequests": "Nessuna richiesta di manutenzione ancora.",
+    "submitted": "Richiesta inviata con successo."
+  },
+  "notifications": {
+    "maintenanceUpdates": "Aggiornamenti manutenzione",
+    "paymentReminders": "Promemoria pagamenti",
+    "leaseAlerts": "Avvisi contratto",
+    "documentUploads": "Caricamenti documenti",
+    "communityUpdates": "Aggiornamenti comunità",
+    "email": "Email",
+    "push": "Notifiche push",
+    "sms": "SMS"
+  }
+}

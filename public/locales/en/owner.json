@@ -1,0 +1,29 @@
+{
+  "title": "Owner Portal",
+  "nav": {
+    "dashboard": "Dashboard",
+    "properties": "My Properties",
+    "statements": "Statements",
+    "maintenance": "Maintenance",
+    "documents": "Documents",
+    "profile": "Profile",
+    "quality": "Quality",
+    "pricing": "Rent Pricing"
+  },
+  "stats": {
+    "totalRevenue": "Total Revenue",
+    "properties": "Properties",
+    "pendingMaintenance": "Pending Maintenance",
+    "occupancyRate": "Occupancy Rate"
+  },
+  "statements": {
+    "title": "Owner Statements",
+    "download": "Download",
+    "period": "Period",
+    "noStatements": "No statements available."
+  },
+  "empty": {
+    "noProperties": "No properties linked to your account.",
+    "noMaintenance": "No maintenance requests."
+  }
+}

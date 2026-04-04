@@ -1,0 +1,29 @@
+{
+  "title": "Portal del Propietario",
+  "nav": {
+    "dashboard": "Panel",
+    "properties": "Mis Propiedades",
+    "statements": "Estados de cuenta",
+    "maintenance": "Mantenimiento",
+    "documents": "Documentos",
+    "profile": "Perfil",
+    "quality": "Calidad",
+    "pricing": "Precio del alquiler"
+  },
+  "stats": {
+    "totalRevenue": "Ingresos totales",
+    "properties": "Propiedades",
+    "pendingMaintenance": "Mantenimiento pendiente",
+    "occupancyRate": "Tasa de ocupación"
+  },
+  "statements": {
+    "title": "Estados de cuenta del propietario",
+    "download": "Descargar",
+    "period": "Período",
+    "noStatements": "No hay estados de cuenta disponibles."
+  },
+  "empty": {
+    "noProperties": "No hay propiedades vinculadas a su cuenta.",
+    "noMaintenance": "No hay solicitudes de mantenimiento."
+  }
+}

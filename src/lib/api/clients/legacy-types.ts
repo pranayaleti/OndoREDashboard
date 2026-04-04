@@ -17,6 +17,7 @@ export interface User {
   phone?: string;
   address?: string;
   profilePicture?: string;
+  preferredLocale?: string;
 }
 
 export interface LoginRequest {
@@ -57,6 +58,8 @@ export interface SignupRequest {
   address?: string;
   profilePicture?: string;
   password: string;
+  /** Program referral code (e.g. from marketing site ?ref=). */
+  referralCode?: string;
 }
 
 export interface SignupResponse {

@@ -1,0 +1,29 @@
+{
+  "title": "Portail Propriétaire",
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "properties": "Mes Propriétés",
+    "statements": "Relevés",
+    "maintenance": "Maintenance",
+    "documents": "Documents",
+    "profile": "Profil",
+    "quality": "Qualité",
+    "pricing": "Prix du loyer"
+  },
+  "stats": {
+    "totalRevenue": "Revenus totaux",
+    "properties": "Propriétés",
+    "pendingMaintenance": "Maintenance en attente",
+    "occupancyRate": "Taux d'occupation"
+  },
+  "statements": {
+    "title": "Relevés du propriétaire",
+    "download": "Télécharger",
+    "period": "Période",
+    "noStatements": "Aucun relevé disponible."
+  },
+  "empty": {
+    "noProperties": "Aucune propriété liée à votre compte.",
+    "noMaintenance": "Aucune demande de maintenance."
+  }
+}

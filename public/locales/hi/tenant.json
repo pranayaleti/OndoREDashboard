@@ -1,0 +1,51 @@
+{
+  "title": "किरायेदार पोर्टल",
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "rent": "किराया और भुगतान",
+    "maintenance": "रखरखाव",
+    "documents": "दस्तावेज़",
+    "profile": "प्रोफाइल",
+    "notifications": "सूचनाएं",
+    "addons": "ऐड-ऑन",
+    "moveOut": "बाहर जाना"
+  },
+  "rent": {
+    "dueDate": "देय तिथि",
+    "amount": "राशि",
+    "status": "स्थिति",
+    "payNow": "अभी भुगतान करें",
+    "history": "भुगतान इतिहास",
+    "nextDue": "अगला देय",
+    "overdue": "अतिदेय",
+    "paid": "भुगतान किया",
+    "pending": "लंबित"
+  },
+  "maintenance": {
+    "submit": "अनुरोध भेजें",
+    "title": "समस्या का शीर्षक",
+    "description": "विवरण",
+    "priority": "प्राथमिकता",
+    "high": "उच्च",
+    "medium": "मध्यम",
+    "low": "निम्न",
+    "status": {
+      "pending": "लंबित",
+      "inProgress": "प्रगति में",
+      "completed": "पूर्ण",
+      "cancelled": "रद्द"
+    },
+    "noRequests": "अभी तक कोई रखरखाव अनुरोध नहीं।",
+    "submitted": "अनुरोध सफलतापूर्वक सबमिट किया गया।"
+  },
+  "notifications": {
+    "maintenanceUpdates": "रखरखाव अपडेट",
+    "paymentReminders": "भुगतान अनुस्मारक",
+    "leaseAlerts": "लीज़ अलर्ट",
+    "documentUploads": "दस्तावेज़ अपलोड",
+    "communityUpdates": "समुदाय अपडेट",
+    "email": "ईमेल",
+    "push": "पुश सूचनाएं",
+    "sms": "SMS"
+  }
+}

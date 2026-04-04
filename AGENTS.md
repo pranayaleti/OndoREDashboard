@@ -64,6 +64,34 @@ src/
 - **No `any`**: TypeScript strict mode — avoid `any` unless absolutely unavoidable.
 - **Assistant chat**: Client-side AI guardrails in `lib/aiGuardrails.ts` (`validateChatInput`) run before sending messages; backend enforces the same limits. Handle 400 (guardrail/validation) and 429 (rate limit) in the assistant UI.
 
+## Internationalization (i18n) — MANDATORY FOR ALL CHANGES
+
+This app uses `react-i18next` for full multi-language support. **Every change that introduces user-facing text must include all 8 locale translations.**
+
+### Supported locales
+
+| Code | Language | Native label | BCP 47 |
+|------|----------|--------------|--------|
+| `en` | English | English (United States) | `en-US` |
+| `es` | Spanish | Español | `es-ES` |
+| `fr` | French | Français | `fr-FR` |
+| `it` | Italian | Italiano | `it-IT` |
+| `te` | Telugu | తెలుగు | `te-IN` |
+| `hi` | Hindi | हिन्दी | `hi-IN` |
+| `ta` | Tamil | தமிழ் | `ta-IN` |
+| `kn` | Kannada | ಕನ್ನಡ | `kn-IN` |
+
+### Rules — follow every time
+
+1. **No hardcoded English strings in JSX.** Use `const { t } = useTranslation()` and `t('namespace.key')`.
+2. **Translation files** live at `public/locales/{locale}/common.json`. Adding a key to `en/common.json` requires adding the equivalent to all 7 other locale files in the same change.
+3. **New namespaces** (e.g. `tenant.json`, `owner.json`) must be created for all 8 locales at once and registered in `src/lib/i18n.ts`.
+4. **Language switcher**: `src/components/ui/language-switcher.tsx`. Do not add locale codes anywhere else — update only `src/lib/i18n.ts` and the switcher if a new language is added.
+5. **Date/number formatting**: always use `src/lib/locale-format.ts` helpers (`formatDate`, `formatCurrency`, etc.). Never call `toLocaleDateString()` without a locale.
+6. **Toast / error messages**: Use `t()` for all user-visible toast text, error messages, and validation strings.
+7. **Backend sync**: `preferredLocale` is returned from `/api/auth/me` and stored in `users.preferred_locale`. The auth context applies it on login via `i18n.changeLanguage()`. Language switcher persists via `PUT /api/users/me/locale`.
+8. **i18n fallback**: Missing keys fall back to `en` automatically — but this is not an excuse to skip translations. Always provide all 8.
+
 ## Auth & test users
 
 Test users are seeded from `OndoREBackend` via `npm run seed`:

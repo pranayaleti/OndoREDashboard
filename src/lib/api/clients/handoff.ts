@@ -3,7 +3,15 @@
  * Handles move-in/move-out checklist notifications.
  */
 
-import { apiPost, getAuthHeaders } from "../http";
+import { apiPost, apiGet, getAuthHeaders } from "../http";
+
+export interface MoveOutResource {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  category: string;
+}
 
 export const handoffApi = {
   /**
@@ -20,5 +28,14 @@ export const handoffApi = {
       { propertyId, tenantName, propertyAddress },
       headers,
     );
+  },
+
+  /**
+   * Get move-out resources (helpful external links for tenants).
+   */
+  async getMoveOutResources(): Promise<MoveOutResource[]> {
+    const headers = getAuthHeaders();
+    const res = await apiGet<{ data: MoveOutResource[] }>('/move-out-resources', headers);
+    return res.data;
   },
 };

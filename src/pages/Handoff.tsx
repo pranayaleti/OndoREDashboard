@@ -16,7 +16,7 @@ import { propertyApi, handoffApi, type Property } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 
-import { HandoffCelebration, HandoffChecklist, HandoffOverview, HandoffPropertyDetails, HandoffNeighborhood } from "@/components/handoff"
+import { HandoffCelebration, HandoffChecklist, HandoffOverview, HandoffPropertyDetails, HandoffNeighborhood, HandoffMoveOutResources } from "@/components/handoff"
 export default function Handoff() {
   const { propertyId: urlPropertyId } = useParams<{ propertyId?: string }>()
   const navigate = useNavigate()
@@ -1135,6 +1135,8 @@ export default function Handoff() {
               setChecklistItems={setChecklistItems}
             />
           )}
+
+            {activeTab === 'checklist' && <HandoffMoveOutResources />}
 
             </Tabs>
             </div>

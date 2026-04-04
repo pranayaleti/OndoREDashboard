@@ -69,7 +69,7 @@ function App() {
           >
             Skip to main content
           </a>
-          {!shouldHideChrome && <Header />}
+          {!shouldHideChrome && <Suspense fallback={null}><Header /></Suspense>}
           <main id="main-content" className="flex-1">
             <ErrorBoundary>
               <Suspense fallback={<Loading />}>

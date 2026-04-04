@@ -1,0 +1,29 @@
+{
+  "title": "உரிமையாளர் போர்டல்",
+  "nav": {
+    "dashboard": "டாஷ்போர்டு",
+    "properties": "என் சொத்துக்கள்",
+    "statements": "அறிக்கைகள்",
+    "maintenance": "பராமரிப்பு",
+    "documents": "ஆவணங்கள்",
+    "profile": "சுயவிவரம்",
+    "quality": "தரம்",
+    "pricing": "வாடகை விலை"
+  },
+  "stats": {
+    "totalRevenue": "மொத்த வருவாய்",
+    "properties": "சொத்துக்கள்",
+    "pendingMaintenance": "நிலுவையில் உள்ள பராமரிப்பு",
+    "occupancyRate": "ஆக்கிரமிப்பு விகிதம்"
+  },
+  "statements": {
+    "title": "உரிமையாளர் அறிக்கைகள்",
+    "download": "பதிவிறக்கு",
+    "period": "காலம்",
+    "noStatements": "அறிக்கைகள் கிடைக்கவில்லை."
+  },
+  "empty": {
+    "noProperties": "உங்கள் கணக்கில் சொத்துக்கள் இணைக்கப்படவில்லை.",
+    "noMaintenance": "பராமரிப்பு கோரிக்கைகள் இல்லை."
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "title": "ಬಾಡಿಗೆದಾರ ಪೋರ್ಟಲ್",
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "rent": "ಬಾಡಿಗೆ ಮತ್ತು ಪಾವತಿಗಳು",
+    "maintenance": "ನಿರ್ವಹಣೆ",
+    "documents": "ದಾಖಲೆಗಳು",
+    "profile": "ಪ್ರೊಫೈಲ್",
+    "notifications": "ಅಧಿಸೂಚನೆಗಳು",
+    "addons": "ಆಡ್-ಆನ್‌ಗಳು",
+    "moveOut": "ಹೊರಹೋಗಿ"
+  },
+  "rent": {
+    "dueDate": "ಅಂತಿಮ ದಿನಾಂಕ",
+    "amount": "ಮೊತ್ತ",
+    "status": "ಸ್ಥಿತಿ",
+    "payNow": "ಈಗ ಪಾವತಿಸಿ",
+    "history": "ಪಾವತಿ ಇತಿಹಾಸ",
+    "nextDue": "ಮುಂದಿನ ಕಾಲಮಿತಿ",
+    "overdue": "ಅವಧಿ ಮೀರಿದೆ",
+    "paid": "ಪಾವತಿಸಲಾಗಿದೆ",
+    "pending": "ಬಾಕಿ"
+  },
+  "maintenance": {
+    "submit": "ವಿನಂತಿ ಸಲ್ಲಿಸಿ",
+    "title": "ಸಮಸ್ಯೆ ಶೀರ್ಷಿಕೆ",
+    "description": "ವಿವರಣೆ",
+    "priority": "ಆದ್ಯತೆ",
+    "high": "ಹೆಚ್ಚು",
+    "medium": "ಮಧ್ಯಮ",
+    "low": "ಕಡಿಮೆ",
+    "status": {
+      "pending": "ಬಾಕಿ",
+      "inProgress": "ಪ್ರಗತಿಯಲ್ಲಿ",
+      "completed": "ಪೂರ್ಣಗೊಂಡಿದೆ",
+      "cancelled": "ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ"
+    },
+    "noRequests": "ಇನ್ನೂ ನಿರ್ವಹಣೆ ವಿನಂತಿಗಳಿಲ್ಲ.",
+    "submitted": "ವಿನಂತಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ."
+  },
+  "notifications": {
+    "maintenanceUpdates": "ನಿರ್ವಹಣೆ ನವೀಕರಣಗಳು",
+    "paymentReminders": "ಪಾವತಿ ಜ್ಞಾಪನಗಳು",
+    "leaseAlerts": "ಲೀಸ್ ಎಚ್ಚರಿಕೆಗಳು",
+    "documentUploads": "ದಾಖಲೆ ಅಪ್‌ಲೋಡ್‌ಗಳು",
+    "communityUpdates": "ಸಮುದಾಯ ನವೀಕರಣಗಳು",
+    "email": "ಇಮೇಲ್",
+    "push": "ಪುಶ್ ಅಧಿಸೂಚನೆಗಳು",
+    "sms": "SMS"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "title": "मालिक पोर्टल",
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "properties": "मेरी संपत्तियाँ",
+    "statements": "विवरण",
+    "maintenance": "रखरखाव",
+    "documents": "दस्तावेज़",
+    "profile": "प्रोफाइल",
+    "quality": "गुणवत्ता",
+    "pricing": "किराया मूल्य"
+  },
+  "stats": {
+    "totalRevenue": "कुल आय",
+    "properties": "संपत्तियाँ",
+    "pendingMaintenance": "लंबित रखरखाव",
+    "occupancyRate": "अधिभोग दर"
+  },
+  "statements": {
+    "title": "मालिक विवरण",
+    "download": "डाउनलोड",
+    "period": "अवधि",
+    "noStatements": "कोई विवरण उपलब्ध नहीं।"
+  },
+  "empty": {
+    "noProperties": "आपके खाते से कोई संपत्ति नहीं जुड़ी।",
+    "noMaintenance": "कोई रखरखाव अनुरोध नहीं।"
+  }
+}

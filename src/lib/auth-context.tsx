@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { authApi, type User, ApiError } from "@/lib/api"
+import i18n from '@/lib/i18n'
 import {
   setAccessToken,
   clearAccessToken,
@@ -19,6 +20,7 @@ export interface UserData {
   phone?: string
   address?: string
   profilePicture?: string
+  preferredLocale?: string
 }
 
 interface AuthContextType {
@@ -44,6 +46,7 @@ function convertUser(apiUser: User): UserData {
     phone: apiUser.phone,
     address: apiUser.address,
     profilePicture: apiUser.profilePicture,
+    preferredLocale: apiUser.preferredLocale,
   }
 }
 
@@ -68,6 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (token) {
           const apiUser = await authApi.getMe()
           setUser(convertUser(apiUser))
+          if (apiUser.preferredLocale) {
+            i18n.changeLanguage(apiUser.preferredLocale)
+          }
         }
       } catch {
         // Session unrecoverable — stay logged out

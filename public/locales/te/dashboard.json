@@ -1,0 +1,44 @@
+{
+  "title": "మేనేజర్ డాష్‌బోర్డ్",
+  "nav": {
+    "home": "హోమ్",
+    "properties": "ఆస్తులు",
+    "leads": "లీడ్స్",
+    "screening": "అద్దెదారు స్క్రీనింగ్",
+    "owners": "యజమానులు",
+    "tenants": "అద్దెదారులు",
+    "maintenance": "నిర్వహణ",
+    "finances": "ఆర్థికం",
+    "reports": "నివేదికలు",
+    "messages": "సందేశాలు",
+    "documents": "పత్రాలు",
+    "payments": "వసూలు చేసిన అద్దె",
+    "calendar": "క్యాలెండర్",
+    "notifications": "నోటిఫికేషన్లు",
+    "profile": "ప్రొఫైల్",
+    "assistant": "AI సహాయకుడు",
+    "atRisk": "ప్రమాదంలో"
+  },
+  "stats": {
+    "totalProperties": "మొత్తం ఆస్తులు",
+    "activeLeads": "చురుకైన లీడ్స్",
+    "pendingMaintenance": "పెండింగ్ నిర్వహణ",
+    "monthlyRevenue": "నెలవారీ ఆదాయం",
+    "occupancyRate": "ఆక్యుపెన్సీ రేటు",
+    "activeOwners": "చురుకైన యజమానులు",
+    "activeTenants": "చురుకైన అద్దెదారులు"
+  },
+  "empty": {
+    "noProperties": "ఇంకా ఆస్తులు లేవు.",
+    "noLeads": "ఇంకా లీడ్స్ లేవు.",
+    "noMaintenance": "నిర్వహణ అభ్యర్థనలు లేవు.",
+    "noPayments": "మీ పోర్ట్‌ఫోలియోలో ఇంకా చెల్లింపులు లేవు."
+  },
+  "actions": {
+    "addProperty": "ఆస్తి జోడించండి",
+    "inviteOwner": "యజమానిని ఆహ్వానించండి",
+    "inviteTenant": "అద్దెదారుని ఆహ్వానించండి",
+    "viewAll": "అన్నీ చూడండి",
+    "export": "ఎగుమతి చేయండి"
+  }
+}

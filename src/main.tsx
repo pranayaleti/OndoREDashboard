@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import "@/lib/us-locale-override"
+import './lib/i18n'
 import { initBFCache } from '@/lib/bfcache'
 
 initBFCache()

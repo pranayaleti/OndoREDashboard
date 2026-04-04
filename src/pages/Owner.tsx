@@ -28,6 +28,7 @@ import OwnerNotifications from "@/components/owner/owner-notifications"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-history"
 import { ScreeningListPage } from "@/components/shared/screening-list-page"
+import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function Owner() {
   return (
@@ -63,6 +64,7 @@ export default function Owner() {
             <Route path="/calendar" element={<OwnerCalendar />} />
             <Route path="/notifications" element={<OwnerNotifications />} />
             <Route path="/profile" element={<OwnerProfile />} />
+            <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>
         </Suspense>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { Link, useParams, useNavigate } from "react-router-dom"
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { useAuth } from "@/lib/auth-context"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -57,7 +58,9 @@ const roleFlows: Record<string, { title: string; subtitle: string; steps: string
 }
 
 export default function Signup() {
+  const { t } = useTranslation('auth')
   const { token } = useParams<{ token: string }>()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { toast } = useToast()
   const { authenticateUser } = useAuth()
@@ -200,8 +203,8 @@ export default function Signup() {
     
     if (!token) {
       toast({
-        title: "Invalid invitation",
-        description: "No invitation token found.",
+        title: t('signup.error'),
+        description: t('signup.invalidToken'),
         variant: "destructive",
       })
       return
@@ -210,8 +213,8 @@ export default function Signup() {
     const isValid = validateForm()
     if (!isValid) {
       toast({
-        title: "Check the highlighted fields",
-        description: "Please resolve the validation errors before continuing.",
+        title: t('login.checkFields'),
+        description: t('login.resolveErrors'),
         variant: "destructive",
       })
       return
@@ -220,6 +223,14 @@ export default function Signup() {
     const normalizedPhone = values.phone ? values.phone.replace(/\D/g, "") : undefined
 
     try {
+      const refFromQuery = searchParams.get("ref")?.trim()
+      let refFromSession: string | undefined
+      try {
+        refFromSession = sessionStorage.getItem("ondo_referral_code")?.trim() || undefined
+      } catch {
+        refFromSession = undefined
+      }
+      const referralCode = refFromQuery || refFromSession || undefined
       const response = await signup({
         token,
         firstName: values.firstName,
@@ -228,7 +239,15 @@ export default function Signup() {
         address: values.address || undefined,
         profilePicture: values.profilePicture || undefined,
         password: values.password,
+        referralCode,
       })
+      if (referralCode) {
+        try {
+          sessionStorage.removeItem("ondo_referral_code")
+        } catch {
+          /* ignore */
+        }
+      }
 
       if (!response?.accessToken || !response?.user) {
         throw new Error("Signup succeeded but no session token was returned.")
@@ -250,7 +269,7 @@ export default function Signup() {
       )
       setIsSuccess(true)
       toast({
-        title: "Account created successfully!",
+        title: t('signup.success'),
         description: `Welcome to ${companyInfo.name}. You're now logged in.`,
       })
 
@@ -265,8 +284,8 @@ export default function Signup() {
 
     } catch (error) {
       toast({
-        title: "Signup failed",
-        description: getErrorMessage(error, "An error occurred during signup."),
+        title: t('signup.error'),
+        description: getErrorMessage(error, t('signup.unexpectedError')),
         variant: "destructive",
       })
     }
@@ -296,16 +315,16 @@ export default function Signup() {
               </div>
               
               <h1 className="text-2xl font-medium mb-4 bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-                Invalid Invitation
+                {t('signup.error')}
               </h1>
               
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                This invitation link is invalid or has expired. Please contact your administrator for a new invitation.
+                {t('signup.invalidToken')}
               </p>
               
               <Link to="/login">
                 <button className="w-full bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-600 hover:to-red-900 text-white font-medium py-4 rounded-2xl text-xl transition-all duration-200 flex items-center justify-center gap-2">
-                  Back to Login
+                  {t('forgotPassword.backToLogin')}
                   <ArrowRight className="h-5 w-5" />
                 </button>
               </Link>
@@ -340,7 +359,7 @@ export default function Signup() {
               </h1>
               
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Your account has been created successfully. You're being redirected to your dashboard...
+                {t('signup.successDesc')}
               </p>
               
               <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -476,11 +495,11 @@ export default function Signup() {
             {signingUp ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/40 border-t-transparent" />
-                Creating account...
+                {t('signup.creating')}
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Create account
+                {t('signup.submit')}
                 <ArrowRight className="h-5 w-5" />
               </span>
             )}

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
@@ -15,6 +16,7 @@ import { getApiBaseUrl } from "@/lib/api/base-url"
 const API_BASE_URL = getApiBaseUrl()
 
 export default function ForgotPassword() {
+  const { t } = useTranslation('auth')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const { toast } = useToast()
@@ -43,8 +45,8 @@ export default function ForgotPassword() {
     const isValid = validateForm()
     if (!isValid) {
       toast({
-        title: "Check your entry",
-        description: "Please enter a valid email address.",
+        title: t('forgotPassword.error'),
+        description: t('validation.emailInvalid'),
         variant: "destructive",
       })
       return
@@ -80,20 +82,20 @@ export default function ForgotPassword() {
       if (response.ok) {
         setIsSubmitted(true)
         toast({
-          title: "Reset link sent",
+          title: t('forgotPassword.checkEmail'),
           description: data.message,
         })
       } else {
         toast({
-          title: "Error",
-          description: data.message || "Failed to send reset email.",
+          title: t('forgotPassword.error'),
+          description: data.message || t('forgotPassword.unexpectedError'),
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
+        title: t('forgotPassword.error'),
+        description: error instanceof Error ? error.message : t('forgotPassword.unexpectedError'),
         variant: "destructive",
       })
     } finally {
@@ -121,28 +123,28 @@ export default function ForgotPassword() {
               </div>
               
               <h1 className="text-2xl font-medium mb-4 bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-                Check Your Email
+                {t('forgotPassword.checkEmail')}
               </h1>
               
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                We've sent password reset instructions to <strong>{values.email}</strong>
+                {t('forgotPassword.resetSent')}
               </p>
               
               <div className="space-y-3">
                 <Link to="/login" className="block">
                   <button className="w-full bg-gradient-to-r from-orange-500 to-red-800 hover:from-orange-600 hover:to-red-900 text-white font-medium py-4 rounded-2xl text-xl transition-all duration-200 flex items-center justify-center gap-2">
-                    Back to Login
+                    {t('forgotPassword.backToLogin')}
                     <ArrowRight className="h-5 w-5" />
                   </button>
                 </Link>
                 
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Didn't receive an email? Check your spam folder or{" "}
+                  {t('forgotPassword.didntReceive')}{" "}
                   <button 
                     onClick={() => setIsSubmitted(false)}
                     className="text-orange-600 hover:underline"
                   >
-                    try again
+                    {t('forgotPassword.resend')}
                   </button>
                 </p>
               </div>
@@ -162,19 +164,19 @@ export default function ForgotPassword() {
             <Logo size="xl" variant="centered" showText={true} linkTo="/" />
           </div>
           <h1 className="text-2xl font-medium bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">
-            Forgot Password
+            {t('forgotPassword.title')}
           </h1>
         </div>
 
         <Card className="border-none shadow-lg">
           <CardContent className="pt-6">
             <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-              Enter your email address and we'll send you a link to reset your password.
+              {t('forgotPassword.subtitle')}
             </p>
             
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">Company Email</Label>
+                <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">{t('forgotPassword.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -199,11 +201,11 @@ export default function ForgotPassword() {
                 {isLoading ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending...
+                    {t('forgotPassword.sending')}
                   </>
                 ) : (
                   <>
-                    Send Reset Link
+                    {t('forgotPassword.submit')}
                     <ArrowRight className="h-5 w-5" />
                   </>
                 )}
@@ -214,9 +216,8 @@ export default function ForgotPassword() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Remember your password?{" "}
             <Link to="/login" className="text-orange-600 dark:text-orange-400 hover:underline font-medium">
-              Sign in here
+              {t('forgotPassword.backToLogin')}
             </Link>
           </p>
         </div>

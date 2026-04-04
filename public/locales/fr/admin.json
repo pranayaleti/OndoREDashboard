@@ -1,0 +1,19 @@
+{
+  "title": "Portail Admin",
+  "nav": {
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "properties": "Propriétés",
+    "settings": "Paramètres",
+    "apiKeys": "Clés API",
+    "paymentConfig": "Config. paiement"
+  },
+  "users": {
+    "inviteUser": "Inviter un utilisateur",
+    "role": "Rôle",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "lastLogin": "Dernière connexion"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Panel del Administrador",
+  "nav": {
+    "home": "Inicio",
+    "properties": "Propiedades",
+    "leads": "Clientes potenciales",
+    "screening": "Selección de inquilinos",
+    "owners": "Propietarios",
+    "tenants": "Inquilinos",
+    "maintenance": "Mantenimiento",
+    "finances": "Finanzas",
+    "reports": "Informes",
+    "messages": "Mensajes",
+    "documents": "Documentos",
+    "payments": "Renta cobrada",
+    "calendar": "Calendario",
+    "notifications": "Notificaciones",
+    "profile": "Perfil",
+    "assistant": "Asistente IA",
+    "atRisk": "En riesgo"
+  },
+  "stats": {
+    "totalProperties": "Total de propiedades",
+    "activeLeads": "Clientes activos",
+    "pendingMaintenance": "Mantenimiento pendiente",
+    "monthlyRevenue": "Ingresos mensuales",
+    "occupancyRate": "Tasa de ocupación",
+    "activeOwners": "Propietarios activos",
+    "activeTenants": "Inquilinos activos"
+  },
+  "empty": {
+    "noProperties": "Sin propiedades aún.",
+    "noLeads": "Sin clientes aún.",
+    "noMaintenance": "Sin solicitudes de mantenimiento.",
+    "noPayments": "Sin pagos en su cartera aún."
+  },
+  "actions": {
+    "addProperty": "Agregar propiedad",
+    "inviteOwner": "Invitar propietario",
+    "inviteTenant": "Invitar inquilino",
+    "viewAll": "Ver todo",
+    "export": "Exportar"
+  }
+}

@@ -36,6 +36,22 @@ export { tokenManager } from "./clients/token-manager";
 export { handoffApi } from "./clients/handoff";
 export { featureApi } from "./clients/feature-api";
 export { homeownerApi } from "./clients/homeowner-api";
+export { workflowsApi } from "./clients/workflows";
+export { tasksApi } from "./clients/tasks";
+export { calendarApi } from "./clients/calendar";
+export { inboxApi } from "./clients/inbox";
+export { qualityApi } from "./clients/quality";
+export { pricingApi } from "./clients/pricing";
+export { ownerStatementsApi } from "./clients/owner-statements";
+export { paymentConfigApi } from "./clients/payment-config";
+export { referralApi } from "./clients/referrals";
+export type {
+  ReferralCode,
+  ReferralStats,
+  ReferralHistoryItem,
+  CreditBalance,
+  LeaderboardEntry,
+} from "./clients/referrals";
 export type {
   HomeownerSummary,
   PropertyMortgage,
@@ -50,6 +66,29 @@ export type {
   PropertyDocumentType,
   PropertyDocumentStatus,
 } from "./clients/homeowner-api";
+export type { WorkflowRule } from "./clients/workflows";
+export type { Task, ChecklistItem, TaskStats } from "./clients/tasks";
+export type { CalendarEvent } from "./clients/calendar";
+export type {
+  InboxSummary,
+  InternalNote,
+  SuggestedReply,
+  KnowledgeEntry,
+} from "./clients/inbox";
+export type { QualityScore, QualityInsights } from "./clients/quality";
+export type {
+  SuggestedRent,
+  VacancyCost,
+  RenewalRecommendation,
+} from "./clients/pricing";
+export type { OwnerStatement } from "./clients/owner-statements";
+export type { PaymentMethodConfig } from "./clients/payment-config";
+export type {
+  AutoReplyConfig,
+  SandboxResult,
+  TranslationResult,
+  ThreadTranslation,
+} from "./clients/inbox";
 
 // Re-export types from @ondo/types for convenience
 export type {

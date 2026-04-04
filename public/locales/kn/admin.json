@@ -1,0 +1,19 @@
+{
+  "title": "ಅಡ್ಮಿನ್ ಪೋರ್ಟಲ್",
+  "nav": {
+    "overview": "ಅವಲೋಕನ",
+    "users": "ಬಳಕೆದಾರರು",
+    "properties": "ಆಸ್ತಿಗಳು",
+    "settings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "apiKeys": "API ಕೀಗಳು",
+    "paymentConfig": "ಪಾವತಿ ಕಾನ್ಫಿಗ್"
+  },
+  "users": {
+    "inviteUser": "ಬಳಕೆದಾರರನ್ನು ಆಹ್ವಾನಿಸಿ",
+    "role": "ಪಾತ್ರ",
+    "status": "ಸ್ಥಿತಿ",
+    "active": "ಸಕ್ರಿಯ",
+    "inactive": "ನಿಷ್ಕ್ರಿಯ",
+    "lastLogin": "ಕೊನೆಯ ಲಾಗಿನ್"
+  }
+}
