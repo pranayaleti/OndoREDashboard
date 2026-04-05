@@ -77,8 +77,8 @@ export function UtilityBillingManager() {
   const loadData = async () => {
     try {
       const [acctRes, billRes] = await Promise.allSettled([
-        (featureApi as any).utilities?.listAccounts?.(),
-        (featureApi as any).utilities?.listBills?.(),
+        featureApi.utilities?.listAccounts?.(),
+        featureApi.utilities?.listBills?.(),
       ])
       if (acctRes.status === "fulfilled" && Array.isArray(acctRes.value)) setAccounts(acctRes.value as UtilityAccount[])
       if (billRes.status === "fulfilled" && Array.isArray(billRes.value)) setBills(billRes.value as UtilityBill[])
@@ -92,7 +92,7 @@ export function UtilityBillingManager() {
     }
     const created: UtilityAccount = { id: Date.now().toString(), ...newAccount } as UtilityAccount
     try {
-      await (featureApi as any).utilities?.addAccount?.(newAccount)
+      await featureApi.utilities?.addAccount?.(newAccount)
     } catch { /* noop */ }
     setAccounts((prev) => [...prev, created])
     setNewAccount({ type: "electricity", provider: "", accountNumber: "" })
@@ -103,7 +103,7 @@ export function UtilityBillingManager() {
   const allocateBill = async (billId: string) => {
     setAllocatingId(billId)
     try {
-      await (featureApi as any).utilities?.allocateBill?.(billId)
+      await featureApi.utilities?.allocateBill?.(billId)
     } catch { /* noop */ }
     setTimeout(() => {
       setBills((prev) => prev.map((b) =>

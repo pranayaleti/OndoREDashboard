@@ -74,11 +74,11 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
         confirmPassword: "",
       })
       onOpenChange(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error changing password:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to update password.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to update password.",
         variant: "destructive",
       })
     } finally {
@@ -101,6 +101,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
             <Input
               id="currentPassword"
               type="password"
+              autoComplete="current-password"
               placeholder="Enter your current password"
               value={passwordData.currentPassword}
               onChange={(e) =>
@@ -114,6 +115,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
             <Input
               id="newPassword"
               type="password"
+              autoComplete="new-password"
               placeholder="Enter your new password"
               value={passwordData.newPassword}
               onChange={(e) =>
@@ -127,6 +129,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
             <Input
               id="confirmPassword"
               type="password"
+              autoComplete="new-password"
               placeholder="Confirm your new password"
               value={passwordData.confirmPassword}
               onChange={(e) =>

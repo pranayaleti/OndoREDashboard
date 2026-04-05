@@ -908,7 +908,7 @@ export const featureApi = {
         `/communication/threads${params}`,
         undefined,
         headers
-      ).then((r) => (r as any).data || []);
+      ).then((r) => r.data || []);
     },
 
     getThread(threadId: string): Promise<MessageThread> {
@@ -918,7 +918,7 @@ export const featureApi = {
         `/communication/threads/${threadId}`,
         undefined,
         headers
-      ).then((r) => (r as any).data);
+      ).then((r) => r.data);
     },
 
     createThread(payload: {
@@ -935,7 +935,7 @@ export const featureApi = {
         '/communication/threads',
         payload,
         headers
-      ).then((r) => (r as any).data);
+      ).then((r) => r.data);
     },
 
     updateThread(
@@ -953,7 +953,7 @@ export const featureApi = {
         `/communication/threads/${threadId}`,
         updates,
         headers
-      ).then((r) => (r as any).data);
+      ).then((r) => r.data);
     },
 
     listMessages(threadId: string, page = 1): Promise<MessageRecord[]> {
@@ -963,7 +963,7 @@ export const featureApi = {
         `/communication/threads/${threadId}/messages?page=${page}`,
         undefined,
         headers
-      ).then((r) => (r as any).data || []);
+      ).then((r) => r.data || []);
     },
 
     sendMessage(payload: {
@@ -977,7 +977,7 @@ export const featureApi = {
         `/communication/threads/${payload.threadId}/messages`,
         { body: payload.body, templateId: payload.templateId },
         headers
-      ).then((r) => (r as any).data);
+      ).then((r) => r.data);
     },
 
     markRead(threadId: string): Promise<void> {
@@ -1007,7 +1007,7 @@ export const featureApi = {
         '/communication/templates',
         undefined,
         headers
-      ).then((r) => (r as any).data || []);
+      ).then((r) => r.data || []);
     },
 
     createTemplate(payload: {
@@ -1022,7 +1022,7 @@ export const featureApi = {
         '/communication/templates',
         payload,
         headers
-      ).then((r) => (r as any).data);
+      ).then((r) => r.data);
     },
 
     updatePreferences(
@@ -2517,6 +2517,17 @@ export const featureApi = {
       return apiRequest<unknown>('GET', `/properties/${propertyId}/inventory/low-stock`, undefined, headers)
         .then((r) => unwrapDataArray(r));
     },
+    /** Alias used by inventory-manager component (no propertyId filter). */
+    list(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/inventory', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    add(item: any): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', '/inventory', item, headers);
+    },
   },
 
   // ── AI Leasing Agent ──────────────────────────────────────────────────────
@@ -2583,6 +2594,20 @@ export const featureApi = {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('POST', `/compliance/checks/${checkId}/resolve`, data, headers);
     },
+    listProperties(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/compliance/properties', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    listIssues(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/compliance/issues', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    resolveIssue(issueId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/compliance/issues/${issueId}/resolve`, {}, headers);
+    },
   },
 
   // ── ESG / Sustainability ──────────────────────────────────────────────────
@@ -2591,6 +2616,15 @@ export const featureApi = {
     getPropertyEsg(propertyId: string): Promise<unknown> {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('GET', `/properties/${propertyId}/esg`, undefined, headers);
+    },
+    getSummary(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/esg/summary', undefined, headers);
+    },
+    listProperties(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/esg/properties', undefined, headers)
+        .then((r) => unwrapDataArray(r));
     },
     recordMetrics(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
       const headers = getAuthHeaders();
@@ -2807,6 +2841,46 @@ export const featureApi = {
   },
 
   leads: leadApi,
+
+  // ─── Stub namespaces for feature-flagged APIs not yet wired to backend ───
+  // These stubs let components use optional chaining (featureApi.tax?.list1099s?.())
+  // without casting to `any`. Replace stubs with real implementations as backend
+  // endpoints become available.
+  tax: undefined as undefined | {
+    list1099s: (year: number) => Promise<unknown[]>;
+    generate1099s: (year: number) => Promise<void>;
+    file1099: (formId: string) => Promise<void>;
+  },
+  trust: undefined as undefined | {
+    listAccounts: () => Promise<unknown[]>;
+    listTransactions: () => Promise<unknown[]>;
+    listDistributions: () => Promise<unknown[]>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recordTransaction: (txn: any) => Promise<void>;
+  },
+  utilities: undefined as undefined | {
+    listAccounts: () => Promise<unknown[]>;
+    listBills: () => Promise<unknown[]>;
+    addAccount: (account: Record<string, unknown>) => Promise<void>;
+    allocateBill: (billId: string) => Promise<void>;
+  },
+  pets: undefined as undefined | {
+    getPolicy: () => Promise<unknown>;
+    list: () => Promise<unknown[]>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updatePolicy: (draft: any) => Promise<void>;
+  },
+  investor: undefined as undefined | {
+    listDeals: () => Promise<unknown[]>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createDeal: (deal: any) => Promise<void>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addInvestor: (inv: any) => Promise<void>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createCapitalCall: (call: any) => Promise<void>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createDistribution: (dist: any) => Promise<void>;
+  },
 };
 
 // Suppress unused import warning for rawAuthRequest if not called directly

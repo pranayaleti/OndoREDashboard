@@ -41,6 +41,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    modulePreload: {
+      resolveDependencies: (_filename, deps, context) => {
+        if (context.hostType !== 'html') return deps
+
+        return deps.filter(
+          (dep) => !dep.includes('charts-') && !dep.includes('style-vendor-')
+        )
+      },
+    },
     // Preserve unchanged files for faster incremental builds
     emptyOutDir: false,
     rollupOptions: {
@@ -50,10 +59,32 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['lucide-react'],
-          'charts': ['recharts'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/react-router-dom/')
+          ) {
+            return 'react-vendor'
+          }
+
+          if (id.includes('/recharts/')) {
+            return 'charts'
+          }
+
+          if (
+            id.includes('/class-variance-authority/') ||
+            id.includes('/clsx/') ||
+            id.includes('/tailwind-merge/')
+          ) {
+            return 'style-vendor'
+          }
+
+          if (id.includes('/lucide-react/')) {
+            return 'ui-vendor'
+          }
         },
       },
     },

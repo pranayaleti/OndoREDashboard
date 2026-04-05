@@ -23,23 +23,32 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useToast } from "@/hooks/use-toast"
 
+interface MaintenanceRecord {
+  id: string
+  date: string
+  type: string
+  description: string
+  cost: number
+  status: string
+}
+
 interface PropertyMaintenanceProps {
-  property: any
+  property: { maintenanceHistory?: MaintenanceRecord[] }
 }
 
 export function PropertyMaintenance({ property }: PropertyMaintenanceProps) {
-  const [maintenanceHistory, setMaintenanceHistory] = useState(property.maintenanceHistory || [])
+  const [maintenanceHistory, setMaintenanceHistory] = useState<MaintenanceRecord[]>(property.maintenanceHistory || [])
   const [searchTerm, setSearchTerm] = useState("")
   const { toast } = useToast()
 
   // Filter maintenance history based on search term
   const filteredHistory = maintenanceHistory.filter(
-    (item: any) =>
+    (item) =>
       item.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleAddMaintenance = (data: any) => {
+  const handleAddMaintenance = (data: { date: string; type: string; description: string; cost: string; status: string }) => {
     // In a real app, this would call an API to add the maintenance record
     const newRecord = {
       id: `maint${maintenanceHistory.length + 1}`,
@@ -59,7 +68,7 @@ export function PropertyMaintenance({ property }: PropertyMaintenanceProps) {
   }
 
   // Calculate total maintenance costs
-  const totalCost = maintenanceHistory.reduce((sum: number, item: any) => sum + item.cost, 0)
+  const totalCost = maintenanceHistory.reduce((sum: number, item: MaintenanceRecord) => sum + item.cost, 0)
 
   return (
     <div className="space-y-6">
@@ -152,7 +161,7 @@ export function PropertyMaintenance({ property }: PropertyMaintenanceProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredHistory.map((record: any) => (
+                {filteredHistory.map((record: MaintenanceRecord) => (
                   <TableRow key={record.id}>
                     <TableCell>
                       <div className="flex items-center">
@@ -192,7 +201,7 @@ export function PropertyMaintenance({ property }: PropertyMaintenanceProps) {
   )
 }
 
-function AddMaintenanceDialog({ onAddMaintenance }: { onAddMaintenance: (data: any) => void }) {
+function AddMaintenanceDialog({ onAddMaintenance }: { onAddMaintenance: (data: { date: string; type: string; description: string; cost: string; status: string }) => void }) {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],

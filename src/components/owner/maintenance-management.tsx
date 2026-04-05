@@ -151,7 +151,7 @@ export function OwnerMaintenanceManagement() {
       const allProperties = res.properties
       const ownerProperties = allProperties.filter((p: { ownerId: string }) => p.ownerId === user.id)
       setProperties(ownerProperties)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching properties:", err)
     }
   }

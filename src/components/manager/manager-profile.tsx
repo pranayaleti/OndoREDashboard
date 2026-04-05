@@ -313,11 +313,11 @@ export default function ManagerProfile() {
         description: "Your profile picture has been updated successfully.",
         duration: 3000,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating profile picture:', error)
       toast({
         title: "Error",
-        description: error.message || "Failed to update profile picture. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to update profile picture. Please try again.",
         variant: "destructive",
       })
     } finally {

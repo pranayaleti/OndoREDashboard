@@ -90,8 +90,8 @@ export function ComplianceDashboard() {
   const loadData = async () => {
     try {
       const [propRes, issueRes] = await Promise.allSettled([
-        (featureApi as any).compliance?.listProperties?.(),
-        (featureApi as any).compliance?.listIssues?.(),
+        featureApi.compliance?.listProperties?.(),
+        featureApi.compliance?.listIssues?.(),
       ])
       if (propRes.status === "fulfilled" && Array.isArray(propRes.value)) setProperties(propRes.value as PropertyCompliance[])
       if (issueRes.status === "fulfilled" && Array.isArray(issueRes.value)) setIssues(issueRes.value as ComplianceIssue[])
@@ -100,7 +100,7 @@ export function ComplianceDashboard() {
 
   const runCheck = async (propertyId: string) => {
     setCheckingId(propertyId)
-    try { await (featureApi as any).compliance?.runCheck?.(propertyId) } catch { /* noop */ }
+    try { await featureApi.compliance?.runCheck?.(propertyId) } catch { /* noop */ }
     setTimeout(() => {
       setProperties((prev) => prev.map((p) =>
         p.id === propertyId
@@ -114,7 +114,7 @@ export function ComplianceDashboard() {
 
   const resolveIssue = async (issueId: string) => {
     setResolvingId(issueId)
-    try { await (featureApi as any).compliance?.resolveIssue?.(issueId) } catch { /* noop */ }
+    try { await featureApi.compliance?.resolveIssue?.(issueId) } catch { /* noop */ }
     setTimeout(() => {
       setIssues((prev) => prev.map((i) => i.id === issueId ? { ...i, resolved: true } : i))
       setResolvingId(null)

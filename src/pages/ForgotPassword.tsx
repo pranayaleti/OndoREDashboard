@@ -180,6 +180,7 @@ export default function ForgotPassword() {
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="your.email@company.com"
                   value={values.email}
                   maxLength={120}

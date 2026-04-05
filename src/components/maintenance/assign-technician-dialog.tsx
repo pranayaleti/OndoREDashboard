@@ -122,11 +122,11 @@ export function AssignTechnicianDialog({
       setCostMin("")
       setCostMax("")
       setNotes("")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error assigning technician:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to assign technician. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to assign technician. Please try again.",
         variant: "destructive",
       })
     } finally {

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Wrench, Building, Clock, CheckCircle, Loader2, AlertCircle } from "lucide-react"
 import { maintenanceApi } from "@/lib/api"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function MaintenanceTickets() {
   const [tickets, setTickets] = useState<Array<{
@@ -104,10 +105,11 @@ export default function MaintenanceTickets() {
           )}
 
           {!loading && !error && tickets.length === 0 && (
-            <div className="py-12 text-center text-gray-500">
-              <Wrench className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No tickets assigned to you.</p>
-            </div>
+            <EmptyState
+              icon={<Wrench className="h-12 w-12" />}
+              title="All clear!"
+              description="No maintenance tickets are assigned to you right now. New requests will show up here automatically."
+            />
           )}
 
           {!loading && !error && tickets.length > 0 && (

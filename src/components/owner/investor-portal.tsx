@@ -128,7 +128,7 @@ export function InvestorPortal() {
   const loadData = async () => {
     try {
       const [dealsRes] = await Promise.allSettled([
-        (featureApi as any).investor?.listDeals?.(),
+        featureApi.investor?.listDeals?.(),
       ])
       if (dealsRes.status === "fulfilled" && Array.isArray(dealsRes.value)) setDeals(dealsRes.value as InvestmentDeal[])
     } catch { /* use mock */ }
@@ -148,7 +148,7 @@ export function InvestorPortal() {
       status: "open",
       investorCount: 0,
     }
-    try { await (featureApi as any).investor?.createDeal?.(deal) } catch { /* noop */ }
+    try { await featureApi.investor?.createDeal?.(deal) } catch { /* noop */ }
     setDeals((prev) => [...prev, deal])
     setNewDeal({ propertyName: "", dealType: "equity", totalRaise: "" })
     setDealOpen(false)
@@ -166,7 +166,7 @@ export function InvestorPortal() {
       funded: 0,
       joinedDate: new Date().toISOString().slice(0, 10),
     }
-    try { await (featureApi as any).investor?.addInvestor?.(inv) } catch { /* noop */ }
+    try { await featureApi.investor?.addInvestor?.(inv) } catch { /* noop */ }
     setInvestors((prev) => [...prev, inv])
     setNewInvestor({ name: "", email: "", commitment: "" })
     setInvestorOpen(false)
@@ -182,7 +182,7 @@ export function InvestorPortal() {
       dueDate: newCall.dueDate,
       status: "pending",
     }
-    try { await (featureApi as any).investor?.createCapitalCall?.(call) } catch { /* noop */ }
+    try { await featureApi.investor?.createCapitalCall?.(call) } catch { /* noop */ }
     setCalls((prev) => [...prev, call])
     setNewCall({ amount: "", dueDate: "" })
     setCallOpen(false)
@@ -198,7 +198,7 @@ export function InvestorPortal() {
       date: new Date().toISOString().slice(0, 10),
       type: newDist.type as Distribution["type"],
     }
-    try { await (featureApi as any).investor?.createDistribution?.(dist) } catch { /* noop */ }
+    try { await featureApi.investor?.createDistribution?.(dist) } catch { /* noop */ }
     setDistributions((prev) => [...prev, dist])
     setNewDist({ amount: "", type: "profit" })
     setDistOpen(false)

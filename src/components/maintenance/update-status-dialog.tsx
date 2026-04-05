@@ -64,11 +64,11 @@ export function UpdateStatusDialog({
 
       onOpenChange(false)
       setNotes("")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating status:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to update status. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to update status. Please try again.",
         variant: "destructive",
       })
     } finally {

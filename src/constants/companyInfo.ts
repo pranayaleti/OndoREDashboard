@@ -78,9 +78,9 @@ export const companyInfo = {
 
   // Logo path and dimensions
   logo: {
-    path: "logo.png", // Use with import.meta.env.BASE_URL when needed
-    width: 200,
-    height: 60,
+    path: "favicon.svg", // Use with import.meta.env.BASE_URL when needed
+    width: 64,
+    height: 64,
   },
 
   // OG image dimensions
@@ -222,4 +222,3 @@ export function getUserTimezone(): DetectedTimezone {
     };
   }
 }
-

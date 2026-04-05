@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
@@ -15,10 +15,11 @@ import AdminDocuments from "@/components/admin/admin-documents"
 import AdminMessages from "@/components/admin/admin-messages"
 import AdminCalendar from "@/components/admin/admin-calendar"
 import AdminNotifications from "@/components/admin/admin-notifications"
-import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
 import { ReferralProgram } from "@/components/shared/referral-program"
+
+const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 
 export default function Admin() {
   return (
@@ -49,4 +50,3 @@ export default function Admin() {
     </PortalSidebar>
   )
 }
-

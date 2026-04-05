@@ -70,7 +70,7 @@ export default function ManagerMaintenance() {
       setError(null)
       const requests = await maintenanceApi.getManagerMaintenanceRequests()
       setMaintenanceRequests(requests)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching maintenance requests:", err)
       setError("Failed to load maintenance requests")
       toast({
@@ -87,7 +87,7 @@ export default function ManagerMaintenance() {
     try {
       const res = await propertyApi.getProperties()
       setProperties(res.properties)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching properties:", err)
     }
   }
@@ -172,11 +172,11 @@ export default function ManagerMaintenance() {
       setIsUpdateDialogOpen(false)
       setUpdateData({ status: "", assignedTo: "", message: "" })
       fetchMaintenanceRequests()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating maintenance request:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to update maintenance request.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to update maintenance request.",
         variant: "destructive",
       })
     }
@@ -200,11 +200,11 @@ export default function ManagerMaintenance() {
       setIsAssignDialogOpen(false)
       setUpdateData({ status: "", assignedTo: "", message: "" })
       fetchMaintenanceRequests()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error assigning maintenance request:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to assign maintenance request.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to assign maintenance request.",
         variant: "destructive",
       })
     }
@@ -223,11 +223,11 @@ export default function ManagerMaintenance() {
       })
 
       fetchMaintenanceRequests()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error completing maintenance request:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to complete maintenance request.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to complete maintenance request.",
         variant: "destructive",
       })
     }
@@ -658,7 +658,7 @@ export default function ManagerMaintenance() {
 
             fetchMaintenanceRequests()
             setIsNewRequestDialogOpen(false)
-          } catch (error: any) {
+          } catch (error: unknown) {
             console.error("Error creating maintenance request:", error)
             throw error // Re-throw to let dialog handle the error display
           }

@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
@@ -22,13 +22,14 @@ import OwnerOccupancy from "@/components/owner/owner-occupancy"
 import OwnerPropertyDetail from "@/components/owner/owner-property-detail"
 import { AddPropertyForm } from "@/components/owner/add-property-form"
 import { OwnerMaintenanceManagement } from "@/components/owner/maintenance-management"
-import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import OwnerCalendar from "@/components/owner/owner-calendar"
 import OwnerNotifications from "@/components/owner/owner-notifications"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-history"
 import { ScreeningListPage } from "@/components/shared/screening-list-page"
 import { ReferralProgram } from "@/components/shared/referral-program"
+
+const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 
 export default function Owner() {
   return (

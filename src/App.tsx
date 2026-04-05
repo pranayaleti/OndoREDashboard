@@ -60,7 +60,7 @@ function App() {
   useSessionExpiry()
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <AuthProvider>
         <div className="min-h-screen flex flex-col">
           <a

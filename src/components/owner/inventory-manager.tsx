@@ -60,7 +60,7 @@ export function InventoryManager() {
 
   const loadData = async () => {
     try {
-      const res = await (featureApi as any).inventory?.list?.()
+      const res = await featureApi.inventory?.list?.()
       if (Array.isArray(res)) setItems(res as InventoryItem[])
     } catch { /* use mock */ }
   }
@@ -80,7 +80,7 @@ export function InventoryManager() {
       unitCost: Math.round(parseFloat(unitCost || "0") * 100),
       location,
     }
-    try { await (featureApi as any).inventory?.add?.(item) } catch { /* noop */ }
+    try { await featureApi.inventory?.add?.(item) } catch { /* noop */ }
     setItems((prev) => [...prev, item])
     setNewItem({ name: "", sku: "", quantity: "", minQuantity: "", unitCost: "", location: "" })
     setAddOpen(false)
@@ -100,7 +100,7 @@ export function InventoryManager() {
       toast({ title: "Insufficient quantity", variant: "destructive" })
       return
     }
-    try { await (featureApi as any).inventory?.recordUsage?.(selectedItem.id, qty, usageForm.maintenanceRef) } catch { /* noop */ }
+    try { await featureApi.inventory?.recordUsage?.(selectedItem.id, qty, usageForm.maintenanceRef) } catch { /* noop */ }
     setItems((prev) => prev.map((i) => i.id === selectedItem.id ? { ...i, quantity: i.quantity - qty } : i))
     setUsageOpen(false)
     toast({ title: `Used ${qty} × ${selectedItem.name}` })
@@ -115,7 +115,7 @@ export function InventoryManager() {
   const restock = async () => {
     if (!selectedItem || !restockQty) return
     const qty = Number(restockQty)
-    try { await (featureApi as any).inventory?.restock?.(selectedItem.id, qty) } catch { /* noop */ }
+    try { await featureApi.inventory?.restock?.(selectedItem.id, qty) } catch { /* noop */ }
     setItems((prev) => prev.map((i) => i.id === selectedItem.id ? { ...i, quantity: i.quantity + qty } : i))
     setRestockOpen(false)
     toast({ title: `Restocked ${qty} × ${selectedItem.name}` })

@@ -385,7 +385,7 @@ function SidebarLayout({
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup
-                value={theme ?? "light"}
+                value={theme ?? "system"}
                 onValueChange={(value) => setTheme(value)}
               >
                 <DropdownMenuRadioItem value="light" className="cursor-pointer gap-2">

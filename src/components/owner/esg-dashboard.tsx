@@ -94,8 +94,8 @@ export function ESGDashboard() {
   const loadData = async () => {
     try {
       const [sumRes, propRes] = await Promise.allSettled([
-        (featureApi as any).esg?.getSummary?.(),
-        (featureApi as any).esg?.listProperties?.(),
+        featureApi.esg?.getSummary?.(),
+        featureApi.esg?.listProperties?.(),
       ])
       if (sumRes.status === "fulfilled" && sumRes.value) setSummary(sumRes.value as ESGSummary)
       if (propRes.status === "fulfilled" && Array.isArray(propRes.value)) setProperties(propRes.value as PropertyESG[])
@@ -107,7 +107,7 @@ export function ESGDashboard() {
       toast({ title: "Select a property", variant: "destructive" })
       return
     }
-    try { await (featureApi as any).esg?.recordMetrics?.(form) } catch { /* noop */ }
+    try { await featureApi.esg?.recordMetrics?.(form.propertyId, form as unknown as Record<string, unknown>) } catch { /* noop */ }
     setRecordOpen(false)
     toast({ title: "ESG metrics recorded" })
     setForm({ propertyId: "", energyKwh: "", waterGallons: "", wasteRecycledLbs: "", solarKwh: "" })

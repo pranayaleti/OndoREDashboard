@@ -53,7 +53,7 @@ export function TwoFactorAuthDialog({
           const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp" })
           if (error) {
             // Note: If session is missing or persistSession is false, this throws.
-            console.error("Supabase MFA Enroll Error:", error.message)
+            console.error("Supabase MFA Enroll Error:", error instanceof Error ? error.message : String(error))
             throw error
           }
           
@@ -61,7 +61,7 @@ export function TwoFactorAuthDialog({
           if (data.totp?.qr_code) {
              setQrCode(data.totp.qr_code)
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error("MFA Initialization failed:", error)
           // Fallback UI or silent error if just mocking for now
         } finally {
@@ -110,10 +110,10 @@ export function TwoFactorAuthDialog({
         title: "Code Sent",
         description: "We've sent a verification code to your phone.",
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error?.message || "Failed to send code. (Check Supabase config)",
+        description: error instanceof Error ? error.message : "Failed to send code. (Check Supabase config)",
         variant: "destructive",
       })
     } finally {
@@ -145,10 +145,10 @@ export function TwoFactorAuthDialog({
           description: "Your account is no longer protected by two-factor authentication.",
         })
         onOpenChange(false)
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           title: "Error",
-          description: error.message || "Failed to disable two-factor authentication.",
+          description: error instanceof Error ? error.message : String(error) || "Failed to disable two-factor authentication.",
           variant: "destructive",
         })
       } finally {
@@ -208,10 +208,10 @@ export function TwoFactorAuthDialog({
         setVerificationCode("")
         setIsCodeSent(false)
         onOpenChange(false)
-      } catch (error: any) {
+      } catch (error: unknown) {
         toast({
           title: "Error",
-          description: error.message || "Failed to verify access code.",
+          description: error instanceof Error ? error.message : String(error) || "Failed to verify access code.",
           variant: "destructive",
         })
       } finally {

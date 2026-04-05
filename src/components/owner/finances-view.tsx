@@ -531,11 +531,11 @@ export function FinancesView() {
                 <TableBody>
                   {filteredTransactions.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8">
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <Filter className="h-8 w-8 mb-2" />
-                          <p>No transactions found</p>
-                          <p className="text-sm">Try adjusting your filters</p>
+                      <TableCell colSpan={6} className="text-center py-10">
+                        <div className="flex flex-col items-center justify-center text-muted-foreground/60">
+                          <Filter className="h-10 w-10 mb-3" />
+                          <p className="text-base font-medium text-foreground">No transactions found</p>
+                          <p className="text-sm mt-1">Try adjusting your date range or filters to see results.</p>
                         </div>
                       </TableCell>
                     </TableRow>

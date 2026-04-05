@@ -177,6 +177,7 @@ export default function LoginPage() {
             <Input
               id="email"
               type="email"
+              autoComplete="email"
               placeholder={t('login.emailPlaceholder')}
               value={values.email}
               maxLength={120}

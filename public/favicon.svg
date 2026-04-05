@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ondo Real Estate">
+  <defs>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6921e"/>
+      <stop offset="100%" stop-color="#d96619"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#ring)"/>
+  <circle cx="32" cy="32" r="22" fill="#ffffff"/>
+  <circle cx="32" cy="24" r="7" fill="url(#ring)"/>
+  <path fill="url(#ring)" d="M21 32c0 6.6 4.9 12 11 12s11-5.4 11-12v-1.5c-2.5 2.1-6.3 3.5-11 3.5s-8.5-1.4-11-3.5V32z"/>
+</svg>

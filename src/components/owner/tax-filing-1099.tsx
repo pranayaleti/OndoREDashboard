@@ -78,7 +78,7 @@ export function TaxFiling1099() {
 
   const loadForms = async (y: number) => {
     try {
-      const res = await (featureApi as any).tax?.list1099s?.(y)
+      const res = await featureApi.tax?.list1099s?.(y)
       if (Array.isArray(res)) setForms(res as Form1099[])
     } catch { /* use mock */ }
   }
@@ -86,7 +86,7 @@ export function TaxFiling1099() {
   const generate = async () => {
     setGenerating(true)
     try {
-      await (featureApi as any).tax?.generate1099s?.(Number(year))
+      await featureApi.tax?.generate1099s?.(Number(year))
     } catch { /* noop */ }
     setTimeout(() => {
       setGenerating(false)
@@ -102,7 +102,7 @@ export function TaxFiling1099() {
   const fileForm = async (formId: string) => {
     setFilingId(formId)
     try {
-      await (featureApi as any).tax?.file1099?.(formId)
+      await featureApi.tax?.file1099?.(formId)
     } catch { /* noop */ }
     setTimeout(() => {
       setForms((prev) => prev.map((f) => f.id === formId ? { ...f, status: "filed" } : f))

@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
@@ -16,10 +16,11 @@ import ManagerDocuments from "@/components/manager/manager-documents"
 import ManagerMessages from "@/components/manager/manager-messages"
 import ManagerCalendar from "@/components/manager/manager-calendar"
 import ManagerNotifications from "@/components/manager/manager-notifications"
-import ManagerAtRisk from "@/components/manager/manager-at-risk"
 import ManagerAssistant from "@/components/manager/manager-assistant"
 import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-history"
 import { ReferralProgram } from "@/components/shared/referral-program"
+
+const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 
 export default function Manager() {
   return (
@@ -63,4 +64,3 @@ export default function Manager() {
     </PortalSidebar>
   )
 }
-

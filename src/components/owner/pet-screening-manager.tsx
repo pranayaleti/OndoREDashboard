@@ -78,8 +78,8 @@ export function PetScreeningManager() {
   const loadData = async () => {
     try {
       const [policyRes, petsRes] = await Promise.allSettled([
-        (featureApi as any).pets?.getPolicy?.(),
-        (featureApi as any).pets?.list?.(),
+        featureApi.pets?.getPolicy?.(),
+        featureApi.pets?.list?.(),
       ])
       if (policyRes.status === "fulfilled" && policyRes.value) setPolicy(policyRes.value as PetPolicy)
       if (petsRes.status === "fulfilled" && Array.isArray(petsRes.value)) setPets(petsRes.value as TenantPet[])
@@ -95,7 +95,7 @@ export function PetScreeningManager() {
 
   const savePolicy = async () => {
     try {
-      await (featureApi as any).pets?.updatePolicy?.(draft)
+      await featureApi.pets?.updatePolicy?.(draft)
       setPolicy({ ...draft })
       setEditOpen(false)
       toast({ title: "Pet policy updated" })

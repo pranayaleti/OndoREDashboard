@@ -117,10 +117,10 @@ export function AddTenantDialog({ trigger, buttonClassName }: AddTenantDialogPro
       // Reset form and close dialog
       setFormData({ emails: [""], role: "tenant" })
       setIsOpen(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Invitation Failed",
-        description: error.message || "Failed to send invitations. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to send invitations. Please try again.",
         variant: "destructive",
       })
     }

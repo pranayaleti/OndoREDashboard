@@ -126,11 +126,11 @@ export default function ManagerLeads() {
         duration: 3000,
         description: `Invitation sent to ${lead.tenantEmail}.`,
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error sending invitation:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to send invitation.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to send invitation.",
         variant: "destructive",
       })
     }

@@ -93,6 +93,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("auth:session-expired", handleSessionExpired)
   }, [handleSessionExpired])
 
+  // Proactive token refresh: silently refresh the access token every 12 minutes
+  // (tokens typically expire in 15 min) to prevent mid-session expiration.
+  useEffect(() => {
+    if (!user) return // Only refresh when logged in
+
+    const REFRESH_INTERVAL = 12 * 60 * 1000 // 12 minutes
+    const interval = setInterval(async () => {
+      try {
+        const token = await refreshAccessToken()
+        if (!token) {
+          // Refresh failed — session likely expired
+          handleSessionExpired()
+        }
+      } catch {
+        // Silent failure — the next API call will trigger session-expired if needed
+      }
+    }, REFRESH_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [user, handleSessionExpired])
+
   const logout = useCallback(() => {
     // Fire-and-forget: call the logout endpoint to revoke the refresh token
     // family on the backend. We don't await — UX should feel instant.

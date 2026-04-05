@@ -155,11 +155,11 @@ export function ScheduleServiceDialog({
 
       onOpenChange(false)
       setNotes("")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error scheduling service:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to schedule service. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to schedule service. Please try again.",
         variant: "destructive",
       })
     } finally {

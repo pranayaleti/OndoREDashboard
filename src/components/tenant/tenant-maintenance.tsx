@@ -37,7 +37,7 @@ function MaintenanceList() {
       setError(null)
       const requests = await maintenanceApi.getTenantMaintenanceRequests()
       setMaintenanceRequests(requests)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching maintenance requests:", err)
       setError("Failed to load maintenance requests")
       toast({
@@ -367,7 +367,7 @@ function NewMaintenanceRequest() {
         description: "Your maintenance request has been submitted successfully.",
       })
       navigate("/tenant/maintenance/")
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting maintenance request:", error)
       throw error // Re-throw to let dialog handle the error display
     }

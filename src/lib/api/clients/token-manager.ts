@@ -107,6 +107,13 @@ export async function refreshAccessToken(): Promise<string | null> {
       });
 
       if (!res.ok) {
+        if (res.status === 404) {
+          console.warn(
+            `[token-manager] Auth refresh endpoint returned 404. ` +
+            `Verify VITE_API_BASE_URL (${API_BASE_URL}) points to a deployed backend ` +
+            `and the /auth/refresh route is available.`
+          );
+        }
         clearAccessToken();
         return null;
       }

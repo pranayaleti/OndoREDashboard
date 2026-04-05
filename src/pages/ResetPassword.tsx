@@ -321,6 +321,7 @@ export default function ResetPassword() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
                     placeholder="Enter new password"
                     value={values.password}
                     maxLength={128}
@@ -349,6 +350,7 @@ export default function ResetPassword() {
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
                     placeholder="Confirm new password"
                     value={values.confirmPassword}
                     maxLength={128}

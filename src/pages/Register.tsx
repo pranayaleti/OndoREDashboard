@@ -170,10 +170,10 @@ export default function Register() {
         description: "We’ll configure your workspace and send next steps shortly.",
       })
       resetForm()
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Unable to submit",
-        description: error?.message || "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
         variant: "destructive",
       })
     }
@@ -213,6 +213,7 @@ export default function Register() {
             <Label htmlFor="firstName">First name *</Label>
             <Input
               id="firstName"
+              autoComplete="given-name"
               value={values.firstName}
               maxLength={50}
               onChange={handleChange("firstName")}
@@ -225,6 +226,7 @@ export default function Register() {
             <Label htmlFor="lastName">Last name *</Label>
             <Input
               id="lastName"
+              autoComplete="family-name"
               value={values.lastName}
               maxLength={50}
               onChange={handleChange("lastName")}
@@ -239,6 +241,7 @@ export default function Register() {
           <Input
             id="email"
             type="email"
+            autoComplete="email"
             value={values.email}
             maxLength={120}
             placeholder="you@portfolio.com"
@@ -253,6 +256,8 @@ export default function Register() {
             <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"
+              type="tel"
+              autoComplete="tel"
               value={values.phone}
               maxLength={20}
               placeholder="Optional"
@@ -266,6 +271,7 @@ export default function Register() {
             <Label htmlFor="companyName">Company / portfolio name</Label>
             <Input
               id="companyName"
+              autoComplete="organization"
               value={values.companyName}
               maxLength={80}
               placeholder="Optional"

@@ -66,6 +66,11 @@ export function Logo({
       <img 
         src={getLogoPath()}
         alt={`${companyInfo.name} logo`} 
+        width={64}
+        height={64}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
         className={cn(
           currentSize.logo,
           "w-auto transition-all duration-300",
@@ -113,4 +118,3 @@ export function Logo({
     </Link>
   )
 }
-

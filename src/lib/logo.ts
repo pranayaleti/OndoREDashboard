@@ -3,6 +3,5 @@
  */
 export function getLogoPath(): string {
   const baseUrl = import.meta.env?.BASE_URL || '/'
-  return `${baseUrl}logo.png`
+  return `${baseUrl}favicon.svg`
 }
-

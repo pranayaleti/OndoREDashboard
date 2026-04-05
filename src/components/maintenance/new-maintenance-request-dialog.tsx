@@ -114,11 +114,11 @@ export function NewMaintenanceRequestDialog({
       })
 
       onOpenChange(false)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting maintenance request:", error)
       toast({
         title: "Error",
-        description: error.message || "Failed to submit maintenance request. Please try again.",
+        description: error instanceof Error ? error.message : String(error) || "Failed to submit maintenance request. Please try again.",
         variant: "destructive",
       })
     } finally {

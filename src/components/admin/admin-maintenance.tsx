@@ -19,7 +19,7 @@ export default function AdminMaintenance() {
     try {
       const res = await propertyApi.getProperties()
       setProperties(res.properties)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error fetching properties:", err)
     }
   }
@@ -73,7 +73,7 @@ export default function AdminMaintenance() {
             })
 
             setIsNewRequestDialogOpen(false)
-          } catch (error: any) {
+          } catch (error: unknown) {
             console.error("Error creating maintenance request:", error)
             throw error // Re-throw to let dialog handle the error display
           }

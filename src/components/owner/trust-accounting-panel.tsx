@@ -98,9 +98,9 @@ export function TrustAccountingPanel() {
   const loadData = async () => {
     try {
       const [acctRes, txnRes, distRes] = await Promise.allSettled([
-        (featureApi as any).trust?.listAccounts?.(),
-        (featureApi as any).trust?.listTransactions?.(),
-        (featureApi as any).trust?.listDistributions?.(),
+        featureApi.trust?.listAccounts?.(),
+        featureApi.trust?.listTransactions?.(),
+        featureApi.trust?.listDistributions?.(),
       ])
       if (acctRes.status === "fulfilled" && Array.isArray(acctRes.value)) setAccounts(acctRes.value as TrustAccount[])
       if (txnRes.status === "fulfilled" && Array.isArray(txnRes.value)) setTransactions(txnRes.value as TrustTransaction[])
@@ -121,7 +121,7 @@ export function TrustAccountingPanel() {
       description: form.description,
       accountId: form.accountId,
     }
-    try { await (featureApi as any).trust?.recordTransaction?.(newTxn) } catch { /* noop */ }
+    try { await featureApi.trust?.recordTransaction?.(newTxn) } catch { /* noop */ }
     setTransactions((prev) => [newTxn, ...prev])
     setForm({ type: "credit", amount: "", description: "", accountId: "" })
     setTxnOpen(false)
