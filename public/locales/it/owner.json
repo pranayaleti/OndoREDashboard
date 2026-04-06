@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "Nessuna proprietà collegata al tuo account.",
     "noMaintenance": "Nessuna richiesta di manutenzione."
+  },
+  "screeningConfig": {
+    "loadError": "Impossibile caricare la configurazione dello screening",
+    "saveSuccess": "Configurazione dello screening salvata",
+    "saveError": "Impossibile salvare la configurazione dello screening",
+    "addQuestionSuccess": "Domanda aggiunta",
+    "addQuestionError": "Impossibile aggiungere la domanda",
+    "deleteQuestionSuccess": "Domanda rimossa",
+    "deleteQuestionError": "Impossibile eliminare la domanda",
+    "templateTitle": "Modello di screening",
+    "templateDescription": "Scegli un modello di screening predefinito in base al tuo piano di abbonamento.",
+    "criteriaTitle": "Criteri di superamento o rifiuto",
+    "criteriaDescription": "Imposta le soglie minime e le informative che i candidati devono rivedere prima dell'inizio dello screening.",
+    "criteria": {
+      "minCreditScore": "Punteggio minimo di credito",
+      "minCreditScorePlaceholder": "es. 650",
+      "minIncomeRatio": "Rapporto minimo reddito/affitto",
+      "minIncomeRatioPlaceholder": "es. 3.0",
+      "noEvictions": "Nessuno sfratto precedente",
+      "noCriminal": "Nessun precedente penale squalificante"
+    },
+    "optionalChecksTitle": "Controlli opzionali",
+    "optionalChecksDescription": "Abilita controlli aggiuntivi consentiti dal tuo piano oltre a quelli predefiniti del modello.",
+    "optionalChecks": {
+      "identityLabel": "Richiedi verifica dell'identità",
+      "identityDescription": "Aggiungi una verifica dell'identità al pacchetto di screening autorizzato dai candidati."
+    },
+    "applicantNotesTitle": "Note informative per i candidati",
+    "applicantNotesDescription": "Aggiungi note visibili ai candidati per criteri o informative non già coperte dalle soglie sopra indicate.",
+    "applicantNotesPlaceholder": "Esempio: i candidati devono essere pronti a fornire buste paga recenti e un documento d'identità se richiesto.",
+    "selectedChecks": "Controlli inclusi in questo flusso di domanda",
+    "save": "Salva configurazione",
+    "saving": "Salvataggio...",
+    "questionsTitle": "Domande personalizzate di screening",
+    "questionsDescription": "Aggiungi le tue domande per i candidati.",
+    "addQuestion": "Aggiungi domanda",
+    "emptyQuestions": "Nessuna domanda personalizzata al momento. Aggiungine per raccogliere più informazioni dai candidati.",
+    "questionRequired": "Obbligatoria",
+    "questionPassFail": "Supera/Non supera",
+    "deleteTitle": "Eliminare la domanda?",
+    "deleteDescription": "Questa azione rimuoverà la domanda da tutte le domande future.",
+    "deleteConfirm": "Elimina",
+    "cancel": "Annulla",
+    "questionText": "Testo della domanda",
+    "questionTextPlaceholder": "Inserisci la tua domanda...",
+    "questionTypeLabel": "Tipo di domanda",
+    "questionTypes": {
+      "text": "Testo libero",
+      "yes_no": "Sì / No",
+      "multiple_choice": "Scelta multipla",
+      "number": "Numero"
+    },
+    "optionsLabel": "Opzioni (separate da virgole)",
+    "optionsPlaceholder": "Opzione A, Opzione B, Opzione C",
+    "expectedAnswerLabel": "Risposta attesa",
+    "expectedAnswerPlaceholder": "Valore atteso",
+    "expectedAnswerYesNoPlaceholder": "sì o no",
+    "addQuestionConfirm": "Aggiungi domanda",
+    "checkLabels": {
+      "credit": "Controllo del credito",
+      "criminal": "Precedenti penali",
+      "eviction": "Storico sfratti",
+      "income": "Verifica del reddito",
+      "identity": "Verifica dell'identità",
+      "references": "Controllo referenze"
+    }
   }
 }

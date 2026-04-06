@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "మీ ఖాతాతో ఆస్తులు లింక్ లేవు.",
     "noMaintenance": "నిర్వహణ అభ్యర్థనలు లేవు."
+  },
+  "screeningConfig": {
+    "loadError": "స్క్రీనింగ్ కాన్ఫిగరేషన్‌ను లోడ్ చేయలేకపోయాము",
+    "saveSuccess": "స్క్రీనింగ్ కాన్ఫిగరేషన్ సేవ్ చేయబడింది",
+    "saveError": "స్క్రీనింగ్ కాన్ఫిగరేషన్‌ను సేవ్ చేయలేకపోయాము",
+    "addQuestionSuccess": "ప్రశ్న జోడించబడింది",
+    "addQuestionError": "ప్రశ్నను జోడించలేకపోయాము",
+    "deleteQuestionSuccess": "ప్రశ్న తొలగించబడింది",
+    "deleteQuestionError": "ప్రశ్నను తొలగించలేకపోయాము",
+    "templateTitle": "స్క్రీనింగ్ టెంప్లేట్",
+    "templateDescription": "మీ సభ్యత్వ ప్రణాళిక ఆధారంగా ముందుగా నిర్మించిన స్క్రీనింగ్ టెంప్లేట్‌ను ఎంచుకోండి.",
+    "criteriaTitle": "పాస్/ఫెయిల్ ప్రమాణాలు",
+    "criteriaDescription": "స్క్రీనింగ్ ప్రారంభమయ్యే ముందు అభ్యర్థులు సమీక్షించాల్సిన కనీస పరిమితులు మరియు వెల్లడింపులను సెట్ చేయండి.",
+    "criteria": {
+      "minCreditScore": "కనీస క్రెడిట్ స్కోరు",
+      "minCreditScorePlaceholder": "ఉదా. 650",
+      "minIncomeRatio": "కనీస ఆదాయం-అద్దె నిష్పత్తి",
+      "minIncomeRatioPlaceholder": "ఉదా. 3.0",
+      "noEvictions": "మునుపటి బహిష్కరణలు ఉండకూడదు",
+      "noCriminal": "అనర్హత కలిగించే నేర చరిత్ర ఉండకూడదు"
+    },
+    "optionalChecksTitle": "ఐచ్చిక స్క్రీనింగ్ తనిఖీలు",
+    "optionalChecksDescription": "టెంప్లేట్ డిఫాల్ట్‌లకు అదనంగా మీ ప్లాన్ అనుమతించే తనిఖీలను ఆన్ చేయండి.",
+    "optionalChecks": {
+      "identityLabel": "గుర్తింపు ధృవీకరణను అవసరంగా పెట్టండి",
+      "identityDescription": "అభ్యర్థులు అనుమతించే స్క్రీనింగ్ ప్యాకేజీలో ఒక గుర్తింపు తనిఖీని జోడించండి."
+    },
+    "applicantNotesTitle": "అభ్యర్థి వెల్లడింపు గమనికలు",
+    "applicantNotesDescription": "పై పరిమితులు ఇప్పటికే కవర్ చేయని ప్రమాణాలు లేదా వెల్లడింపుల కోసం అభ్యర్థులకు కనిపించే గమనికలను జోడించండి.",
+    "applicantNotesPlaceholder": "ఉదాహరణ: అవసరమైతే అభ్యర్థులు తాజా జీత స్లిప్పులు మరియు ప్రభుత్వ గుర్తింపు పత్రాన్ని అందించడానికి సిద్ధంగా ఉండాలి.",
+    "selectedChecks": "ఈ దరఖాస్తు ప్రవాహంలో ఉన్న తనిఖీలు",
+    "save": "కాన్ఫిగరేషన్ సేవ్ చేయండి",
+    "saving": "సేవ్ అవుతోంది...",
+    "questionsTitle": "అనుకూల స్క్రీనింగ్ ప్రశ్నలు",
+    "questionsDescription": "అభ్యర్థులు సమాధానం ఇవ్వడానికి మీ స్వంత ప్రశ్నలను జోడించండి.",
+    "addQuestion": "ప్రశ్న జోడించండి",
+    "emptyQuestions": "ఇంకా అనుకూల ప్రశ్నలు లేవు. అదనపు సమాచారాన్ని సేకరించడానికి ప్రశ్నలను జోడించండి.",
+    "questionRequired": "తప్పనిసరి",
+    "questionPassFail": "పాస్/ఫెయిల్",
+    "deleteTitle": "ప్రశ్నను తొలగించాలా?",
+    "deleteDescription": "ఇది భవిష్యత్తులో వచ్చే అన్ని దరఖాస్తుల నుంచి ఈ ప్రశ్నను తొలగిస్తుంది.",
+    "deleteConfirm": "తొలగించండి",
+    "cancel": "రద్దు",
+    "questionText": "ప్రశ్న పాఠ్యం",
+    "questionTextPlaceholder": "మీ ప్రశ్నను నమోదు చేయండి...",
+    "questionTypeLabel": "ప్రశ్న రకం",
+    "questionTypes": {
+      "text": "స్వేచ్ఛా పాఠ్యం",
+      "yes_no": "అవును / కాదు",
+      "multiple_choice": "బహుళ ఎంపిక",
+      "number": "సంఖ్య"
+    },
+    "optionsLabel": "ఎంపికలు (కామాలతో వేరు చేయండి)",
+    "optionsPlaceholder": "ఎంపిక A, ఎంపిక B, ఎంపిక C",
+    "expectedAnswerLabel": "అంచనా సమాధానం",
+    "expectedAnswerPlaceholder": "అంచనా విలువ",
+    "expectedAnswerYesNoPlaceholder": "అవును లేదా కాదు",
+    "addQuestionConfirm": "ప్రశ్న జోడించండి",
+    "checkLabels": {
+      "credit": "క్రెడిట్ తనిఖీ",
+      "criminal": "నేర చరిత్ర",
+      "eviction": "బహిష్కరణ చరిత్ర",
+      "income": "ఆదాయం ధృవీకరణ",
+      "identity": "గుర్తింపు ధృవీకరణ",
+      "references": "రిఫరెన్స్ తనిఖీ"
+    }
   }
 }

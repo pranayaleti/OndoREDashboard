@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -57,33 +59,60 @@ interface ScreeningQuestion {
 }
 
 interface ScreeningConfig {
-  id: string
+  id: string | null
+  propertyId: string
   templateId: string | null
   criteria: Record<string, unknown>
+  requiredChecks: VerificationCheckType[]
+  applicantDisclosureNotes: string | null
+  availableOptionalChecks: VerificationCheckType[]
 }
 
 interface ScreeningConfigWizardProps {
   propertyId: string
 }
 
-const checkLabels: Record<string, string> = {
-  credit: "Credit Check",
-  criminal: "Criminal History",
-  eviction: "Eviction History",
-  income: "Income Verification",
-  identity: "Identity Verification",
-  references: "Reference Check",
+type VerificationCheckType =
+  | "credit"
+  | "criminal"
+  | "eviction"
+  | "income"
+  | "identity"
+  | "references"
+
+const VERIFICATION_CHECK_TYPES: VerificationCheckType[] = [
+  "credit",
+  "criminal",
+  "eviction",
+  "income",
+  "identity",
+  "references",
+]
+
+function isVerificationCheckType(value: unknown): value is VerificationCheckType {
+  return typeof value === "string" && VERIFICATION_CHECK_TYPES.includes(value as VerificationCheckType)
+}
+
+function normalizeChecks(value: unknown): VerificationCheckType[] {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return Array.from(new Set(value.filter(isVerificationCheckType)))
 }
 
 export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps) {
+  const { t } = useTranslation("owner")
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [templates, setTemplates] = useState<ScreeningTemplate[]>([])
-  const [, setConfig] = useState<ScreeningConfig | null>(null)
   const [questions, setQuestions] = useState<ScreeningQuestion[]>([])
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
   const [criteria, setCriteria] = useState<Record<string, unknown>>({})
+  const [requiredChecks, setRequiredChecks] = useState<VerificationCheckType[]>([])
+  const [availableOptionalChecks, setAvailableOptionalChecks] = useState<VerificationCheckType[]>([])
+  const [applicantDisclosureNotes, setApplicantDisclosureNotes] = useState("")
 
   // New question form
   const [showAddQuestion, setShowAddQuestion] = useState(false)
@@ -111,12 +140,20 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
       setTemplates(tpls as ScreeningTemplate[])
       const configData = cfg as { data?: ScreeningConfig } | ScreeningConfig | null
       const parsed = configData && "data" in configData ? configData.data : configData
-      setConfig(parsed as ScreeningConfig | null)
       setSelectedTemplateId((parsed as ScreeningConfig | null)?.templateId ?? null)
       setCriteria((parsed as ScreeningConfig | null)?.criteria ?? {})
+      setRequiredChecks(normalizeChecks((parsed as ScreeningConfig | null)?.requiredChecks))
+      setAvailableOptionalChecks(
+        normalizeChecks((parsed as ScreeningConfig | null)?.availableOptionalChecks),
+      )
+      setApplicantDisclosureNotes((parsed as ScreeningConfig | null)?.applicantDisclosureNotes ?? "")
       setQuestions(qs as ScreeningQuestion[])
-    } catch {
-      toast({ title: "Failed to load screening configuration", variant: "destructive" })
+    } catch (err: unknown) {
+      toast({
+        title: t("screeningConfig.loadError"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -125,12 +162,21 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
   const saveConfig = async () => {
     try {
       setSaving(true)
-      await featureApi.screeningConfig.setConfig(propertyId, selectedTemplateId, criteria)
-      toast({ title: "Screening configuration saved" })
+      await featureApi.screeningConfig.setConfig(
+        propertyId,
+        selectedTemplateId,
+        criteria,
+        requiredChecks,
+        applicantDisclosureNotes.trim() || null,
+      )
+      toast({ title: t("screeningConfig.saveSuccess") })
       await loadData()
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to save"
-      toast({ title: message, variant: "destructive" })
+      toast({
+        title: t("screeningConfig.saveError"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
@@ -151,7 +197,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
         payload.expectedAnswer = newQuestion.expectedAnswer
       }
       await featureApi.screeningConfig.addQuestion(propertyId, payload)
-      toast({ title: "Question added" })
+      toast({ title: t("screeningConfig.addQuestionSuccess") })
       setShowAddQuestion(false)
       setNewQuestion({
         questionText: "",
@@ -163,22 +209,63 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
       })
       await loadData()
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to add question"
-      toast({ title: message, variant: "destructive" })
+      toast({
+        title: t("screeningConfig.addQuestionError"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      })
     }
   }
 
   const deleteQuestion = async (questionId: string) => {
     try {
       await featureApi.screeningConfig.deleteQuestion(questionId)
-      toast({ title: "Question removed" })
+      toast({ title: t("screeningConfig.deleteQuestionSuccess") })
       await loadData()
-    } catch {
-      toast({ title: "Failed to delete question", variant: "destructive" })
+    } catch (err: unknown) {
+      toast({
+        title: t("screeningConfig.deleteQuestionError"),
+        description: err instanceof Error ? err.message : undefined,
+        variant: "destructive",
+      })
     }
   }
 
   const selectedTemplate = templates.find((t) => t.id === selectedTemplateId)
+  const selectedTemplateChecks = normalizeChecks(selectedTemplate?.checks ?? [])
+
+  const getCheckLabel = (check: VerificationCheckType) => t(`screeningConfig.checkLabels.${check}`)
+
+  const getQuestionTypeLabel = (questionType: ScreeningQuestion["questionType"]) =>
+    t(`screeningConfig.questionTypes.${questionType}`)
+
+  const updateTemplateSelection = (templateId: string) => {
+    const template = templates.find((item) => item.id === templateId)
+    const optionalSelections = requiredChecks.filter((check) =>
+      availableOptionalChecks.includes(check),
+    )
+
+    setSelectedTemplateId(templateId)
+    setCriteria(template?.defaultCriteria ?? {})
+    setRequiredChecks(Array.from(new Set([...normalizeChecks(template?.checks ?? []), ...optionalSelections])))
+  }
+
+  const toggleOptionalCheck = (check: VerificationCheckType, enabled: boolean) => {
+    if (enabled) {
+      setRequiredChecks((currentChecks) => Array.from(new Set([...currentChecks, ...selectedTemplateChecks, check])))
+      return
+    }
+
+    setRequiredChecks((currentChecks) =>
+      Array.from(
+        new Set(
+          currentChecks.filter(
+            (existingCheck) => existingCheck !== check || selectedTemplateChecks.includes(existingCheck),
+          ),
+        ),
+      ),
+    )
+  }
 
   if (loading) {
     return (
@@ -196,10 +283,10 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-blue-500" />
-            Screening Template
+            {t("screeningConfig.templateTitle")}
           </CardTitle>
           <CardDescription>
-            Choose a pre-built screening template based on your subscription plan
+            {t("screeningConfig.templateDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -207,10 +294,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
             {templates.map((tpl) => (
               <div
                 key={tpl.id}
-                onClick={() => {
-                  setSelectedTemplateId(tpl.id)
-                  setCriteria(tpl.defaultCriteria ?? {})
-                }}
+                onClick={() => updateTemplateSelection(tpl.id)}
                 className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
                   selectedTemplateId === tpl.id
                     ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/10"
@@ -225,9 +309,9 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                 </div>
                 <p className="text-sm text-slate-500 mb-3">{tpl.description}</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {(tpl.checks ?? []).map((check: string) => (
+                  {normalizeChecks(tpl.checks ?? []).map((check) => (
                     <Badge key={check} variant="secondary" className="text-xs">
-                      {checkLabels[check] ?? check}
+                      {getCheckLabel(check)}
                     </Badge>
                   ))}
                 </div>
@@ -241,29 +325,29 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
       {selectedTemplate && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Pass/Fail Criteria</CardTitle>
+            <CardTitle className="text-base">{t("screeningConfig.criteriaTitle")}</CardTitle>
             <CardDescription>
-              Set minimum thresholds for automatic screening evaluation
+              {t("screeningConfig.criteriaDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selectedTemplate.checks?.includes("credit") && (
                 <div className="space-y-2">
-                  <Label>Minimum Credit Score</Label>
+                  <Label>{t("screeningConfig.criteria.minCreditScore")}</Label>
                   <Input
                     type="number"
                     value={String(criteria.minCreditScore ?? "")}
                     onChange={(e) =>
                       setCriteria({ ...criteria, minCreditScore: Number(e.target.value) || null })
                     }
-                    placeholder="e.g. 650"
+                    placeholder={t("screeningConfig.criteria.minCreditScorePlaceholder")}
                   />
                 </div>
               )}
               {selectedTemplate.checks?.includes("income") && (
                 <div className="space-y-2">
-                  <Label>Minimum Income-to-Rent Ratio</Label>
+                  <Label>{t("screeningConfig.criteria.minIncomeRatio")}</Label>
                   <Input
                     type="number"
                     step="0.1"
@@ -271,13 +355,13 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                     onChange={(e) =>
                       setCriteria({ ...criteria, minIncomeRatio: Number(e.target.value) || null })
                     }
-                    placeholder="e.g. 3.0"
+                    placeholder={t("screeningConfig.criteria.minIncomeRatioPlaceholder")}
                   />
                 </div>
               )}
               {selectedTemplate.checks?.includes("eviction") && (
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <Label>No Prior Evictions Required</Label>
+                  <Label>{t("screeningConfig.criteria.noEvictions")}</Label>
                   <Switch
                     checked={criteria.noEvictions === true}
                     onCheckedChange={(v) => setCriteria({ ...criteria, noEvictions: v })}
@@ -286,7 +370,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
               )}
               {selectedTemplate.checks?.includes("criminal") && (
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                  <Label>No Criminal History Required</Label>
+                  <Label>{t("screeningConfig.criteria.noCriminal")}</Label>
                   <Switch
                     checked={criteria.noCriminal === true}
                     onCheckedChange={(v) => setCriteria({ ...criteria, noCriminal: v })}
@@ -294,9 +378,58 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                 </div>
               )}
             </div>
+            {availableOptionalChecks.length > 0 && (
+              <div className="mt-6 space-y-4 rounded-lg border bg-slate-50/60 p-4 dark:bg-slate-900/40">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    {t("screeningConfig.optionalChecksTitle")}
+                  </h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {t("screeningConfig.optionalChecksDescription")}
+                  </p>
+                </div>
+                {availableOptionalChecks.includes("identity") && (
+                  <div className="flex items-center justify-between gap-4 rounded-lg border bg-background p-3">
+                    <div className="space-y-1">
+                      <Label>{t("screeningConfig.optionalChecks.identityLabel")}</Label>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {t("screeningConfig.optionalChecks.identityDescription")}
+                      </p>
+                    </div>
+                    <Switch
+                      checked={requiredChecks.includes("identity")}
+                      onCheckedChange={(checked) => toggleOptionalCheck("identity", checked)}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="mt-6 space-y-2">
+              <Label>{t("screeningConfig.applicantNotesTitle")}</Label>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {t("screeningConfig.applicantNotesDescription")}
+              </p>
+              <Textarea
+                value={applicantDisclosureNotes}
+                onChange={(event) => setApplicantDisclosureNotes(event.target.value)}
+                placeholder={t("screeningConfig.applicantNotesPlaceholder")}
+                maxLength={4000}
+                rows={5}
+              />
+            </div>
+            <div className="mt-6 space-y-2">
+              <Label>{t("screeningConfig.selectedChecks")}</Label>
+              <div className="flex flex-wrap gap-2">
+                {requiredChecks.map((check) => (
+                  <Badge key={check} variant="secondary">
+                    {getCheckLabel(check)}
+                  </Badge>
+                ))}
+              </div>
+            </div>
             <Button onClick={saveConfig} disabled={saving} className="mt-4">
               <Save className="h-4 w-4 mr-2" />
-              {saving ? "Saving..." : "Save Configuration"}
+              {saving ? t("screeningConfig.saving") : t("screeningConfig.save")}
             </Button>
           </CardContent>
         </Card>
@@ -307,20 +440,20 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Custom Screening Questions</CardTitle>
+              <CardTitle className="text-base">{t("screeningConfig.questionsTitle")}</CardTitle>
               <CardDescription>
-                Add your own questions for applicants to answer
+                {t("screeningConfig.questionsDescription")}
               </CardDescription>
             </div>
             <Button size="sm" onClick={() => setShowAddQuestion(true)}>
-              <Plus className="h-4 w-4 mr-1" /> Add Question
+              <Plus className="h-4 w-4 mr-1" /> {t("screeningConfig.addQuestion")}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {questions.length === 0 ? (
             <p className="text-sm text-slate-500 text-center py-6">
-              No custom questions yet. Add questions to gather additional information from applicants.
+              {t("screeningConfig.emptyQuestions")}
             </p>
           ) : (
             <div className="space-y-3">
@@ -334,14 +467,16 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                     <p className="font-medium text-sm">{q.questionText}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="outline" className="text-xs">
-                        {q.questionType.replace("_", " ")}
+                        {getQuestionTypeLabel(q.questionType)}
                       </Badge>
                       {q.isRequired && (
-                        <Badge variant="secondary" className="text-xs">Required</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {t("screeningConfig.questionRequired")}
+                        </Badge>
                       )}
                       {q.isPassFail && (
                         <Badge className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                          Pass/Fail
+                          {t("screeningConfig.questionPassFail")}
                         </Badge>
                       )}
                     </div>
@@ -354,15 +489,15 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete question?</AlertDialogTitle>
+                        <AlertDialogTitle>{t("screeningConfig.deleteTitle")}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will remove the question from all future applications.
+                          {t("screeningConfig.deleteDescription")}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t("screeningConfig.cancel")}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => deleteQuestion(q.id)}>
-                          Delete
+                          {t("screeningConfig.deleteConfirm")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -376,16 +511,16 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
           {showAddQuestion && (
             <div className="mt-4 p-4 border rounded-lg bg-white dark:bg-slate-900 space-y-4">
               <div className="space-y-2">
-                <Label>Question Text</Label>
+                <Label>{t("screeningConfig.questionText")}</Label>
                 <Input
                   value={newQuestion.questionText}
                   onChange={(e) => setNewQuestion({ ...newQuestion, questionText: e.target.value })}
-                  placeholder="Enter your question..."
+                  placeholder={t("screeningConfig.questionTextPlaceholder")}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Question Type</Label>
+                  <Label>{t("screeningConfig.questionTypeLabel")}</Label>
                   <Select
                     value={newQuestion.questionType}
                     onValueChange={(v) =>
@@ -396,20 +531,20 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="text">Free Text</SelectItem>
-                      <SelectItem value="yes_no">Yes / No</SelectItem>
-                      <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
-                      <SelectItem value="number">Number</SelectItem>
+                      <SelectItem value="text">{t("screeningConfig.questionTypes.text")}</SelectItem>
+                      <SelectItem value="yes_no">{t("screeningConfig.questionTypes.yes_no")}</SelectItem>
+                      <SelectItem value="multiple_choice">{t("screeningConfig.questionTypes.multiple_choice")}</SelectItem>
+                      <SelectItem value="number">{t("screeningConfig.questionTypes.number")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {newQuestion.questionType === "multiple_choice" && (
                   <div className="space-y-2">
-                    <Label>Options (comma separated)</Label>
+                    <Label>{t("screeningConfig.optionsLabel")}</Label>
                     <Input
                       value={newQuestion.options}
                       onChange={(e) => setNewQuestion({ ...newQuestion, options: e.target.value })}
-                      placeholder="Option A, Option B, Option C"
+                      placeholder={t("screeningConfig.optionsPlaceholder")}
                     />
                   </div>
                 )}
@@ -420,32 +555,36 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                     checked={newQuestion.isRequired}
                     onCheckedChange={(v) => setNewQuestion({ ...newQuestion, isRequired: v })}
                   />
-                  <Label>Required</Label>
+                  <Label>{t("screeningConfig.questionRequired")}</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={newQuestion.isPassFail}
                     onCheckedChange={(v) => setNewQuestion({ ...newQuestion, isPassFail: v })}
                   />
-                  <Label>Pass/Fail</Label>
+                  <Label>{t("screeningConfig.questionPassFail")}</Label>
                 </div>
               </div>
               {newQuestion.isPassFail && (
                 <div className="space-y-2">
-                  <Label>Expected Answer</Label>
+                  <Label>{t("screeningConfig.expectedAnswerLabel")}</Label>
                   <Input
                     value={newQuestion.expectedAnswer}
                     onChange={(e) => setNewQuestion({ ...newQuestion, expectedAnswer: e.target.value })}
-                    placeholder={newQuestion.questionType === "yes_no" ? "yes or no" : "Expected value"}
+                    placeholder={
+                      newQuestion.questionType === "yes_no"
+                        ? t("screeningConfig.expectedAnswerYesNoPlaceholder")
+                        : t("screeningConfig.expectedAnswerPlaceholder")
+                    }
                   />
                 </div>
               )}
               <div className="flex gap-2">
                 <Button onClick={addQuestion} disabled={!newQuestion.questionText.trim()}>
-                  Add Question
+                  {t("screeningConfig.addQuestionConfirm")}
                 </Button>
                 <Button variant="outline" onClick={() => setShowAddQuestion(false)}>
-                  Cancel
+                  {t("screeningConfig.cancel")}
                 </Button>
               </div>
             </div>

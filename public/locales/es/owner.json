@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "No hay propiedades vinculadas a su cuenta.",
     "noMaintenance": "No hay solicitudes de mantenimiento."
+  },
+  "screeningConfig": {
+    "loadError": "No se pudo cargar la configuración de evaluación",
+    "saveSuccess": "Configuración de evaluación guardada",
+    "saveError": "No se pudo guardar la configuración de evaluación",
+    "addQuestionSuccess": "Pregunta agregada",
+    "addQuestionError": "No se pudo agregar la pregunta",
+    "deleteQuestionSuccess": "Pregunta eliminada",
+    "deleteQuestionError": "No se pudo eliminar la pregunta",
+    "templateTitle": "Plantilla de evaluación",
+    "templateDescription": "Elige una plantilla de evaluación prediseñada según tu plan de suscripción.",
+    "criteriaTitle": "Criterios de aprobación o rechazo",
+    "criteriaDescription": "Define los umbrales mínimos y las divulgaciones que los solicitantes deben revisar antes de que comience la evaluación.",
+    "criteria": {
+      "minCreditScore": "Puntaje mínimo de crédito",
+      "minCreditScorePlaceholder": "p. ej. 650",
+      "minIncomeRatio": "Relación mínima ingreso-renta",
+      "minIncomeRatioPlaceholder": "p. ej. 3.0",
+      "noEvictions": "Sin desalojos previos",
+      "noCriminal": "Sin antecedentes penales descalificantes"
+    },
+    "optionalChecksTitle": "Verificaciones opcionales",
+    "optionalChecksDescription": "Activa verificaciones adicionales permitidas por tu plan además de las predeterminadas de la plantilla.",
+    "optionalChecks": {
+      "identityLabel": "Requerir verificación de identidad",
+      "identityDescription": "Agrega una verificación de identidad al paquete de evaluación que autoriza el solicitante."
+    },
+    "applicantNotesTitle": "Notas de divulgación para solicitantes",
+    "applicantNotesDescription": "Agrega notas visibles para el solicitante sobre criterios o divulgaciones que aún no estén cubiertos por los umbrales anteriores.",
+    "applicantNotesPlaceholder": "Ejemplo: Los solicitantes deben estar listos para proporcionar talones de pago recientes y una identificación oficial si se solicita.",
+    "selectedChecks": "Verificaciones incluidas en este flujo de solicitud",
+    "save": "Guardar configuración",
+    "saving": "Guardando...",
+    "questionsTitle": "Preguntas personalizadas de evaluación",
+    "questionsDescription": "Agrega tus propias preguntas para que los solicitantes las respondan.",
+    "addQuestion": "Agregar pregunta",
+    "emptyQuestions": "Todavía no hay preguntas personalizadas. Agrega preguntas para recopilar más información de los solicitantes.",
+    "questionRequired": "Obligatoria",
+    "questionPassFail": "Aprobación/Rechazo",
+    "deleteTitle": "¿Eliminar pregunta?",
+    "deleteDescription": "Esto eliminará la pregunta de todas las solicitudes futuras.",
+    "deleteConfirm": "Eliminar",
+    "cancel": "Cancelar",
+    "questionText": "Texto de la pregunta",
+    "questionTextPlaceholder": "Escribe tu pregunta...",
+    "questionTypeLabel": "Tipo de pregunta",
+    "questionTypes": {
+      "text": "Texto libre",
+      "yes_no": "Sí / No",
+      "multiple_choice": "Opción múltiple",
+      "number": "Número"
+    },
+    "optionsLabel": "Opciones (separadas por comas)",
+    "optionsPlaceholder": "Opción A, Opción B, Opción C",
+    "expectedAnswerLabel": "Respuesta esperada",
+    "expectedAnswerPlaceholder": "Valor esperado",
+    "expectedAnswerYesNoPlaceholder": "sí o no",
+    "addQuestionConfirm": "Agregar pregunta",
+    "checkLabels": {
+      "credit": "Revisión de crédito",
+      "criminal": "Antecedentes penales",
+      "eviction": "Historial de desalojos",
+      "income": "Verificación de ingresos",
+      "identity": "Verificación de identidad",
+      "references": "Verificación de referencias"
+    }
   }
 }

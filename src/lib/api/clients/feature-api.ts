@@ -1395,9 +1395,20 @@ export const featureApi = {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('GET', `/properties/${propertyId}/screening-config`, undefined, headers);
     },
-    setConfig(propertyId: string, templateId: string | null, criteria: Record<string, unknown>): Promise<unknown> {
+    setConfig(
+      propertyId: string,
+      templateId: string | null,
+      criteria: Record<string, unknown>,
+      requiredChecks: string[],
+      applicantDisclosureNotes: string | null,
+    ): Promise<unknown> {
       const headers = getAuthHeaders();
-      return apiRequest<unknown>('PUT', `/properties/${propertyId}/screening-config`, { templateId, criteria }, headers);
+      return apiRequest<unknown>(
+        'PUT',
+        `/properties/${propertyId}/screening-config`,
+        { templateId, criteria, requiredChecks, applicantDisclosureNotes },
+        headers,
+      );
     },
     getQuestions(propertyId: string): Promise<unknown[]> {
       const headers = getAuthHeaders();

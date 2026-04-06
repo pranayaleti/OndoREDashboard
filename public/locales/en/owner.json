@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "No properties linked to your account.",
     "noMaintenance": "No maintenance requests."
+  },
+  "screeningConfig": {
+    "loadError": "Failed to load screening configuration",
+    "saveSuccess": "Screening configuration saved",
+    "saveError": "Failed to save screening configuration",
+    "addQuestionSuccess": "Question added",
+    "addQuestionError": "Failed to add question",
+    "deleteQuestionSuccess": "Question removed",
+    "deleteQuestionError": "Failed to delete question",
+    "templateTitle": "Screening template",
+    "templateDescription": "Choose a pre-built screening template based on your subscription plan.",
+    "criteriaTitle": "Pass/fail criteria",
+    "criteriaDescription": "Set the minimum thresholds and disclosures applicants must review before screening starts.",
+    "criteria": {
+      "minCreditScore": "Minimum credit score",
+      "minCreditScorePlaceholder": "e.g. 650",
+      "minIncomeRatio": "Minimum income-to-rent ratio",
+      "minIncomeRatioPlaceholder": "e.g. 3.0",
+      "noEvictions": "No prior evictions required",
+      "noCriminal": "No disqualifying criminal history required"
+    },
+    "optionalChecksTitle": "Optional screening checks",
+    "optionalChecksDescription": "Enable extra checks that your plan allows beyond the template defaults.",
+    "optionalChecks": {
+      "identityLabel": "Require identity verification",
+      "identityDescription": "Add an identity check to the screening package applicants consent to."
+    },
+    "applicantNotesTitle": "Applicant disclosure notes",
+    "applicantNotesDescription": "Add applicant-facing notes for criteria or disclosures that are not already covered by the thresholds above.",
+    "applicantNotesPlaceholder": "Example: Applicants must be ready to provide recent pay stubs and a government-issued ID if requested.",
+    "selectedChecks": "Checks included in this application flow",
+    "save": "Save configuration",
+    "saving": "Saving...",
+    "questionsTitle": "Custom screening questions",
+    "questionsDescription": "Add your own questions for applicants to answer.",
+    "addQuestion": "Add question",
+    "emptyQuestions": "No custom questions yet. Add questions to gather additional information from applicants.",
+    "questionRequired": "Required",
+    "questionPassFail": "Pass/Fail",
+    "deleteTitle": "Delete question?",
+    "deleteDescription": "This will remove the question from all future applications.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
+    "questionText": "Question text",
+    "questionTextPlaceholder": "Enter your question...",
+    "questionTypeLabel": "Question type",
+    "questionTypes": {
+      "text": "Free text",
+      "yes_no": "Yes / No",
+      "multiple_choice": "Multiple choice",
+      "number": "Number"
+    },
+    "optionsLabel": "Options (comma separated)",
+    "optionsPlaceholder": "Option A, Option B, Option C",
+    "expectedAnswerLabel": "Expected answer",
+    "expectedAnswerPlaceholder": "Expected value",
+    "expectedAnswerYesNoPlaceholder": "yes or no",
+    "addQuestionConfirm": "Add question",
+    "checkLabels": {
+      "credit": "Credit check",
+      "criminal": "Criminal history",
+      "eviction": "Eviction history",
+      "income": "Income verification",
+      "identity": "Identity verification",
+      "references": "Reference check"
+    }
   }
 }

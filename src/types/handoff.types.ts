@@ -41,6 +41,7 @@ export interface KeyInfo {
   label: string
   location?: string
   notes?: string
+  photoUrl?: string
 }
 
 export interface AccessCode {
@@ -48,6 +49,15 @@ export interface AccessCode {
   code: string
   location?: string
   instructions?: string
+  photoUrl?: string
+}
+
+export interface GarageDoorOpener {
+  label: string
+  code?: string
+  remoteLocation?: string
+  photoUrl?: string
+  duplicateInfo?: string
 }
 
 export interface AlarmInfo {
@@ -207,6 +217,8 @@ export interface PropertyHandoff {
     keys: KeyInfo[]
     codes: AccessCode[]
     alarm?: AlarmInfo
+    garageDoorOpeners?: GarageDoorOpener[]
+    keyDuplicationInfo?: string
   }
   
   mailbox: MailboxInfo

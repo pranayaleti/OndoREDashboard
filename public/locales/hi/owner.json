@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "आपके खाते से कोई संपत्ति नहीं जुड़ी।",
     "noMaintenance": "कोई रखरखाव अनुरोध नहीं।"
+  },
+  "screeningConfig": {
+    "loadError": "स्क्रीनिंग कॉन्फ़िगरेशन लोड नहीं हो सका",
+    "saveSuccess": "स्क्रीनिंग कॉन्फ़िगरेशन सेव हो गया",
+    "saveError": "स्क्रीनिंग कॉन्फ़िगरेशन सेव नहीं हो सका",
+    "addQuestionSuccess": "प्रश्न जोड़ दिया गया",
+    "addQuestionError": "प्रश्न नहीं जोड़ा जा सका",
+    "deleteQuestionSuccess": "प्रश्न हटा दिया गया",
+    "deleteQuestionError": "प्रश्न हटाया नहीं जा सका",
+    "templateTitle": "स्क्रीनिंग टेम्पलेट",
+    "templateDescription": "अपनी सदस्यता योजना के आधार पर पहले से बना स्क्रीनिंग टेम्पलेट चुनें।",
+    "criteriaTitle": "पास/फेल मानदंड",
+    "criteriaDescription": "स्क्रीनिंग शुरू होने से पहले आवेदकों द्वारा देखे जाने वाले न्यूनतम मानदंड और खुलासे तय करें।",
+    "criteria": {
+      "minCreditScore": "न्यूनतम क्रेडिट स्कोर",
+      "minCreditScorePlaceholder": "उदा. 650",
+      "minIncomeRatio": "न्यूनतम आय-से-किराया अनुपात",
+      "minIncomeRatioPlaceholder": "उदा. 3.0",
+      "noEvictions": "कोई पूर्व बेदखली नहीं",
+      "noCriminal": "कोई अयोग्य आपराधिक इतिहास नहीं"
+    },
+    "optionalChecksTitle": "वैकल्पिक स्क्रीनिंग जांचें",
+    "optionalChecksDescription": "टेम्पलेट डिफ़ॉल्ट्स के अलावा अपने प्लान द्वारा अनुमत अतिरिक्त जांचें चालू करें।",
+    "optionalChecks": {
+      "identityLabel": "पहचान सत्यापन आवश्यक करें",
+      "identityDescription": "आवेदकों द्वारा अधिकृत स्क्रीनिंग पैकेज में पहचान जांच जोड़ें।"
+    },
+    "applicantNotesTitle": "आवेदक खुलासा नोट्स",
+    "applicantNotesDescription": "ऊपर दिए गए मानदंडों में शामिल न होने वाले मापदंडों या खुलासों के लिए आवेदक-उन्मुख नोट्स जोड़ें।",
+    "applicantNotesPlaceholder": "उदाहरण: आवश्यकता होने पर आवेदकों को हालिया वेतन पर्चियां और सरकारी पहचान पत्र देने के लिए तैयार रहना चाहिए।",
+    "selectedChecks": "इस आवेदन प्रवाह में शामिल जांचें",
+    "save": "कॉन्फ़िगरेशन सेव करें",
+    "saving": "सेव हो रहा है...",
+    "questionsTitle": "कस्टम स्क्रीनिंग प्रश्न",
+    "questionsDescription": "आवेदकों के उत्तर देने के लिए अपने प्रश्न जोड़ें।",
+    "addQuestion": "प्रश्न जोड़ें",
+    "emptyQuestions": "अभी कोई कस्टम प्रश्न नहीं हैं। आवेदकों से अतिरिक्त जानकारी लेने के लिए प्रश्न जोड़ें।",
+    "questionRequired": "आवश्यक",
+    "questionPassFail": "पास/फेल",
+    "deleteTitle": "प्रश्न हटाएं?",
+    "deleteDescription": "यह प्रश्न को सभी भविष्य के आवेदनों से हटा देगा।",
+    "deleteConfirm": "हटाएं",
+    "cancel": "रद्द करें",
+    "questionText": "प्रश्न का पाठ",
+    "questionTextPlaceholder": "अपना प्रश्न दर्ज करें...",
+    "questionTypeLabel": "प्रश्न प्रकार",
+    "questionTypes": {
+      "text": "मुक्त पाठ",
+      "yes_no": "हाँ / नहीं",
+      "multiple_choice": "बहुविकल्पी",
+      "number": "संख्या"
+    },
+    "optionsLabel": "विकल्प (कॉमा से अलग करें)",
+    "optionsPlaceholder": "विकल्प A, विकल्प B, विकल्प C",
+    "expectedAnswerLabel": "अपेक्षित उत्तर",
+    "expectedAnswerPlaceholder": "अपेक्षित मान",
+    "expectedAnswerYesNoPlaceholder": "हाँ या नहीं",
+    "addQuestionConfirm": "प्रश्न जोड़ें",
+    "checkLabels": {
+      "credit": "क्रेडिट जांच",
+      "criminal": "आपराधिक इतिहास",
+      "eviction": "बेदखली इतिहास",
+      "income": "आय सत्यापन",
+      "identity": "पहचान सत्यापन",
+      "references": "संदर्भ जांच"
+    }
   }
 }

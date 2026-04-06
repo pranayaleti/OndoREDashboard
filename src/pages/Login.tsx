@@ -17,8 +17,9 @@ import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
 import { OnboardingCard } from "@/components/auth/onboarding-card"
 import { companyInfo } from "@/constants/companyInfo"
 
-/** Seeded test users (npm run seed in OndoREBackend) — dev only */
+/** Seeded demo users (npm run seed in OndoREBackend) — shown only in dev or demo deployments. */
 const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD ?? ""
+const ENABLE_PUBLIC_DEMO = import.meta.env.DEV || import.meta.env.VITE_ENABLE_PUBLIC_DEMO === "true"
 
 const REFERRAL_SESSION_KEY = "ondo_referral_code"
 
@@ -252,7 +253,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {import.meta.env.DEV && (
+        {ENABLE_PUBLIC_DEMO && DEMO_PASSWORD && (
           <div className="rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80">
             <button
               type="button"
@@ -263,10 +264,11 @@ export default function LoginPage() {
               <span>{showTestAccounts ? t('login.hide') : t('login.show')}</span>
             </button>
             {showTestAccounts && (
-              <div className="mt-3 space-y-2">
-                <CredentialButton label="Manager/Admin" email={`admin@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
-                <CredentialButton label="Owner" email={`owner@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
-                <CredentialButton label="Tenant" email={`tenant@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
+              <div className="mt-3 space-y-3">
+                <p className="text-xs text-white/65">{t('login.demoHelperDesc')}</p>
+                <CredentialButton label={t('login.demoManagerLabel')} email={`admin@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
+                <CredentialButton label={t('login.demoOwnerLabel')} email={`owner@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
+                <CredentialButton label={t('login.demoTenantLabel')} email={`tenant@${companyInfo.social.twitterDomain}`} password={DEMO_PASSWORD} onFill={handleFillCredentials} />
               </div>
             )}
           </div>

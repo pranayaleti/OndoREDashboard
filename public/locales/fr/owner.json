@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "Aucune propriété liée à votre compte.",
     "noMaintenance": "Aucune demande de maintenance."
+  },
+  "screeningConfig": {
+    "loadError": "Impossible de charger la configuration de sélection",
+    "saveSuccess": "Configuration de sélection enregistrée",
+    "saveError": "Impossible d'enregistrer la configuration de sélection",
+    "addQuestionSuccess": "Question ajoutée",
+    "addQuestionError": "Impossible d'ajouter la question",
+    "deleteQuestionSuccess": "Question supprimée",
+    "deleteQuestionError": "Impossible de supprimer la question",
+    "templateTitle": "Modèle de sélection",
+    "templateDescription": "Choisissez un modèle de sélection prédéfini selon votre abonnement.",
+    "criteriaTitle": "Critères de réussite ou d'échec",
+    "criteriaDescription": "Définissez les seuils minimums et les divulgations que les candidats doivent examiner avant le début du contrôle.",
+    "criteria": {
+      "minCreditScore": "Score de crédit minimum",
+      "minCreditScorePlaceholder": "ex. 650",
+      "minIncomeRatio": "Ratio minimum revenus/loyer",
+      "minIncomeRatioPlaceholder": "ex. 3.0",
+      "noEvictions": "Aucune expulsion antérieure",
+      "noCriminal": "Aucun antécédent judiciaire disqualifiant"
+    },
+    "optionalChecksTitle": "Contrôles optionnels",
+    "optionalChecksDescription": "Activez des contrôles supplémentaires autorisés par votre abonnement au-delà de ceux du modèle.",
+    "optionalChecks": {
+      "identityLabel": "Exiger la vérification d'identité",
+      "identityDescription": "Ajoutez une vérification d'identité au pack de contrôle auquel les candidats consentent."
+    },
+    "applicantNotesTitle": "Notes de divulgation pour les candidats",
+    "applicantNotesDescription": "Ajoutez des notes visibles par les candidats pour les critères ou divulgations qui ne sont pas déjà couverts par les seuils ci-dessus.",
+    "applicantNotesPlaceholder": "Exemple : les candidats doivent être prêts à fournir des fiches de paie récentes et une pièce d'identité officielle sur demande.",
+    "selectedChecks": "Contrôles inclus dans ce parcours de demande",
+    "save": "Enregistrer la configuration",
+    "saving": "Enregistrement...",
+    "questionsTitle": "Questions de sélection personnalisées",
+    "questionsDescription": "Ajoutez vos propres questions pour les candidats.",
+    "addQuestion": "Ajouter une question",
+    "emptyQuestions": "Aucune question personnalisée pour le moment. Ajoutez-en pour recueillir plus d'informations auprès des candidats.",
+    "questionRequired": "Obligatoire",
+    "questionPassFail": "Réussite/Échec",
+    "deleteTitle": "Supprimer la question ?",
+    "deleteDescription": "Cela supprimera la question de toutes les futures demandes.",
+    "deleteConfirm": "Supprimer",
+    "cancel": "Annuler",
+    "questionText": "Texte de la question",
+    "questionTextPlaceholder": "Saisissez votre question...",
+    "questionTypeLabel": "Type de question",
+    "questionTypes": {
+      "text": "Texte libre",
+      "yes_no": "Oui / Non",
+      "multiple_choice": "Choix multiple",
+      "number": "Nombre"
+    },
+    "optionsLabel": "Options (séparées par des virgules)",
+    "optionsPlaceholder": "Option A, Option B, Option C",
+    "expectedAnswerLabel": "Réponse attendue",
+    "expectedAnswerPlaceholder": "Valeur attendue",
+    "expectedAnswerYesNoPlaceholder": "oui ou non",
+    "addQuestionConfirm": "Ajouter une question",
+    "checkLabels": {
+      "credit": "Contrôle de crédit",
+      "criminal": "Antécédents judiciaires",
+      "eviction": "Historique des expulsions",
+      "income": "Vérification des revenus",
+      "identity": "Vérification d'identité",
+      "references": "Vérification des références"
+    }
   }
 }

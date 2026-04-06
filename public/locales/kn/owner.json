@@ -25,5 +25,71 @@
   "empty": {
     "noProperties": "ನಿಮ್ಮ ಖಾತೆಗೆ ಯಾವುದೇ ಆಸ್ತಿಗಳು ಲಿಂಕ್ ಆಗಿಲ್ಲ.",
     "noMaintenance": "ನಿರ್ವಹಣೆ ವಿನಂತಿಗಳಿಲ್ಲ."
+  },
+  "screeningConfig": {
+    "loadError": "ಸ್ಕ್ರೀನಿಂಗ್ ಸಂರಚನೆಯನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ",
+    "saveSuccess": "ಸ್ಕ್ರೀನಿಂಗ್ ಸಂರಚನೆ ಉಳಿಸಲಾಗಿದೆ",
+    "saveError": "ಸ್ಕ್ರೀನಿಂಗ್ ಸಂರಚನೆಯನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ",
+    "addQuestionSuccess": "ಪ್ರಶ್ನೆಯನ್ನು ಸೇರಿಸಲಾಗಿದೆ",
+    "addQuestionError": "ಪ್ರಶ್ನೆಯನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ",
+    "deleteQuestionSuccess": "ಪ್ರಶ್ನೆಯನ್ನು ತೆಗೆದುಹಾಕಲಾಗಿದೆ",
+    "deleteQuestionError": "ಪ್ರಶ್ನೆಯನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ",
+    "templateTitle": "ಸ್ಕ್ರೀನಿಂಗ್ ಟೆಂಪ್ಲೇಟ್",
+    "templateDescription": "ನಿಮ್ಮ ಚಂದಾ ಯೋಜನೆಯ ಆಧಾರದ ಮೇಲೆ ಪೂರ್ವಸಿದ್ಧ ಸ್ಕ್ರೀನಿಂಗ್ ಟೆಂಪ್ಲೇಟ್ ಆಯ್ಕೆಮಾಡಿ.",
+    "criteriaTitle": "ಪಾಸ್/ಫೇಲ್ ಮಾನದಂಡಗಳು",
+    "criteriaDescription": "ಸ್ಕ್ರೀನಿಂಗ್ ಆರಂಭಕ್ಕೂ ಮೊದಲು ಅರ್ಜಿದಾರರು ಪರಿಶೀಲಿಸಬೇಕಾದ ಕನಿಷ್ಠ ಮಿತಿಗಳು ಮತ್ತು ಬಹಿರಂಗಪಡಿಸುವಿಕೆಗಳನ್ನು ಹೊಂದಿಸಿ.",
+    "criteria": {
+      "minCreditScore": "ಕನಿಷ್ಠ ಕ್ರೆಡಿಟ್ ಅಂಕೆ",
+      "minCreditScorePlaceholder": "ಉದಾ. 650",
+      "minIncomeRatio": "ಕನಿಷ್ಠ ಆದಾಯ-ಬಾಡಿಗೆ ಅನುಪಾತ",
+      "minIncomeRatioPlaceholder": "ಉದಾ. 3.0",
+      "noEvictions": "ಹಿಂದಿನ ಹೊರಹಾಕುವಿಕೆಗಳಿಲ್ಲ",
+      "noCriminal": "ಅನರ್ಹಗೊಳಿಸುವ ಅಪರಾಧ ಹಿನ್ನೆಲೆಯಿಲ್ಲ"
+    },
+    "optionalChecksTitle": "ಐಚ್ಛಿಕ ಸ್ಕ್ರೀನಿಂಗ್ ಪರಿಶೀಲನೆಗಳು",
+    "optionalChecksDescription": "ಟೆಂಪ್ಲೇಟ್ ಡಿಫಾಲ್ಟ್‌ಗಳಿಗೆ ಹೆಚ್ಚುವರಿಯಾಗಿ ನಿಮ್ಮ ಯೋಜನೆ ಅನುಮತಿಸುವ ಹೆಚ್ಚುವರಿ ಪರಿಶೀಲನೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.",
+    "optionalChecks": {
+      "identityLabel": "ಗುರುತು ದೃಢೀಕರಣವನ್ನು ಅಗತ್ಯವನ್ನಾಗಿ ಮಾಡಿ",
+      "identityDescription": "ಅರ್ಜಿದಾರರು ಒಪ್ಪಿಗೆಯಿಡುವ ಸ್ಕ್ರೀನಿಂಗ್ ಪ್ಯಾಕೇಜಿಗೆ ಗುರುತು ಪರಿಶೀಲನೆಯನ್ನು ಸೇರಿಸಿ."
+    },
+    "applicantNotesTitle": "ಅರ್ಜಿದಾರರ ಬಹಿರಂಗಪಡಿಸುವಿಕೆ ಟಿಪ್ಪಣಿಗಳು",
+    "applicantNotesDescription": "ಮೇಲಿನ ಮಿತಿಗಳಲ್ಲಿ ಈಗಾಗಲೇ ಒಳಗೊಂಡಿಲ್ಲದ ಮಾನದಂಡಗಳು ಅಥವಾ ಬಹಿರಂಗಪಡಿಸುವಿಕೆಗಳಿಗಾಗಿ ಅರ್ಜಿದಾರರು ನೋಡುವ ಟಿಪ್ಪಣಿಗಳನ್ನು ಸೇರಿಸಿ.",
+    "applicantNotesPlaceholder": "ಉದಾಹರಣೆ: ಅಗತ್ಯವಿದ್ದರೆ ಅರ್ಜಿದಾರರು ಇತ್ತೀಚಿನ ವೇತನ ಸ್ಲಿಪ್‌ಗಳು ಮತ್ತು ಸರ್ಕಾರ ನೀಡಿದ ಗುರುತಿನ ಚೀಟಿಯನ್ನು ಒದಗಿಸಲು ಸಿದ್ಧರಾಗಿರಬೇಕು.",
+    "selectedChecks": "ಈ ಅರ್ಜಿ ಪ್ರವಾಹದಲ್ಲಿ ಸೇರಿಸಿರುವ ಪರಿಶೀಲನೆಗಳು",
+    "save": "ಸಂರಚನೆಯನ್ನು ಉಳಿಸಿ",
+    "saving": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
+    "questionsTitle": "ಕಸ್ಟಮ್ ಸ್ಕ್ರೀನಿಂಗ್ ಪ್ರಶ್ನೆಗಳು",
+    "questionsDescription": "ಅರ್ಜಿದಾರರು ಉತ್ತರಿಸಲು ನಿಮ್ಮ ಸ್ವಂತ ಪ್ರಶ್ನೆಗಳನ್ನು ಸೇರಿಸಿ.",
+    "addQuestion": "ಪ್ರಶ್ನೆ ಸೇರಿಸಿ",
+    "emptyQuestions": "ಇನ್ನೂ ಯಾವುದೇ ಕಸ್ಟಮ್ ಪ್ರಶ್ನೆಗಳಿಲ್ಲ. ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿಗಾಗಿ ಪ್ರಶ್ನೆಗಳನ್ನು ಸೇರಿಸಿ.",
+    "questionRequired": "ಕಡ್ಡಾಯ",
+    "questionPassFail": "ಪಾಸ್/ಫೇಲ್",
+    "deleteTitle": "ಪ್ರಶ್ನೆಯನ್ನು ಅಳಿಸಬೇಕೆ?",
+    "deleteDescription": "ಇದು ಭವಿಷ್ಯದ ಎಲ್ಲಾ ಅರ್ಜಿಗಳಿಂದ ಈ ಪ್ರಶ್ನೆಯನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ.",
+    "deleteConfirm": "ಅಳಿಸಿ",
+    "cancel": "ರದ್ದುಮಾಡಿ",
+    "questionText": "ಪ್ರಶ್ನೆಯ ಪಠ್ಯ",
+    "questionTextPlaceholder": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನಮೂದಿಸಿ...",
+    "questionTypeLabel": "ಪ್ರಶ್ನೆಯ ವಿಧ",
+    "questionTypes": {
+      "text": "ಮುಕ್ತ ಪಠ್ಯ",
+      "yes_no": "ಹೌದು / ಇಲ್ಲ",
+      "multiple_choice": "ಬಹು ಆಯ್ಕೆ",
+      "number": "ಸಂಖ್ಯೆ"
+    },
+    "optionsLabel": "ಆಯ್ಕೆಗಳು (ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಡಿಸಿ)",
+    "optionsPlaceholder": "ಆಯ್ಕೆ A, ಆಯ್ಕೆ B, ಆಯ್ಕೆ C",
+    "expectedAnswerLabel": "ನಿರೀಕ್ಷಿತ ಉತ್ತರ",
+    "expectedAnswerPlaceholder": "ನಿರೀಕ್ಷಿತ ಮೌಲ್ಯ",
+    "expectedAnswerYesNoPlaceholder": "ಹೌದು ಅಥವಾ ಇಲ್ಲ",
+    "addQuestionConfirm": "ಪ್ರಶ್ನೆ ಸೇರಿಸಿ",
+    "checkLabels": {
+      "credit": "ಕ್ರೆಡಿಟ್ ಪರಿಶೀಲನೆ",
+      "criminal": "ಅಪರಾಧ ಹಿನ್ನೆಲೆ",
+      "eviction": "ಹೊರಹಾಕುವಿಕೆ ಇತಿಹಾಸ",
+      "income": "ಆದಾಯ ದೃಢೀಕರಣ",
+      "identity": "ಗುರುತು ದೃಢೀಕರಣ",
+      "references": "ರೆಫರೆನ್ಸ್ ಪರಿಶೀಲನೆ"
+    }
   }
 }

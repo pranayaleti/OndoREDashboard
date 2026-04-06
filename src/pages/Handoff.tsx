@@ -264,18 +264,45 @@ export default function Handoff() {
   // Fetch handoff data when property is selected
   useEffect(() => {
     if (!selectedPropertyId) {
-      // Don't set loading to false if we're still loading properties
-      // This prevents showing "Handoff Not Found" before properties are loaded
       if (!loadingProperties) {
         setLoading(false)
       }
       return
     }
 
-    // ROADMAP: Fetch handoff data from API based on selectedPropertyId (Q2 2026).
-    // For now, using mock data
-    const selectedProperty = properties.find(p => p.id === selectedPropertyId)
-    const mockData: PropertyHandoff = {
+    const fetchHandoff = async () => {
+      try {
+        setLoading(true)
+        const apiData = await handoffApi.getHandoff(selectedPropertyId)
+        const selectedProperty = properties.find(p => p.id === selectedPropertyId)
+
+        if (apiData && apiData.data && Object.keys(apiData.data).length > 0) {
+          // Use real API data — merge with property info for address display
+          const handoff: PropertyHandoff = {
+            ...(apiData.data as unknown as PropertyHandoff),
+            id: apiData.id,
+            propertyId: apiData.propertyId,
+            propertyAddress: selectedProperty
+              ? `${selectedProperty.addressLine1}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zipcode || ''}`
+              : (apiData.data as Record<string, unknown>).propertyAddress as string || '',
+            createdDate: new Date(apiData.createdAt),
+            lastUpdated: new Date(apiData.updatedAt),
+            ownerNotes: apiData.ownerNotes || undefined,
+          }
+
+          const initialChecklist: Record<string, boolean> = {}
+          handoff.moveInChecklist?.forEach(item => {
+            initialChecklist[item.id] = item.completed
+          })
+          setChecklistItems(initialChecklist)
+          setHandoffData(handoff)
+          setOwnerNotes(handoff.ownerNotes || "")
+          setLoading(false)
+          return
+        }
+
+        // No API data yet — use sensible defaults so owners can start filling in
+        const defaultData: PropertyHandoff = {
       id: "1",
       propertyId: selectedPropertyId,
       propertyAddress: selectedProperty 
@@ -644,15 +671,22 @@ export default function Handoff() {
       ownerNotes: "Welcome to your new home! The neighborhood is very friendly. Best coffee shop is around the corner on Main St. The building is quiet, but please be mindful of noise during quiet hours."
     }
 
-    // Initialize checklist state
-    const initialChecklist: Record<string, boolean> = {}
-    mockData.moveInChecklist.forEach(item => {
-      initialChecklist[item.id] = item.completed
-    })
-    setChecklistItems(initialChecklist)
-    setHandoffData(mockData)
-    setOwnerNotes(mockData.ownerNotes || "")
-    setLoading(false)
+        // Initialize checklist state from defaults
+        const defaultChecklist: Record<string, boolean> = {}
+        defaultData.moveInChecklist.forEach(item => {
+          defaultChecklist[item.id] = item.completed
+        })
+        setChecklistItems(defaultChecklist)
+        setHandoffData(defaultData)
+        setOwnerNotes(defaultData.ownerNotes || "")
+        setLoading(false)
+      } catch (error) {
+        console.error("Error fetching handoff data:", error)
+        setLoading(false)
+      }
+    }
+
+    fetchHandoff()
   }, [selectedPropertyId, properties])
 
   const handleChecklistToggle = (id: string) => {
@@ -1006,14 +1040,31 @@ export default function Handoff() {
                     <X className="h-4 w-4 mr-2" />
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    // ROADMAP: Save changes to API (Q2 2026 - document management).
-                    if (handoffData) {
-                      setHandoffData({
-                        ...handoffData,
-                        ownerNotes: ownerNotes,
-                        lastUpdated: new Date()
-                      })
+                  <Button onClick={async () => {
+                    if (handoffData && selectedPropertyId) {
+                      try {
+                        await handoffApi.saveHandoff(
+                          selectedPropertyId,
+                          handoffData,
+                          ownerNotes || null,
+                        )
+                        setHandoffData({
+                          ...handoffData,
+                          ownerNotes: ownerNotes,
+                          lastUpdated: new Date()
+                        })
+                        toast({
+                          title: "Saved",
+                          description: "Handoff information has been saved successfully.",
+                        })
+                      } catch (error) {
+                        console.error("Failed to save handoff:", error)
+                        toast({
+                          title: "Error",
+                          description: "Failed to save handoff information.",
+                          variant: "destructive",
+                        })
+                      }
                     }
                     setIsEditMode(false)
                   }}>

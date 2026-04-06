@@ -557,9 +557,16 @@ export function HandoffPropertyDetails({
                         <div className="space-y-3">
                           {handoffData.access.keys.map((key, index) => (
                             <div key={index} className="p-3 border rounded-lg">
-                              <p className="font-medium">{key.label}</p>
-                              {key.location && <p className="text-sm text-muted-foreground">Location: {key.location}</p>}
-                              {key.notes && <p className="text-sm text-muted-foreground">{key.notes}</p>}
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <p className="font-medium">{key.label}</p>
+                                  {key.location && <p className="text-sm text-muted-foreground">Location: {key.location}</p>}
+                                  {key.notes && <p className="text-sm text-muted-foreground">{key.notes}</p>}
+                                </div>
+                                {key.photoUrl && (
+                                  <img src={key.photoUrl} alt={key.label} className="h-12 w-12 rounded object-cover ml-3 cursor-pointer hover:opacity-80" onClick={() => window.open(key.photoUrl, '_blank')} />
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -607,6 +614,47 @@ export function HandoffPropertyDetails({
                           {handoffData.access.alarm.instructions && (
                             <p className="text-sm">{handoffData.access.alarm.instructions}</p>
                           )}
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Garage Door Openers */}
+                    {handoffData.access.garageDoorOpeners && handoffData.access.garageDoorOpeners.length > 0 && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Garage Door Openers</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            {handoffData.access.garageDoorOpeners.map((opener, index) => (
+                              <div key={index} className="p-3 border rounded-lg">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <p className="font-medium">{opener.label}</p>
+                                    {opener.code && <p className="text-sm font-mono">Code: {opener.code}</p>}
+                                    {opener.remoteLocation && <p className="text-sm text-muted-foreground">Remote location: {opener.remoteLocation}</p>}
+                                    {opener.duplicateInfo && <p className="text-sm text-muted-foreground">Duplicate info: {opener.duplicateInfo}</p>}
+                                  </div>
+                                  {opener.photoUrl && (
+                                    <img src={opener.photoUrl} alt={opener.label} className="h-12 w-12 rounded object-cover ml-3 cursor-pointer hover:opacity-80" onClick={() => window.open(opener.photoUrl, '_blank')} />
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Key Duplication Info */}
+                    {handoffData.access.keyDuplicationInfo && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Key Duplication</CardTitle>
+                          <CardDescription>Where to get copies of keys made</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm">{handoffData.access.keyDuplicationInfo}</p>
                         </CardContent>
                       </Card>
                     )}
