@@ -2,8 +2,7 @@
 
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
-// Mock data for the chart
-const data = [
+const FALLBACK_DATA = [
   { name: "Mortgage", value: 1800, color: "#ef4444" },
   { name: "Property Management", value: 580, color: "#3b82f6" },
   { name: "Insurance", value: 450, color: "#eab308" },
@@ -11,12 +10,24 @@ const data = [
   { name: "Utilities", value: 270, color: "#a855f7" },
 ]
 
-export function PropertyPerformanceChart() {
+interface ChartEntry {
+  name: string
+  value: number
+  color: string
+}
+
+interface PropertyPerformanceChartProps {
+  data?: ChartEntry[]
+}
+
+export function PropertyPerformanceChart({ data }: PropertyPerformanceChartProps) {
+  const chartData = data && data.length > 0 ? data : FALLBACK_DATA
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
-          data={data}
+          data={chartData}
           cx="50%"
           cy="50%"
           labelLine={false}
@@ -25,7 +36,7 @@ export function PropertyPerformanceChart() {
           dataKey="value"
           label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
         >
-          {data.map((entry, index) => (
+          {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
         </Pie>

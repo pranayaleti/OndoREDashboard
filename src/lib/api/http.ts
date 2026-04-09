@@ -22,8 +22,12 @@ const REQUEST_TIMEOUT_MS = 30_000;
 // Error parsing
 // ---------------------------------------------------------------------------
 
-function parseApiError(data: unknown, status: number): ApiErrorResponse {
-  if (typeof data === "object" && data !== null) {
+/**
+ * Normalizes backend JSON error payloads for `ApiError` construction.
+ * Exported for unit tests — must stay aligned with OndoREBackend `errorHandler` JSON shape.
+ */
+export function parseApiErrorBody(data: unknown, status: number): ApiErrorResponse {
+  if (typeof data === "object" && data !== null && !Array.isArray(data)) {
     const obj = data as Record<string, unknown>;
     return {
       message: (obj.message as string) || "Unknown error",
@@ -91,7 +95,7 @@ async function doFetch<T>(
     } catch {
       data = null;
     }
-    const errorData = parseApiError(data, response.status);
+    const errorData = parseApiErrorBody(data, response.status);
     throw new OntoApiError(
       errorData.message,
       response.status,
@@ -209,7 +213,7 @@ export async function apiUpload<T>(
         });
         if (!retry.ok) {
           const data = await retry.json().catch(() => null);
-          const err = parseApiError(data, retry.status);
+          const err = parseApiErrorBody(data, retry.status);
           throw new OntoApiError(err.message, retry.status, err.code, err.errors, err.correlationId);
         }
         return retry.json() as Promise<T>;
@@ -220,7 +224,7 @@ export async function apiUpload<T>(
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
-      const err = parseApiError(data, response.status);
+      const err = parseApiErrorBody(data, response.status);
       throw new OntoApiError(err.message, response.status, err.code, err.errors, err.correlationId);
     }
 

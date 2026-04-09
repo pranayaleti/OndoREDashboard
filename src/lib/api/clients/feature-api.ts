@@ -1039,20 +1039,82 @@ export const featureApi = {
   },
 
   accounting: {
-    listLedgerEntries(_params?: {
+    async listLedgerEntries(params?: {
       propertyId?: string;
       startDate?: string;
       endDate?: string;
     }): Promise<LedgerEntry[]> {
-      return Promise.resolve([]);
+      if (!params?.propertyId) return [];
+      const headers = getAuthHeaders();
+      const query = buildQueryString({
+        startDate: params.startDate,
+        endDate: params.endDate,
+      });
+      const raw = await apiRequest<unknown>(
+        'GET',
+        `/properties/${params.propertyId}/expenses${query}`,
+        undefined,
+        headers,
+      );
+      const rows = unwrapDataArray(raw);
+      return rows.map((r) => ({
+        id: String(r.id ?? ''),
+        propertyId: String(r.property_id ?? params.propertyId ?? ''),
+        ownerId: String(r.created_by ?? ''),
+        type: 'expense' as LedgerEntryType,
+        category: String(r.category ?? ''),
+        description: String(r.description ?? ''),
+        amount: typeof r.amount_cents === 'number' ? r.amount_cents / 100 : 0,
+        date: String(r.expense_date ?? r.created_at ?? ''),
+        createdAt: String(r.created_at ?? ''),
+      }));
     },
-    createLedgerEntry(_entry: LedgerEntry): Promise<LedgerEntry> {
-      return Promise.reject(new Error('Ledger API is not wired to the backend yet.'));
+    async createLedgerEntry(entry: LedgerEntry): Promise<LedgerEntry> {
+      const headers = getAuthHeaders();
+      const payload = {
+        category: entry.category ?? 'other',
+        description: entry.description,
+        amount_cents: Math.round(entry.amount * 100),
+        expense_date: entry.date,
+        tax_deductible: true,
+      };
+      const raw = await apiRequest<unknown>(
+        'POST',
+        `/properties/${entry.propertyId}/expenses`,
+        payload,
+        headers,
+      );
+      const r = (raw as Record<string, unknown>)?.data ?? raw as Record<string, unknown>;
+      return {
+        ...entry,
+        id: String((r as Record<string, unknown>)?.id ?? entry.id),
+        createdAt: String((r as Record<string, unknown>)?.created_at ?? new Date().toISOString()),
+      };
     },
-    recordExpense(
-      _entry: Omit<LedgerEntry, 'id' | 'type'> & { type?: LedgerEntry['type'] },
+    async recordExpense(
+      entry: Omit<LedgerEntry, 'id' | 'type'> & { type?: LedgerEntry['type'] },
     ): Promise<LedgerEntry> {
-      return Promise.reject(new Error('Expense API is not wired to the backend yet.'));
+      const headers = getAuthHeaders();
+      const payload = {
+        category: entry.category ?? 'other',
+        description: entry.description,
+        amount_cents: Math.round(entry.amount * 100),
+        expense_date: entry.date,
+        tax_deductible: true,
+      };
+      const raw = await apiRequest<unknown>(
+        'POST',
+        `/properties/${entry.propertyId}/expenses`,
+        payload,
+        headers,
+      );
+      const r = ((raw as Record<string, unknown>)?.data ?? raw) as Record<string, unknown>;
+      return {
+        ...entry,
+        id: String(r?.id ?? ''),
+        type: 'expense' as LedgerEntryType,
+        createdAt: String(r?.created_at ?? new Date().toISOString()),
+      };
     },
     async getProfitLoss(params?: {
       propertyId?: string;
@@ -1102,8 +1164,13 @@ export const featureApi = {
         propertiesIncluded: Array.isArray(d.properties) ? d.properties.length : 0,
       };
     },
-    exportLedger(_payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
-      return Promise.reject(new Error('Accounting export is not wired to the backend yet.'));
+    exportLedger(payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
+      const downloadUrl = `${API_BASE_URL}/reports/pnl/export${buildQueryString({
+        startDate: payload.startDate,
+        endDate: payload.endDate,
+        propertyId: payload.propertyId,
+      })}`;
+      return Promise.resolve({ downloadUrl });
     },
   },
 

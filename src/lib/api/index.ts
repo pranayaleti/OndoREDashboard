@@ -10,7 +10,16 @@
  */
 
 // Export HTTP utilities
-export { apiRequest, apiGet, apiPost, apiPut, apiDelete, apiUpload, getAuthHeaders } from "./http";
+export {
+  apiRequest,
+  apiGet,
+  apiPost,
+  apiPut,
+  apiDelete,
+  apiUpload,
+  getAuthHeaders,
+  parseApiErrorBody,
+} from "./http";
 
 // Export client modules
 export { authApi } from "./clients/auth";
