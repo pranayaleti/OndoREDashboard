@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { 
   Home, 
   ChevronRight, 
@@ -25,6 +25,8 @@ interface BreadcrumbItem {
 interface BreadcrumbProps {
   items: BreadcrumbItem[]
   className?: string
+  rootLabel?: string
+  rootHref?: string
 }
 
 // Icon mapping for common pages
@@ -49,10 +51,23 @@ const getIconForLabel = (label: string): LucideIcon | undefined => {
 }
 
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
+  const location = useLocation()
+  const pathSegments = location.pathname.split("/").filter(Boolean)
+  const rootSegment = pathSegments[0]
+  const inferredRootHref =
+    rootSegment === "dashboard" ||
+    rootSegment === "owner" ||
+    rootSegment === "tenant" ||
+    rootSegment === "maintenance" ||
+    rootSegment === "admin" ||
+    rootSegment === "super-admin"
+      ? `/${rootSegment}`
+      : "/"
+
   return (
     <nav className={cn("flex items-center space-x-2 text-sm lg:text-base", className)} aria-label="Breadcrumb">
       <Link 
-        to="/owner" 
+        to={inferredRootHref}
         className="flex items-center gap-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
       >
         <Home className="h-4 w-4 shrink-0 lg:h-5 lg:w-5" />

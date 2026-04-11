@@ -152,14 +152,14 @@ function TenantCard({ t, onIntervention, onViewHistory }: TenantCardProps) {
 
         {/* AI Recommendation badge */}
         {recommendation && (
-          <div className={`mt-2 flex items-start gap-1.5 text-xs px-2.5 py-1.5 rounded-md border ${
+          <div className={`mt-2 flex items-start gap-1.5 whitespace-normal break-words px-2.5 py-1.5 text-xs rounded-md border ${
             RECOMMENDATION_COLORS[recommendation.recommended_type]
           }`}>
             <Brain className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-            <span>
+            <span className="min-w-0 whitespace-normal break-words">
               <strong>Suggested:</strong> {INTERVENTION_LABELS[recommendation.recommended_type]}
               {" — "}
-              <span className="opacity-80">{recommendation.reasoning.slice(0, 100)}{recommendation.reasoning.length > 100 ? "…" : ""}</span>
+              <span className="opacity-80">{recommendation.reasoning}</span>
             </span>
           </div>
         )}
@@ -360,11 +360,20 @@ export default function ManagerAtRisk() {
   const [bandFilter, setBandFilter] = useState<"all" | "high" | "medium">("all")
   const { toast } = useToast()
 
-  const fetchList = async () => {
+  const fetchList = async (attemptAutoRefresh = false) => {
     try {
       setLoading(true)
       const data = await dashboardApi.getAtRiskTenants()
       setList(data)
+      if (attemptAutoRefresh && data.length === 0) {
+        try {
+          await dashboardApi.refreshAtRiskScores()
+          const refreshed = await dashboardApi.getAtRiskTenants()
+          setList(refreshed)
+        } catch {
+          // Keep the initial empty state if the refresh pass fails.
+        }
+      }
     } catch (err) {
       console.error("At-risk fetch error:", err)
       toast({ title: "Error", description: "Failed to load at-risk tenants.", variant: "destructive" })
@@ -373,7 +382,7 @@ export default function ManagerAtRisk() {
     }
   }
 
-  useEffect(() => { fetchList() }, [])
+  useEffect(() => { void fetchList(true) }, [])
 
   const handleRefreshScores = async () => {
     try {

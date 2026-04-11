@@ -39,6 +39,9 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 import type { UserRole } from "@/lib/auth-utils"
 import { documentsApi, type DocumentListRecord } from "@/lib/api"
+import { getDemoDocuments } from "@/lib/seed-data"
+import { CardGridSkeleton } from "@/components/ui/list-skeletons"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export interface Document {
   id: string
@@ -333,16 +336,24 @@ export function DocumentsPage({
     setApiError(null)
     try {
       const { data } = await documentsApi.list()
-      setDocumentsState(data.map(mapRecordToDocument))
+      const mapped = data.map(mapRecordToDocument)
+      const fallbackDocuments = getDemoDocuments(user)
+      setDocumentsState(mapped.length === 0 && fallbackDocuments.length > 0 ? fallbackDocuments : mapped)
       setFoldersState([])
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to load documents"
-      setApiError(msg)
-      setDocumentsState([])
+      const fallbackDocuments = getDemoDocuments(user)
+      if (fallbackDocuments.length > 0) {
+        setDocumentsState(fallbackDocuments)
+        setApiError(null)
+      } else {
+        setApiError(msg)
+        setDocumentsState([])
+      }
     } finally {
       setApiLoading(false)
     }
-  }, [fetchFromApi])
+  }, [fetchFromApi, user])
 
   useEffect(() => {
     loadFromApi()
@@ -544,8 +555,10 @@ export function DocumentsPage({
 
   if (fetchFromApi && apiLoading) {
     return (
-      <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="text-muted-foreground">Loading documents...</div>
+      <div className="min-h-screen bg-transparent">
+        <div className="container mx-auto px-4 py-6">
+          <CardGridSkeleton cards={3} />
+        </div>
       </div>
     )
   }
@@ -745,13 +758,12 @@ export function DocumentsPage({
                 {filteredDocuments.length === 0 ? (
                   <Card>
                     <CardContent className="text-center py-12">
-                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                        No documents found
-                      </h3>
-                      <p className="text-gray-500 dark:text-gray-400">
-                        {searchTerm ? "Try adjusting your search terms" : "No documents available"}
-                      </p>
+                      <EmptyState
+                        icon={<FileText className="h-12 w-12" />}
+                        title="No documents found"
+                        description={searchTerm ? "Try adjusting your search terms" : "No documents available"}
+                        ctaLabel={undefined}
+                      />
                     </CardContent>
                   </Card>
                 ) : viewMode === "grid" ? (
@@ -917,4 +929,3 @@ export function DocumentsPage({
     </div>
   )
 }
-

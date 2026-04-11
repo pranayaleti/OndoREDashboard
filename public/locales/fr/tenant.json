@@ -5,6 +5,8 @@
     "rent": "Loyer et Paiements",
     "maintenance": "Maintenance",
     "documents": "Documents",
+    "myUploads": "Mes fichiers",
+    "sharedDocuments": "Documents partagés",
     "profile": "Profil",
     "notifications": "Notifications",
     "addons": "Modules complémentaires",
@@ -20,6 +22,40 @@
     "overdue": "En retard",
     "paid": "Payé",
     "pending": "En attente"
+  },
+  "dashboard": {
+    "propertyStatusActive": "Active",
+    "propertyStatusPending": "En attente de validation du bailleur",
+    "propertyStatusPendingSubtitle": "Nous relions actuellement votre bail et votre logement. La vue du bien s'activera dès que l'affectation sera confirmée.",
+    "quickPayTitle": "Paiement rapide",
+    "quickPayDescription": "Consultez votre prochain loyer, vérifiez l'auto-pay et ouvrez les paiements directement.",
+    "quickPayDueLabel": "Prochaine échéance",
+    "quickPayAutopayLabel": "Paiement automatique",
+    "quickPayAutopayOn": "Auto-pay actif",
+    "quickPayAutopayOff": "Auto-pay inactif",
+    "quickPayOpen": "Ouvrir paiements",
+    "quickPaySetup": "Activez l'auto-pay quand vous voulez.",
+    "quickPayEmptyTitle": "Votre calendrier de loyer est en préparation",
+    "quickPayEmptyDescription": "Nous afficherons la prochaine échéance et les raccourcis de paiement dès que le bailleur terminera la configuration.",
+    "assistantTitle": "Demandez à Ondo avant de fouiller dans les menus",
+    "assistantDescription": "Utilisez l'assistant pour vos questions de bail, rappels de loyer ou pour démarrer une demande de maintenance avec les bons détails.",
+    "assistantTry": "Essayez",
+    "assistantOpen": "Ouvrir l'assistant",
+    "assistantExampleLease": "Quand mon bail se termine-t-il ?",
+    "assistantExampleRent": "Montre-moi mon prochain loyer.",
+    "assistantExampleMaintenance": "Créer un ticket plomberie.",
+    "maintenanceTimelineTitle": "Chronologie maintenance",
+    "maintenanceTimelineDescription": "Suivez la dernière demande de sa soumission à sa résolution sans ouvrir toute la page de maintenance.",
+    "maintenanceEmptyTitle": "Aucune demande de maintenance pour le moment",
+    "maintenanceEmptyDescription": "Si quelque chose change à la maison, envoyez une demande avec des photos et nous mettrons cette chronologie à jour ici.",
+    "maintenanceOpen": "Ouvrir la maintenance",
+    "maintenanceSubmit": "Envoyer une demande",
+    "maintenanceLastUpdated": "Dernière mise à jour {{date}}",
+    "maintenanceOpenCount": "{{count}} demandes ouvertes",
+    "maintenanceStageSubmitted": "Soumise",
+    "maintenanceStageReviewed": "Révisée",
+    "maintenanceStageScheduled": "Planifiée",
+    "maintenanceStageResolved": "Résolue"
   },
   "maintenance": {
     "submit": "Soumettre une demande",
@@ -47,5 +83,13 @@
     "email": "E-mail",
     "push": "Notifications push",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "Commencez par l'assistant",
+    "assistantDescription": "Posez vos questions sur le bail, le loyer ou la maintenance en langage naturel et allez directement vers le bon parcours.",
+    "paymentsTitle": "Utilisez le paiement rapide pour le loyer",
+    "paymentsDescription": "Cette carte garde le prochain montant dû et vos raccourcis de paiement au premier plan.",
+    "maintenanceTitle": "Suivez l'avancement ici",
+    "maintenanceDescription": "La chronologie indique si votre demande est soumise, révisée, planifiée ou résolue avant même d'ouvrir le ticket."
   }
 }

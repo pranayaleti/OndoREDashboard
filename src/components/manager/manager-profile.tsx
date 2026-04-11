@@ -38,6 +38,7 @@ import { US_TIMEZONES } from "@/constants"
 import { useUserTimezone } from "@/hooks/use-user-timezone"
 import { LoginHistory } from "@/components/shared/login-history"
 import { ReferralShareWidget } from "@/components/shared/referral-share-widget"
+import { NotificationPreferencesGrid, type NotificationPreferenceValues } from "@/components/shared/notification-preferences-grid"
 
 export default function ManagerProfile() {
   const { user, refreshUser } = useAuth()
@@ -89,6 +90,13 @@ export default function ManagerProfile() {
       dataRetention: "7",
     },
   })
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferenceValues>({
+    rentDueReminders: true,
+    maintenanceUpdates: true,
+    leaseExpiryAlerts: true,
+    newMessages: true,
+    paymentConfirmations: true,
+  })
   const { displayTimezone, storageTimezone } = useUserTimezone()
 
   const handleToggleChange = (category: string, subcategory: string, setting: string) => {
@@ -112,6 +120,18 @@ export default function ManagerProfile() {
         [subcategory]: value,
       },
     }))
+  }
+
+  const handleNotificationPreferenceToggle = (key: keyof NotificationPreferenceValues) => {
+    setNotificationPreferences((previous) => ({
+      ...previous,
+      [key]: !previous[key],
+    }))
+    toast({
+      title: "Preferences Updated",
+      description: "Your notification preferences have been saved successfully.",
+      duration: 3000,
+    })
   }
   const [portfolioStats, setPortfolioStats] = useState<ManagerPortfolioStats | null>(null)
   const [isLoadingStats, setIsLoadingStats] = useState(true)
@@ -547,6 +567,11 @@ export default function ManagerProfile() {
             </TabsContent>
 
             <TabsContent value="notifications" className="space-y-6">
+              <NotificationPreferencesGrid
+                values={notificationPreferences}
+                onToggle={handleNotificationPreferenceToggle}
+                description="Choose which manager alerts should stay active in your profile."
+              />
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -562,7 +587,7 @@ export default function ManagerProfile() {
                     <p className="text-sm text-gray-500 mb-6">
                       Access your detailed notifications page to see all alerts, updates, and important messages
                     </p>
-                    <Link to="/manager/notifications">
+                    <Link to="/dashboard/notifications">
                       <Button size="lg" className="gap-2">
                         Go to Notifications
                         <ExternalLink className="h-4 w-4" />

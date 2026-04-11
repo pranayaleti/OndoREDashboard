@@ -6,6 +6,9 @@
     "statements": "Estados de cuenta",
     "maintenance": "Mantenimiento",
     "documents": "Documentos",
+    "actionItems": "Elementos de acción",
+    "myUploads": "Mis cargas",
+    "sharedDocuments": "Documentos compartidos",
     "profile": "Perfil",
     "quality": "Calidad",
     "pricing": "Precio del alquiler"
@@ -25,6 +28,28 @@
   "empty": {
     "noProperties": "No hay propiedades vinculadas a su cuenta.",
     "noMaintenance": "No hay solicitudes de mantenimiento."
+  },
+  "sidebar": {
+    "actionItemsHint": "Rentas atrasadas, contratos por vencer y problemas sin resolver que requieren tu atención."
+  },
+  "home": {
+    "setupEyebrow": "Configuración del panel",
+    "emptyTitle": "Aún no hay datos financieros",
+    "emptyDescription": "Conecta tus datos bancarios y de la propiedad para convertir esta vista en un resumen en vivo de gastos, servicios y costos recurrentes.",
+    "connectBank": "Conectar banco",
+    "addPropertyValue": "Agregar valor de la propiedad",
+    "myUploadsTitle": "Mis cargas",
+    "myUploadsDescription": "Guarda en un solo lugar los archivos de seguro, hipoteca, garantías e inspecciones que subes tú. Los documentos compartidos de tu equipo permanecen en Documentos.",
+    "manageUploads": "Gestionar mis cargas",
+    "viewSharedDocs": "Ver documentos compartidos"
+  },
+  "tour": {
+    "assistantTitle": "Empieza con el asistente",
+    "assistantDescription": "La barra de búsqueda es la forma más rápida de revisar mantenimiento, documentos o tareas de la propiedad sin recorrer cada pestaña.",
+    "actionItemsTitle": "Revisa los elementos de acción",
+    "actionItemsDescription": "Esto reemplaza la etiqueta at-risk por una cola más clara de renta, contrato y mantenimiento que aún necesita una decisión.",
+    "documentsTitle": "Separa tus cargas de los documentos compartidos",
+    "documentsDescription": "Usa Mis cargas para los archivos que agregas tú y Documentos compartidos para contratos o reportes que tu equipo publique para ti."
   },
   "screeningConfig": {
     "loadError": "No se pudo cargar la configuración de evaluación",

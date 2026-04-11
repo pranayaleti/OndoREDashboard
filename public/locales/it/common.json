@@ -107,6 +107,24 @@
     "shareDesc": "Condividi Ondo RE, guadagna mesi gratuiti + partecipazioni",
     "viewProgram": "Vedi programma completo"
   },
+  "sidebar": {
+    "sections": {
+      "home": "Home",
+      "management": "Gestione",
+      "financials": "Finanze",
+      "documents": "Documenti",
+      "account": "Account",
+      "resident": "Vivere qui",
+      "payments": "Pagamenti"
+    }
+  },
+  "tour": {
+    "step": "Passo {{current}} di {{total}}",
+    "skip": "Salta tour",
+    "back": "Indietro",
+    "next": "Avanti",
+    "done": "Fine"
+  },
   "language": {
     "label": "Lingua",
     "en": "English (United States)",

@@ -6,6 +6,9 @@
     "statements": "Relevés",
     "maintenance": "Maintenance",
     "documents": "Documents",
+    "actionItems": "Points d'action",
+    "myUploads": "Mes fichiers",
+    "sharedDocuments": "Documents partagés",
     "profile": "Profil",
     "quality": "Qualité",
     "pricing": "Prix du loyer"
@@ -25,6 +28,28 @@
   "empty": {
     "noProperties": "Aucune propriété liée à votre compte.",
     "noMaintenance": "Aucune demande de maintenance."
+  },
+  "sidebar": {
+    "actionItemsHint": "Loyers en retard, baux qui expirent et sujets non résolus qui demandent votre attention."
+  },
+  "home": {
+    "setupEyebrow": "Configuration du tableau",
+    "emptyTitle": "Aucune donnée financière pour le moment",
+    "emptyDescription": "Connectez vos informations bancaires et immobilières pour transformer cette vue en aperçu en direct des dépenses, charges et coûts récurrents.",
+    "connectBank": "Connecter votre banque",
+    "addPropertyValue": "Ajouter la valeur du bien",
+    "myUploadsTitle": "Mes fichiers",
+    "myUploadsDescription": "Regroupez vos assurances, hypothèques, garanties et rapports d'inspection que vous téléversez vous-même. Les documents partagés par votre équipe restent dans Documents.",
+    "manageUploads": "Gérer mes fichiers",
+    "viewSharedDocs": "Voir les documents partagés"
+  },
+  "tour": {
+    "assistantTitle": "Commencez par l'assistant",
+    "assistantDescription": "La barre de recherche est le moyen le plus rapide de vérifier la maintenance, les documents ou les tâches du bien sans parcourir chaque onglet.",
+    "actionItemsTitle": "Passez en revue les points d'action",
+    "actionItemsDescription": "Cela remplace l'ancien libellé at-risk par une file plus claire pour les loyers, baux et sujets de maintenance qui attendent encore une décision.",
+    "documentsTitle": "Séparez vos fichiers des documents partagés",
+    "documentsDescription": "Utilisez Mes fichiers pour ce que vous ajoutez vous-même, et Documents partagés pour les baux ou rapports publiés par votre équipe."
   },
   "screeningConfig": {
     "loadError": "Impossible de charger la configuration de sélection",

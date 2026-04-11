@@ -28,10 +28,6 @@ export function MaintenanceOverview() {
           <p className="text-lg font-medium">{highPriority}</p>
         </div>
       </div>
-      <p className="mt-4 text-sm text-muted-foreground">
-        Vendor assignment and notifications will hook into Twilio/Email once the
-        backend exposes vendor endpoints.
-      </p>
     </div>
   );
 }

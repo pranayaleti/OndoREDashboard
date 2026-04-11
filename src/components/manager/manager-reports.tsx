@@ -15,6 +15,8 @@ import {
 import { propertyApi, authApi, leadApi, maintenanceApi, type Property, type InvitedUser, type Lead, type MaintenanceRequest } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { FinancialReportsView, type OwnerOption } from "@/components/shared/financial-reports-view"
+import { Button } from "@/components/ui/button"
+import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 
 export default function ManagerReports() {
   const [loading, setLoading] = useState(true)
@@ -125,6 +127,34 @@ export default function ManagerReports() {
   const recentLeads = leads.filter(l => new Date(l.createdAt) >= thirtyDaysAgo)
   const recentMaintenance = maintenanceRequests.filter(m => new Date(m.createdAt) >= thirtyDaysAgo)
 
+  const handleExportCsv = () => {
+    const rows = [
+      ["Metric", "Value"],
+      ["Total Properties", stats.totalProperties],
+      ["Approved Properties", stats.approvedProperties],
+      ["Pending Properties", stats.pendingProperties],
+      ["Rejected Properties", stats.rejectedProperties],
+      ["Total Owners", stats.totalOwners],
+      ["Total Tenants", stats.totalTenants],
+      ["Total Leads", stats.totalLeads],
+      ["Converted Leads", stats.convertedLeads],
+      ["Total Maintenance", stats.totalMaintenance],
+      ["Completed Maintenance", stats.completedMaintenance],
+      ["Emergency Maintenance", stats.emergencyMaintenance],
+    ]
+    const csv = rows
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "manager-reports-summary.csv"
+    link.click()
+    URL.revokeObjectURL(url)
+    toast({ title: "Download started", description: "Manager reports CSV export" })
+  }
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -141,12 +171,48 @@ export default function ManagerReports() {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          Reports & Analytics
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Comprehensive insights into your property management operations
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              Reports & Analytics
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Comprehensive insights into your property management operations
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={handleExportCsv}>
+              Export CSV
+            </Button>
+            <ExportPDFButton
+              variant="outline"
+              fileName="manager-reports"
+              content={{
+                title: "Manager Reports",
+                subtitle: "Portfolio analytics summary",
+                summary: [
+                  { label: "Properties", value: stats.totalProperties },
+                  { label: "Owners", value: stats.totalOwners },
+                  { label: "Tenants", value: stats.totalTenants },
+                  { label: "Maintenance", value: stats.totalMaintenance },
+                ],
+                tables: [
+                  {
+                    title: "Operations Overview",
+                    headers: ["Metric", "Value"],
+                    rows: [
+                      ["Approval Rate", `${stats.approvalRate}%`],
+                      ["Lead Conversion", `${stats.conversionRate}%`],
+                      ["Recent Properties", String(recentProperties.length)],
+                      ["Recent Leads", String(recentLeads.length)],
+                      ["Recent Maintenance", String(recentMaintenance.length)],
+                    ],
+                  },
+                ],
+              }}
+            />
+          </div>
+        </div>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">

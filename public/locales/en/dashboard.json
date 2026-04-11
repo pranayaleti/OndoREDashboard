@@ -40,5 +40,20 @@
     "inviteTenant": "Invite Tenant",
     "viewAll": "View All",
     "export": "Export"
+  },
+  "portfolio": {
+    "accounting": {
+      "title": "Profit & Loss",
+      "covering": "Covering {{count}} properties",
+      "export": "Export CSV",
+      "exporting": "Preparing export..."
+    },
+    "documents": {
+      "title": "Document Vault",
+      "latest": "Latest upload: {{name}}",
+      "empty": "No portfolio documents uploaded yet.",
+      "upload": "Upload document",
+      "uploading": "Uploading..."
+    }
   }
 }

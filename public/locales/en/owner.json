@@ -6,6 +6,9 @@
     "statements": "Statements",
     "maintenance": "Maintenance",
     "documents": "Documents",
+    "actionItems": "Action Items",
+    "myUploads": "My Uploads",
+    "sharedDocuments": "Shared Documents",
     "profile": "Profile",
     "quality": "Quality",
     "pricing": "Rent Pricing"
@@ -25,6 +28,28 @@
   "empty": {
     "noProperties": "No properties linked to your account.",
     "noMaintenance": "No maintenance requests."
+  },
+  "sidebar": {
+    "actionItemsHint": "Late rent, expiring leases, and unresolved issues that need your attention."
+  },
+  "home": {
+    "setupEyebrow": "Dashboard setup",
+    "emptyTitle": "No financial data yet",
+    "emptyDescription": "Connect your banking and property details to turn this view into a live snapshot of expenses, utilities, and recurring costs.",
+    "connectBank": "Connect your bank",
+    "addPropertyValue": "Add property value",
+    "myUploadsTitle": "My uploads",
+    "myUploadsDescription": "Keep insurance, mortgage, warranty, and inspection files you upload yourself in one place. Shared documents from your team stay in Documents.",
+    "manageUploads": "Manage my uploads",
+    "viewSharedDocs": "View shared docs"
+  },
+  "tour": {
+    "assistantTitle": "Ask the assistant first",
+    "assistantDescription": "The search bar is the fastest way to check maintenance, documents, or property to-dos without digging through every tab.",
+    "actionItemsTitle": "Review action items",
+    "actionItemsDescription": "This replaces the old at-risk label with a clearer queue of rent, lease, and maintenance items that still need a decision.",
+    "documentsTitle": "Separate personal uploads from shared docs",
+    "documentsDescription": "Use My Uploads for files you add yourself, and Shared Documents for leases or reports your team publishes for you."
   },
   "screeningConfig": {
     "loadError": "Failed to load screening configuration",

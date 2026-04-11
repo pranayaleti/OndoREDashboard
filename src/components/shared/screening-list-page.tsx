@@ -28,6 +28,7 @@ import { UserPlus, Loader2, ChevronRight, CheckCircle, XCircle, AlertCircle } fr
 import { screeningApi, type Screening, type ScreeningRecommendation } from "@/lib/api/clients/screening"
 import { propertyApi, authApi, type Property } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { EmptyState } from "@/components/ui/empty-state"
 
 export interface OwnerOption {
   id: string
@@ -222,8 +223,12 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
         </Card>
       ) : screenings.length === 0 ? (
         <Card>
-          <CardContent className="pt-6 text-muted-foreground">
-            No screenings yet. Click &quot;New screening&quot; to send an invitation to a prospective tenant.
+          <CardContent className="pt-6">
+            <EmptyState
+              icon={<UserPlus className="h-12 w-12" />}
+              title="No screenings yet"
+              description='Click "New screening" to send an invitation to a prospective tenant.'
+            />
           </CardContent>
         </Card>
       ) : (

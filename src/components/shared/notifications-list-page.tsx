@@ -6,6 +6,9 @@ import { Bell, Loader2, AlertCircle } from "lucide-react"
 import { notificationsApi, type Notification } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { formatDistanceToNow } from "date-fns"
+import { useAuth } from "@/lib/auth-context"
+import { getDemoNotifications } from "@/lib/seed-data"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface NotificationsListPageProps {
   title?: string
@@ -16,6 +19,7 @@ export function NotificationsListPage({
   title = "Notifications",
   subtitle = "Stay updated with important updates",
 }: NotificationsListPageProps) {
+  const { user } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,14 +31,15 @@ export function NotificationsListPage({
     setError(null)
     try {
       const { notifications: data } = await notificationsApi.getNotifications(false, 1, 50)
-      setNotifications(data)
+      const fallbackNotifications = getDemoNotifications(user)
+      setNotifications(data.length === 0 && fallbackNotifications.length > 0 ? fallbackNotifications : data)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load notifications")
-      setNotifications([])
+      setNotifications(getDemoNotifications(user))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [user])
 
   useEffect(() => {
     fetchNotifications()
@@ -45,7 +50,9 @@ export function NotificationsListPage({
 
   const markAsRead = async (id: string) => {
     try {
-      await notificationsApi.markAsRead(id)
+      if (getDemoNotifications(user).length === 0) {
+        await notificationsApi.markAsRead(id)
+      }
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
       toast({ title: "Marked as read" })
     } catch {
@@ -55,7 +62,9 @@ export function NotificationsListPage({
 
   const markAllAsRead = async () => {
     try {
-      await notificationsApi.markAllAsRead()
+      if (getDemoNotifications(user).length === 0) {
+        await notificationsApi.markAllAsRead()
+      }
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
       toast({ title: "All marked as read" })
     } catch {
@@ -136,10 +145,13 @@ export function NotificationsListPage({
         {filtered.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
-              <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                {filter === "unread" ? "No unread notifications." : "No notifications yet."}
-              </p>
+              <EmptyState
+                icon={<Bell className="h-12 w-12" />}
+                title={filter === "unread" ? "No unread notifications" : "No notifications yet"}
+                description={filter === "unread" ? "You’re all caught up for now." : "We’ll show rent, maintenance, and lease updates here."}
+                ctaLabel="Open dashboard"
+                ctaHref={user?.role ? `/${user.role === "manager" ? "dashboard" : user.role}` : "/"}
+              />
             </CardContent>
           </Card>
         ) : (

@@ -103,6 +103,8 @@ import type {
   ReferralHistoryItem,
   LeaderboardEntry,
 } from "@/lib/api/clients/referrals";
+import { useAuth } from "@/lib/auth-context";
+import { getDemoReferralLink } from "@/lib/seed-data";
 
 const SWEEPSTAKES_URL =
   import.meta.env.VITE_UI_BASE_URL
@@ -151,6 +153,7 @@ function TableRowSkeleton({ cols }: { cols: number }) {
 export function ReferralProgram() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [history, setHistory] = useState<ReferralHistoryItem[]>([]);
@@ -174,8 +177,23 @@ export function ReferralProgram() {
     setLoadingStats(true);
     try {
       const data = await referralApi.getStats();
-      setStats(data);
+      setStats({
+        ...data,
+        shareUrl: data.shareUrl || getDemoReferralLink(user?.id),
+      });
     } catch {
+      setStats((current) =>
+        current ?? {
+          code: user?.id ?? "demo-referral",
+          shareUrl: getDemoReferralLink(user?.id),
+          totalReferrals: 0,
+          creditsEarned: 0,
+          creditsAvailable: 0,
+          maxCredits: 10,
+          sweepstakesEntries: 0,
+          leaderboardPosition: null,
+        }
+      );
       toast({
         title: t("referral.errorLoading"),
         variant: "destructive",
@@ -226,8 +244,9 @@ export function ReferralProgram() {
   }, [fetchHistory, historyPage]);
 
   const handleCopy = async () => {
-    if (!stats?.shareUrl) return;
-    await navigator.clipboard.writeText(stats.shareUrl);
+    const referralLink = stats?.shareUrl || getDemoReferralLink(user?.id);
+    if (!referralLink) return;
+    await navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

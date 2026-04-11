@@ -25,7 +25,7 @@ const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 export default function Manager() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen">
+      <div className="min-h-full">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<ManagerDashboard />} />

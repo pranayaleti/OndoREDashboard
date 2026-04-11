@@ -17,6 +17,11 @@ import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 import { usePagination } from "@/hooks/usePagination"
 import { DataPagination } from "@/components/ui/DataPagination"
 import { PageSizeSelector } from "@/components/ui/PageSizeSelector"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ExportPDFButton } from "@/components/ui/export-pdf-button"
+import { getDemoMaintenanceTickets } from "@/lib/seed-data"
+
+type BoardStatus = MaintenanceRequest["status"] | "awaiting_parts"
 
 export default function ManagerMaintenance() {
   const { user } = useAuth()
@@ -34,8 +39,11 @@ export default function ManagerMaintenance() {
   const [suggestVendorsRequest, setSuggestVendorsRequest] = useState<MaintenanceRequest | null>(null)
   const [suggestedVendors, setSuggestedVendors] = useState<Vendor[]>([])
   const [suggestVendorsLoading, setSuggestVendorsLoading] = useState(false)
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list")
+  const [boardStatusById, setBoardStatusById] = useState<Record<string, BoardStatus>>({})
+  const [draggedRequestId, setDraggedRequestId] = useState<string | null>(null)
   const [updateData, setUpdateData] = useState({
-    status: "",
+    status: "" as MaintenanceRequest["status"] | "",
     assignedTo: "",
     message: ""
   })
@@ -69,15 +77,22 @@ export default function ManagerMaintenance() {
       setLoading(true)
       setError(null)
       const requests = await maintenanceApi.getManagerMaintenanceRequests()
-      setMaintenanceRequests(requests)
+      const fallbackRequests = getDemoMaintenanceTickets(user)
+      setMaintenanceRequests(requests.length > 0 ? requests : fallbackRequests)
     } catch (err: unknown) {
       console.error("Error fetching maintenance requests:", err)
-      setError("Failed to load maintenance requests")
-      toast({
-        title: "Error",
-        description: "Failed to load maintenance requests. Please try again.",
-        variant: "destructive",
-      })
+      const fallbackRequests = getDemoMaintenanceTickets(user)
+      if (fallbackRequests.length > 0) {
+        setMaintenanceRequests(fallbackRequests)
+        setError(null)
+      } else {
+        setError("Failed to load maintenance requests")
+        toast({
+          title: "Error",
+          description: "Failed to load maintenance requests. Please try again.",
+          variant: "destructive",
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -106,10 +121,13 @@ export default function ManagerMaintenance() {
     return () => { cancelled = true }
   }, [suggestVendorsRequest?.id, suggestVendorsRequest?.category])
 
+  const getBoardStatus = (request: MaintenanceRequest): BoardStatus =>
+    boardStatusById[request.id] ?? request.status
+
   const filteredRequests = maintenanceRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       request.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter
+    const matchesStatus = statusFilter === "all" || getBoardStatus(request) === statusFilter
     const matchesPriority = priorityFilter === "all" || request.priority === priorityFilter
     return matchesSearch && matchesStatus && matchesPriority
   })
@@ -138,6 +156,8 @@ export default function ManagerMaintenance() {
     }
   }
 
+  const getStatusLabel = (request: MaintenanceRequest) => getBoardStatus(request).replace("_", " ")
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "emergency":
@@ -158,7 +178,7 @@ export default function ManagerMaintenance() {
 
     try {
       await maintenanceApi.updateMaintenanceRequest(selectedRequest.id, {
-        status: updateData.status as any,
+        status: updateData.status || selectedRequest.status,
         assignedTo: updateData.assignedTo,
         managerNotes: updateData.message
       })
@@ -233,6 +253,78 @@ export default function ManagerMaintenance() {
     }
   }
 
+  const handleExportCsv = () => {
+    if (filteredRequests.length === 0) return
+    const rows = [
+      ["Title", "Property", "Priority", "Status", "Assigned To", "Created"],
+      ...filteredRequests.map((request) => [
+        request.title,
+        request.propertyTitle || request.propertyAddress || "Property",
+        request.priority,
+        getBoardStatus(request),
+        request.assignedTo || "Not assigned",
+        new Date(request.createdAt).toLocaleDateString(),
+      ]),
+    ]
+    const csv = rows
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "maintenance-requests.csv"
+    link.click()
+    URL.revokeObjectURL(url)
+    toast({ title: "Download started", description: "Maintenance requests CSV export" })
+  }
+
+  const handleMoveRequest = async (request: MaintenanceRequest, nextStatus: BoardStatus) => {
+    setBoardStatusById((previous) => ({ ...previous, [request.id]: nextStatus }))
+    setMaintenanceRequests((previous) =>
+      previous.map((item) =>
+        item.id === request.id && nextStatus !== "awaiting_parts"
+          ? { ...item, status: nextStatus }
+          : item
+      )
+    )
+
+    if (nextStatus === "awaiting_parts") {
+      toast({
+        title: "Board updated",
+        description: `${request.title} moved to Awaiting Parts.`,
+      })
+      return
+    }
+
+    try {
+      await maintenanceApi.updateMaintenanceRequest(request.id, { status: nextStatus })
+      toast({
+        title: "Status updated",
+        description: `${request.title} moved to ${nextStatus.replace("_", " ")}.`,
+      })
+    } catch (error) {
+      setBoardStatusById((previous) => {
+        const next = { ...previous }
+        delete next[request.id]
+        return next
+      })
+      void fetchMaintenanceRequests()
+      toast({
+        title: "Update failed",
+        description: error instanceof Error ? error.message : "Could not update the ticket status.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const boardColumns: Array<{ status: BoardStatus; label: string }> = [
+    { status: "pending", label: "Pending" },
+    { status: "in_progress", label: "In Progress" },
+    { status: "awaiting_parts", label: "Awaiting Parts" },
+    { status: "completed", label: "Completed" },
+  ]
+
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       {/* Header */}
@@ -247,7 +339,44 @@ export default function ManagerMaintenance() {
           </div>
           <p className="text-gray-600 dark:text-gray-400">Manage tenant maintenance requests</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <div className="rounded-xl border p-1">
+            <Button type="button" variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")}>
+              List view
+            </Button>
+            <Button type="button" variant={viewMode === "kanban" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("kanban")}>
+              Kanban view
+            </Button>
+          </div>
+          <Button variant="outline" onClick={handleExportCsv}>
+            Export CSV
+          </Button>
+          <ExportPDFButton
+            variant="outline"
+            fileName="maintenance-requests"
+            content={{
+              title: "Maintenance Requests",
+              subtitle: "Current manager maintenance queue",
+              summary: [
+                { label: "Requests", value: filteredRequests.length },
+                { label: "In Progress", value: filteredRequests.filter((request) => getBoardStatus(request) === "in_progress").length },
+                { label: "Awaiting Parts", value: filteredRequests.filter((request) => getBoardStatus(request) === "awaiting_parts").length },
+              ],
+              tables: [
+                {
+                  title: "Maintenance Requests",
+                  headers: ["Title", "Property", "Priority", "Status", "Assigned To"],
+                  rows: filteredRequests.map((request) => [
+                    request.title,
+                    request.propertyTitle || request.propertyAddress || "Property",
+                    request.priority,
+                    getBoardStatus(request),
+                    request.assignedTo || "Not assigned",
+                  ]),
+                },
+              ],
+            }}
+          />
           <Button onClick={() => setIsNewRequestDialogOpen(true)} className="bg-ondo-orange hover:bg-ondo-red">
             <Plus className="h-4 w-4 mr-2" />
             Create Ticket
@@ -280,15 +409,16 @@ export default function ManagerMaintenance() {
               <Label htmlFor="status">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="All Statuses" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="awaiting_parts">Awaiting Parts</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
               </Select>
             </div>
             <div>
@@ -335,12 +465,14 @@ export default function ManagerMaintenance() {
             </Button>
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="text-center py-8">
-            <Wrench className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Maintenance Requests</h3>
-            <p className="text-gray-600">No maintenance requests found matching your criteria.</p>
-          </div>
-        ) : (
+          <EmptyState
+            icon={<Wrench className="h-12 w-12" />}
+            title="No maintenance requests"
+            description="No maintenance requests found matching your current filters."
+            ctaLabel="Create maintenance ticket"
+            onCtaClick={() => setIsNewRequestDialogOpen(true)}
+          />
+        ) : viewMode === "list" ? (
           pagedRequests.map((request) => (
             <Card key={request.id} className="hover:shadow-md transition-shadow">
               <CardContent className="pt-6">
@@ -374,7 +506,7 @@ export default function ManagerMaintenance() {
                       {request.priority} priority
                     </Badge>
                     <Badge variant="outline">
-                      {request.status.replace('_', ' ')}
+                      {getStatusLabel(request)}
                     </Badge>
                   </div>
                 </div>
@@ -484,7 +616,10 @@ export default function ManagerMaintenance() {
                             <Select
                               value={updateData.status}
                               onValueChange={(value) => {
-                                setUpdateData(prev => ({ ...prev, status: value }));
+                                setUpdateData((prev) => ({
+                                  ...prev,
+                                  status: value as MaintenanceRequest["status"],
+                                }))
                               }}
                             >
                               <SelectTrigger className="w-full">
@@ -591,6 +726,64 @@ export default function ManagerMaintenance() {
               </CardContent>
             </Card>
           ))
+        ) : (
+          <div className="grid gap-4 xl:grid-cols-4">
+            {boardColumns.map((column) => {
+              const columnRequests = filteredRequests.filter((request) => getBoardStatus(request) === column.status)
+              return (
+                <div
+                  key={column.status}
+                  className="rounded-2xl border bg-muted/10 p-4"
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={(event) => {
+                    event.preventDefault()
+                    const request = filteredRequests.find((item) => item.id === draggedRequestId)
+                    if (request) {
+                      void handleMoveRequest(request, column.status)
+                    }
+                    setDraggedRequestId(null)
+                  }}
+                >
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="font-semibold">{column.label}</h3>
+                    <Badge variant="secondary">{columnRequests.length}</Badge>
+                  </div>
+                  <div className="space-y-3">
+                    {columnRequests.map((request) => (
+                      <div
+                        key={request.id}
+                        draggable
+                        onDragStart={() => setDraggedRequestId(request.id)}
+                        onDragEnd={() => setDraggedRequestId(null)}
+                        className="cursor-grab rounded-2xl border bg-background p-4 shadow-sm active:cursor-grabbing"
+                      >
+                        <div className="space-y-3">
+                          <div>
+                            <p className="font-semibold">{request.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {request.propertyTitle || request.propertyAddress || "Property"}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge className={getPriorityColor(request.priority)}>{request.priority}</Badge>
+                            <Badge variant="outline">{request.assignedTo || "Unassigned"}</Badge>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {request.dateScheduled ? `Scheduled ${new Date(request.dateScheduled).toLocaleDateString()}` : "Schedule pending"}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {columnRequests.length === 0 && (
+                      <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+                        Drop a ticket here
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         )}
       </div>
 

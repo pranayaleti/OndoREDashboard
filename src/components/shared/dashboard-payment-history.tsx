@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { DollarSign, Loader2, AlertCircle } from "lucide-react"
+import { DollarSign, AlertCircle } from "lucide-react"
 import { dashboardApi, type DashboardPaymentItem } from "@/lib/api"
+import { useAuth } from "@/lib/auth-context"
+import { getDemoDashboardPayments } from "@/lib/seed-data"
+import { ListRowsSkeleton } from "@/components/ui/list-skeletons"
+import { EmptyState } from "@/components/ui/empty-state"
 
 function formatUSD(cents: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100)
@@ -26,6 +30,7 @@ export function DashboardPaymentHistory({
   title = "Rent payments",
   emptyMessage = "No payments yet.",
 }: DashboardPaymentHistoryProps) {
+  const { user } = useAuth()
   const [items, setItems] = useState<DashboardPaymentItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -38,15 +43,19 @@ export function DashboardPaymentHistory({
     setError(null)
     try {
       const res = await dashboardApi.getDashboardPayments(page, limit)
-      setItems(res.data)
-      setTotal(res.pagination.total)
+      const fallbackItems = getDemoDashboardPayments(user)
+      const nextItems = res.data.length === 0 && fallbackItems.length > 0 ? fallbackItems : res.data
+      setItems(nextItems)
+      setTotal(nextItems.length === fallbackItems.length ? nextItems.length : res.pagination.total)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load payments")
-      setItems([])
+      const fallbackItems = getDemoDashboardPayments(user)
+      setItems(fallbackItems)
+      setTotal(fallbackItems.length)
     } finally {
       setLoading(false)
     }
-  }, [page])
+  }, [page, user])
 
   useEffect(() => {
     fetchPayments()
@@ -54,8 +63,8 @@ export function DashboardPaymentHistory({
 
   if (loading && items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="container mx-auto px-4 py-8">
+        <ListRowsSkeleton rows={4} />
       </div>
     )
   }
@@ -94,9 +103,13 @@ export function DashboardPaymentHistory({
       {items.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No payments found</h3>
-            <p className="text-muted-foreground">{emptyMessage}</p>
+            <EmptyState
+              icon={<DollarSign className="h-12 w-12" />}
+              title="No payments found"
+              description={emptyMessage}
+              ctaLabel="Open finances"
+              ctaHref={user?.role === "owner" ? "/owner/finances" : "/dashboard/finances"}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -109,8 +122,8 @@ export function DashboardPaymentHistory({
                     <p className="font-semibold text-lg">{formatUSD(p.amountCents)}</p>
                     <p className="text-sm text-muted-foreground capitalize">{p.paymentType}</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
-                      {p.propertyTitle && <span>{p.propertyTitle}</span>}
                       {p.payerEmail && <span>{p.payerEmail}</span>}
+                      {p.propertyAddress && <span>{p.propertyAddress}</span>}
                       {p.createdAt && <span>{formatDate(p.createdAt)}</span>}
                     </div>
                   </div>

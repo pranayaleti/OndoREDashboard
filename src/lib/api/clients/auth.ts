@@ -50,7 +50,7 @@ export interface LoginResponseWithTokens extends LoginResponse {
 }
 
 export const authApi = {
-  async login(request: LoginRequest): Promise<LoginResponseWithTokens> {
+  async login(request: LoginRequest & { rememberMe?: boolean }): Promise<LoginResponseWithTokens> {
     const raw = await apiPost<unknown>("/auth/login", request);
     return LoginResponseSchema.parse(raw) as unknown as LoginResponseWithTokens;
   },

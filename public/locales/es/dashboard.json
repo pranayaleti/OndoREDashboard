@@ -40,5 +40,20 @@
     "inviteTenant": "Invitar inquilino",
     "viewAll": "Ver todo",
     "export": "Exportar"
+  },
+  "portfolio": {
+    "accounting": {
+      "title": "Pérdidas y ganancias",
+      "covering": "Cubre {{count}} propiedades",
+      "export": "Exportar CSV",
+      "exporting": "Preparando exportación..."
+    },
+    "documents": {
+      "title": "Bóveda de documentos",
+      "latest": "Última carga: {{name}}",
+      "empty": "Aún no se han cargado documentos del portafolio.",
+      "upload": "Subir documento",
+      "uploading": "Subiendo..."
+    }
   }
 }

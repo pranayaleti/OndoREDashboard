@@ -9,6 +9,8 @@ import { dashboardApi, type PropertyReminderItem } from "@/lib/api"
 import { formatUSDate } from "@/lib/us-format"
 import { useAuth } from "@/lib/auth-context"
 import type { UserRole } from "@/lib/auth-context"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Modal } from "@/components/ui/modal"
 
 const MAX_VISIBLE = 6
 
@@ -36,6 +38,8 @@ export function HomeCareRemindersCard() {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState(false)
   const [completing, setCompleting] = useState<string | null>(null)
+  const [isTriageOpen, setIsTriageOpen] = useState(false)
+  const [selectedReminderKeys, setSelectedReminderKeys] = useState<string[]>([])
 
   const fetchReminders = async (cancelled?: { current: boolean }) => {
     setFetchError(false)
@@ -69,6 +73,36 @@ export function HomeCareRemindersCard() {
       void fetchReminders()
     } catch (err) {
       // Revert optimistic update on failure
+      void fetchReminders()
+      toast.error("Could not mark complete", {
+        description: err instanceof Error ? err.message : "Please try again.",
+      })
+    } finally {
+      setCompleting(null)
+    }
+  }
+
+  const completeTargets = async (targets: PropertyReminderItem[]) => {
+    if (targets.length === 0) return
+
+    setCompleting("__bulk__")
+    setReminders((prev) =>
+      prev.filter(
+        (r) => !targets.some((target) => target.propertyId === r.propertyId && target.reminderType === r.reminderType)
+      )
+    )
+
+    try {
+      await Promise.all(
+        targets.map((target) =>
+          dashboardApi.completeReminder(target.propertyId, target.reminderType)
+        )
+      )
+      toast.success("Reminder completed", {
+        description: "Next due date has been updated.",
+      })
+      void fetchReminders()
+    } catch (err) {
       void fetchReminders()
       toast.error("Could not mark complete", {
         description: err instanceof Error ? err.message : "Please try again.",
@@ -141,21 +175,67 @@ export function HomeCareRemindersCard() {
     )
   }
 
-  const visible = reminders.slice(0, MAX_VISIBLE)
   const overdueCount = reminders.filter((r) => r.overdue).length
+  const displayReminders = overdueCount > 0 ? reminders.filter((r) => r.overdue) : reminders
+  const visible = displayReminders.slice(0, MAX_VISIBLE)
+  const groupedReminderEntries = displayReminders.reduce<Record<string, PropertyReminderItem[]>>((accumulator, reminder) => {
+    const groupLabel = reminder.propertyAddress || reminder.propertyTitle || "Property"
+    accumulator[groupLabel] = [...(accumulator[groupLabel] ?? []), reminder]
+    return accumulator
+  }, {})
+
+  const handleOpenTriage = () => {
+    setSelectedReminderKeys(displayReminders.map((reminder) => `${reminder.propertyId}:${reminder.reminderType}`))
+    setIsTriageOpen(true)
+  }
+
+  const handleToggleReminder = (key: string, checked: boolean) => {
+    setSelectedReminderKeys((previous) =>
+      checked ? [...new Set([...previous, key])] : previous.filter((item) => item !== key)
+    )
+  }
+
+  const handleCompleteSelected = async () => {
+    const targets = displayReminders.filter((reminder) =>
+      selectedReminderKeys.includes(`${reminder.propertyId}:${reminder.reminderType}`)
+    )
+    await completeTargets(targets)
+    setIsTriageOpen(false)
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Bell aria-hidden="true" className="h-4 w-4 text-ondo-orange" />
-          Home care reminders
-          {overdueCount > 0 && (
-            <Badge variant="destructive" className="text-xs">
-              {overdueCount} overdue
-            </Badge>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Bell aria-hidden="true" className="h-4 w-4 text-ondo-orange" />
+            Home care reminders
+            {overdueCount > 0 && (
+              <Badge variant="destructive" className="text-xs">
+                {overdueCount} overdue
+              </Badge>
+            )}
+          </CardTitle>
+          {displayReminders.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="shrink-0 border-ondo-orange text-ondo-orange hover:bg-ondo-orange hover:text-white"
+              onClick={handleOpenTriage}
+              disabled={completing === "__bulk__"}
+              aria-label="Open overdue reminder triage"
+            >
+              {completing === "__bulk__" ? (
+                <Loader2 aria-hidden="true" className="h-3 w-3 animate-spin" />
+              ) : (
+                <>
+                  <CheckCircle aria-hidden="true" className="h-3 w-3 mr-1" />
+                  Triage All
+                </>
+              )}
+            </Button>
           )}
-        </CardTitle>
+        </div>
         <CardDescription>HVAC, air filters, winterize lawn, and more</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -202,7 +282,7 @@ export function HomeCareRemindersCard() {
                   variant="outline"
                   className="shrink-0 border-ondo-orange text-ondo-orange hover:bg-ondo-orange hover:text-white"
                   onClick={() => handleComplete(r.propertyId, r.reminderType)}
-                  disabled={isCompleting}
+                  disabled={isCompleting || completing === "__bulk__"}
                   aria-label={isCompleting ? `Marking "${r.title}" as done…` : `Mark "${r.title}" as done`}
                 >
                   {isCompleting ? (
@@ -218,12 +298,69 @@ export function HomeCareRemindersCard() {
             )
           })}
         </ul>
-        {reminders.length > MAX_VISIBLE && (
+        {displayReminders.length > MAX_VISIBLE && (
           <p className="text-xs text-muted-foreground pt-1">
-            +{reminders.length - MAX_VISIBLE} more reminder{reminders.length - MAX_VISIBLE !== 1 ? "s" : ""}
+            +{displayReminders.length - MAX_VISIBLE} more reminder{displayReminders.length - MAX_VISIBLE !== 1 ? "s" : ""}
           </p>
         )}
       </CardContent>
+      <Modal
+        open={isTriageOpen}
+        onOpenChange={setIsTriageOpen}
+        title="Overdue reminders triage"
+        description="Review overdue reminders by property, then mark the completed items in one pass."
+        footer={
+          <>
+            <Button type="button" variant="outline" onClick={() => setIsTriageOpen(false)}>
+              Close
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCompleteSelected}
+              disabled={selectedReminderKeys.length === 0 || completing === "__bulk__"}
+              className="bg-orange-500 text-black hover:bg-orange-400"
+            >
+              {completing === "__bulk__" ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle className="mr-2 h-4 w-4" />
+              )}
+              Mark Selected as Done
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          {Object.entries(groupedReminderEntries).map(([propertyLabel, propertyReminders]) => (
+            <div key={propertyLabel} className="rounded-2xl border p-4">
+              <div className="mb-3">
+                <p className="font-semibold">{propertyLabel}</p>
+                <p className="text-xs text-muted-foreground">{propertyReminders.length} overdue item{propertyReminders.length !== 1 ? "s" : ""}</p>
+              </div>
+              <div className="space-y-3">
+                {propertyReminders.map((reminder) => {
+                  const key = `${reminder.propertyId}:${reminder.reminderType}`
+                  const checked = selectedReminderKeys.includes(key)
+                  return (
+                    <label key={key} className="flex items-start gap-3 rounded-xl border bg-muted/20 p-3">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={(value) => handleToggleReminder(key, value === true)}
+                        aria-label={`Select ${reminder.title}`}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium">{reminder.title}</p>
+                        <p className="text-sm text-muted-foreground">{reminder.description}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Due {formatUSDate(reminder.nextDue)}</p>
+                      </div>
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Modal>
     </Card>
   )
 }

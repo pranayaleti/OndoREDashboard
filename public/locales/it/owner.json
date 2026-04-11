@@ -6,6 +6,9 @@
     "statements": "Estratti conto",
     "maintenance": "Manutenzione",
     "documents": "Documenti",
+    "actionItems": "Azioni da fare",
+    "myUploads": "I miei caricamenti",
+    "sharedDocuments": "Documenti condivisi",
     "profile": "Profilo",
     "quality": "Qualità",
     "pricing": "Prezzo affitto"
@@ -25,6 +28,28 @@
   "empty": {
     "noProperties": "Nessuna proprietà collegata al tuo account.",
     "noMaintenance": "Nessuna richiesta di manutenzione."
+  },
+  "sidebar": {
+    "actionItemsHint": "Affitti in ritardo, contratti in scadenza e problemi irrisolti che richiedono la tua attenzione."
+  },
+  "home": {
+    "setupEyebrow": "Configurazione dashboard",
+    "emptyTitle": "Nessun dato finanziario ancora",
+    "emptyDescription": "Collega i dati bancari e della proprietà per trasformare questa vista in un quadro in tempo reale di spese, utenze e costi ricorrenti.",
+    "connectBank": "Collega la banca",
+    "addPropertyValue": "Aggiungi valore immobile",
+    "myUploadsTitle": "I miei caricamenti",
+    "myUploadsDescription": "Tieni in un unico posto i file di assicurazione, mutuo, garanzia e ispezione che carichi tu stesso. I documenti condivisi dal tuo team restano in Documenti.",
+    "manageUploads": "Gestisci i miei caricamenti",
+    "viewSharedDocs": "Vedi documenti condivisi"
+  },
+  "tour": {
+    "assistantTitle": "Inizia dall'assistente",
+    "assistantDescription": "La barra di ricerca e il modo piu rapido per controllare manutenzione, documenti o attivita dell'immobile senza aprire ogni scheda.",
+    "actionItemsTitle": "Rivedi le azioni da fare",
+    "actionItemsDescription": "Questo sostituisce la vecchia etichetta at-risk con una coda piu chiara di affitti, contratti e manutenzioni che richiedono ancora una decisione.",
+    "documentsTitle": "Separa i tuoi caricamenti dai documenti condivisi",
+    "documentsDescription": "Usa I miei caricamenti per i file che aggiungi tu e Documenti condivisi per contratti o report pubblicati dal tuo team."
   },
   "screeningConfig": {
     "loadError": "Impossibile caricare la configurazione dello screening",

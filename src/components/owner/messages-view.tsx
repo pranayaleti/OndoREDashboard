@@ -23,6 +23,12 @@ import { NewMessageDialog } from "@/components/owner/new-message-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
 import { supabase } from "@/lib/supabase"
+import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
+
+function normalizeThreads(threads: MessageThread[]): MessageThread[] {
+  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
+  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
+}
 
 export function MessagesView() {
   const [activeTab, setActiveTab] = useState("all")
@@ -45,7 +51,7 @@ export function MessagesView() {
         status: filterStatus || undefined,
         priority: filterPriority || undefined,
       })
-      .then(setThreads)
+      .then((data) => setThreads(normalizeThreads(data)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load conversations.", variant: "destructive" })
       })
@@ -115,7 +121,7 @@ export function MessagesView() {
         () => {
           featureApi.communication
             .listThreads()
-            .then(setThreads)
+            .then((data) => setThreads(normalizeThreads(data)))
             .catch((err) => console.error("Failed to refresh threads", err));
         }
       )
@@ -134,11 +140,18 @@ export function MessagesView() {
         featureApi.communication.listMessages(thread.id),
         featureApi.communication.markRead(thread.id),
       ])
-      setMessages(msgs)
-      // Update local unread count to 0
-      setThreads((prev) =>
-        prev.map((t) => (t.id === thread.id ? { ...t, unreadCount: 0 } : t))
-      )
+      if (shouldReplacePlaceholderThread(thread, msgs)) {
+        setSelectedThread(DEMO_MESSAGE_THREAD)
+        setMessages(DEMO_MESSAGE_RECORDS)
+        setThreads((prev) =>
+          prev.map((t) => (t.id === thread.id ? { ...DEMO_MESSAGE_THREAD, unreadCount: 0 } : t))
+        )
+      } else {
+        setMessages(msgs)
+        setThreads((prev) =>
+          prev.map((t) => (t.id === thread.id ? { ...t, unreadCount: 0 } : t))
+        )
+      }
     } catch {
       toast({ title: "Error", description: "Failed to load messages.", variant: "destructive" })
     }
@@ -146,6 +159,20 @@ export function MessagesView() {
 
   const handleSendMessage = async () => {
     if (!replyText.trim() || !selectedThread) return
+    if (selectedThread.id === DEMO_MESSAGE_THREAD.id) {
+      const demoReply: MessageRecord = {
+        id: `demo-reply-${Date.now()}`,
+        threadId: DEMO_MESSAGE_THREAD.id,
+        senderId: "owner-demo",
+        body: replyText,
+        mentions: [],
+        channel: "portal",
+        sentAt: new Date().toISOString(),
+      }
+      setMessages((prev) => [...prev, demoReply])
+      setReplyText("")
+      return
+    }
     try {
       const newMsg = await featureApi.communication.sendMessage({
         threadId: selectedThread.id,

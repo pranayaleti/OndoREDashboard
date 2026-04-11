@@ -27,6 +27,7 @@ import { referralApi } from "@/lib/api/clients/referrals";
 import type { ReferralStats } from "@/lib/api/clients/referrals";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboardPath } from "@/lib/auth-utils";
+import { getDemoReferralLink } from "@/lib/seed-data";
 
 export function ReferralShareWidget() {
   const { t } = useTranslation();
@@ -46,10 +47,26 @@ export function ReferralShareWidget() {
     referralApi
       .getStats()
       .then((data) => {
-        if (!cancelled) setStats(data);
+        if (!cancelled) {
+          setStats({
+            ...data,
+            shareUrl: data.shareUrl || getDemoReferralLink(user?.id),
+          });
+        }
       })
       .catch(() => {
-        // Non-critical widget — fail silently
+        if (!cancelled) {
+          setStats({
+            code: user?.id ?? "demo-referral",
+            shareUrl: getDemoReferralLink(user?.id),
+            totalReferrals: 0,
+            creditsEarned: 0,
+            creditsAvailable: 0,
+            maxCredits: 10,
+            sweepstakesEntries: 0,
+            leaderboardPosition: null,
+          });
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -61,8 +78,9 @@ export function ReferralShareWidget() {
   }, []);
 
   const handleCopy = async () => {
-    if (!stats?.shareUrl) return;
-    await navigator.clipboard.writeText(stats.shareUrl);
+    const referralLink = stats?.shareUrl || getDemoReferralLink(user?.id);
+    if (!referralLink) return;
+    await navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -89,7 +107,7 @@ export function ReferralShareWidget() {
             <div className="flex gap-1.5">
               <Input
                 readOnly
-                value={stats?.shareUrl ?? ""}
+                value={stats?.shareUrl || getDemoReferralLink(user?.id)}
                 className="text-xs font-mono h-9 bg-muted"
                 aria-label={t("referral.shareTitle")}
               />

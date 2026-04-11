@@ -5,6 +5,8 @@
     "rent": "किराया और भुगतान",
     "maintenance": "रखरखाव",
     "documents": "दस्तावेज़",
+    "myUploads": "मेरे अपलोड",
+    "sharedDocuments": "साझा दस्तावेज़",
     "profile": "प्रोफाइल",
     "notifications": "सूचनाएं",
     "addons": "ऐड-ऑन",
@@ -20,6 +22,40 @@
     "overdue": "अतिदेय",
     "paid": "भुगतान किया",
     "pending": "लंबित"
+  },
+  "dashboard": {
+    "propertyStatusActive": "सक्रिय",
+    "propertyStatusPending": "मकान मालिक की मंजूरी लंबित",
+    "propertyStatusPendingSubtitle": "हम अभी आपके लीज़ और यूनिट विवरण को मिला रहे हैं। असाइनमेंट की पुष्टि होते ही आपकी संपत्ति दृश्य खुल जाएगी।",
+    "quickPayTitle": "त्वरित भुगतान",
+    "quickPayDescription": "अगला किराया शुल्क देखें, ऑटोपे जांचें और सीधे भुगतान पर जाएँ।",
+    "quickPayDueLabel": "आने वाला शुल्क",
+    "quickPayAutopayLabel": "ऑटोपे",
+    "quickPayAutopayOn": "ऑटोपे चालू",
+    "quickPayAutopayOff": "ऑटोपे बंद",
+    "quickPayOpen": "भुगतान खोलें",
+    "quickPaySetup": "जब चाहें ऑटोपे सेट करें।",
+    "quickPayEmptyTitle": "आपका किराया शेड्यूल अभी तैयार हो रहा है",
+    "quickPayEmptyDescription": "मकान मालिक के बिलिंग सेटअप पूरा करते ही हम अगली तारीख और भुगतान शॉर्टकट दिखाएँगे।",
+    "assistantTitle": "मेनू में ढूँढने से पहले Ondo से पूछें",
+    "assistantDescription": "लीज़ सवालों, किराया रिमाइंडर या सही विवरण के साथ रखरखाव अनुरोध शुरू करने के लिए असिस्टेंट का उपयोग करें।",
+    "assistantTry": "ऐसे पूछें",
+    "assistantOpen": "असिस्टेंट खोलें",
+    "assistantExampleLease": "मेरी लीज़ कब खत्म होती है?",
+    "assistantExampleRent": "मेरा अगला किराया दिखाओ।",
+    "assistantExampleMaintenance": "प्लंबिंग टिकट भेजो।",
+    "maintenanceTimelineTitle": "रखरखाव टाइमलाइन",
+    "maintenanceTimelineDescription": "पूरा रखरखाव पेज खोले बिना नवीनतम अनुरोध को भेजने से समाधान तक ट्रैक करें।",
+    "maintenanceEmptyTitle": "अभी कोई रखरखाव अनुरोध नहीं है",
+    "maintenanceEmptyDescription": "घर में कुछ बदलता है तो फोटो के साथ अनुरोध भेजें, हम यह टाइमलाइन यहीं अपडेट रखेंगे।",
+    "maintenanceOpen": "रखरखाव खोलें",
+    "maintenanceSubmit": "अनुरोध भेजें",
+    "maintenanceLastUpdated": "आखिरी अपडेट {{date}}",
+    "maintenanceOpenCount": "{{count}} खुले अनुरोध",
+    "maintenanceStageSubmitted": "भेजा गया",
+    "maintenanceStageReviewed": "समीक्षित",
+    "maintenanceStageScheduled": "निर्धारित",
+    "maintenanceStageResolved": "समाधान हुआ"
   },
   "maintenance": {
     "submit": "अनुरोध भेजें",
@@ -47,5 +83,13 @@
     "email": "ईमेल",
     "push": "पुश सूचनाएं",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "पहले असिस्टेंट से शुरू करें",
+    "assistantDescription": "लीज़, किराया या रखरखाव के बारे में सामान्य भाषा में पूछें और सीधे सही वर्कफ़्लो पर जाएँ।",
+    "paymentsTitle": "किराये के लिए त्वरित भुगतान इस्तेमाल करें",
+    "paymentsDescription": "यह कार्ड अगली देय राशि और भुगतान शॉर्टकट सामने रखता है ताकि आपको ढूँढना न पड़े।",
+    "maintenanceTitle": "प्रगति यहाँ देखें",
+    "maintenanceDescription": "टाइमलाइन दिखाती है कि आपका अनुरोध भेजा गया, समीक्षित, निर्धारित या समाधान हुआ है, वह भी टिकट खोले बिना।"
   }
 }

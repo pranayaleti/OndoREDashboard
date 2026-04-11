@@ -18,13 +18,13 @@ import { HomeImprovementPage } from "@/components/homeowner/home-improvement-pag
 import { EquipmentGridPage } from "@/components/homeowner/equipment-grid"
 import { HomeownerSearchResults } from "@/components/homeowner/homeowner-search-results"
 import { DocumentsPanel } from "@/components/homeowner/documents-panel"
-import { HomeownerSettingsPage } from "@/components/homeowner/homeowner-settings-page"
+import TenantSettings from "@/components/tenant/tenant-settings"
 import { ReferralProgram } from "@/components/shared/referral-program"
 
 export default function Tenant() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen">
+      <div className="min-h-full">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<TenantDashboard />} />
@@ -38,7 +38,7 @@ export default function Tenant() {
             <Route path="/equipment" element={<EquipmentGridPage />} />
             <Route path="/search" element={<HomeownerSearchResults />} />
             <Route path="/my-documents" element={<DocumentsPanel />} />
-            <Route path="/settings" element={<HomeownerSettingsPage />} />
+            <Route path="/settings" element={<TenantSettings />} />
             <Route path="/documents" element={<TenantDocuments />} />
             <Route path="/messages" element={<TenantMessages />} />
             <Route path="/calendar" element={<TenantCalendar />} />

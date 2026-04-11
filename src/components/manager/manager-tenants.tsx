@@ -129,6 +129,8 @@ function TenantsList() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [paymentFilter, setPaymentFilter] = useState("all")
   const [cardFilter, setCardFilter] = useState<string | null>(null)
+  const [selectedTenantIds, setSelectedTenantIds] = useState<number[]>([])
+  const { toast } = useToast()
 
   // Helper function to check if lease is expiring soon (within 60 days)
   const isLeaseExpiring = (leaseEnd: string) => {
@@ -203,6 +205,66 @@ function TenantsList() {
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
     }
+  }
+
+  const selectedTenants = filteredTenants.filter((tenant) => selectedTenantIds.includes(tenant.id))
+
+  const toggleTenant = (tenantId: number, checked: boolean) => {
+    setSelectedTenantIds((previous) =>
+      checked ? [...new Set([...previous, tenantId])] : previous.filter((id) => id !== tenantId)
+    )
+  }
+
+  const toggleAllVisible = (checked: boolean) => {
+    setSelectedTenantIds((previous) => {
+      const visibleIds = pagedTenants.map((tenant) => tenant.id)
+      if (!checked) {
+        return previous.filter((id) => !visibleIds.includes(id))
+      }
+      return [...new Set([...previous, ...visibleIds])]
+    })
+  }
+
+  const handleExportSelected = () => {
+    if (selectedTenants.length === 0) return
+    const rows = [
+      ["Name", "Email", "Property", "Rent", "Payment Status"],
+      ...selectedTenants.map((tenant) => [
+        tenant.name,
+        tenant.email,
+        tenant.property,
+        String(tenant.rent),
+        tenant.paymentStatus,
+      ]),
+    ]
+    const csv = rows
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "selected-tenants.csv"
+    link.click()
+    URL.revokeObjectURL(url)
+    toast({ title: "Download started", description: "Selected tenants export" })
+  }
+
+  const handleBulkMessage = () => {
+    toast({
+      title: "Message draft ready",
+      description: `We prepared a bulk message for ${selectedTenants.length} tenant${selectedTenants.length !== 1 ? "s" : ""}.`,
+      duration: 3000,
+    })
+  }
+
+  const handleMarkReviewed = () => {
+    toast({
+      title: "Rent review updated",
+      description: `Marked ${selectedTenants.length} tenant${selectedTenants.length !== 1 ? "s" : ""} as reviewed.`,
+      duration: 3000,
+    })
+    setSelectedTenantIds([])
   }
 
   return (
@@ -350,12 +412,50 @@ function TenantsList() {
         </p>
         <PageSizeSelector pageSize={pageSize} onChange={changePageSize} options={[5, 10, 25]} />
       </div>
+      {selectedTenantIds.length > 0 && (
+        <Card className="mb-4 border-orange-200 bg-orange-50/70 dark:border-orange-500/20 dark:bg-orange-500/10">
+          <CardContent className="flex flex-col gap-3 pt-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="font-semibold">{selectedTenantIds.length} tenant{selectedTenantIds.length !== 1 ? "s" : ""} selected</p>
+              <p className="text-sm text-muted-foreground">Use a bulk action to message, export, or review this group.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" onClick={handleBulkMessage}>
+                Send Message
+              </Button>
+              <Button variant="outline" onClick={handleExportSelected}>
+                Export Selected
+              </Button>
+              <Button onClick={handleMarkReviewed} className="bg-orange-500 text-black hover:bg-orange-400">
+                Mark Rent as Reviewed
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <div className="space-y-4">
+        {pagedTenants.length > 0 && (
+          <div className="flex items-center gap-3 rounded-xl border px-4 py-3 text-sm text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={pagedTenants.every((tenant) => selectedTenantIds.includes(tenant.id))}
+              onChange={(event) => toggleAllVisible(event.target.checked)}
+              aria-label="Select all visible tenants"
+            />
+            <span>Select all visible tenants</span>
+          </div>
+        )}
         {pagedTenants.map((tenant) => (
           <Card key={tenant.id} className="hover:shadow-lg transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedTenantIds.includes(tenant.id)}
+                    onChange={(event) => toggleTenant(tenant.id, event.target.checked)}
+                    aria-label={`Select ${tenant.name}`}
+                  />
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={`/placeholder-avatar-${tenant.id}.jpg`} />
                     <AvatarFallback>

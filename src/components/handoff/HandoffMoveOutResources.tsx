@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ExternalLink } from "lucide-react"
-import { handoffApi, type MoveOutResource } from "@/lib/api/clients/handoff"
+import { apiGet } from "@/lib/api/http"
+
+interface MoveOutResource {
+  id: string
+  title: string
+  description: string
+  url: string
+  category: string
+}
 
 export function HandoffMoveOutResources() {
   const [resources, setResources] = useState<MoveOutResource[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    handoffApi
-      .getMoveOutResources()
-      .then(setResources)
+    apiGet<{ data: MoveOutResource[] }>("/move-out-resources")
+      .then((response) => setResources(response.data))
       .catch(() => setResources([]))
       .finally(() => setLoading(false))
   }, [])

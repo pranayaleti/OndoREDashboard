@@ -7,6 +7,27 @@ import {
 } from "@ondo/types";
 import { apiGet, apiPost, apiPut, apiDelete, getAuthHeaders } from "../http";
 
+function extractMaintenanceRequests(raw: unknown): MaintenanceRequest[] {
+  if (Array.isArray(raw)) return raw as MaintenanceRequest[];
+  if (typeof raw === "object" && raw !== null && "data" in raw) {
+    const data = (raw as { data?: unknown }).data;
+    if (Array.isArray(data)) return data as MaintenanceRequest[];
+  }
+  return [];
+}
+
+function extractMaintenanceRequest(raw: unknown): MaintenanceRequest {
+  if (typeof raw === "object" && raw !== null) {
+    if ("request" in raw && typeof (raw as { request?: unknown }).request === "object") {
+      return (raw as { request: MaintenanceRequest }).request;
+    }
+    if ("data" in raw && typeof (raw as { data?: unknown }).data === "object") {
+      return (raw as { data: MaintenanceRequest }).data;
+    }
+  }
+  return raw as MaintenanceRequest;
+}
+
 export interface MaintenanceListResponse {
   data: MaintenanceRequest[];
   pagination: {
@@ -59,12 +80,14 @@ export const maintenanceApi = {
 
   async getRequest(id: string): Promise<MaintenanceRequest> {
     const headers = getAuthHeaders();
-    return apiGet<MaintenanceRequest>(`/maintenance/${id}`, headers);
+    const raw = await apiGet<unknown>(`/maintenance/${id}`, headers);
+    return extractMaintenanceRequest(raw);
   },
 
   async createRequest(request: Partial<MaintenanceRequest>): Promise<MaintenanceRequest> {
     const headers = getAuthHeaders();
-    return apiPost<MaintenanceRequest>("/maintenance", request, headers);
+    const raw = await apiPost<unknown>("/maintenance", request, headers);
+    return extractMaintenanceRequest(raw);
   },
 
   async updateRequest(
@@ -72,7 +95,8 @@ export const maintenanceApi = {
     request: Partial<MaintenanceRequest>,
   ): Promise<MaintenanceRequest> {
     const headers = getAuthHeaders();
-    return apiPut<MaintenanceRequest>(`/maintenance/${id}`, request, headers);
+    const raw = await apiPut<unknown>(`/maintenance/${id}`, request, headers);
+    return extractMaintenanceRequest(raw);
   },
 
   async updateStatus(
@@ -80,7 +104,8 @@ export const maintenanceApi = {
     status: string,
   ): Promise<MaintenanceRequest> {
     const headers = getAuthHeaders();
-    return apiPut<MaintenanceRequest>(`/maintenance/${id}/status`, { status }, headers);
+    const raw = await apiPut<unknown>(`/maintenance/${id}/status`, { status }, headers);
+    return extractMaintenanceRequest(raw);
   },
 
   async deleteRequest(id: string): Promise<{ message: string }> {
@@ -90,7 +115,8 @@ export const maintenanceApi = {
 
   async getManagerMaintenanceRequests(): Promise<MaintenanceRequest[]> {
     const headers = getAuthHeaders();
-    return apiGet<MaintenanceRequest[]>("/dashboard/maintenance", headers);
+    const raw = await apiGet<unknown>("/dashboard/maintenance", headers);
+    return extractMaintenanceRequests(raw);
   },
 
   async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {

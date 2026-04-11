@@ -12,6 +12,8 @@ import type { PnLStatement, VacancyReport } from "@/lib/api/clients/reports"
 import { formatUSDate, formatUSD } from "@/lib/us-format"
 import { useToast } from "@/hooks/use-toast"
 import { AlertCircle, Building2, CreditCard, DollarSign, Loader2, Receipt, RefreshCw, TrendingUp } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
+import { DEMO_MANAGER_FINANCIAL_SUMMARY, getDemoDashboardPayments, isManagerDemoUser } from "@/lib/seed-data"
 
 function getDefaultDateRange() {
   const now = new Date()
@@ -40,6 +42,7 @@ export function RoleFinancesView({
   requireOwnerSelection = false,
   ownerPickerTitle = "Financial reports",
 }: RoleFinancesViewProps) {
+  const { user } = useAuth()
   const { toast } = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = parseFinanceTab(searchParams.get("tab"))
@@ -84,7 +87,13 @@ export function RoleFinancesView({
       setSelectedOwnerId((current) => current ?? ownerOptions[0]?.id ?? null)
     } catch (fetchError) {
       console.error("Failed to load owners for finance view:", fetchError)
-      setOwners([])
+      if (isManagerDemoUser(user)) {
+        const fallbackOwners = [{ id: "demo-owner", label: "Demo Owner Portfolio" }]
+        setOwners(fallbackOwners)
+        setSelectedOwnerId((current) => current ?? fallbackOwners[0].id)
+      } else {
+        setOwners([])
+      }
       toast({
         title: "Could not load owners",
         description: "Owner-specific report filters are unavailable right now.",
@@ -93,7 +102,7 @@ export function RoleFinancesView({
     } finally {
       setOwnersLoading(false)
     }
-  }, [requireOwnerSelection, toast])
+  }, [requireOwnerSelection, toast, user])
 
   const fetchOverview = useCallback(async () => {
     if (requireOwnerSelection && ownersLoading) {
@@ -133,15 +142,28 @@ export function RoleFinancesView({
     } catch (fetchError) {
       console.error("Failed to load finance overview:", fetchError)
       const message = fetchError instanceof Error ? fetchError.message : "Failed to load finance data"
-      setError(message)
-      setPnl(null)
-      setVacancy(null)
-      setPayments([])
-      toast({
-        title: "Finance data unavailable",
-        description: message,
-        variant: "destructive",
-      })
+      if (isManagerDemoUser(user)) {
+        setError(null)
+        setPnl(DEMO_MANAGER_FINANCIAL_SUMMARY)
+        setVacancy({
+          totalUnits: 5,
+          occupiedUnits: 4,
+          vacantUnits: 1,
+          vacancyRate: 20,
+          properties: [],
+        })
+        setPayments(getDemoDashboardPayments(user))
+      } else {
+        setError(message)
+        setPnl(null)
+        setVacancy(null)
+        setPayments([])
+        toast({
+          title: "Finance data unavailable",
+          description: message,
+          variant: "destructive",
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -152,6 +174,7 @@ export function RoleFinancesView({
     requireOwnerSelection,
     selectedOwnerId,
     toast,
+    user,
   ])
 
   useEffect(() => {

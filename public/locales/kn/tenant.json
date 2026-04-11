@@ -5,6 +5,8 @@
     "rent": "ಬಾಡಿಗೆ ಮತ್ತು ಪಾವತಿಗಳು",
     "maintenance": "ನಿರ್ವಹಣೆ",
     "documents": "ದಾಖಲೆಗಳು",
+    "myUploads": "ನನ್ನ ಅಪ್‌ಲೋಡ್‌ಗಳು",
+    "sharedDocuments": "ಹಂಚಿದ ದಾಖಲೆಗಳು",
     "profile": "ಪ್ರೊಫೈಲ್",
     "notifications": "ಅಧಿಸೂಚನೆಗಳು",
     "addons": "ಆಡ್-ಆನ್‌ಗಳು",
@@ -20,6 +22,40 @@
     "overdue": "ಅವಧಿ ಮೀರಿದೆ",
     "paid": "ಪಾವತಿಸಲಾಗಿದೆ",
     "pending": "ಬಾಕಿ"
+  },
+  "dashboard": {
+    "propertyStatusActive": "ಸಕ್ರಿಯ",
+    "propertyStatusPending": "ಮನೆಯ ಮಾಲೀಕರ ಅನುಮೋದನೆ ಬಾಕಿ",
+    "propertyStatusPendingSubtitle": "ನಿಮ್ಮ ಲೀಸ್ ಮತ್ತು ಘಟಕದ ವಿವರಗಳನ್ನು ನಾವು ಈಗ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ. ಒದಗಿಕೆ ದೃಢಪಟ್ಟ ಕೂಡಲೇ ಆಸ್ತಿ ವೀಕ್ಷಣೆ ತೆರೆದುಕೊಳ್ಳುತ್ತದೆ.",
+    "quickPayTitle": "ತ್ವರಿತ ಪಾವತಿ",
+    "quickPayDescription": "ಮುಂದಿನ ಬಾಡಿಗೆ ಶುಲ್ಕವನ್ನು ನೋಡಿ, ಆಟೋಪೇ ಪರಿಶೀಲಿಸಿ, ನೇರವಾಗಿ payments ಗೆ ಹೋಗಿ.",
+    "quickPayDueLabel": "ಮುಂದಿನ ಶುಲ್ಕ",
+    "quickPayAutopayLabel": "ಆಟೋಪೇ",
+    "quickPayAutopayOn": "ಆಟೋಪೇ ಆನ್",
+    "quickPayAutopayOff": "ಆಟೋಪೇ ಆಫ್",
+    "quickPayOpen": "ಪಾವತಿಗಳನ್ನು ತೆರೆಯಿರಿ",
+    "quickPaySetup": "ನಿಮಗೆ ಸೌಕರ್ಯವಾದಾಗ ಆಟೋಪೇ ಸೆಟ್ ಮಾಡಿ.",
+    "quickPayEmptyTitle": "ನಿಮ್ಮ ಬಾಡಿಗೆ ವೇಳಾಪಟ್ಟಿ ಇನ್ನೂ ಸಿದ್ಧವಾಗುತ್ತಿದೆ",
+    "quickPayEmptyDescription": "ಮನೆಯ ಮಾಲೀಕರು ಬಿಲ್ಲಿಂಗ್ ಸೆಟಪ್ ಪೂರ್ಣಗೊಳಿಸಿದ ನಂತರ ಮುಂದಿನ ದಿನಾಂಕ ಮತ್ತು ಪಾವತಿ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ತೋರಿಸುತ್ತೇವೆ.",
+    "assistantTitle": "ಮೆನುಗಳಲ್ಲಿ ಹುಡುಕುವ ಮೊದಲು Ondo ಅನ್ನು ಕೇಳಿ",
+    "assistantDescription": "ಲೀಸ್ ಪ್ರಶ್ನೆಗಳು, ಬಾಡಿಗೆ ನೆನಪಿಕೆಗಳು ಅಥವಾ ಸರಿಯಾದ ವಿವರಗಳೊಂದಿಗೆ ನಿರ್ವಹಣಾ ವಿನಂತಿ ಆರಂಭಿಸಲು ಸಹಾಯಕವನ್ನು ಬಳಸಿ.",
+    "assistantTry": "ಹೀಗೆ ಕೇಳಿ",
+    "assistantOpen": "ಸಹಾಯಕ ತೆರೆಯಿರಿ",
+    "assistantExampleLease": "ನನ್ನ ಲೀಸ್ ಯಾವಾಗ ಮುಗಿಯುತ್ತದೆ?",
+    "assistantExampleRent": "ನನ್ನ ಮುಂದಿನ ಬಾಡಿಗೆಯನ್ನು ತೋರಿಸು.",
+    "assistantExampleMaintenance": "ಪ್ಲಂಬಿಂಗ್ ಟಿಕೆಟ್ ಕಳುಹಿಸು.",
+    "maintenanceTimelineTitle": "ನಿರ್ವಹಣೆ ಕಾಲರೇಖೆ",
+    "maintenanceTimelineDescription": "ಪೂರ್ಣ maintenance ಪುಟ ತೆರೆಯದೆ ಇತ್ತೀಚಿನ ವಿನಂತಿಯನ್ನು ಸಲ್ಲಿಕೆಯಿಂದ ಪರಿಹಾರವರೆಗೆ ಅನುಸರಿಸಿ.",
+    "maintenanceEmptyTitle": "ಈಗ ಯಾವುದೇ ನಿರ್ವಹಣೆ ವಿನಂತಿಗಳಿಲ್ಲ",
+    "maintenanceEmptyDescription": "ಮನೆಯಲ್ಲಿ ಏನಾದರೂ ಬದಲಾಗಿದರೆ ಫೋಟೋಗಳೊಂದಿಗೆ ವಿನಂತಿಯನ್ನು ಕಳುಹಿಸಿ; ಈ ಕಾಲರೇಖೆಯನ್ನು ಇಲ್ಲಿ ನವೀಕರಿಸುತ್ತೇವೆ.",
+    "maintenanceOpen": "ನಿರ್ವಹಣೆ ತೆರೆಯಿರಿ",
+    "maintenanceSubmit": "ವಿನಂತಿ ಕಳುಹಿಸಿ",
+    "maintenanceLastUpdated": "ಕೊನೆಯ ನವೀಕರಣ {{date}}",
+    "maintenanceOpenCount": "{{count}} ತೆರೆಯಿರುವ ವಿನಂತಿಗಳು",
+    "maintenanceStageSubmitted": "ಸಲ್ಲಿಸಲಾಗಿದೆ",
+    "maintenanceStageReviewed": "ಪರಿಶೀಲಿಸಲಾಗಿದೆ",
+    "maintenanceStageScheduled": "ನಿಗದಿಯಾಗಿದೆ",
+    "maintenanceStageResolved": "ಪರಿಹರಿಸಲಾಗಿದೆ"
   },
   "maintenance": {
     "submit": "ವಿನಂತಿ ಸಲ್ಲಿಸಿ",
@@ -47,5 +83,13 @@
     "email": "ಇಮೇಲ್",
     "push": "ಪುಶ್ ಅಧಿಸೂಚನೆಗಳು",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "ಮೊದಲು ಸಹಾಯಕದಿಂದ ಆರಂಭಿಸಿ",
+    "assistantDescription": "ಲೀಸ್, ಬಾಡಿಗೆ ಅಥವಾ ನಿರ್ವಹಣೆ ಬಗ್ಗೆ ಸರಳ ಭಾಷೆಯಲ್ಲಿ ಕೇಳಿ ಮತ್ತು ಸರಿಯಾದ ವರ್ಕ್‌ಫ್ಲೋಗೆ ನೇರವಾಗಿ ಹೋಗಿ.",
+    "paymentsTitle": "ಬಾಡಿಗೆಗಾಗಿ ತ್ವರಿತ ಪಾವತಿ ಬಳಸಿ",
+    "paymentsDescription": "ಈ ಕಾರ್ಡ್ ಮುಂದಿನ ಬಾಕಿ ಮೊತ್ತ ಮತ್ತು ಪಾವತಿ ಶಾರ್ಟ್‌ಕಟ್‌ಗಳನ್ನು ಮುಂದೆಯೇ ಇಡುತ್ತದೆ.",
+    "maintenanceTitle": "ಪ್ರಗತಿಯನ್ನು ಇಲ್ಲಿ ನೋಡಿ",
+    "maintenanceDescription": "ಟೈಮ್‌ಲೈನ್ ಟಿಕೆಟ್ ತೆರೆಯುವ ಮುನ್ನವೇ ನಿಮ್ಮ ವಿನಂತಿ ಸಲ್ಲಿಸಲಾಗಿದೆ, ಪರಿಶೀಲಿಸಲಾಗಿದೆ, ನಿಗದಿಯಾಗಿದೆ ಅಥವಾ ಪರಿಹರಿಸಲಾಗಿದೆ ಎಂಬುದನ್ನು ತೋರಿಸುತ್ತದೆ."
   }
 }

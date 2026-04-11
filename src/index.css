@@ -73,6 +73,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: rgb(255 255 255);
+    -webkit-box-shadow: 0 0 0 1000px rgb(15 23 42) inset;
+    caret-color: rgb(255 255 255);
+    transition: background-color 9999s ease-out 0s;
+  }
   /* Slightly larger type on desktop (matches portal `lg` layout) for readability */
   @media (min-width: 1024px) {
     html {

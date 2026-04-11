@@ -5,6 +5,8 @@
     "rent": "Rent & Payments",
     "maintenance": "Maintenance",
     "documents": "Documents",
+    "myUploads": "My Uploads",
+    "sharedDocuments": "Shared Documents",
     "profile": "Profile",
     "notifications": "Notifications",
     "addons": "Add-ons",
@@ -20,6 +22,40 @@
     "overdue": "Overdue",
     "paid": "Paid",
     "pending": "Pending"
+  },
+  "dashboard": {
+    "propertyStatusActive": "Active",
+    "propertyStatusPending": "Pending Landlord Approval",
+    "propertyStatusPendingSubtitle": "We're matching your lease and unit details now. Your property view will unlock as soon as the assignment is confirmed.",
+    "quickPayTitle": "Quick pay",
+    "quickPayDescription": "See your next rent charge, check autopay, and jump straight into payments.",
+    "quickPayDueLabel": "Upcoming charge",
+    "quickPayAutopayLabel": "Autopay",
+    "quickPayAutopayOn": "Autopay on",
+    "quickPayAutopayOff": "Autopay off",
+    "quickPayOpen": "Open payments",
+    "quickPaySetup": "Set up autopay when you're ready.",
+    "quickPayEmptyTitle": "Your rent schedule is still being prepared",
+    "quickPayEmptyDescription": "We'll show the next due date and payment shortcuts once your landlord finishes the billing setup.",
+    "assistantTitle": "Ask Ondo before you dig through menus",
+    "assistantDescription": "Use the assistant for lease questions, rent reminders, or to start a maintenance request with the right details.",
+    "assistantTry": "Try asking",
+    "assistantOpen": "Open assistant",
+    "assistantExampleLease": "When is my lease up?",
+    "assistantExampleRent": "Show my next rent due.",
+    "assistantExampleMaintenance": "Submit a plumbing ticket.",
+    "maintenanceTimelineTitle": "Maintenance timeline",
+    "maintenanceTimelineDescription": "Track the latest request from submission through resolution without opening the full maintenance page.",
+    "maintenanceEmptyTitle": "No maintenance requests right now",
+    "maintenanceEmptyDescription": "If something changes at home, send a request with photos and we'll keep the timeline updated here.",
+    "maintenanceOpen": "Open maintenance",
+    "maintenanceSubmit": "Submit a request",
+    "maintenanceLastUpdated": "Last updated {{date}}",
+    "maintenanceOpenCount": "{{count}} open requests",
+    "maintenanceStageSubmitted": "Submitted",
+    "maintenanceStageReviewed": "Reviewed",
+    "maintenanceStageScheduled": "Scheduled",
+    "maintenanceStageResolved": "Resolved"
   },
   "maintenance": {
     "submit": "Submit Request",
@@ -47,5 +83,13 @@
     "email": "Email",
     "push": "Push Notifications",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "Start with the assistant",
+    "assistantDescription": "Ask about your lease, rent, or maintenance in plain language and jump straight into the right workflow.",
+    "paymentsTitle": "Use quick pay for rent questions",
+    "paymentsDescription": "This card keeps the next amount due and your payment shortcuts up front so you don't have to hunt for them.",
+    "maintenanceTitle": "Watch request progress here",
+    "maintenanceDescription": "The timeline shows whether your request is submitted, reviewed, scheduled, or resolved before you even open the ticket."
   }
 }

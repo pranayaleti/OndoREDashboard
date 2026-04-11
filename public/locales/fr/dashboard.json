@@ -40,5 +40,20 @@
     "inviteTenant": "Inviter un locataire",
     "viewAll": "Voir tout",
     "export": "Exporter"
+  },
+  "portfolio": {
+    "accounting": {
+      "title": "Profits et pertes",
+      "covering": "Couvre {{count}} propriétés",
+      "export": "Exporter CSV",
+      "exporting": "Préparation de l’export..."
+    },
+    "documents": {
+      "title": "Coffre de documents",
+      "latest": "Dernier envoi : {{name}}",
+      "empty": "Aucun document du portefeuille n’a encore été téléversé.",
+      "upload": "Téléverser un document",
+      "uploading": "Téléversement..."
+    }
   }
 }

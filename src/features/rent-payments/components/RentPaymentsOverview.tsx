@@ -33,10 +33,6 @@ export function RentPaymentsOverview() {
             <p className="font-medium">{recentPayments.length}</p>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Stripe ACH + Plaid tokens will be injected once backend endpoints expose the
-          payment intents. For now this card serves as a layout contract.
-        </p>
       </div>
     </div>
   );

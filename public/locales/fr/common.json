@@ -107,6 +107,24 @@
     "shareDesc": "Partagez Ondo RE, gagnez des mois gratuits + participations",
     "viewProgram": "Voir le programme complet"
   },
+  "sidebar": {
+    "sections": {
+      "home": "Accueil",
+      "management": "Gestion",
+      "financials": "Finances",
+      "documents": "Documents",
+      "account": "Compte",
+      "resident": "Vie sur place",
+      "payments": "Paiements"
+    }
+  },
+  "tour": {
+    "step": "Étape {{current}} sur {{total}}",
+    "skip": "Passer la visite",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé"
+  },
   "language": {
     "label": "Langue",
     "en": "English (United States)",

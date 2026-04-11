@@ -9,27 +9,28 @@ import {
   TrendingUp,
   CheckCircle,
   Clock,
-  BadgeCheck,
-  BarChart3,
-  FileSpreadsheet,
-  Receipt,
+  AlertCircle,
 } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
-import { propertyApi, maintenanceApi, type Property, type MaintenanceRequest } from "@/lib/api"
+import { featureApi, propertyApi, maintenanceApi, type Property, type MaintenanceRequest, type RentSchedule } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { formatUSDate } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
-import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
+import { AssistantStarterCard } from "@/components/assistant-starter-card"
+import { TenantQuickPayCard } from "@/components/tenant/TenantQuickPayCard"
+import { TenantMaintenanceTimelineCard } from "@/components/tenant/TenantMaintenanceTimelineCard"
 
 /**
  * Tenant Portal Configuration
  */
 export function createTenantConfig(
   assignedProperty: Property | null,
-  maintenanceRequests: MaintenanceRequest[]
+  maintenanceRequests: MaintenanceRequest[],
+  rentSchedule: RentSchedule[],
+  t: (key: string, options?: Record<string, unknown>) => string
 ): PortalConfig {
   // Calculate next rent due date
   const getNextRentDueDate = () => {
@@ -88,6 +89,13 @@ export function createTenantConfig(
   }
 
   const leaseProgress = getLeaseProgress()
+  const monthsRemaining = getMonthsRemaining()
+  const leaseProgressTone =
+    monthsRemaining > 6
+      ? "bg-emerald-500"
+      : monthsRemaining >= 3
+        ? "bg-amber-500"
+        : "bg-red-500"
 
   // Calculate days at property
   const getDaysAtProperty = () => {
@@ -112,6 +120,43 @@ export function createTenantConfig(
   // Mock data counts (matching actual component data)
   const unreadMessagesCount = 2
   const documentsCount = 8
+  const nextPaymentSchedule = rentSchedule[0] ?? null
+  const latestMaintenanceRequest = [...maintenanceRequests].sort((a, b) =>
+    new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  )[0] ?? null
+  const pendingLandlordApprovalSection = !assignedProperty ? (
+    <Card key="pending-landlord-approval">
+      <CardHeader>
+        <CardTitle>{t("dashboard.propertyStatusPending")}</CardTitle>
+        <CardDescription>{t("dashboard.propertyStatusPendingSubtitle")}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
+          <div className="flex items-start gap-3">
+            <div className="rounded-full bg-amber-500/15 p-2 text-amber-600 dark:text-amber-300">
+              <AlertCircle className="h-5 w-5" />
+            </div>
+            <div className="space-y-2">
+              <p className="font-medium">
+                Your lease is being confirmed by your landlord. You can explore the portal while you wait.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t("dashboard.propertyStatusPendingSubtitle")}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/tenant/maintenance">
+            <Button>Submit a maintenance request</Button>
+          </Link>
+          <Link to="/tenant/messages">
+            <Button variant="outline">Message your landlord</Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  ) : null
 
   // Stat cards configuration
   const statCards: StatCardConfig[] = [
@@ -127,8 +172,19 @@ export function createTenantConfig(
       id: "lease-expires",
       title: "Lease Expires",
       value: leaseExpiration ? formatLeaseExpiration(leaseExpiration) : "N/A",
-      subtitle: leaseExpiration ? `${getMonthsRemaining()} months left` : "No lease data",
+      subtitle: leaseExpiration ? `${monthsRemaining} months left` : "No lease data",
       icon: <Calendar className="h-4 w-4 text-muted-foreground" />,
+      footer: leaseExpiration ? (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span>Lease term</span>
+            <span>{Math.round(leaseProgress)}%</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-muted">
+            <div className={`h-full rounded-full transition-all ${leaseProgressTone}`} style={{ width: `${leaseProgress}%` }} />
+          </div>
+        </div>
+      ) : undefined,
       href: "/tenant/lease-details",
     },
     {
@@ -142,8 +198,10 @@ export function createTenantConfig(
     {
       id: "property-status",
       title: "Property Status",
-      value: assignedProperty ? "Active" : "Not Assigned",
-      subtitle: assignedProperty ? `${assignedProperty.addressLine1}, ${assignedProperty.city}` : "No property assigned",
+      value: assignedProperty ? t("dashboard.propertyStatusActive") : t("dashboard.propertyStatusPending"),
+      subtitle: assignedProperty
+        ? `${assignedProperty.addressLine1}, ${assignedProperty.city}`
+        : t("dashboard.propertyStatusPendingSubtitle"),
       icon: <Building className="h-4 w-4 text-muted-foreground" />,
       href: assignedProperty ? "/tenant/lease-details" : undefined,
     },
@@ -403,16 +461,36 @@ export function createTenantConfig(
               )}
             </>
           ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>No Property Assigned</CardTitle>
-                <CardDescription>You don't have a property assigned yet</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500 text-center py-4">
-                  Contact your property manager to get assigned to a property.
-                </p>
-              </CardContent>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("dashboard.propertyStatusPending")}</CardTitle>
+                  <CardDescription>{t("dashboard.propertyStatusPendingSubtitle")}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-full bg-amber-500/15 p-2 text-amber-600 dark:text-amber-300">
+                        <AlertCircle className="h-5 w-5" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="font-medium">
+                          Your lease is being confirmed by your landlord. You can explore the portal while you wait.
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {t("dashboard.propertyStatusPendingSubtitle")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Link to="/tenant/maintenance">
+                      <Button>Submit a maintenance request</Button>
+                    </Link>
+                    <Link to="/tenant/messages">
+                      <Button variant="outline">Message your landlord</Button>
+                    </Link>
+                  </div>
+                </CardContent>
             </Card>
           )}
         </div>
@@ -490,69 +568,65 @@ export function createTenantConfig(
 
   const widgets: DashboardWidget[] = [
     {
-      id: "tenant-screening",
-      title: "Tenant Screening",
+      id: "tenant-assistant",
+      title: "Assistant",
       gridCols: 2,
-      priority: 5,
+      priority: 0,
       component: (
-        <TenantScreeningWidgetContainer
-          ctaHref="/tenant/lease-details"
-          ctaLabel="View my screening"
-          description="Review your screening status, keep documents up to date, and unlock faster renewals."
-          title="Your Screening Status"
-          limit={3}
-        />
-      ),
-    },
-    {
-      id: "bookkeeping-reporting",
-      title: "Bookkeeping & Reporting",
-      gridCols: 2,
-      priority: 50,
-      component: (
-        <BookkeepingReportingWidget
-          eyebrow="Payments & Reporting"
-          title="Stay on top of rent, receipts, and reimbursements."
-          subtitle="Centralize rent history, categorize reimbursements, and export statements when you need them."
-          ctaLabel="View payments"
-          ctaHref="/tenant/payments"
-          transactionsHref="/tenant/payments"
-          cashFlowHref="/tenant/payments"
-          taxPackageCardHref="/tenant/documents"
-          features={[
-            {
-              label: "Auto-categorize transactions",
-              icon: <BadgeCheck className="h-4 w-4" />,
-              href: "/tenant/payments",
-            },
-            {
-              label: "Monitor income & expenses",
-              icon: <BarChart3 className="h-4 w-4" />,
-              href: "/tenant/payments",
-            },
-            {
-              label: "Auto-generate reports",
-              icon: <FileSpreadsheet className="h-4 w-4" />,
-              href: "/tenant/documents",
-            },
-            {
-              label: "Make tax time simple",
-              icon: <Receipt className="h-4 w-4" />,
-              href: "/tenant/documents",
-            },
+        <AssistantStarterCard
+          title={t("dashboard.assistantTitle")}
+          description={t("dashboard.assistantDescription")}
+          promptLabel={t("dashboard.assistantTry")}
+          prompts={[
+            t("dashboard.assistantExampleLease"),
+            t("dashboard.assistantExampleRent"),
+            t("dashboard.assistantExampleMaintenance"),
           ]}
-          taxSummary={{
-            timePeriod: "Lease Term",
-            properties: assignedProperty ? assignedProperty.addressLine1 ?? "Current Property" : "Pending Assignment",
-            categorized: paymentStats.totalPayments * 5,
-            uncategorized: Math.max(0, paymentStats.totalPayments - paymentStats.onTimePayments),
-            attachments: documentsCount,
-            ctaLabel: "Download receipts",
-            ctaHref: "/tenant/documents",
-          }}
+          assistantHref="/tenant/assistant"
+          ctaLabel={t("dashboard.assistantOpen")}
+          dataTourTarget="tenant-assistant-starter"
         />
       ),
     },
+    ...(assignedProperty
+      ? [
+          {
+            id: "tenant-quick-pay",
+            title: "Quick Pay",
+            gridCols: 1 as const,
+            priority: 10,
+            component: <TenantQuickPayCard schedule={nextPaymentSchedule} />,
+          },
+          {
+            id: "tenant-maintenance-timeline",
+            title: "Maintenance Timeline",
+            gridCols: 1 as const,
+            priority: 20,
+            component: (
+              <TenantMaintenanceTimelineCard
+                request={latestMaintenanceRequest}
+                totalRequests={maintenanceRequests.length}
+              />
+            ),
+          },
+        ]
+      : [
+          {
+            id: "tenant-screening",
+            title: "Tenant Screening",
+            gridCols: 2 as const,
+            priority: 10,
+            component: (
+              <TenantScreeningWidgetContainer
+                ctaHref="/tenant/lease-details"
+                ctaLabel="View my screening"
+                description="Review your screening status, keep documents up to date, and unlock faster renewals."
+                title="Your Screening Status"
+                limit={3}
+              />
+            ),
+          },
+        ]),
   ]
 
   return {
@@ -562,7 +636,7 @@ export function createTenantConfig(
     description: "Your rental property overview",
     
     // Layout configuration
-    showHeader: true,
+    showHeader: false,
     showTabs: false,
     showQuickActions: true,
     showStats: true,
@@ -573,11 +647,13 @@ export function createTenantConfig(
     statCards,
     quickActions,
     widgets,
+    customSections: pendingLandlordApprovalSection ? [pendingLandlordApprovalSection] : [],
     
     // Data configuration
     dataFetchers: {
       assignedProperty: () => propertyApi.getTenantProperty().catch(() => null),
       maintenanceRequests: () => maintenanceApi.getTenantMaintenanceRequests().catch(() => []),
+      rentSchedule: () => featureApi.rentPayments.getSchedule().catch(() => []),
     },
     
     // Theme
@@ -587,4 +663,3 @@ export function createTenantConfig(
     },
   } as PortalConfig
 }
-

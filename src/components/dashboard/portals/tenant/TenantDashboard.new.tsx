@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { useAuth } from "@/lib/auth-context"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { BaseDashboard, BaseDashboardProvider } from "../../base"
@@ -10,15 +11,17 @@ import { formatUSDate } from "@/lib/us-format"
  */
 function TenantDashboardContent() {
   const { user: _user } = useAuth()
+  const { t } = useTranslation("tenant")
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format
   const config = useMemo(() => {
     const assignedProperty = data.assignedProperty || null
     const maintenanceRequests = data.maintenanceRequests || []
+    const rentSchedule = data.rentSchedule || []
 
-    return createTenantConfig(assignedProperty, maintenanceRequests)
-  }, [data.assignedProperty, data.maintenanceRequests])
+    return createTenantConfig(assignedProperty, maintenanceRequests, rentSchedule, t)
+  }, [data.assignedProperty, data.maintenanceRequests, data.rentSchedule, t])
 
   // Generate activities from fetched data
   const activities = useMemo(() => {
@@ -51,11 +54,12 @@ function TenantDashboardContent() {
 
 export default function TenantDashboardNew() {
   useWelcomeToast()
+  const { t } = useTranslation("tenant")
 
   // Create initial config for provider
   const initialConfig = useMemo(() => {
-    return createTenantConfig(null, [])
-  }, [])
+    return createTenantConfig(null, [], [], t)
+  }, [t])
 
   return (
     <BaseDashboardProvider config={initialConfig}>
@@ -63,4 +67,3 @@ export default function TenantDashboardNew() {
     </BaseDashboardProvider>
   )
 }
-

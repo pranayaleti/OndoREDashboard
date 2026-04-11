@@ -107,6 +107,24 @@
     "shareDesc": "Ondo RE शेयर करें, मुफ्त महीने + प्रविष्टियाँ अर्जित करें",
     "viewProgram": "पूरा प्रोग्राम देखें"
   },
+  "sidebar": {
+    "sections": {
+      "home": "होम",
+      "management": "प्रबंधन",
+      "financials": "वित्त",
+      "documents": "दस्तावेज़",
+      "account": "खाता",
+      "resident": "यहाँ रहना",
+      "payments": "भुगतान"
+    }
+  },
+  "tour": {
+    "step": "चरण {{current}} / {{total}}",
+    "skip": "टूर छोड़ें",
+    "back": "वापस",
+    "next": "आगे",
+    "done": "समाप्त"
+  },
   "language": {
     "label": "भाषा",
     "en": "English (United States)",

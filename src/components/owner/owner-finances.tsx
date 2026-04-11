@@ -17,6 +17,8 @@ import { reportsApi, type PnLStatement } from "@/lib/api/clients/reports"
 import { getApiBaseUrl } from "@/lib/api/base-url"
 import { getAuthHeaders } from "@/lib/api/http"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
+import { DEMO_OWNER_FINANCIAL_SUMMARY, isOwnerDemoUser } from "@/lib/seed-data"
 
 function formatDateRange(start: string, end: string): string {
   return `${start} to ${end}`
@@ -39,6 +41,7 @@ function parseOwnerFinanceTab(param: string | null): OwnerFinanceTab {
 }
 
 export default function OwnerFinances() {
+  const { user } = useAuth()
   const { toast } = useToast()
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = parseOwnerFinanceTab(searchParams.get("tab"))
@@ -69,16 +72,21 @@ export default function OwnerFinances() {
         { startDate: dateRange.startDate, endDate: dateRange.endDate },
         undefined
       )
-      setPnl(data)
+      setPnl(data.properties.length > 0 ? data : isOwnerDemoUser(user) ? DEMO_OWNER_FINANCIAL_SUMMARY : data)
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to load financial summary"
-      setError(message)
-      setPnl(null)
-      toast({ title: "Error", description: message, variant: "destructive" })
+      if (isOwnerDemoUser(user)) {
+        setError(null)
+        setPnl(DEMO_OWNER_FINANCIAL_SUMMARY)
+      } else {
+        setError(message)
+        setPnl(null)
+        toast({ title: "Error", description: message, variant: "destructive" })
+      }
     } finally {
       setLoading(false)
     }
-  }, [dateRange.startDate, dateRange.endDate, toast])
+  }, [dateRange.startDate, dateRange.endDate, toast, user])
 
   useEffect(() => {
     fetchPnL()

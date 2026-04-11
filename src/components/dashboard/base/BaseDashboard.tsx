@@ -88,6 +88,11 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
 function renderDashboardContent(config: BaseDashboardProps["config"], data: any): ReactNode {
   return (
     <>
+      {/* Custom Sections */}
+      {config.customSections && config.customSections.map((section, index) => (
+        <div key={index}>{section}</div>
+      ))}
+
       {/* Quick Actions */}
       {config.showQuickActions && config.quickActions && config.quickActions.length > 0 && (
         <QuickActions actions={config.quickActions} />
@@ -128,11 +133,6 @@ function renderDashboardContent(config: BaseDashboardProps["config"], data: any)
         <ActivityFeed activities={data.activities} />
       )}
 
-      {/* Custom Sections */}
-      {config.customSections && config.customSections.map((section, index) => (
-        <div key={index}>{section}</div>
-      ))}
     </>
   )
 }
-

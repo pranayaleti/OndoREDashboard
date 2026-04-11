@@ -1,3 +1,3 @@
-import { featureApi } from '@/lib/api';
+import { documentsApi } from '@/lib/api';
 
-export const documentsApi = featureApi.documents;
+export { documentsApi };

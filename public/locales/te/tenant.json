@@ -5,6 +5,8 @@
     "rent": "అద్దె మరియు చెల్లింపులు",
     "maintenance": "నిర్వహణ",
     "documents": "పత్రాలు",
+    "myUploads": "నా అప్‌లోడ్‌లు",
+    "sharedDocuments": "పంచుకున్న పత్రాలు",
     "profile": "ప్రొఫైల్",
     "notifications": "నోటిఫికేషన్లు",
     "addons": "యాడ్-ఆన్లు",
@@ -20,6 +22,40 @@
     "overdue": "గడువు మించింది",
     "paid": "చెల్లించారు",
     "pending": "పెండింగ్"
+  },
+  "dashboard": {
+    "propertyStatusActive": "క్రియాశీలం",
+    "propertyStatusPending": "ఇంటి యజమాని ఆమోదం కోసం ఎదురుచూస్తోంది",
+    "propertyStatusPendingSubtitle": "మీ లీజ్ మరియు యూనిట్ వివరాలను మేము ఇప్పుడు సరిపోలుస్తున్నాం. అసైన్‌మెంట్ ధృవీకరించగానే మీ ఆస్తి వీక్షణ తెరుచుకుంటుంది.",
+    "quickPayTitle": "త్వరిత చెల్లింపు",
+    "quickPayDescription": "మీ తదుపరి అద్దె చార్జ్‌ను చూడండి, ఆటోపేను పరిశీలించండి, వెంటనే payments కి వెళ్ళండి.",
+    "quickPayDueLabel": "రాబోయే చార్జ్",
+    "quickPayAutopayLabel": "ఆటోపే",
+    "quickPayAutopayOn": "ఆటోపే ఆన్",
+    "quickPayAutopayOff": "ఆటోపే ఆఫ్",
+    "quickPayOpen": "చెల్లింపులు తెరవండి",
+    "quickPaySetup": "మీకు సిద్ధమైనప్పుడు ఆటోపేను సెటప్ చేయండి.",
+    "quickPayEmptyTitle": "మీ అద్దె షెడ్యూల్ ఇంకా సిద్ధమవుతోంది",
+    "quickPayEmptyDescription": "మీ ఇంటి యజమాని బిల్లింగ్ సెటప్ పూర్తిచేసిన వెంటనే తదుపరి తేదీ మరియు payment shortcuts ను చూపిస్తాం.",
+    "assistantTitle": "మెనూల్లో వెతకడానికి ముందు Ondo ను అడగండి",
+    "assistantDescription": "లీజ్ ప్రశ్నలు, అద్దె గుర్తింపులు, లేదా సరైన వివరాలతో maintenance request ప్రారంభించడానికి అసిస్టెంట్‌ను వాడండి.",
+    "assistantTry": "ఇలా అడగండి",
+    "assistantOpen": "అసిస్టెంట్ తెరవండి",
+    "assistantExampleLease": "నా లీజ్ ఎప్పుడు ముగుస్తుంది?",
+    "assistantExampleRent": "నా తదుపరి అద్దె చూపించు.",
+    "assistantExampleMaintenance": "ప్లంబింగ్ టికెట్ నమోదు చేయి.",
+    "maintenanceTimelineTitle": "నిర్వహణ టైమ్‌లైన్",
+    "maintenanceTimelineDescription": "పూర్తి maintenance page తెరవకుండా తాజా అభ్యర్థనను సమర్పణ నుంచి పరిష్కారం వరకు ట్రాక్ చేయండి.",
+    "maintenanceEmptyTitle": "ప్రస్తుతం maintenance requests లేవు",
+    "maintenanceEmptyDescription": "ఇంట్లో ఏదైనా మారితే ఫోటోలతో request పంపండి, ఈ టైమ్‌లైన్‌ను ఇక్కడే అప్డేట్ చేస్తాం.",
+    "maintenanceOpen": "నిర్వహణ తెరవండి",
+    "maintenanceSubmit": "అభ్యర్థన పంపండి",
+    "maintenanceLastUpdated": "చివరి అప్డేట్ {{date}}",
+    "maintenanceOpenCount": "{{count}} ఓపెన్ అభ్యర్థనలు",
+    "maintenanceStageSubmitted": "సమర్పించబడింది",
+    "maintenanceStageReviewed": "సమీక్షించబడింది",
+    "maintenanceStageScheduled": "షెడ్యూల్ చేయబడింది",
+    "maintenanceStageResolved": "పరిష్కరించబడింది"
   },
   "maintenance": {
     "submit": "అభ్యర్థన సమర్పించండి",
@@ -47,5 +83,13 @@
     "email": "ఇమెయిల్",
     "push": "పుష్ నోటిఫికేషన్లు",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "ముందుగా అసిస్టెంట్‌తో ప్రారంభించండి",
+    "assistantDescription": "లీజ్, అద్దె లేదా maintenance గురించి సహజ భాషలో అడిగి సరైన workflow కి నేరుగా వెళ్లండి.",
+    "paymentsTitle": "అద్దె కోసం quick pay వాడండి",
+    "paymentsDescription": "ఈ కార్డ్ తదుపరి బాకీ మొత్తం మరియు చెల్లింపు shortcuts ను ముందే చూపిస్తుంది.",
+    "maintenanceTitle": "ప్రగతిని ఇక్కడ చూడండి",
+    "maintenanceDescription": "టికెట్ తెరవకముందే అభ్యర్థన submitted, reviewed, scheduled లేదా resolved అయ్యిందా అనేది టైమ్‌లైన్‌లో కనిపిస్తుంది."
   }
 }

@@ -5,6 +5,8 @@
     "rent": "Renta y Pagos",
     "maintenance": "Mantenimiento",
     "documents": "Documentos",
+    "myUploads": "Mis cargas",
+    "sharedDocuments": "Documentos compartidos",
     "profile": "Perfil",
     "notifications": "Notificaciones",
     "addons": "Complementos",
@@ -20,6 +22,40 @@
     "overdue": "Vencido",
     "paid": "Pagado",
     "pending": "Pendiente"
+  },
+  "dashboard": {
+    "propertyStatusActive": "Activo",
+    "propertyStatusPending": "Pendiente de aprobación del arrendador",
+    "propertyStatusPendingSubtitle": "Estamos vinculando ahora los detalles de tu contrato y tu unidad. La vista de la propiedad se activará en cuanto se confirme la asignación.",
+    "quickPayTitle": "Pago rápido",
+    "quickPayDescription": "Consulta tu próximo cargo de renta, revisa el autopago y entra directo a pagos.",
+    "quickPayDueLabel": "Próximo cargo",
+    "quickPayAutopayLabel": "Autopago",
+    "quickPayAutopayOn": "Autopago activado",
+    "quickPayAutopayOff": "Autopago desactivado",
+    "quickPayOpen": "Abrir pagos",
+    "quickPaySetup": "Activa el autopago cuando quieras.",
+    "quickPayEmptyTitle": "Tu calendario de renta aún se está preparando",
+    "quickPayEmptyDescription": "Mostraremos la próxima fecha de pago y los accesos rápidos en cuanto tu arrendador termine la configuración de cobro.",
+    "assistantTitle": "Pregunta a Ondo antes de buscar en los menús",
+    "assistantDescription": "Usa el asistente para dudas del contrato, recordatorios de renta o para iniciar una solicitud de mantenimiento con los detalles correctos.",
+    "assistantTry": "Prueba con",
+    "assistantOpen": "Abrir asistente",
+    "assistantExampleLease": "¿Cuándo vence mi contrato?",
+    "assistantExampleRent": "Muéstrame mi próxima renta.",
+    "assistantExampleMaintenance": "Envía una solicitud de plomería.",
+    "maintenanceTimelineTitle": "Cronología de mantenimiento",
+    "maintenanceTimelineDescription": "Sigue la solicitud más reciente desde el envío hasta la resolución sin abrir toda la página de mantenimiento.",
+    "maintenanceEmptyTitle": "No hay solicitudes de mantenimiento por ahora",
+    "maintenanceEmptyDescription": "Si algo cambia en casa, envía una solicitud con fotos y mantendremos la cronología actualizada aquí.",
+    "maintenanceOpen": "Abrir mantenimiento",
+    "maintenanceSubmit": "Enviar solicitud",
+    "maintenanceLastUpdated": "Última actualización {{date}}",
+    "maintenanceOpenCount": "{{count}} solicitudes abiertas",
+    "maintenanceStageSubmitted": "Enviada",
+    "maintenanceStageReviewed": "Revisada",
+    "maintenanceStageScheduled": "Programada",
+    "maintenanceStageResolved": "Resuelta"
   },
   "maintenance": {
     "submit": "Enviar solicitud",
@@ -47,5 +83,13 @@
     "email": "Correo electrónico",
     "push": "Notificaciones push",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "Empieza con el asistente",
+    "assistantDescription": "Pregunta sobre tu contrato, la renta o el mantenimiento en lenguaje natural y salta directo al flujo correcto.",
+    "paymentsTitle": "Usa pago rápido para la renta",
+    "paymentsDescription": "Esta tarjeta mantiene el próximo monto y los accesos de pago al frente para que no tengas que buscarlos.",
+    "maintenanceTitle": "Sigue el progreso aquí",
+    "maintenanceDescription": "La cronología muestra si tu solicitud está enviada, revisada, programada o resuelta antes de abrir el ticket."
   }
 }

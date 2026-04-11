@@ -9,7 +9,7 @@ import { HomeImprovementPage } from "@/components/homeowner/home-improvement-pag
 import { EquipmentGridPage } from "@/components/homeowner/equipment-grid"
 import { HomeownerSearchResults } from "@/components/homeowner/homeowner-search-results"
 import { DocumentsPanel } from "@/components/homeowner/documents-panel"
-import { HomeownerSettingsPage } from "@/components/homeowner/homeowner-settings-page"
+import OwnerSettings from "@/components/owner/owner-settings"
 import OwnerProperties from "@/components/owner/owner-properties"
 import OwnerFinances from "@/components/owner/owner-finances"
 import OwnerReports from "@/components/owner/owner-reports"
@@ -34,7 +34,7 @@ const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 export default function Owner() {
   return (
     <PortalSidebar>
-      <div className="min-h-screen">
+      <div className="min-h-full">
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<HomeownerDashboard />} />
@@ -44,7 +44,7 @@ export default function Owner() {
             <Route path="/equipment" element={<EquipmentGridPage />} />
             <Route path="/search" element={<HomeownerSearchResults />} />
             <Route path="/my-documents" element={<DocumentsPanel />} />
-            <Route path="/settings" element={<HomeownerSettingsPage />} />
+            <Route path="/settings" element={<OwnerSettings />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             {/* Property creation routes - both old and new URLs */}

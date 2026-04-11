@@ -47,7 +47,22 @@ function mapDashboardTenantRowToTenant(row: Record<string, unknown>): Tenant {
 import {
   GetPropertyResponseSchema,
   GetPropertiesResponseSchema,
+  PropertySchema,
 } from "../schemas";
+
+function normalizePropertyResponse(raw: unknown): GetPropertyResponse {
+  const wrapped = GetPropertyResponseSchema.safeParse(raw);
+  if (wrapped.success) {
+    return wrapped.data as GetPropertyResponse;
+  }
+
+  const direct = PropertySchema.safeParse(raw);
+  if (direct.success) {
+    return { property: direct.data } as GetPropertyResponse;
+  }
+
+  throw wrapped.error;
+}
 
 export const propertyApi = {
   async getProperties(
@@ -72,7 +87,7 @@ export const propertyApi = {
   async getProperty(id: string): Promise<GetPropertyResponse> {
     const headers = getAuthHeaders();
     const raw = await apiGet<unknown>(`/properties/${id}`, headers);
-    return GetPropertyResponseSchema.parse(raw) as GetPropertyResponse;
+    return normalizePropertyResponse(raw);
   },
 
   async createProperty(request: CreatePropertyRequest): Promise<CreatePropertyResponse> {
@@ -127,7 +142,8 @@ export const propertyApi = {
 
   async getTenantProperty(): Promise<GetPropertyResponse> {
     const headers = getAuthHeaders();
-    return apiGet<GetPropertyResponse>("/properties/tenant-property", headers);
+    const raw = await apiGet<unknown>("/properties/tenant-property", headers);
+    return normalizePropertyResponse(raw);
   },
 
   async getOwnerTenants(): Promise<OwnerTenantsResponse> {

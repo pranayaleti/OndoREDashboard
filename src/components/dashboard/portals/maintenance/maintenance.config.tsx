@@ -4,10 +4,7 @@ import {
   CheckCircle,
   AlertTriangle,
   Building,
-  BadgeCheck,
-  BarChart3,
-  FileSpreadsheet,
-  Receipt,
+  ArrowRight,
 } from "lucide-react"
 import { PortalConfig, StatCardConfig, QuickAction, DashboardTab, DashboardWidget } from "../../base/types"
 import { maintenanceApi, type MaintenanceRequest } from "@/lib/api"
@@ -17,8 +14,8 @@ import { Link } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
 import { formatUSDate } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
-import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
+import { getDemoMaintenanceTickets } from "@/lib/seed-data"
 
 /**
  * Maintenance Portal Configuration
@@ -233,6 +230,81 @@ export function createMaintenanceConfig(
 
   const widgets: DashboardWidget[] = [
     {
+      id: "my-assigned-tickets",
+      title: "My Assigned Tickets",
+      gridCols: 2,
+      priority: 0,
+      component: (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <CardTitle>My Assigned Tickets</CardTitle>
+                <CardDescription>Up to 5 active tickets currently on your board</CardDescription>
+              </div>
+              <Link to="/maintenance/tickets">
+                <Button variant="outline" size="sm">
+                  View all
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {assignedRequests.length > 0 ? (
+              <div className="space-y-3">
+                {assignedRequests
+                  .filter((ticket) => ticket.status !== "completed")
+                  .slice(0, 5)
+                  .map((ticket) => {
+                    const priorityTone =
+                      ticket.priority === "emergency" || ticket.priority === "high"
+                        ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200"
+                        : ticket.priority === "medium"
+                          ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+                          : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
+
+                    const statusTone =
+                      ticket.status === "in_progress"
+                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+                        : ticket.status === "completed"
+                          ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
+                          : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+
+                    return (
+                      <div key={ticket.id} className="rounded-2xl border p-4">
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                          <div className="space-y-1">
+                            <p className="font-semibold">{ticket.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {ticket.propertyAddress || ticket.propertyTitle || "Property"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {ticket.dateScheduled ? `Scheduled ${formatUSDate(ticket.dateScheduled)}` : "Schedule pending"}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge className={priorityTone}>{ticket.priority}</Badge>
+                            <Badge className={statusTone}>{ticket.status.replace("_", " ")}</Badge>
+                            <Button asChild variant="outline" size="sm">
+                              <Link to="/maintenance/tickets">View</Link>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+                No active tickets are assigned right now.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
       id: "tenant-screening",
       title: "Tenant Screening",
       gridCols: 2,
@@ -247,55 +319,6 @@ export function createMaintenanceConfig(
         />
       ),
     },
-    {
-      id: "bookkeeping-reporting",
-      title: "Bookkeeping & Reporting",
-      gridCols: 2,
-      priority: 50,
-      component: (
-        <BookkeepingReportingWidget
-          eyebrow="Maintenance Financials"
-          title="Know exactly where service dollars go."
-          subtitle="Tie labor hours and material costs to properties, and deliver audit-ready breakdowns."
-          ctaLabel="Review cost reports"
-          ctaHref="/maintenance/documents"
-          transactionsHref="/maintenance/tickets"
-          cashFlowHref="/maintenance/tickets"
-          taxPackageCardHref="/maintenance/documents"
-          features={[
-            {
-              label: "Auto-categorize transactions",
-              icon: <BadgeCheck className="h-4 w-4" />,
-              href: "/maintenance/tickets",
-            },
-            {
-              label: "Monitor income & expenses",
-              icon: <BarChart3 className="h-4 w-4" />,
-              href: "/maintenance/tickets",
-            },
-            {
-              label: "Auto-generate reports",
-              icon: <FileSpreadsheet className="h-4 w-4" />,
-              href: "/maintenance/documents",
-            },
-            {
-              label: "Make tax time simple",
-              icon: <Receipt className="h-4 w-4" />,
-              href: "/maintenance/documents",
-            },
-          ]}
-          taxSummary={{
-            timePeriod: "This Week",
-            properties: `${assignedRequests.length} Active Jobs`,
-            categorized: stats.inProgress + stats.completedToday * 2,
-            uncategorized: Math.max(1, stats.pending),
-            attachments: assignedRequests.length,
-            ctaLabel: "Export cost summary",
-            ctaHref: "/maintenance/documents",
-          }}
-        />
-      ),
-    },
   ]
 
   return {
@@ -306,7 +329,7 @@ export function createMaintenanceConfig(
     headerIcon: <Wrench className="h-8 w-8 text-orange-600" />,
     
     // Layout configuration
-    showHeader: true,
+    showHeader: false,
     showTabs: false,
     showQuickActions: true,
     showStats: true,
@@ -320,7 +343,14 @@ export function createMaintenanceConfig(
     
     // Data configuration
     dataFetchers: {
-      maintenanceRequests: () => maintenanceApi.getManagerMaintenanceRequests().catch(() => []),
+      maintenanceRequests: async () => {
+        try {
+          const data = await maintenanceApi.getManagerMaintenanceRequests()
+          return data.length > 0 ? data : getDemoMaintenanceTickets({ role: "maintenance", email: "maintenance@ondorealestate.com" })
+        } catch {
+          return getDemoMaintenanceTickets({ role: "maintenance", email: "maintenance@ondorealestate.com" })
+        }
+      },
     },
     
     // Theme
@@ -330,4 +360,3 @@ export function createMaintenanceConfig(
     },
   } as PortalConfig
 }
-

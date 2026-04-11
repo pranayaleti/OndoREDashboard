@@ -37,6 +37,7 @@ export interface StatCardConfig {
   value: string | number
   subtitle?: string
   icon: ReactNode
+  footer?: ReactNode
   trend?: {
     value: number
     label: string
@@ -127,4 +128,3 @@ export interface DashboardData {
   activities?: ActivityItem[]
   [key: string]: any
 }
-

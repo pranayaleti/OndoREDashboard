@@ -107,6 +107,24 @@
     "shareDesc": "Ondo RE ಹಂಚಿಕೊಳ್ಳಿ, ಉಚಿತ ತಿಂಗಳುಗಳು + ಎಂಟ್ರಿಗಳು ಗಳಿಸಿ",
     "viewProgram": "ಸಂಪೂರ್ಣ ಪ್ರೋಗ್ರಾಮ್ ನೋಡಿ"
   },
+  "sidebar": {
+    "sections": {
+      "home": "ಮುಖಪುಟ",
+      "management": "ನಿರ್ವಹಣೆ",
+      "financials": "ಹಣಕಾಸು",
+      "documents": "ದಾಖಲೆಗಳು",
+      "account": "ಖಾತೆ",
+      "resident": "ಇಲ್ಲಿನ ವಾಸ",
+      "payments": "ಪಾವತಿಗಳು"
+    }
+  },
+  "tour": {
+    "step": "ಹಂತ {{current}} / {{total}}",
+    "skip": "ಟೂರ್ ಬಿಡಿ",
+    "back": "ಹಿಂದೆ",
+    "next": "ಮುಂದೆ",
+    "done": "ಮುಗಿಯಿತು"
+  },
   "language": {
     "label": "ಭಾಷೆ",
     "en": "English (United States)",

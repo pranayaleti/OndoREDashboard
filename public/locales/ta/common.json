@@ -107,6 +107,24 @@
     "shareDesc": "Ondo RE பகிரவும், இலவச மாதங்கள் + பதிவுகள் சம்பாதிக்கவும்",
     "viewProgram": "முழு திட்டத்தைப் பார்க்கவும்"
   },
+  "sidebar": {
+    "sections": {
+      "home": "முகப்பு",
+      "management": "நிர்வாகம்",
+      "financials": "நிதி",
+      "documents": "ஆவணங்கள்",
+      "account": "கணக்கு",
+      "resident": "இங்கே வாழ்வு",
+      "payments": "கொடுப்பனவுகள்"
+    }
+  },
+  "tour": {
+    "step": "படி {{current}} / {{total}}",
+    "skip": "சுற்றுப்பயணத்தை தவிர்க்க",
+    "back": "பின்",
+    "next": "அடுத்து",
+    "done": "முடிந்தது"
+  },
   "language": {
     "label": "மொழி",
     "en": "English (United States)",

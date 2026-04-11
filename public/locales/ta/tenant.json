@@ -5,6 +5,8 @@
     "rent": "வாடகை மற்றும் கட்டணங்கள்",
     "maintenance": "பராமரிப்பு",
     "documents": "ஆவணங்கள்",
+    "myUploads": "என் பதிவேற்றங்கள்",
+    "sharedDocuments": "பகிரப்பட்ட ஆவணங்கள்",
     "profile": "சுயவிவரம்",
     "notifications": "அறிவிப்புகள்",
     "addons": "ஆட்-ஆன்கள்",
@@ -20,6 +22,40 @@
     "overdue": "காலதாமதம்",
     "paid": "செலுத்தப்பட்டது",
     "pending": "நிலுவையில்"
+  },
+  "dashboard": {
+    "propertyStatusActive": "செயலில் உள்ளது",
+    "propertyStatusPending": "வீட்டு உரிமையாளர் ஒப்புதல் நிலுவையில்",
+    "propertyStatusPendingSubtitle": "உங்கள் குத்தகை மற்றும் அலகு விவரங்களை நாங்கள் இப்போது இணைக்கிறோம். ஒதுக்கீடு உறுதியாகும் உடன் சொத்து காட்சி திறக்கும்.",
+    "quickPayTitle": "வேகமான கட்டணம்",
+    "quickPayDescription": "அடுத்த வாடகை கட்டணத்தை பார்க்கவும், ஆட்டோபேயை சரிபார்க்கவும், உடனே payments பகுதிக்கு செல்லவும்.",
+    "quickPayDueLabel": "வரவிருக்கும் கட்டணம்",
+    "quickPayAutopayLabel": "ஆட்டோபே",
+    "quickPayAutopayOn": "ஆட்டோபே இயக்கத்தில்",
+    "quickPayAutopayOff": "ஆட்டோபே நிறுத்தத்தில்",
+    "quickPayOpen": "கட்டணங்களைத் திறக்கவும்",
+    "quickPaySetup": "உங்களுக்கு வேண்டியபோது ஆட்டோபே அமைக்கவும்.",
+    "quickPayEmptyTitle": "உங்கள் வாடகை அட்டவணை இன்னும் தயாராகிறது",
+    "quickPayEmptyDescription": "வீட்டு உரிமையாளர் பில்லிங் அமைப்பை முடித்தவுடன் அடுத்த தேதி மற்றும் கட்டண shortcuts-ஐ காட்டுவோம்.",
+    "assistantTitle": "மெனுக்களில் தேடுவதற்கு முன் Ondo-வைக் கேளுங்கள்",
+    "assistantDescription": "குத்தகை கேள்விகள், வாடகை நினைவூட்டல்கள் அல்லது சரியான விவரங்களுடன் பராமரிப்பு கோரிக்கையை தொடங்க உதவியாளரை பயன்படுத்தவும்.",
+    "assistantTry": "இப்படி கேளுங்கள்",
+    "assistantOpen": "உதவியாளரைத் திறக்கவும்",
+    "assistantExampleLease": "என் குத்தகை எப்போது முடிகிறது?",
+    "assistantExampleRent": "என் அடுத்த வாடகையை காட்டு.",
+    "assistantExampleMaintenance": "பிளம்பிங் டிக்கெட் அனுப்பு.",
+    "maintenanceTimelineTitle": "பராமரிப்பு காலவரிசை",
+    "maintenanceTimelineDescription": "முழு maintenance பக்கத்தைத் திறக்காமல் சமீபத்திய கோரிக்கையை அனுப்புதல் முதல் தீர்வு வரை பின்தொடருங்கள்.",
+    "maintenanceEmptyTitle": "இப்போது பராமரிப்பு கோரிக்கைகள் இல்லை",
+    "maintenanceEmptyDescription": "வீட்டில் ஏதும் மாறினால் புகைப்படங்களுடன் கோரிக்கை அனுப்புங்கள்; இந்த காலவரிசையை இங்கே புதுப்பித்து வைத்திருப்போம்.",
+    "maintenanceOpen": "பராமரிப்பைத் திறக்கவும்",
+    "maintenanceSubmit": "கோரிக்கை அனுப்பவும்",
+    "maintenanceLastUpdated": "கடைசியாக புதுப்பிக்கப்பட்டது {{date}}",
+    "maintenanceOpenCount": "{{count}} திறந்த கோரிக்கைகள்",
+    "maintenanceStageSubmitted": "அனுப்பப்பட்டது",
+    "maintenanceStageReviewed": "பரிசீலிக்கப்பட்டது",
+    "maintenanceStageScheduled": "அட்டவணையிடப்பட்டது",
+    "maintenanceStageResolved": "தீர்க்கப்பட்டது"
   },
   "maintenance": {
     "submit": "கோரிக்கை சமர்ப்பிக்கவும்",
@@ -47,5 +83,13 @@
     "email": "மின்னஞ்சல்",
     "push": "புஷ் அறிவிப்புகள்",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "முதலில் உதவியாளருடன் தொடங்குங்கள்",
+    "assistantDescription": "குத்தகை, வாடகை அல்லது பராமரிப்பு பற்றி இயல்பான மொழியில் கேட்டு சரியான செயல்முறைக்கு நேராக செல்லுங்கள்.",
+    "paymentsTitle": "வாடகைக்கு வேகமான கட்டணத்தை பயன்படுத்துங்கள்",
+    "paymentsDescription": "இந்த அட்டை அடுத்த கட்டணத் தொகையும் கட்டண shortcuts-களையும் முன்னிலையிலே வைத்திருக்கும்.",
+    "maintenanceTitle": "முன்னேற்றத்தை இங்கே பாருங்கள்",
+    "maintenanceDescription": "டிக்கெட்டை திறக்குமுன்னரே உங்கள் கோரிக்கை அனுப்பப்பட்டதா, பரிசீலிக்கப்பட்டதா, அட்டவணையிடப்பட்டதா அல்லது தீர்க்கப்பட்டதா என்பதை காலவரிசை காட்டும்."
   }
 }

@@ -109,7 +109,6 @@ export default function Signup() {
     password: validationPresets.passwordStrong,
     confirmPassword: {
       required: true,
-      formatter: sanitize.trim,
       rules: [
         {
           regex: REGEX_PATTERNS.PASSWORD_STRONG,
@@ -117,7 +116,7 @@ export default function Signup() {
         },
         {
           validator: (value, values) => value === values?.password,
-          message: "Passwords must match",
+          message: t('signup.mismatch'),
         },
       ],
       maxLength: 128,

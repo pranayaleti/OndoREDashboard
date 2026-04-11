@@ -26,6 +26,8 @@ import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
+import { DEMO_MANAGER_FINANCIAL_SUMMARY, isDemoPortfolio } from "@/lib/seed-data"
+import { ManagerOnboardingChecklist } from "@/components/manager/manager-onboarding-checklist"
 
 /**
  * Manager Portal Configuration
@@ -36,6 +38,7 @@ export function createManagerConfig(
   leads: Lead[],
   financialSummary: PnLStatement | null = null
 ): PortalConfig {
+  const effectiveFinancialSummary = financialSummary ?? DEMO_MANAGER_FINANCIAL_SUMMARY
   const pendingProperties = properties.filter(p => p.status === "pending")
   
   // Calculate stats from data
@@ -107,7 +110,7 @@ export function createManagerConfig(
     {
       id: "revenue-mtd",
       title: "Revenue (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.income.total) : "—",
+      value: formatUSD(effectiveFinancialSummary.income.total),
       subtitle: "Month-to-date income",
       icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -115,7 +118,7 @@ export function createManagerConfig(
     {
       id: "expenses-mtd",
       title: "Expenses (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.expenses.total) : "—",
+      value: formatUSD(effectiveFinancialSummary.expenses.total),
       subtitle: "Month-to-date expenses",
       icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -123,7 +126,7 @@ export function createManagerConfig(
     {
       id: "net-income-mtd",
       title: "Net Income (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.netIncome) : "—",
+      value: formatUSD(effectiveFinancialSummary.netIncome),
       subtitle: "Month-to-date net income",
       icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -133,46 +136,32 @@ export function createManagerConfig(
   // Quick actions configuration
   const quickActions: QuickAction[] = [
     {
-      id: "properties",
-      title: "Properties",
-      description: "Review & manage",
+      id: "add-property",
+      title: "+ Add Property",
+      description: "Review or add inventory",
       icon: <Building className="h-8 w-8 text-blue-500" />,
       href: "/dashboard/properties",
     },
     {
-      id: "owners",
-      title: "Owners",
-      description: "View & manage",
-      icon: <Users className="h-8 w-8 text-green-500" />,
-      href: "/dashboard/owners",
+      id: "invite-owner",
+      title: "+ Invite Owner",
+      description: "Send owner access",
+      icon: <UserPlus className="h-8 w-8 text-green-500" />,
+      href: "/dashboard/owners/new",
     },
     {
-      id: "tenants",
-      title: "Tenants",
-      description: "View & manage",
+      id: "add-tenant",
+      title: "+ Add Tenant",
+      description: "Open tenant list",
       icon: <Users className="h-8 w-8 text-purple-500" />,
-      href: "/dashboard/tenants",
+      href: "/dashboard/tenants/new",
     },
     {
-      id: "maintenance",
-      title: "Maintenance",
-      description: "Requests & staff",
+      id: "create-maintenance",
+      title: "+ Create Maintenance Ticket",
+      description: "Open work orders",
       icon: <AlertTriangle className="h-8 w-8 text-orange-500" />,
       href: "/dashboard/maintenance",
-    },
-    {
-      id: "finances",
-      title: "Finances",
-      description: "P&L & payments",
-      icon: <DollarSign className="h-8 w-8 text-emerald-500" />,
-      href: "/dashboard/finances",
-    },
-    {
-      id: "invite",
-      title: "Invite User",
-      description: "Add owner/tenant",
-      icon: <UserPlus className="h-8 w-8 text-indigo-500" />,
-      href: "/dashboard/owners/new",
     },
   ]
 
@@ -411,7 +400,7 @@ export function createManagerConfig(
     headerIcon: <Building className="h-8 w-8 text-blue-600" />,
     
     // Layout configuration
-    showHeader: true,
+    showHeader: false,
     showTabs: false,
     showQuickActions: true,
     showStats: true,
@@ -422,6 +411,9 @@ export function createManagerConfig(
     statCards,
     quickActions,
     widgets,
+    customSections: isDemoPortfolio(properties)
+      ? [<ManagerOnboardingChecklist key="manager-onboarding-checklist" />]
+      : [],
     
     // Data configuration
     dataFetchers: {
@@ -439,7 +431,7 @@ export function createManagerConfig(
             .map((u) => u.id)
           return await reportsApi.getAggregatedPnLForStaff({ startDate, endDate }, ownerIds)
         } catch {
-          return null
+          return DEMO_MANAGER_FINANCIAL_SUMMARY
         }
       },
     },
@@ -451,4 +443,3 @@ export function createManagerConfig(
     },
   } as PortalConfig
 }
-

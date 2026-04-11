@@ -155,6 +155,30 @@ function extractMaintenanceRequests(raw: unknown): MaintenanceRequest[] {
   return [];
 }
 
+function extractMaintenanceRequest(raw: unknown): MaintenanceRequest {
+  const direct = MaintenanceRequestSchema.safeParse(raw);
+  if (direct.success) {
+    return direct.data as MaintenanceRequest;
+  }
+
+  if (typeof raw === "object" && raw !== null) {
+    if ("request" in raw) {
+      const nested = MaintenanceRequestSchema.safeParse((raw as { request?: unknown }).request);
+      if (nested.success) {
+        return nested.data as MaintenanceRequest;
+      }
+    }
+    if ("data" in raw) {
+      const nested = MaintenanceRequestSchema.safeParse((raw as { data?: unknown }).data);
+      if (nested.success) {
+        return nested.data as MaintenanceRequest;
+      }
+    }
+  }
+
+  return raw as MaintenanceRequest;
+}
+
 // ─── Screening types ─────────────────────────────────────────────────────────
 
 export type TenantScreeningStatus = 'approved' | 'in_review' | 'flagged' | 'pending';
@@ -828,7 +852,7 @@ export const featureApi = {
     async createMaintenanceRequest(data: CreateMaintenanceRequestRequest): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
       const raw = await apiRequest<unknown>('POST', '/maintenance', data, headers);
-      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
+      return extractMaintenanceRequest(raw);
     },
     async getTenantMaintenanceRequests(): Promise<MaintenanceRequest[]> {
       const headers = getAuthHeaders();
@@ -843,7 +867,7 @@ export const featureApi = {
     async getMaintenanceRequestById(id: string): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
       const raw = await apiRequest<unknown>('GET', `/maintenance/${id}`, undefined, headers);
-      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
+      return extractMaintenanceRequest(raw);
     },
     async updateMaintenanceRequest(
       id: string,
@@ -851,7 +875,7 @@ export const featureApi = {
     ): Promise<MaintenanceRequest> {
       const headers = getAuthHeaders();
       const raw = await apiRequest<unknown>('PUT', `/maintenance/${id}`, data, headers);
-      return MaintenanceRequestSchema.parse(raw) as MaintenanceRequest;
+      return extractMaintenanceRequest(raw);
     },
   },
 
@@ -1164,13 +1188,19 @@ export const featureApi = {
         propertiesIncluded: Array.isArray(d.properties) ? d.properties.length : 0,
       };
     },
-    exportLedger(payload: LedgerExportRequest): Promise<{ downloadUrl: string }> {
-      const downloadUrl = `${API_BASE_URL}/reports/pnl/export${buildQueryString({
-        startDate: payload.startDate,
-        endDate: payload.endDate,
-        propertyId: payload.propertyId,
-      })}`;
-      return Promise.resolve({ downloadUrl });
+    async exportLedger(payload: LedgerExportRequest): Promise<{ downloadUrl: string; fileName?: string; expiresIn?: number }> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ downloadUrl: string; fileName?: string; expiresIn?: number }>(
+        'GET',
+        `/reports/pnl/export-url${buildQueryString({
+          startDate: payload.startDate,
+          endDate: payload.endDate,
+          propertyId: payload.propertyId,
+          format: payload.format,
+        })}`,
+        undefined,
+        headers,
+      );
     },
   },
 

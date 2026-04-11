@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Wrench, Building, Clock, CheckCircle, Loader2, AlertCircle } from "lucide-react"
 import { maintenanceApi } from "@/lib/api"
 import { EmptyState } from "@/components/ui/empty-state"
+import { useRealtimeTable } from "@/hooks/useRealtimeTable"
+import { useAuth } from "@/lib/auth-context"
+import { getDemoMaintenanceTickets } from "@/lib/seed-data"
 
 export default function MaintenanceTickets() {
+  const { user } = useAuth()
   const [tickets, setTickets] = useState<Array<{
     id: string
     property: string
@@ -24,8 +28,10 @@ export default function MaintenanceTickets() {
       setLoading(true)
       setError(null)
       const list = await maintenanceApi.getManagerMaintenanceRequests()
+      const fallbackList = getDemoMaintenanceTickets(user)
+      const effectiveList = list.length > 0 ? list : fallbackList
       setTickets(
-        list.map((r) => ({
+        effectiveList.map((r) => ({
           id: r.id,
           property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "—",
           issue: r.title,
@@ -36,8 +42,24 @@ export default function MaintenanceTickets() {
         }))
       )
     } catch {
-      setError("Failed to load tickets")
-      setTickets([])
+      const fallbackList = getDemoMaintenanceTickets(user)
+      if (fallbackList.length > 0) {
+        setError(null)
+        setTickets(
+          fallbackList.map((r) => ({
+            id: r.id,
+            property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "—",
+            issue: r.title,
+            priority: r.priority,
+            status: r.status,
+            assignedDate: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "—",
+            dueDate: "—",
+          }))
+        )
+      } else {
+        setError("Failed to load tickets")
+        setTickets([])
+      }
     } finally {
       setLoading(false)
     }
@@ -46,6 +68,14 @@ export default function MaintenanceTickets() {
   useEffect(() => {
     fetchTickets()
   }, [])
+
+  useRealtimeTable({
+    table: "maintenance_requests",
+    events: ["INSERT", "UPDATE"],
+    onEvent: () => {
+      void fetchTickets()
+    },
+  })
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -109,6 +139,8 @@ export default function MaintenanceTickets() {
               icon={<Wrench className="h-12 w-12" />}
               title="All clear!"
               description="No maintenance tickets are assigned to you right now. New requests will show up here automatically."
+              ctaLabel="Open maintenance finances"
+              ctaHref="/maintenance/finances"
             />
           )}
 

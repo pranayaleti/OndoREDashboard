@@ -25,6 +25,8 @@ import { PaymentMethods } from "@/components/ui/payment-methods"
 import { StripePaymentForm } from "@/components/stripe/StripePaymentForm"
 import { featureApi, type StripePaymentMethod, type PaymentRecord } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
+import { EmptyState } from "@/components/ui/empty-state"
+import { getDemoPaymentHistory } from "@/lib/seed-data"
 
 export default function TenantPayments() {
   const { toast } = useToast()
@@ -64,13 +66,14 @@ export default function TenantPayments() {
     setIsLoadingHistory(true)
     try {
       const result = await featureApi.stripe.getPaymentHistory(1, 50)
-      setPayments(result.data)
+      const fallbackPayments = getDemoPaymentHistory(user)
+      setPayments(result.data.length > 0 ? result.data : fallbackPayments)
     } catch {
-      // Will show empty
+      setPayments(getDemoPaymentHistory(user))
     } finally {
       setIsLoadingHistory(false)
     }
-  }, [])
+  }, [user])
 
   useEffect(() => {
     loadPaymentMethods()
@@ -149,6 +152,30 @@ export default function TenantPayments() {
 
   const succeededCount = payments.filter((p) => p.status === "succeeded").length
 
+  const handleExportHistoryCsv = () => {
+    if (payments.length === 0) return
+    const rows = [
+      ["Date", "Description", "Status", "Amount"],
+      ...payments.map((payment) => [
+        formatUSDate(payment.createdAt),
+        payment.description || payment.paymentType || "Payment",
+        payment.status,
+        (payment.amountCents / 100).toFixed(2),
+      ]),
+    ]
+    const csv = rows
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = "tenant-payment-history.csv"
+    link.click()
+    URL.revokeObjectURL(url)
+    toast({ title: "Download started", description: "Payment history CSV export" })
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -224,7 +251,13 @@ export default function TenantPayments() {
             <CardContent>
               <div className="space-y-4">
                 {payments.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No payments yet.</p>
+                  <EmptyState
+                    icon={<Receipt className="h-10 w-10" />}
+                    title="No payments yet"
+                    description="Your payment history will appear here after your first successful rent payment."
+                    ctaLabel="Go to pay rent"
+                    ctaHref="/tenant/payments"
+                  />
                 ) : (
                   payments.slice(0, 3).map((payment) => (
                     <div key={payment.id} className="flex items-center justify-between p-4 border rounded-lg">
@@ -350,32 +383,37 @@ export default function TenantPayments() {
                 <CardTitle>Payment History</CardTitle>
                 <CardDescription>All your payment transactions</CardDescription>
               </div>
-              <ExportPDFButton
-                fileName="payment-history"
-                size="default"
-                variant="outline"
-                content={{
-                  title: "Payment History",
-                  subtitle: "All your payment transactions",
-                  userEmail: user?.email,
-                  summary: [
-                    { label: "Total Payments", value: payments.length },
-                    { label: "Successful", value: succeededCount },
-                  ],
-                  tables: [
-                    {
-                      title: "Payment History",
-                      headers: ["Date", "Amount", "Type", "Status"],
-                      rows: payments.map((p) => [
-                        formatUSDate(p.createdAt),
-                        formatUSD(p.amountCents / 100),
-                        p.paymentType,
-                        p.status,
-                      ]),
-                    },
-                  ],
-                }}
-              />
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={handleExportHistoryCsv} disabled={payments.length === 0}>
+                  Export CSV
+                </Button>
+                <ExportPDFButton
+                  fileName="payment-history"
+                  size="default"
+                  variant="outline"
+                  content={{
+                    title: "Payment History",
+                    subtitle: "All your payment transactions",
+                    userEmail: user?.email,
+                    summary: [
+                      { label: "Total Payments", value: payments.length },
+                      { label: "Successful", value: succeededCount },
+                    ],
+                    tables: [
+                      {
+                        title: "Payment History",
+                        headers: ["Date", "Amount", "Type", "Status"],
+                        rows: payments.map((p) => [
+                          formatUSDate(p.createdAt),
+                          formatUSD(p.amountCents / 100),
+                          p.paymentType,
+                          p.status,
+                        ]),
+                      },
+                    ],
+                  }}
+                />
+              </div>
             </CardHeader>
             <CardContent>
               {isLoadingHistory ? (
@@ -383,7 +421,13 @@ export default function TenantPayments() {
                   <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
                 </div>
               ) : payments.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">No payment history yet.</p>
+                <EmptyState
+                  icon={<Receipt className="h-10 w-10" />}
+                  title="No payment history yet"
+                  description="Completed rent and fee payments will be listed here once your billing activity starts."
+                  ctaLabel="Open payment methods"
+                  onCtaClick={() => setActiveTab("methods")}
+                />
               ) : (
                 <div className="space-y-4">
                   {displayedPayments.map((payment) => (

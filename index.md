@@ -134,6 +134,7 @@ Test accounts (created by `npm run seed` in backend):
 - Manager: `admin@ondorealestate.com` / `ondo1234`
 - Owner: `owner@ondorealestate.com` / `ondo1234`
 - Tenant: `tenant@ondorealestate.com` / `ondo1234`
+- Maintenance: `maintenance@ondorealestate.com` / `ondo1234`
 
 ## Design System
 

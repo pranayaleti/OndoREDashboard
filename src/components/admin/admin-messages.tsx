@@ -12,6 +12,12 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { MessageSquare, Send, Search, Plus, Reply, User, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
+import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
+
+function normalizeThreads(threads: MessageThread[]): MessageThread[] {
+  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
+  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
+}
 
 function MessagesList() {
   const { toast } = useToast()
@@ -30,7 +36,7 @@ function MessagesList() {
     setLoadingThreads(true)
     featureApi.communication
       .listThreads()
-      .then((data) => setThreads(data))
+      .then((data) => setThreads(normalizeThreads(data)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
       })
@@ -50,10 +56,18 @@ function MessagesList() {
       featureApi.communication.markRead(selectedThreadId).catch(() => {}),
     ])
       .then(([msgs]) => {
-        setMessages(msgs)
-        setThreads((prev) =>
-          prev.map((t) => (t.id === selectedThreadId ? { ...t, unreadCount: 0 } : t))
-        )
+        const currentThread = threads.find((thread) => thread.id === selectedThreadId)
+        if (shouldReplacePlaceholderThread(currentThread, msgs)) {
+          setMessages(DEMO_MESSAGE_RECORDS)
+          setThreads((prev) =>
+            prev.map((t) => (t.id === selectedThreadId ? { ...DEMO_MESSAGE_THREAD, unreadCount: 0 } : t))
+          )
+        } else {
+          setMessages(msgs)
+          setThreads((prev) =>
+            prev.map((t) => (t.id === selectedThreadId ? { ...t, unreadCount: 0 } : t))
+          )
+        }
       })
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
@@ -71,8 +85,28 @@ function MessagesList() {
     return matchesSearch && matchesCategory
   })
 
+  useEffect(() => {
+    if (selectedThreadId || filteredThreads.length === 0) return
+    setSelectedThreadId(filteredThreads[0].id)
+  }, [filteredThreads, selectedThreadId])
+
   const handleReply = async () => {
     if (!selectedThreadId || !replyBody.trim()) return
+    if (selectedThreadId === DEMO_MESSAGE_THREAD.id) {
+      const demoReply: MessageRecord = {
+        id: `demo-reply-${Date.now()}`,
+        threadId: DEMO_MESSAGE_THREAD.id,
+        senderId: "admin-demo",
+        body: replyBody,
+        mentions: [],
+        channel: "portal",
+        sentAt: new Date().toISOString(),
+      }
+      setMessages((prev) => [...prev, demoReply])
+      setReplyBody("")
+      toast({ title: "Message Sent", description: "Your reply has been sent.", duration: 3000 })
+      return
+    }
     setSending(true)
     try {
       const msg = await featureApi.communication.sendMessage({

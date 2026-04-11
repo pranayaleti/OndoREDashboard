@@ -45,9 +45,23 @@ export interface LeaderboardEntry {
   isCurrentUser: boolean;
 }
 
+const REFERRAL_BASE_URL = import.meta.env.VITE_UI_BASE_URL
+  ? `${import.meta.env.VITE_UI_BASE_URL.replace(/\/$/, "")}/referral`
+  : "https://ondorealestate.com/referral";
+
+function buildShareUrl(code: string): string {
+  return code ? `${REFERRAL_BASE_URL}?ref=${encodeURIComponent(code)}` : "";
+}
+
 export const referralApi = {
   getMyCode: () => apiGet<ReferralCode>("/referrals/my-code"),
-  getStats: () => apiGet<ReferralStats>("/referrals/stats"),
+  getStats: () =>
+    apiGet<Omit<ReferralStats, "shareUrl"> & { shareUrl?: string }>("/referrals/stats").then(
+      (stats) => ({
+        ...stats,
+        shareUrl: stats.shareUrl || buildShareUrl(stats.code),
+      })
+    ),
   getHistory: (page = 1, limit = 20) =>
     apiGet<{ referrals: ReferralHistoryItem[]; total: number }>(
       `/referrals/history?page=${page}&limit=${limit}`

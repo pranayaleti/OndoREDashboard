@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { HomeownerPropertyShell } from "./homeowner-property-shell"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,14 +11,12 @@ import { homeownerApi, dashboardApi, type HomeownerSummary } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { getDashboardPath } from "@/lib/auth-utils"
 import { Search, Sparkles, FileText } from "lucide-react"
-import { formatUSDate } from "@/lib/us-format"
+import { formatCurrency, formatDate } from "@/lib/locale-format"
 
 function fmtMoney(cents: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return formatCurrency(cents / 100, "USD", {
     maximumFractionDigits: 0,
-  }).format(cents / 100)
+  })
 }
 
 const SUGGESTIONS = [
@@ -75,12 +74,14 @@ function HomeownerDashboardInner({
   onSearch: (q: string) => void
 }) {
   const { user } = useAuth()
+  const { t } = useTranslation("owner")
   const navigate = useNavigate()
   const [summary, setSummary] = useState<HomeownerSummary | null>(null)
   const [payments, setPayments] = useState<
     Awaited<ReturnType<typeof dashboardApi.getDashboardPayments>>["data"]
   >([])
   const [loading, setLoading] = useState(true)
+  const [placeholderIndex, setPlaceholderIndex] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -109,16 +110,35 @@ function HomeownerDashboardInner({
     }
   }, [propertyId])
 
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setPlaceholderIndex((index) => (index + 1) % SUGGESTIONS.length)
+    }, 2400)
+
+    return () => window.clearInterval(interval)
+  }, [])
+
   const first = user?.firstName?.trim() || "there"
   const today = new Date()
-  const weekday = today.toLocaleDateString("en-US", { weekday: "long" })
-  const dateStr = formatUSDate(today)
+  const welcomeDate = formatDate(today, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
+  const financialCents = [
+    summary?.monthlyExpensesCents ?? 0,
+    summary?.utilitiesThisMonthCents ?? 0,
+    summary?.subscriptionsThisMonthCents ?? 0,
+    summary?.householdThisMonthCents ?? 0,
+  ]
+  const hasFinancialData = financialCents.some((value) => value > 0)
 
   return (
     <div className="space-y-8 p-4 md:p-6 lg:p-8">
       <header className="space-y-2">
         <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-          Welcome back, {first}. It&apos;s {weekday}, {dateStr}. How can we help?
+          Welcome back, {first}. It&apos;s {welcomeDate}. How can we help?
         </h1>
         <p className="text-sm text-muted-foreground">
           Ask anything about your property — search uses your data to give personalized answers.
@@ -126,11 +146,11 @@ function HomeownerDashboardInner({
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
+        <div className="relative flex-1" data-tour-target="owner-assistant-search">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="py-6 pl-10 pr-4 text-base"
-            placeholder='Try: "What maintenance is due this month?"'
+            placeholder={`Try: "${SUGGESTIONS[placeholderIndex]}"`}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -169,32 +189,58 @@ function HomeownerDashboardInner({
 
       <section>
         <h2 className="mb-4 font-serif text-xl font-semibold">Home details</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <SummaryCard
-            title="Monthly expenses"
-            subtitle="This month (from recorded expenses)"
-            value={fmtMoney(summary?.monthlyExpensesCents ?? 0)}
-            loading={loading}
-          />
-          <SummaryCard
-            title="Utilities"
-            subtitle="This month"
-            value={fmtMoney(summary?.utilitiesThisMonthCents ?? 0)}
-            loading={loading}
-          />
-          <SummaryCard
-            title="Subscriptions & fees"
-            subtitle="Mgmt / HOA / recurring (approx.)"
-            value={fmtMoney(summary?.subscriptionsThisMonthCents ?? 0)}
-            loading={loading}
-          />
-          <SummaryCard
-            title="Household"
-            subtitle="Repairs, maintenance & other"
-            value={fmtMoney(summary?.householdThisMonthCents ?? 0)}
-            loading={loading}
-          />
-        </div>
+        {loading || hasFinancialData ? (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <SummaryCard
+              title="Monthly expenses"
+              subtitle="This month (from recorded expenses)"
+              value={fmtMoney(summary?.monthlyExpensesCents ?? 0)}
+              loading={loading}
+            />
+            <SummaryCard
+              title="Utilities"
+              subtitle="This month"
+              value={fmtMoney(summary?.utilitiesThisMonthCents ?? 0)}
+              loading={loading}
+            />
+            <SummaryCard
+              title="Subscriptions & fees"
+              subtitle="Mgmt / HOA / recurring (approx.)"
+              value={fmtMoney(summary?.subscriptionsThisMonthCents ?? 0)}
+              loading={loading}
+            />
+            <SummaryCard
+              title="Household"
+              subtitle="Repairs, maintenance & other"
+              value={fmtMoney(summary?.householdThisMonthCents ?? 0)}
+              loading={loading}
+            />
+          </div>
+        ) : (
+          <Card className="border-orange-200/80 bg-gradient-to-br from-white via-orange-50/50 to-amber-50/70 shadow-sm dark:border-orange-500/20 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+            <CardContent className="flex flex-col gap-5 p-6 md:flex-row md:items-end md:justify-between">
+              <div className="space-y-2">
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-300">
+                  {t("home.setupEyebrow")}
+                </p>
+                <div>
+                  <h3 className="text-xl font-semibold">{t("home.emptyTitle")}</h3>
+                  <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                    {t("home.emptyDescription")}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild className="bg-gradient-to-r from-orange-500 to-red-700 text-white hover:from-orange-600 hover:to-red-800">
+                  <Link to="/owner/finances">{t("home.connectBank")}</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/owner/properties">{t("home.addPropertyValue")}</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -239,6 +285,7 @@ function HomeownerDashboardInner({
         onClick={() => navigate(`${basePath}/my-documents`)}
         role="link"
         tabIndex={0}
+        data-tour-target="owner-documents-card"
         onKeyDown={(e) => {
           if (e.key === "Enter") navigate(`${basePath}/my-documents`)
         }}
@@ -246,28 +293,32 @@ function HomeownerDashboardInner({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base font-medium">
             <FileText className="h-5 w-5 text-orange-600" />
-            Documents
+            {t("home.myUploadsTitle")}
           </CardTitle>
           <CardDescription className="text-xs">
-            Upload insurance, lease, mortgage, and other documents — then ask questions about them using the search bar.
+            {t("home.myUploadsDescription")}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-wrap gap-3">
           <Button
+            asChild
             variant="outline"
             size="sm"
             className="border-orange-200 text-orange-800 hover:bg-orange-50"
           >
-            Manage documents
+            <Link to={`${basePath}/my-documents`}>{t("home.manageUploads")}</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="text-orange-700 hover:text-orange-800 hover:bg-orange-50">
+            <Link to={`${basePath}/documents`}>{t("home.viewSharedDocs")}</Link>
           </Button>
         </CardContent>
       </Card>
 
       <p className="text-xs text-muted-foreground">
         Open the full assistant at{" "}
-        <a href={assistantPath} className="text-ondo-orange underline">
+        <Link to={assistantPath} className="text-ondo-orange underline">
           Assistant
-        </a>{" "}
+        </Link>{" "}
         for more tools and follow-up questions.
       </p>
     </div>

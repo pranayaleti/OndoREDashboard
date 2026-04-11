@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
+import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createMaintenanceConfig } from "./maintenance.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
@@ -10,8 +11,8 @@ import type { MaintenanceRequest } from "@/lib/api"
  * New MaintenanceDashboard using BaseDashboard architecture
  */
 function MaintenanceDashboardContent() {
-  const { user: _user } = useAuth()
-  const { data, updateData } = useBaseDashboard()
+  const { user } = useAuth()
+  const { data, updateData, refreshData } = useBaseDashboard()
 
   // Transform fetched data into config format
   const config = useMemo(() => {
@@ -47,6 +48,15 @@ function MaintenanceDashboardContent() {
     }
   }, [activities, updateData])
 
+  useRealtimeTable({
+    table: "maintenance_requests",
+    events: ["INSERT", "UPDATE"],
+    enabled: !!user?.id,
+    onEvent: () => {
+      void refreshData()
+    },
+  })
+
   return (
     <BaseDashboard config={config} />
   )
@@ -66,4 +76,3 @@ export default function MaintenanceDashboardNew() {
     </BaseDashboardProvider>
   )
 }
-

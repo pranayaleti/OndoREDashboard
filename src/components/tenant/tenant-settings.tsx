@@ -4,9 +4,10 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
-import { Settings, Shield, Bell } from "lucide-react"
+import { Settings, Shield } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useUserTimezone } from "@/hooks/use-user-timezone"
+import { NotificationPreferencesGrid, type NotificationPreferenceValues } from "@/components/shared/notification-preferences-grid"
 
 export default function TenantSettings() {
   const { toast } = useToast()
@@ -23,6 +24,13 @@ export default function TenantSettings() {
       sessionTimeout: "60",
       timezone: storageTimezone?.iana || "America/Denver",
     }
+  })
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferenceValues>({
+    rentDueReminders: true,
+    maintenanceUpdates: true,
+    leaseExpiryAlerts: true,
+    newMessages: true,
+    paymentConfirmations: true,
   })
 
   const handleToggleChange = (category: string, setting: string) => {
@@ -55,6 +63,18 @@ export default function TenantSettings() {
     })
   }
 
+  const handleNotificationPreferenceToggle = (key: keyof NotificationPreferenceValues) => {
+    setNotificationPreferences((previous) => ({
+      ...previous,
+      [key]: !previous[key],
+    }))
+    toast({
+      title: "Settings Updated",
+      description: "Your notification preferences have been saved successfully.",
+      duration: 3000,
+    })
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
@@ -69,57 +89,11 @@ export default function TenantSettings() {
       </div>
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
-              Notification Settings
-            </CardTitle>
-            <CardDescription>Configure how you receive notifications</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Maintenance Updates</Label>
-                <p className="text-sm text-gray-500">Updates about maintenance requests</p>
-              </div>
-              <Switch
-                checked={settings.notifications.maintenance}
-                onCheckedChange={() => handleToggleChange("notifications", "maintenance")}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Payment Reminders</Label>
-                <p className="text-sm text-gray-500">Rent payment reminders</p>
-              </div>
-              <Switch
-                checked={settings.notifications.payments}
-                onCheckedChange={() => handleToggleChange("notifications", "payments")}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Lease Updates</Label>
-                <p className="text-sm text-gray-500">Important lease-related notifications</p>
-              </div>
-              <Switch
-                checked={settings.notifications.leaseUpdates}
-                onCheckedChange={() => handleToggleChange("notifications", "leaseUpdates")}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Announcements</Label>
-                <p className="text-sm text-gray-500">Property announcements and news</p>
-              </div>
-              <Switch
-                checked={settings.notifications.announcements}
-                onCheckedChange={() => handleToggleChange("notifications", "announcements")}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <NotificationPreferencesGrid
+          values={notificationPreferences}
+          onToggle={handleNotificationPreferenceToggle}
+          description="Choose which tenant updates should stay active in your demo workspace."
+        />
 
         <Card>
           <CardHeader>
@@ -182,4 +156,3 @@ export default function TenantSettings() {
     </div>
   )
 }
-

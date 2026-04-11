@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { notificationsApi, type Notification } from "@/lib/api";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-context";
+import { getDemoNotifications } from "@/lib/seed-data";
 
 const POLL_INTERVAL_MS = 60_000; // poll every 60 s (checks run every 15 min)
 
@@ -13,19 +15,26 @@ interface UseNotificationsReturn {
 }
 
 export function useNotifications(enabled: boolean): UseNotificationsReturn {
+  const { user } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   // Track IDs seen this session to fire toasts only for truly new arrivals
   const seenIds = useRef<Set<string>>(new Set());
   const initialized = useRef(false);
+  const usingDemoFallback = useRef(false);
 
   const fetchAll = useCallback(async () => {
     if (!enabled) return;
     try {
       const { notifications: data } = await notificationsApi.getNotifications();
-      setNotifications(data);
+      const fallbackNotifications = getDemoNotifications(user)
+      const nextNotifications = data.length === 0 && fallbackNotifications.length > 0
+        ? fallbackNotifications
+        : data
+      usingDemoFallback.current = data.length === 0 && fallbackNotifications.length > 0
+      setNotifications(nextNotifications);
 
-      const newUnread = data.filter((n: Notification) => !n.read);
+      const newUnread = nextNotifications.filter((n: Notification) => !n.read);
       setUnreadCount(newUnread.length);
 
       if (initialized.current) {
@@ -50,7 +59,7 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
     } catch {
       // Silently swallow auth errors (non-manager roles won't have access)
     }
-  }, [enabled]);
+  }, [enabled, user]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -60,7 +69,9 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
   }, [enabled, fetchAll]);
 
   const markRead = useCallback(async (id: string) => {
-    await notificationsApi.markAsRead(id);
+    if (!usingDemoFallback.current) {
+      await notificationsApi.markAsRead(id);
+    }
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
@@ -69,7 +80,9 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
   }, []);
 
   const markAllRead = useCallback(async () => {
-    await notificationsApi.markAllAsRead();
+    if (!usingDemoFallback.current) {
+      await notificationsApi.markAllAsRead();
+    }
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setUnreadCount(0);
     seenIds.current.clear();

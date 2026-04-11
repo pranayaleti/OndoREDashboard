@@ -107,6 +107,24 @@
     "shareDesc": "Share Ondo RE, earn free months + prize entries",
     "viewProgram": "View Full Program"
   },
+  "sidebar": {
+    "sections": {
+      "home": "Home",
+      "management": "Management",
+      "financials": "Financials",
+      "documents": "Documents",
+      "account": "Account",
+      "resident": "Living Here",
+      "payments": "Payments"
+    }
+  },
+  "tour": {
+    "step": "Step {{current}} of {{total}}",
+    "skip": "Skip tour",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done"
+  },
   "language": {
     "label": "Language",
     "en": "English (United States)",

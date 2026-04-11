@@ -40,6 +40,7 @@ export function StatCard({ config, className }: StatCardProps) {
             {config.trend.value}% {config.trend.label}
           </div>
         )}
+        {config.footer ? <div className="mt-4">{config.footer}</div> : null}
       </CardContent>
     </Card>
   )
@@ -62,4 +63,3 @@ export function StatCard({ config, className }: StatCardProps) {
 
   return cardContent
 }
-

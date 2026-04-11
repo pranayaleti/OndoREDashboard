@@ -25,7 +25,11 @@ export interface UserData {
 
 interface AuthContextType {
   user: UserData | null
-  login: (email: string, password: string) => Promise<{ success: boolean; redirectPath?: string; message?: string }>
+  login: (
+    email: string,
+    password: string,
+    options?: { rememberMe?: boolean; redirectTo?: string }
+  ) => Promise<{ success: boolean; redirectPath?: string; message?: string }>
   logout: () => void
   isLoading: boolean
   refreshUser: () => Promise<void>
@@ -58,7 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const handleSessionExpired = useCallback(() => {
     setUser(null)
     clearAccessToken()
-    navigate("/login?reason=session_expired", { replace: true })
+    const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`
+    const returnTo =
+      currentPath.startsWith("/login") || currentPath === "/"
+        ? ""
+        : `&returnTo=${encodeURIComponent(currentPath)}`
+    navigate(`/login?reason=session_expired${returnTo}`, { replace: true })
   }, [navigate])
 
   // On mount: try to restore session via refresh token (HttpOnly cookie)
@@ -124,16 +133,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [navigate])
 
   const login = useCallback(
-    async (email: string, password: string): Promise<{ success: boolean; redirectPath?: string; message?: string }> => {
+    async (
+      email: string,
+      password: string,
+      options?: { rememberMe?: boolean; redirectTo?: string }
+    ): Promise<{ success: boolean; redirectPath?: string; message?: string }> => {
       setIsLoading(true)
       try {
-        const response = await authApi.login({ email, password })
+        const response = await authApi.login({ email, password, rememberMe: options?.rememberMe })
         // Store the short-lived access token in memory only (never localStorage)
         setAccessToken(response.accessToken, response.expiresIn)
         const userData = convertUser(response.user)
         setUser(userData)
+        if (userData.preferredLocale) {
+          i18n.changeLanguage(userData.preferredLocale)
+        }
         setIsLoading(false)
-        return { success: true, redirectPath: getDashboardPath(userData.role) }
+        return { success: true, redirectPath: options?.redirectTo || getDashboardPath(userData.role) }
       } catch (err: unknown) {
         setIsLoading(false)
         let errorMessage = "An unexpected error occurred. Please try again."

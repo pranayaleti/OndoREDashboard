@@ -5,6 +5,8 @@
     "rent": "Affitto e Pagamenti",
     "maintenance": "Manutenzione",
     "documents": "Documenti",
+    "myUploads": "I miei caricamenti",
+    "sharedDocuments": "Documenti condivisi",
     "profile": "Profilo",
     "notifications": "Notifiche",
     "addons": "Componenti aggiuntivi",
@@ -20,6 +22,40 @@
     "overdue": "Scaduto",
     "paid": "Pagato",
     "pending": "In attesa"
+  },
+  "dashboard": {
+    "propertyStatusActive": "Attivo",
+    "propertyStatusPending": "In attesa di approvazione del proprietario",
+    "propertyStatusPendingSubtitle": "Stiamo collegando ora i dettagli del contratto e dell'unita. La vista della proprieta si attivera appena l'assegnazione sara confermata.",
+    "quickPayTitle": "Pagamento rapido",
+    "quickPayDescription": "Controlla il prossimo addebito, verifica l'autopay ed entra subito nei pagamenti.",
+    "quickPayDueLabel": "Prossimo addebito",
+    "quickPayAutopayLabel": "Autopay",
+    "quickPayAutopayOn": "Autopay attivo",
+    "quickPayAutopayOff": "Autopay non attivo",
+    "quickPayOpen": "Apri pagamenti",
+    "quickPaySetup": "Attiva l'autopay quando vuoi.",
+    "quickPayEmptyTitle": "Il tuo piano affitto e ancora in preparazione",
+    "quickPayEmptyDescription": "Mostreremo la prossima scadenza e i collegamenti rapidi ai pagamenti quando il proprietario completera la configurazione.",
+    "assistantTitle": "Chiedi a Ondo prima di cercare nei menu",
+    "assistantDescription": "Usa l'assistente per domande sul contratto, promemoria di affitto o per avviare una richiesta di manutenzione con i dettagli giusti.",
+    "assistantTry": "Prova a chiedere",
+    "assistantOpen": "Apri assistente",
+    "assistantExampleLease": "Quando scade il mio contratto?",
+    "assistantExampleRent": "Mostrami il mio prossimo affitto.",
+    "assistantExampleMaintenance": "Invia una richiesta idraulica.",
+    "maintenanceTimelineTitle": "Timeline manutenzione",
+    "maintenanceTimelineDescription": "Segui l'ultima richiesta dall'invio alla risoluzione senza aprire tutta la pagina manutenzione.",
+    "maintenanceEmptyTitle": "Nessuna richiesta di manutenzione al momento",
+    "maintenanceEmptyDescription": "Se qualcosa cambia in casa, invia una richiesta con foto e aggiorneremo qui la timeline.",
+    "maintenanceOpen": "Apri manutenzione",
+    "maintenanceSubmit": "Invia richiesta",
+    "maintenanceLastUpdated": "Ultimo aggiornamento {{date}}",
+    "maintenanceOpenCount": "{{count}} richieste aperte",
+    "maintenanceStageSubmitted": "Inviata",
+    "maintenanceStageReviewed": "Revisionata",
+    "maintenanceStageScheduled": "Programmata",
+    "maintenanceStageResolved": "Risolta"
   },
   "maintenance": {
     "submit": "Invia richiesta",
@@ -47,5 +83,13 @@
     "email": "Email",
     "push": "Notifiche push",
     "sms": "SMS"
+  },
+  "tour": {
+    "assistantTitle": "Inizia dall'assistente",
+    "assistantDescription": "Fai domande su contratto, affitto o manutenzione in linguaggio naturale e vai subito nel flusso corretto.",
+    "paymentsTitle": "Usa il pagamento rapido per l'affitto",
+    "paymentsDescription": "Questa scheda tiene in primo piano il prossimo importo dovuto e i collegamenti di pagamento.",
+    "maintenanceTitle": "Controlla qui l'avanzamento",
+    "maintenanceDescription": "La timeline mostra se la richiesta e inviata, revisionata, programmata o risolta ancora prima di aprire il ticket."
   }
 }

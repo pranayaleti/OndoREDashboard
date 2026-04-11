@@ -107,6 +107,24 @@
     "shareDesc": "Ondo RE షేర్ చేయండి, ఉచిత నెలలు + ఎంట్రీలు సంపాదించండి",
     "viewProgram": "పూర్తి ప్రోగ్రామ్ చూడండి"
   },
+  "sidebar": {
+    "sections": {
+      "home": "హోమ్",
+      "management": "నిర్వహణ",
+      "financials": "ఆర్థికాలు",
+      "documents": "పత్రాలు",
+      "account": "ఖాతా",
+      "resident": "ఇక్కడి జీవనం",
+      "payments": "చెల్లింపులు"
+    }
+  },
+  "tour": {
+    "step": "దశ {{current}} / {{total}}",
+    "skip": "టూర్ దాటివేయి",
+    "back": "వెనక్కి",
+    "next": "తర్వాత",
+    "done": "పూర్తైంది"
+  },
   "language": {
     "label": "భాష",
     "en": "English (United States)",

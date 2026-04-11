@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -15,13 +15,43 @@ import { PortalSidebar } from "@/components/portal-sidebar"
 import { propertyApi, handoffApi, type Property } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
+import { getDashboardPath } from "@/lib/auth-utils"
 
 import { HandoffCelebration, HandoffChecklist, HandoffOverview, HandoffPropertyDetails, HandoffNeighborhood, HandoffMoveOutResources } from "@/components/handoff"
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Object.prototype.toString.call(value) === "[object Object]"
+}
+
+function mergeHandoffDefaults<T>(base: T, patch: unknown): T {
+  if (Array.isArray(base)) {
+    return (Array.isArray(patch) ? patch : base) as T
+  }
+
+  if (isPlainObject(base) && isPlainObject(patch)) {
+    const merged: Record<string, unknown> = { ...base }
+    for (const key of Object.keys(patch)) {
+      const baseValue = (base as Record<string, unknown>)[key]
+      const patchValue = patch[key]
+      merged[key] =
+        baseValue === undefined
+          ? patchValue
+          : mergeHandoffDefaults(baseValue, patchValue)
+    }
+    return merged as T
+  }
+
+  return (patch ?? base) as T
+}
+
 export default function Handoff() {
   const { propertyId: urlPropertyId } = useParams<{ propertyId?: string }>()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { user } = useAuth()
   const { toast } = useToast()
+  const queryPropertyId = searchParams.get("propertyId")?.trim() || null
+  const requestedPropertyId = urlPropertyId || queryPropertyId
   const [handoffData, setHandoffData] = useState<PropertyHandoff | null>(null)
   const [originalHandoffData, setOriginalHandoffData] = useState<PropertyHandoff | null>(null)
   const [checklistItems, setChecklistItems] = useState<Record<string, boolean>>({})
@@ -29,7 +59,7 @@ export default function Handoff() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [ownerNotes, setOwnerNotes] = useState<string>("")
   const [properties, setProperties] = useState<Property[]>([])
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(urlPropertyId || null)
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(requestedPropertyId)
   const [loadingProperties, setLoadingProperties] = useState(true)
 
   // Email helper function
@@ -72,6 +102,24 @@ export default function Handoff() {
   // Celebration modal state
   const [showCelebrationModal, setShowCelebrationModal] = useState(false)
   const [hasNotifiedCompletion, setHasNotifiedCompletion] = useState(false)
+
+  useEffect(() => {
+    if (!user || requestedPropertyId) return
+
+    const basePath = getDashboardPath(user.role)
+    const fallbackPath =
+      user.role === "tenant"
+        ? `${basePath}/lease-details`
+        : user.role === "maintenance"
+          ? `${basePath}/tickets`
+          : `${basePath}/properties`
+
+    toast({
+      title: "Property required",
+      description: "Please select a property to view its handoff details.",
+    })
+    navigate(fallbackPath, { replace: true })
+  }, [navigate, requestedPropertyId, toast, user])
   
   // Initialize accordion for maintenance users
   useEffect(() => {
@@ -217,6 +265,378 @@ export default function Handoff() {
   }
   void _navigateToSection
 
+  const buildDefaultHandoffData = (
+    propertyId: string,
+    selectedProperty?: Property,
+  ): PropertyHandoff => ({
+    id: "1",
+    propertyId,
+    propertyAddress: selectedProperty
+      ? `${selectedProperty.addressLine1}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zipcode || ''}`
+      : "123 Main St, Salt Lake City, UT 84101",
+    unitNumber: selectedProperty?.addressLine2 || "Apt 2B",
+    createdDate: new Date(),
+    lastUpdated: new Date(),
+    propertyBasics: {
+      propertyType: "Apartment",
+      squareFootage: 1200,
+      bedrooms: 2,
+      bathrooms: 1,
+      parking: "Assigned spot #12, Garage code: 1234",
+      moveInDate: new Date("2024-01-15"),
+      leaseTerm: "12 months",
+      securityDeposit: 1500,
+      securityDepositReturnTerms: "Returned within 30 days of move-out, minus any damages",
+    },
+    emergencyContacts: [
+      {
+        name: "Property Manager",
+        phone: "(801) 555-0100",
+        email: getEmail("manager"),
+        emergencyLine: "(801) 555-0101",
+      },
+      {
+        name: "Maintenance Emergency",
+        phone: "(801) 555-0200",
+        notes: "24/7 hotline",
+      },
+      {
+        name: "Police Department",
+        phone: "(801) 555-9111",
+        notes: "Local precinct",
+      },
+      {
+        name: "Fire Department",
+        phone: "(801) 555-9112",
+        notes: "Nearest station",
+      },
+      {
+        name: "Hospital",
+        phone: "(801) 555-0300",
+        notes: "Nearest facility",
+      },
+      {
+        name: "Poison Control",
+        phone: "1-800-222-1222",
+      },
+    ],
+    utilities: {
+      electric: {
+        provider: "Rocky Mountain Power",
+        accountNumber: "123456789",
+        customerServicePhone: "(801) 555-1000",
+        setupInstructions: "Call to transfer service",
+        averageMonthlyCost: 80,
+        paymentDueDate: "15th of each month",
+        onlinePortalLink: "https://www.rockymountainpower.net",
+        includedInRent: false,
+      },
+      gas: {
+        provider: "Dominion Energy",
+        accountNumber: "987654321",
+        customerServicePhone: "(801) 555-2000",
+        averageMonthlyCost: 50,
+        includedInRent: false,
+      },
+      water: {
+        provider: "Salt Lake City Public Utilities",
+        accountNumber: "456789123",
+        customerServicePhone: "(801) 555-3000",
+        includedInRent: true,
+      },
+      internet: [
+        {
+          provider: "Xfinity",
+          phone: "(801) 555-4000",
+          website: "https://www.xfinity.com",
+          notes: "Recommended provider",
+        },
+        {
+          provider: "Google Fiber",
+          phone: "(801) 555-5000",
+          website: "https://fiber.google.com",
+        },
+      ],
+      trash: {
+        collectionDays: {
+          trash: ["Monday"],
+          recycling: ["Monday"],
+          bulk: ["First Monday of month"],
+        },
+        binLocation: "Behind building, near parking area",
+        specialInstructions: "Recycling must be sorted",
+        bulkPickupSchedule: "First Monday of each month",
+        hazardousWasteDisposal: "Drop off at city facility",
+      },
+    },
+    access: {
+      keys: [
+        { label: "Front door", location: "Main entrance" },
+        { label: "Mailbox", location: "Lobby" },
+        { label: "Garage", location: "Parking level 1" },
+      ],
+      codes: [
+        { type: "Gate code", code: "1234", location: "Main gate" },
+        { type: "Garage code", code: "5678", location: "Garage door" },
+      ],
+      alarm: {
+        provider: "ADT",
+        code: "0000",
+        contact: "(801) 555-6000",
+        monitoringInfo: "24/7 monitoring",
+        instructions: "Enter code to disarm",
+      },
+    },
+    mailbox: {
+      number: "2B",
+      location: "Lobby, left side",
+      keyDetails: "Small silver key",
+      packageDeliveryArea: "Lobby package room",
+      parcelLockerInstructions: "Use code from delivery notification",
+      mailHoldProcedure: "Notify USPS online or call 1-800-ASK-USPS",
+    },
+    appliances: [
+      {
+        name: "Refrigerator",
+        model: "Samsung RF28R7351SG",
+        location: "Kitchen",
+        manualLink: "https://example.com/manual",
+        type: "refrigerator",
+      },
+      {
+        name: "Stove",
+        model: "GE JGB700SELSS",
+        location: "Kitchen",
+        type: "stove",
+        details: { fuel: "Gas" },
+      },
+      {
+        name: "Dishwasher",
+        model: "Bosch SHX878WD5N",
+        location: "Kitchen",
+        type: "dishwasher",
+      },
+      {
+        name: "HVAC",
+        location: "Hallway",
+        type: "hvac",
+        details: {
+          filterSize: "16x25x1",
+          filterChangeSchedule: "Every 3 months",
+          thermostatLocation: "Living room wall",
+        },
+      },
+    ],
+    maintenance: {
+      requestMethod: "Online portal or email",
+      contacts: [
+        {
+          name: "Maintenance Department",
+          phone: "(801) 555-0200",
+          email: getEmail("maintenance"),
+        },
+      ],
+      responseTimes: "Emergency: 2 hours, Routine: 24-48 hours",
+      responsibilities: "Tenant responsible for lightbulbs, batteries, minor cleaning. Owner responsible for major repairs.",
+      preferredContractors: [
+        {
+          name: "ABC Plumbing",
+          phone: "(801) 555-1001",
+          notes: "Preferred plumber",
+        },
+        {
+          name: "XYZ Electric",
+          phone: "(801) 555-1002",
+          notes: "Preferred electrician",
+        },
+      ],
+      preventiveMaintenanceSchedule: "HVAC service every 6 months",
+      filterChangeInfo: "HVAC filter: 16x25x1, change every 3 months",
+    },
+    policies: {
+      smoking: "No smoking allowed",
+      pets: "Pets allowed with deposit. Must clean up waste. Leash required.",
+      quietHours: "10 PM - 7 AM",
+      guests: "Overnight guests limited to 7 days",
+      subletting: "Not allowed without written permission",
+      modifications: "No nail holes without approval",
+      grilling: "Grilling allowed on balcony only",
+      other: "Please respect neighbors",
+    },
+    neighborhood: {
+      grocery: [
+        { name: "Smith's", address: "500 S Main St", distance: "0.5 miles" },
+        { name: "Whole Foods", address: "1000 S State St", distance: "1.2 miles" },
+      ],
+      dining: [
+        { name: "The Red Iguana", address: "736 W North Temple", notes: "Mexican cuisine" },
+        { name: "Squatters Pub", address: "147 W Broadway", notes: "American pub" },
+      ],
+      services: [
+        { name: "Chase Bank", address: "200 S Main St", phone: "(801) 555-7000" },
+        { name: "USPS Post Office", address: "1760 W 2100 S", phone: "(801) 555-7001" },
+      ],
+      healthcare: [
+        { name: "University Hospital", address: "50 N Medical Dr", phone: "(801) 555-8000" },
+        { name: "Urgent Care", address: "300 S Main St", phone: "(801) 555-8001" },
+      ],
+      recreation: [
+        { name: "Liberty Park", address: "600 E 1300 S", notes: "Large park with trails" },
+        { name: "City Library", address: "210 E 400 S", notes: "Main branch" },
+      ],
+      schools: [
+        { name: "Salt Lake School District", type: "district", website: "https://www.slcschools.org" },
+        { name: "Washington Elementary", type: "elementary", address: "420 S 200 E" },
+      ],
+      transportation: {
+        publicTransit: "UTA Trax and Bus",
+        busStops: ["Main St & 200 S", "State St & 300 S"],
+        trainStations: ["City Center Station"],
+        airportDistance: "6 miles",
+        airportDirections: "Take I-80 W to Airport",
+      },
+    },
+    localServices: [
+      {
+        name: "Trash Pickup",
+        schedule: "Every Monday",
+        type: "trash",
+      },
+      {
+        name: "Street Cleaning",
+        schedule: "First Tuesday of each month",
+        type: "street_cleaning",
+      },
+      {
+        name: "Snow Removal",
+        schedule: "As needed",
+        contact: "Property management",
+        type: "snow_removal",
+      },
+    ],
+    safety: {
+      fireExtinguisherLocations: ["Kitchen", "Hallway"],
+      smokeDetectorLocations: ["Living room", "Bedroom", "Hallway"],
+      carbonMonoxideDetectorLocations: ["Bedroom"],
+      emergencyExits: ["Front door", "Balcony"],
+      waterMainShutOff: "Basement, near water heater",
+      electricalPanelLocation: "Hallway closet",
+      gasShutOffLocation: "Outside, near gas meter",
+    },
+    parking: {
+      assignedSpots: ["Spot #12"],
+      guestParking: "Street parking available",
+      parkingPermits: "Not required",
+      storageUnitDetails: "Storage unit #5 in basement",
+      bikeStorageArea: "Bike rack in parking garage",
+    },
+    moveInChecklist: [
+      { id: "1", label: "Schedule utility transfers", completed: false, category: "utilities" },
+      { id: "2", label: "Update mailing address with USPS", completed: false, category: "address" },
+      { id: "3", label: "Update driver's license address", completed: false, category: "address" },
+      { id: "4", label: "Register to vote at new address", completed: false, category: "address" },
+      { id: "5", label: "Set up renters insurance", completed: false, category: "insurance" },
+      { id: "6", label: "Take move-in photos/videos", completed: false, category: "documentation" },
+      { id: "7", label: "Test all appliances", completed: false, category: "property" },
+      { id: "8", label: "Test smoke/CO detectors", completed: false, category: "safety" },
+      { id: "9", label: "Locate all shut-off valves", completed: false, category: "safety" },
+      { id: "10", label: "Program garage/gate codes", completed: false, category: "access" },
+      { id: "11", label: "Set up internet service", completed: false, category: "utilities" },
+      { id: "12", label: "Learn trash schedule", completed: false, category: "utilities" },
+    ],
+    documents: [
+      {
+        id: "1",
+        name: "Property Insurance Policy - 123 Main St",
+        type: "insurance",
+        url: "#",
+        uploadDate: new Date("2023-04-20"),
+        size: "3.5 MB",
+      },
+      {
+        id: "2",
+        name: "Property Tax Statement 2023 - 456 Oak Avenue",
+        type: "tax",
+        url: "#",
+        uploadDate: new Date("2023-03-20"),
+        size: "820 KB",
+      },
+      {
+        id: "3",
+        name: "Lease Agreement",
+        type: "lease",
+        url: "#",
+        uploadDate: new Date("2024-01-15"),
+        size: "2.1 MB",
+      },
+      {
+        id: "4",
+        name: "Move-in Inspection Report",
+        type: "inspection",
+        url: "#",
+        uploadDate: new Date("2024-01-15"),
+        size: "1.8 MB",
+      },
+      {
+        id: "5",
+        name: "Appliance Manuals",
+        type: "manual",
+        url: "#",
+        uploadDate: new Date("2024-01-10"),
+        size: "5.2 MB",
+      },
+    ],
+    seasonalInfo: [
+      {
+        season: "spring",
+        tips: [
+          "Start AC system and check filters",
+          "Check for pollen buildup",
+          "Inspect for any winter damage",
+        ],
+      },
+      {
+        season: "summer",
+        tips: [
+          "Keep AC filters clean",
+          "Monitor water usage",
+          "Check for pests",
+        ],
+      },
+      {
+        season: "fall",
+        tips: [
+          "Prepare heating system",
+          "Clean gutters",
+          "Manage leaf buildup",
+        ],
+      },
+      {
+        season: "winter",
+        tips: [
+          "Prevent pipe freezing",
+          "Keep walkways clear",
+          "Monitor heating system",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "What do I do if I'm locked out?",
+        answer: "Contact property management at (801) 555-0100. After-hours lockout service available for a fee.",
+      },
+      {
+        question: "How do I report a maintenance emergency?",
+        answer: "Call the 24/7 maintenance hotline at (801) 555-0200 for emergencies.",
+      },
+      {
+        question: "Can I paint or make modifications?",
+        answer: "Minor modifications require written approval. No nail holes without permission.",
+      },
+    ],
+    ownerNotes: "Welcome to your new home! The neighborhood is very friendly. Best coffee shop is around the corner on Main St. The building is quiet, but please be mindful of noise during quiet hours.",
+  })
+
   // Fetch properties for selection
   useEffect(() => {
     const fetchProperties = async () => {
@@ -244,8 +664,8 @@ export default function Handoff() {
         setProperties(userProperties)
         
         // If URL has propertyId, use it
-        if (urlPropertyId && userProperties.some(p => p.id === urlPropertyId)) {
-          setSelectedPropertyId(urlPropertyId)
+        if (requestedPropertyId && userProperties.some(p => p.id === requestedPropertyId)) {
+          setSelectedPropertyId(requestedPropertyId)
         } else if (!selectedPropertyId && userProperties.length > 0) {
           // Auto-select first property if none selected and properties exist
           setSelectedPropertyId(userProperties[0].id)
@@ -259,7 +679,11 @@ export default function Handoff() {
 
     fetchProperties()
      
-  }, [user?.id, user?.role, urlPropertyId])
+  }, [requestedPropertyId, selectedPropertyId, user?.id, user?.role])
+
+  if (!requestedPropertyId) {
+    return null
+  }
 
   // Fetch handoff data when property is selected
   useEffect(() => {
@@ -273,412 +697,31 @@ export default function Handoff() {
     const fetchHandoff = async () => {
       try {
         setLoading(true)
-        const apiData = await handoffApi.getHandoff(selectedPropertyId)
         const selectedProperty = properties.find(p => p.id === selectedPropertyId)
+        const defaultData = buildDefaultHandoffData(selectedPropertyId, selectedProperty)
+        const apiData = await handoffApi.getHandoff(selectedPropertyId)
 
-        if (apiData && apiData.data && Object.keys(apiData.data).length > 0) {
-          // Use real API data — merge with property info for address display
-          const handoff: PropertyHandoff = {
-            ...(apiData.data as unknown as PropertyHandoff),
-            id: apiData.id,
-            propertyId: apiData.propertyId,
-            propertyAddress: selectedProperty
-              ? `${selectedProperty.addressLine1}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zipcode || ''}`
-              : (apiData.data as Record<string, unknown>).propertyAddress as string || '',
-            createdDate: new Date(apiData.createdAt),
-            lastUpdated: new Date(apiData.updatedAt),
-            ownerNotes: apiData.ownerNotes || undefined,
-          }
+        const handoff = apiData && apiData.data && Object.keys(apiData.data).length > 0
+          ? {
+              ...mergeHandoffDefaults(defaultData, apiData.data),
+              id: apiData.id,
+              propertyId: apiData.propertyId,
+              propertyAddress: selectedProperty
+                ? `${selectedProperty.addressLine1}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zipcode || ''}`
+                : (apiData.data as Record<string, unknown>).propertyAddress as string || defaultData.propertyAddress,
+              createdDate: new Date(apiData.createdAt),
+              lastUpdated: new Date(apiData.updatedAt),
+              ownerNotes: apiData.ownerNotes || undefined,
+            }
+          : defaultData
 
-          const initialChecklist: Record<string, boolean> = {}
-          handoff.moveInChecklist?.forEach(item => {
-            initialChecklist[item.id] = item.completed
-          })
-          setChecklistItems(initialChecklist)
-          setHandoffData(handoff)
-          setOwnerNotes(handoff.ownerNotes || "")
-          setLoading(false)
-          return
-        }
-
-        // No API data yet — use sensible defaults so owners can start filling in
-        const defaultData: PropertyHandoff = {
-      id: "1",
-      propertyId: selectedPropertyId,
-      propertyAddress: selectedProperty 
-        ? `${selectedProperty.addressLine1}, ${selectedProperty.city}, ${selectedProperty.state} ${selectedProperty.zipcode || ''}`
-        : "123 Main St, Salt Lake City, UT 84101",
-      unitNumber: selectedProperty?.addressLine2 || "Apt 2B",
-      createdDate: new Date(),
-      lastUpdated: new Date(),
-      propertyBasics: {
-        propertyType: "Apartment",
-        squareFootage: 1200,
-        bedrooms: 2,
-        bathrooms: 1,
-        parking: "Assigned spot #12, Garage code: 1234",
-        moveInDate: new Date("2024-01-15"),
-        leaseTerm: "12 months",
-        securityDeposit: 1500,
-        securityDepositReturnTerms: "Returned within 30 days of move-out, minus any damages"
-      },
-      emergencyContacts: [
-        {
-          name: "Property Manager",
-          phone: "(801) 555-0100",
-          email: getEmail("manager"),
-          emergencyLine: "(801) 555-0101"
-        },
-        {
-          name: "Maintenance Emergency",
-          phone: "(801) 555-0200",
-          notes: "24/7 hotline"
-        },
-        {
-          name: "Police Department",
-          phone: "(801) 555-9111",
-          notes: "Local precinct"
-        },
-        {
-          name: "Fire Department",
-          phone: "(801) 555-9112",
-          notes: "Nearest station"
-        },
-        {
-          name: "Hospital",
-          phone: "(801) 555-0300",
-          notes: "Nearest facility"
-        },
-        {
-          name: "Poison Control",
-          phone: "1-800-222-1222"
-        }
-      ],
-      utilities: {
-        electric: {
-          provider: "Rocky Mountain Power",
-          accountNumber: "123456789",
-          customerServicePhone: "(801) 555-1000",
-          setupInstructions: "Call to transfer service",
-          averageMonthlyCost: 80,
-          paymentDueDate: "15th of each month",
-          onlinePortalLink: "https://www.rockymountainpower.net",
-          includedInRent: false
-        },
-        gas: {
-          provider: "Dominion Energy",
-          accountNumber: "987654321",
-          customerServicePhone: "(801) 555-2000",
-          averageMonthlyCost: 50,
-          includedInRent: false
-        },
-        water: {
-          provider: "Salt Lake City Public Utilities",
-          accountNumber: "456789123",
-          customerServicePhone: "(801) 555-3000",
-          includedInRent: true
-        },
-        internet: [
-          {
-            provider: "Xfinity",
-            phone: "(801) 555-4000",
-            website: "https://www.xfinity.com",
-            notes: "Recommended provider"
-          },
-          {
-            provider: "Google Fiber",
-            phone: "(801) 555-5000",
-            website: "https://fiber.google.com"
-          }
-        ],
-        trash: {
-          collectionDays: {
-            trash: ["Monday"],
-            recycling: ["Monday"],
-            bulk: ["First Monday of month"]
-          },
-          binLocation: "Behind building, near parking area",
-          specialInstructions: "Recycling must be sorted",
-          bulkPickupSchedule: "First Monday of each month",
-          hazardousWasteDisposal: "Drop off at city facility"
-        }
-      },
-      access: {
-        keys: [
-          { label: "Front door", location: "Main entrance" },
-          { label: "Mailbox", location: "Lobby" },
-          { label: "Garage", location: "Parking level 1" }
-        ],
-        codes: [
-          { type: "Gate code", code: "1234", location: "Main gate" },
-          { type: "Garage code", code: "5678", location: "Garage door" }
-        ],
-        alarm: {
-          provider: "ADT",
-          code: "0000",
-          contact: "(801) 555-6000",
-          monitoringInfo: "24/7 monitoring",
-          instructions: "Enter code to disarm"
-        }
-      },
-      mailbox: {
-        number: "2B",
-        location: "Lobby, left side",
-        keyDetails: "Small silver key",
-        packageDeliveryArea: "Lobby package room",
-        parcelLockerInstructions: "Use code from delivery notification",
-        mailHoldProcedure: "Notify USPS online or call 1-800-ASK-USPS"
-      },
-      appliances: [
-        {
-          name: "Refrigerator",
-          model: "Samsung RF28R7351SG",
-          location: "Kitchen",
-          manualLink: "https://example.com/manual",
-          type: "refrigerator"
-        },
-        {
-          name: "Stove",
-          model: "GE JGB700SELSS",
-          location: "Kitchen",
-          type: "stove",
-          details: { fuel: "Gas" }
-        },
-        {
-          name: "Dishwasher",
-          model: "Bosch SHX878WD5N",
-          location: "Kitchen",
-          type: "dishwasher"
-        },
-        {
-          name: "HVAC",
-          location: "Hallway",
-          type: "hvac",
-          details: {
-            filterSize: "16x25x1",
-            filterChangeSchedule: "Every 3 months",
-            thermostatLocation: "Living room wall"
-          }
-        }
-      ],
-      maintenance: {
-        requestMethod: "Online portal or email",
-        contacts: [
-          {
-            name: "Maintenance Department",
-            phone: "(801) 555-0200",
-            email: getEmail("maintenance")
-          }
-        ],
-        responseTimes: "Emergency: 2 hours, Routine: 24-48 hours",
-        responsibilities: "Tenant responsible for lightbulbs, batteries, minor cleaning. Owner responsible for major repairs.",
-        preferredContractors: [
-          {
-            name: "ABC Plumbing",
-            phone: "(801) 555-1001",
-            notes: "Preferred plumber"
-          },
-          {
-            name: "XYZ Electric",
-            phone: "(801) 555-1002",
-            notes: "Preferred electrician"
-          }
-        ],
-        preventiveMaintenanceSchedule: "HVAC service every 6 months",
-        filterChangeInfo: "HVAC filter: 16x25x1, change every 3 months"
-      },
-      policies: {
-        smoking: "No smoking allowed",
-        pets: "Pets allowed with deposit. Must clean up waste. Leash required.",
-        quietHours: "10 PM - 7 AM",
-        guests: "Overnight guests limited to 7 days",
-        subletting: "Not allowed without written permission",
-        modifications: "No nail holes without approval",
-        grilling: "Grilling allowed on balcony only",
-        other: "Please respect neighbors"
-      },
-      neighborhood: {
-        grocery: [
-          { name: "Smith's", address: "500 S Main St", distance: "0.5 miles" },
-          { name: "Whole Foods", address: "1000 S State St", distance: "1.2 miles" }
-        ],
-        dining: [
-          { name: "The Red Iguana", address: "736 W North Temple", notes: "Mexican cuisine" },
-          { name: "Squatters Pub", address: "147 W Broadway", notes: "American pub" }
-        ],
-        services: [
-          { name: "Chase Bank", address: "200 S Main St", phone: "(801) 555-7000" },
-          { name: "USPS Post Office", address: "1760 W 2100 S", phone: "(801) 555-7001" }
-        ],
-        healthcare: [
-          { name: "University Hospital", address: "50 N Medical Dr", phone: "(801) 555-8000" },
-          { name: "Urgent Care", address: "300 S Main St", phone: "(801) 555-8001" }
-        ],
-        recreation: [
-          { name: "Liberty Park", address: "600 E 1300 S", notes: "Large park with trails" },
-          { name: "City Library", address: "210 E 400 S", notes: "Main branch" }
-        ],
-        schools: [
-          { name: "Salt Lake School District", type: "district", website: "https://www.slcschools.org" },
-          { name: "Washington Elementary", type: "elementary", address: "420 S 200 E" }
-        ],
-        transportation: {
-          publicTransit: "UTA Trax and Bus",
-          busStops: ["Main St & 200 S", "State St & 300 S"],
-          trainStations: ["City Center Station"],
-          airportDistance: "6 miles",
-          airportDirections: "Take I-80 W to Airport"
-        }
-      },
-      localServices: [
-        {
-          name: "Trash Pickup",
-          schedule: "Every Monday",
-          type: "trash"
-        },
-        {
-          name: "Street Cleaning",
-          schedule: "First Tuesday of each month",
-          type: "street_cleaning"
-        },
-        {
-          name: "Snow Removal",
-          schedule: "As needed",
-          contact: "Property management",
-          type: "snow_removal"
-        }
-      ],
-      safety: {
-        fireExtinguisherLocations: ["Kitchen", "Hallway"],
-        smokeDetectorLocations: ["Living room", "Bedroom", "Hallway"],
-        carbonMonoxideDetectorLocations: ["Bedroom"],
-        emergencyExits: ["Front door", "Balcony"],
-        waterMainShutOff: "Basement, near water heater",
-        electricalPanelLocation: "Hallway closet",
-        gasShutOffLocation: "Outside, near gas meter"
-      },
-      parking: {
-        assignedSpots: ["Spot #12"],
-        guestParking: "Street parking available",
-        parkingPermits: "Not required",
-        storageUnitDetails: "Storage unit #5 in basement",
-        bikeStorageArea: "Bike rack in parking garage"
-      },
-      moveInChecklist: [
-        { id: "1", label: "Schedule utility transfers", completed: false, category: "utilities" },
-        { id: "2", label: "Update mailing address with USPS", completed: false, category: "address" },
-        { id: "3", label: "Update driver's license address", completed: false, category: "address" },
-        { id: "4", label: "Register to vote at new address", completed: false, category: "address" },
-        { id: "5", label: "Set up renters insurance", completed: false, category: "insurance" },
-        { id: "6", label: "Take move-in photos/videos", completed: false, category: "documentation" },
-        { id: "7", label: "Test all appliances", completed: false, category: "property" },
-        { id: "8", label: "Test smoke/CO detectors", completed: false, category: "safety" },
-        { id: "9", label: "Locate all shut-off valves", completed: false, category: "safety" },
-        { id: "10", label: "Program garage/gate codes", completed: false, category: "access" },
-        { id: "11", label: "Set up internet service", completed: false, category: "utilities" },
-        { id: "12", label: "Learn trash schedule", completed: false, category: "utilities" }
-      ],
-      documents: [
-        { 
-          id: "1", 
-          name: "Property Insurance Policy - 123 Main St", 
-          type: "insurance", 
-          url: "#",
-          uploadDate: new Date("2023-04-20"),
-          size: "3.5 MB"
-        },
-        { 
-          id: "2", 
-          name: "Property Tax Statement 2023 - 456 Oak Avenue", 
-          type: "tax", 
-          url: "#",
-          uploadDate: new Date("2023-03-20"),
-          size: "820 KB"
-        },
-        { 
-          id: "3", 
-          name: "Lease Agreement", 
-          type: "lease", 
-          url: "#",
-          uploadDate: new Date("2024-01-15"),
-          size: "2.1 MB"
-        },
-        { 
-          id: "4", 
-          name: "Move-in Inspection Report", 
-          type: "inspection", 
-          url: "#",
-          uploadDate: new Date("2024-01-15"),
-          size: "1.8 MB"
-        },
-        { 
-          id: "5", 
-          name: "Appliance Manuals", 
-          type: "manual", 
-          url: "#",
-          uploadDate: new Date("2024-01-10"),
-          size: "5.2 MB"
-        }
-      ],
-      seasonalInfo: [
-        {
-          season: "spring",
-          tips: [
-            "Start AC system and check filters",
-            "Check for pollen buildup",
-            "Inspect for any winter damage"
-          ]
-        },
-        {
-          season: "summer",
-          tips: [
-            "Keep AC filters clean",
-            "Monitor water usage",
-            "Check for pests"
-          ]
-        },
-        {
-          season: "fall",
-          tips: [
-            "Prepare heating system",
-            "Clean gutters",
-            "Manage leaf buildup"
-          ]
-        },
-        {
-          season: "winter",
-          tips: [
-            "Prevent pipe freezing",
-            "Keep walkways clear",
-            "Monitor heating system"
-          ]
-        }
-      ],
-      faqs: [
-        {
-          question: "What do I do if I'm locked out?",
-          answer: "Contact property management at (801) 555-0100. After-hours lockout service available for a fee."
-        },
-        {
-          question: "How do I report a maintenance emergency?",
-          answer: "Call the 24/7 maintenance hotline at (801) 555-0200 for emergencies."
-        },
-        {
-          question: "Can I paint or make modifications?",
-          answer: "Minor modifications require written approval. No nail holes without permission."
-        }
-      ],
-      ownerNotes: "Welcome to your new home! The neighborhood is very friendly. Best coffee shop is around the corner on Main St. The building is quiet, but please be mindful of noise during quiet hours."
-    }
-
-        // Initialize checklist state from defaults
         const defaultChecklist: Record<string, boolean> = {}
-        defaultData.moveInChecklist.forEach(item => {
+        handoff.moveInChecklist.forEach(item => {
           defaultChecklist[item.id] = item.completed
         })
         setChecklistItems(defaultChecklist)
-        setHandoffData(defaultData)
-        setOwnerNotes(defaultData.ownerNotes || "")
+        setHandoffData(handoff)
+        setOwnerNotes(handoff.ownerNotes || "")
         setLoading(false)
       } catch (error) {
         console.error("Error fetching handoff data:", error)
@@ -1202,4 +1245,3 @@ export default function Handoff() {
         </PortalSidebar>
       )
     }
-

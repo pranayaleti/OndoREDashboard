@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -13,12 +14,15 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Filter
+  ArrowDownAZ,
+  Filter,
+  Search
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { propertyApi, type Property } from "@/lib/api"
 import { PropertyImageCarousel } from "@/components/ui/property-image-carousel"
 import { formatUSDate } from "@/lib/us-format"
+import { CardGridSkeleton } from "@/components/ui/list-skeletons"
 
 export default function ManagerPropertyReview() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -29,6 +33,8 @@ export default function ManagerPropertyReview() {
   const [reviewComment, setReviewComment] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sortOption, setSortOption] = useState<"newest" | "oldest" | "az" | "status">("newest")
   const { toast } = useToast()
 
   const handleCardClick = (property: Property) => {
@@ -66,7 +72,7 @@ export default function ManagerPropertyReview() {
 
   useEffect(() => {
     fetchProperties()
-  }, [statusFilter])
+  }, [])
 
   const fetchProperties = async () => {
     setLoading(true)
@@ -75,15 +81,7 @@ export default function ManagerPropertyReview() {
       const res = await propertyApi.getProperties()
       const allProperties = res.properties
 
-      let data: Property[]
-
-      if (statusFilter === "all") {
-        data = allProperties
-      } else {
-        data = allProperties.filter((p: Property) => p.status === statusFilter)
-      }
-
-      setProperties(data)
+      setProperties(allProperties)
     } catch (error) {
       console.error("Error fetching properties:", error)
       toast({
@@ -123,8 +121,50 @@ export default function ManagerPropertyReview() {
     }
   }
 
+  const normalizedSearch = searchTerm.trim().toLowerCase()
+  const filteredProperties = properties
+    .filter((property) => {
+      const matchesStatus = statusFilter === "all" || property.status === statusFilter
+      const searchable = [
+        property.title,
+        property.addressLine1,
+        property.addressLine2,
+        property.city,
+        property.state,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+      const matchesSearch = normalizedSearch.length === 0 || searchable.includes(normalizedSearch)
+      return matchesStatus && matchesSearch
+    })
+    .sort((left, right) => {
+      if (sortOption === "oldest") {
+        return new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime()
+      }
+      if (sortOption === "az") {
+        return (left.title || left.addressLine1).localeCompare(right.title || right.addressLine1)
+      }
+      if (sortOption === "status") {
+        return left.status.localeCompare(right.status)
+      }
+      return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()
+    })
+
+  const statusPills: Array<{ label: string; value: string }> = [
+    { label: "All", value: "all" },
+    { label: "Occupied", value: "occupied" },
+    { label: "Vacant", value: "vacant" },
+    { label: "Pending Review", value: "pending" },
+    { label: "Approved", value: "approved" },
+  ]
+
   if (loading) {
-    return <div className="flex justify-center py-8">Loading pending properties...</div>
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <CardGridSkeleton cards={6} />
+      </div>
+    )
   }
 
   return (
@@ -135,26 +175,66 @@ export default function ManagerPropertyReview() {
       </div>
 
       {/* Filter Section */}
-      <div className="mb-6">
-        <div className="flex items-center gap-4">
-          <Filter className="h-5 w-5 text-gray-500" />
-          <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending">Pending Review</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="all">All Properties</SelectItem>
-            </SelectContent>
-          </Select>
+      <div className="mb-6 space-y-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search by property name or address"
+              className="pl-10"
+              aria-label="Search properties"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <Filter className="h-5 w-5 text-gray-500" />
+            <Select value={sortOption} onValueChange={(value: "newest" | "oldest" | "az" | "status") => setSortOption(value)}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="az">A–Z</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending Review</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="occupied">Occupied</SelectItem>
+                <SelectItem value="vacant">Vacant</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="all">All Properties</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {statusPills.map((pill) => (
+            <Button
+              key={pill.value}
+              type="button"
+              variant={statusFilter === pill.value ? "default" : "outline"}
+              className="rounded-full"
+              onClick={() => handleStatusFilterChange(pill.value)}
+              aria-label={`Filter properties by ${pill.label}`}
+            >
+              {pill.label}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {properties.length === 0 ? (
+      {filteredProperties.length === 0 ? (
         <div className="text-center py-12">
-          <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <ArrowDownAZ className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No {statusFilter === "all" ? "" : statusFilter} properties
           </h3>
@@ -167,7 +247,7 @@ export default function ManagerPropertyReview() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <Card 
               key={property.id} 
               className="hover:shadow-lg dark:hover:shadow-xl dark:hover:shadow-black/50 transition-all overflow-hidden"

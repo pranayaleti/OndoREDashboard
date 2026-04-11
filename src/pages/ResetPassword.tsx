@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast"
 import { Logo } from "@/components/logo"
 import { useValidatedForm } from "@/hooks/useValidatedForm"
 import type { FormValidationSchema } from "@/utils/validation.utils"
-import { sanitize } from "@/utils/validation.utils"
 import { ERROR_MESSAGES, REGEX_PATTERNS } from "@/constants/regex.constants"
 import { getApiBaseUrl } from "@/lib/api/base-url"
 
@@ -31,7 +30,6 @@ export default function ResetPassword() {
   const schema: FormValidationSchema<{ password: string; confirmPassword: string }> = {
     password: {
       required: true,
-      formatter: sanitize.trim,
       rules: [
         {
           regex: REGEX_PATTERNS.PASSWORD_STRONG,
@@ -42,7 +40,6 @@ export default function ResetPassword() {
     },
     confirmPassword: {
       required: true,
-      formatter: sanitize.trim,
       rules: [
         {
           regex: REGEX_PATTERNS.PASSWORD_STRONG,
@@ -50,7 +47,7 @@ export default function ResetPassword() {
         },
         {
           validator: (value, values) => value === values?.password,
-          message: "Passwords must match",
+          message: t('resetPassword.mismatch'),
         },
       ],
       maxLength: 128,

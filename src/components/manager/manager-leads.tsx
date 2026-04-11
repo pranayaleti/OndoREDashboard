@@ -25,6 +25,7 @@ import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 import { useAuth } from "@/lib/auth-context"
 import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
+import { EmptyState } from "@/components/ui/empty-state"
 
 function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
   if (!temperature) return <span className="text-xs text-gray-400">—</span>;
@@ -376,17 +377,17 @@ export default function ManagerLeads() {
       ) : (
         <Card>
           <CardContent className="py-12">
-            <div className="text-center">
-              <Users className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                No leads found
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {searchTerm || statusFilter !== "all"
+            <EmptyState
+              icon={<Users className="h-16 w-16" />}
+              title="No leads found"
+              description={
+                searchTerm || statusFilter !== "all"
                   ? "Try adjusting your filters"
-                  : "Tenant inquiries from your properties will appear here"}
-              </p>
-            </div>
+                  : "Tenant inquiries from your properties will appear here"
+              }
+              ctaLabel="Review properties"
+              ctaHref="/dashboard/properties"
+            />
           </CardContent>
         </Card>
       )}
@@ -395,4 +396,3 @@ export default function ManagerLeads() {
     </div>
   )
 }
-

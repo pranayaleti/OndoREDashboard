@@ -10,9 +10,15 @@ import { MessageSquare, Send, Search, Plus, Reply, Archive, Paperclip, User } fr
 import { useToast } from "@/hooks/use-toast"
 import { companyInfo } from "@/constants/companyInfo"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
+import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
 
 // Email addresses based on company domain
 const getEmail = (prefix: string) => `${prefix}@${companyInfo.social.twitterDomain}`
+
+function normalizeThreads(threads: MessageThread[]): MessageThread[] {
+  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
+  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
+}
 
 export default function TenantMessages() {
   const { toast } = useToast()
@@ -39,7 +45,7 @@ export default function TenantMessages() {
     setLoadingThreads(true)
     featureApi.communication
       .listThreads()
-      .then((data) => setThreads(data))
+      .then((data) => setThreads(normalizeThreads(data)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
       })
@@ -52,17 +58,26 @@ export default function TenantMessages() {
       setMessages([])
       return
     }
+    const threadLooksPlaceholder = threads.some(
+      (thread) => thread.id === selectedThreadId && shouldReplacePlaceholderThread(thread)
+    )
     setLoadingMessages(true)
     Promise.all([
       featureApi.communication.listMessages(selectedThreadId),
       featureApi.communication.markRead(selectedThreadId).catch(() => {}),
     ])
       .then(([msgs]) => {
-        setMessages(msgs)
-        // Update local unread count to 0
-        setThreads((prev) =>
-          prev.map((t) => (t.id === selectedThreadId ? { ...t, unreadCount: 0 } : t))
-        )
+        if (threadLooksPlaceholder) {
+          setMessages(DEMO_MESSAGE_RECORDS)
+          setThreads((prev) =>
+            prev.map((t) => (t.id === selectedThreadId ? { ...DEMO_MESSAGE_THREAD, unreadCount: 0 } : t))
+          )
+        } else {
+          setMessages(msgs)
+          setThreads((prev) =>
+            prev.map((t) => (t.id === selectedThreadId ? { ...t, unreadCount: 0 } : t))
+          )
+        }
       })
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
@@ -80,8 +95,28 @@ export default function TenantMessages() {
     return matchesSearch && matchesCategory
   })
 
+  useEffect(() => {
+    if (selectedThreadId || filteredThreads.length === 0) return
+    setSelectedThreadId(filteredThreads[0].id)
+  }, [filteredThreads, selectedThreadId])
+
   const handleReply = async () => {
     if (!selectedThreadId || !replyBody.trim()) return
+    if (selectedThreadId === DEMO_MESSAGE_THREAD.id) {
+      const demoReply: MessageRecord = {
+        id: `demo-reply-${Date.now()}`,
+        threadId: DEMO_MESSAGE_THREAD.id,
+        senderId: "tenant-demo",
+        body: replyBody,
+        mentions: [],
+        channel: "portal",
+        sentAt: new Date().toISOString(),
+      }
+      setMessages((prev) => [...prev, demoReply])
+      setReplyBody("")
+      toast({ title: "Message Sent", description: "Your reply has been sent.", duration: 3000 })
+      return
+    }
     setSending(true)
     try {
       const msg = await featureApi.communication.sendMessage({
