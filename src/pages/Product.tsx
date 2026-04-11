@@ -116,7 +116,7 @@ const timeline = [
 
 export default function Product() {
   return (
-    <div className="flex flex-col bg-slate-950 text-white min-h-screen">
+    <div className="flex flex-col bg-background text-white min-h-screen">
       {/* Hero */}
       <section className="px-4 py-20 sm:py-28">
         <div className="container mx-auto grid gap-12 lg:grid-cols-2 items-center">
@@ -136,12 +136,12 @@ export default function Product() {
               <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
                 <Link to="/free-trial">Start free trial</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-card/75">
                 <Link to="/features">Explore all features <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
           </div>
-          <Card className="border-white/10 bg-white/5 backdrop-blur">
+          <Card className="border-white/10 bg-card/60 backdrop-blur">
             <CardHeader>
               <CardTitle className="text-white">What's inside</CardTitle>
               <CardDescription className="text-white/60">
@@ -172,7 +172,7 @@ export default function Product() {
       </section>
 
       {/* Six pillars */}
-      <section className="bg-slate-900 px-4 py-20">
+      <section className="bg-card px-4 py-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400 mb-2">Six pillars</p>
@@ -185,9 +185,9 @@ export default function Product() {
             {pillars.map((p) => {
               const Icon = p.icon
               return (
-                <Card key={p.title} className="border-white/10 bg-white/5">
+                <Card key={p.title} className="border-white/10 bg-card/60">
                   <CardHeader className="flex flex-row items-start gap-4">
-                    <div className="rounded-full bg-white/10 p-2.5 mt-1 flex-shrink-0">
+                    <div className="rounded-full bg-card/75 p-2.5 mt-1 flex-shrink-0">
                       <Icon className={`h-5 w-5 ${p.color}`} />
                     </div>
                     <div>
@@ -216,7 +216,7 @@ export default function Product() {
             {architecture.map((a) => {
               const Icon = a.icon
               return (
-                <Card key={a.layer} className="border-white/10 bg-white/5">
+                <Card key={a.layer} className="border-white/10 bg-card/60">
                   <CardHeader>
                     <div className="rounded-full bg-orange-500/20 p-2.5 w-fit mb-2">
                       <Icon className="h-5 w-5 text-orange-400" />
@@ -234,7 +234,7 @@ export default function Product() {
       </section>
 
       {/* Comparison table */}
-      <section className="bg-slate-900 px-4 py-20">
+      <section className="bg-card px-4 py-20">
         <div className="container mx-auto max-w-3xl">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400 mb-2">Why Ondo</p>
@@ -243,7 +243,7 @@ export default function Product() {
           <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 bg-white/5">
+                <tr className="border-b border-white/10 bg-card/60">
                   <th className="text-left px-4 py-3 text-white/60 font-medium">Feature</th>
                   <th className="text-center px-4 py-3 text-orange-400 font-semibold">Ondo</th>
                   <th className="text-center px-4 py-3 text-white/40 font-medium">Spreadsheets</th>
@@ -252,7 +252,7 @@ export default function Product() {
               </thead>
               <tbody>
                 {comparisonRows.map((row, i) => (
-                  <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "" : "bg-white/[0.02]"}`}>
+                  <tr key={row.feature} className={`border-b border-white/5 ${i % 2 === 0 ? "" : "bg-card/40"}`}>
                     <td className="px-4 py-3 text-white/80">{row.feature}</td>
                     <td className="px-4 py-3 text-center"><ComparisonCell value={row.ondo} /></td>
                     <td className="px-4 py-3 text-center"><ComparisonCell value={row.spreadsheet} /></td>
@@ -289,7 +289,7 @@ export default function Product() {
       </section>
 
       {/* CTA */}
-      <section className="bg-slate-900 px-4 py-20 text-center">
+      <section className="bg-card px-4 py-20 text-center">
         <div className="container mx-auto max-w-2xl">
           <h2 className="text-3xl font-semibold">One platform. Every role. No spreadsheets.</h2>
           <p className="mt-4 text-white/70">
@@ -299,7 +299,7 @@ export default function Product() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-card/75">
               <Link to="/pricing">View pricing</Link>
             </Button>
           </div>

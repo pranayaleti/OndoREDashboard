@@ -332,7 +332,7 @@ function ReportsList() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-muted dark:bg-card rounded-lg">
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Operating Expense Ratio</div>
                   <div className="text-2xl font-bold mt-1">20.0%</div>
@@ -340,7 +340,7 @@ function ReportsList() {
                 </div>
                 <BarChart3 className="w-8 h-8 text-gray-500" />
               </div>
-              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-muted dark:bg-card rounded-lg">
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Debt Service Coverage</div>
                   <div className="text-2xl font-bold mt-1">1.6x</div>
@@ -348,7 +348,7 @@ function ReportsList() {
                 </div>
                 <DollarSign className="w-8 h-8 text-gray-500" />
               </div>
-              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-muted dark:bg-card rounded-lg">
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Profit Margin</div>
                   <div className="text-2xl font-bold text-green-600 mt-1">80.0%</div>
@@ -368,7 +368,7 @@ function ReportsList() {
           <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link to="/owner/reports/monthly-summary">
-              <Button className="bg-gray-800 dark:bg-gray-800 hover:bg-gray-700 dark:hover:bg-gray-700 p-6 rounded-lg text-left transition-all w-full h-auto">
+              <Button className="bg-muted dark:bg-card hover:bg-secondary dark:hover:bg-secondary p-6 rounded-lg text-left transition-all w-full h-auto">
                 <div className="flex items-center gap-4">
                   <FileText className="w-8 h-8 text-gray-300 flex-shrink-0" />
                   <div>
@@ -380,7 +380,7 @@ function ReportsList() {
             </Link>
 
             <Link to="/owner/reports/occupancy">
-              <Button className="bg-gray-800 dark:bg-gray-800 hover:bg-gray-700 dark:hover:bg-gray-700 p-6 rounded-lg text-left transition-all w-full h-auto">
+              <Button className="bg-muted dark:bg-card hover:bg-secondary dark:hover:bg-secondary p-6 rounded-lg text-left transition-all w-full h-auto">
                 <div className="flex items-center gap-4">
                   <TrendingUp className="w-8 h-8 text-gray-300 flex-shrink-0" />
                   <div>
@@ -392,7 +392,7 @@ function ReportsList() {
             </Link>
 
             <Link to="/owner/reports/tax">
-              <Button className="bg-gray-800 dark:bg-gray-800 hover:bg-gray-700 dark:hover:bg-gray-700 p-6 rounded-lg text-left transition-all w-full h-auto">
+              <Button className="bg-muted dark:bg-card hover:bg-secondary dark:hover:bg-secondary p-6 rounded-lg text-left transition-all w-full h-auto">
                 <div className="flex items-center gap-4">
                   <DollarSign className="w-8 h-8 text-gray-300 flex-shrink-0" />
                   <div>
@@ -449,7 +449,7 @@ function ReportsList() {
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Calculation Breakdown</h3>
-              <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="space-y-3 p-4 bg-muted dark:bg-card rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Annual Gross Revenue</span>
                   <span className="font-bold">$24,000</span>
@@ -542,7 +542,7 @@ function ReportsList() {
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Cap Rate Calculation</h3>
-              <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="space-y-3 p-4 bg-muted dark:bg-card rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Annual Gross Revenue</span>
                   <span className="font-bold">$24,000</span>
@@ -635,7 +635,7 @@ function ReportsList() {
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">OER Calculation</h3>
-              <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="space-y-3 p-4 bg-muted dark:bg-card rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Annual Operating Expenses</span>
                   <span className="font-bold">$4,800</span>
@@ -667,7 +667,7 @@ function ReportsList() {
                       <span className="font-medium">{item.category}</span>
                       <span className="font-bold">${item.amount.toLocaleString()}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div 
                         className="bg-ondo-orange h-2 rounded-full" 
                         style={{ width: `${item.percentage}%` }}
@@ -740,7 +740,7 @@ function ReportsList() {
 
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">GRM Calculation</h3>
-              <div className="space-y-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="space-y-3 p-4 bg-muted dark:bg-card rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Property Value</span>
                   <span className="font-bold">$282,353</span>

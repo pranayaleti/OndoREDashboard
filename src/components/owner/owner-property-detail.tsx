@@ -144,7 +144,7 @@ export default function OwnerPropertyDetail() {
 
       {/* Image Slider */}
       {hasImages ? (
-        <div className="relative h-[300px] md:h-[500px] mb-8 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border shadow-sm">
+        <div className="relative h-[300px] md:h-[500px] mb-8 rounded-xl overflow-hidden bg-muted dark:bg-card border shadow-sm">
           <img
             src={property.photos?.[currentImageIndex]?.url || `${import.meta.env.BASE_URL}placeholder.svg`}
             alt={`${property.title || 'Property'} - Image ${currentImageIndex + 1}`}
@@ -157,7 +157,7 @@ export default function OwnerPropertyDetail() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white hover:bg-black/60 rounded-full h-12 w-12 border border-white/20 backdrop-blur-sm transition-all"
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/40 text-white hover:bg-background/60 rounded-full h-12 w-12 border border-white/20 backdrop-blur-sm transition-all"
                 onClick={prevImage}
               >
                 <ChevronLeft className="h-8 w-8" />
@@ -166,26 +166,26 @@ export default function OwnerPropertyDetail() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/40 text-white hover:bg-black/60 rounded-full h-12 w-12 border border-white/20 backdrop-blur-sm transition-all"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/40 text-white hover:bg-background/60 rounded-full h-12 w-12 border border-white/20 backdrop-blur-sm transition-all"
                 onClick={nextImage}
               >
                 <ChevronRight className="h-8 w-8" />
               </Button>
               {/* Image Counter */}
-              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-sm font-medium border border-white/10">
+              <div className="absolute top-4 right-4 bg-background/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-sm font-medium border border-white/10">
                 {currentImageIndex + 1} / {property.photos?.length || 0}
               </div>
             </>
           )}
           {/* Caption */}
           {property.photos?.[currentImageIndex]?.caption && (
-            <div className="absolute bottom-4 left-4 right-4 md:right-auto bg-black/70 backdrop-blur-md text-white px-4 py-2 rounded-lg text-sm max-w-xl border border-white/10 shadow-lg">
+            <div className="absolute bottom-4 left-4 right-4 md:right-auto bg-background/70 backdrop-blur-md text-white px-4 py-2 rounded-lg text-sm max-w-xl border border-white/10 shadow-lg">
               {property.photos?.[currentImageIndex]?.caption}
             </div>
           )}
         </div>
       ) : (
-        <div className="h-[300px] md:h-[400px] mb-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+        <div className="h-[300px] md:h-[400px] mb-8 rounded-xl bg-muted dark:bg-card border border-slate-200 dark:border-slate-700 flex items-center justify-center">
           <div className="text-center text-slate-500 dark:text-slate-400">
             <Building className="h-20 w-20 mx-auto mb-4 opacity-30" />
             <p className="text-lg font-medium">No images available</p>
@@ -194,7 +194,7 @@ export default function OwnerPropertyDetail() {
       )}
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList className="flex flex-wrap mb-8 bg-slate-100/50 dark:bg-slate-800/50 p-1 h-auto gap-1">
+        <TabsList className="flex flex-wrap mb-8 bg-muted/50 dark:bg-card/50 p-1 h-auto gap-1">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="screening">Screening</TabsTrigger>
           <TabsTrigger value="applications">Applications</TabsTrigger>
@@ -346,7 +346,7 @@ export default function OwnerPropertyDetail() {
           
           {/* Description */}
           {property.description && (
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+            <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm">
               <h4 className="text-lg font-semibold mb-4 flex items-center">
                 <FileText className="h-5 w-5 mr-2 text-slate-400" />
                 Description
@@ -359,7 +359,7 @@ export default function OwnerPropertyDetail() {
           
           {/* Property Categories */}
           {((property.specialties?.length ?? 0) > 0 || (property.services?.length ?? 0) > 0 || (property.valueRanges?.length ?? 0) > 0) && (
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+            <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm">
               <h4 className="text-lg font-semibold mb-5 flex items-center">
                 <Tag className="h-5 w-5 mr-2 text-slate-400" />
                 Property Categories
@@ -373,7 +373,7 @@ export default function OwnerPropertyDetail() {
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {property.specialties.map((specialty, index) => (
-                        <Badge key={index} variant="secondary" className="capitalize bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                        <Badge key={index} variant="secondary" className="capitalize bg-muted dark:bg-card text-slate-700 dark:text-slate-300">
                           {specialty}
                         </Badge>
                       ))}
@@ -418,7 +418,7 @@ export default function OwnerPropertyDetail() {
           
           {/* Lease Information */}
           {(property.leaseTerms || property.fees || property.availability) && (
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+            <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm">
               <h4 className="text-lg font-semibold mb-5 flex items-center">
                 <FileText className="h-5 w-5 mr-2 text-slate-400" />
                 Lease Details
@@ -459,7 +459,7 @@ export default function OwnerPropertyDetail() {
         </TabsContent>
         
         <TabsContent value="location" className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm space-y-6">
+          <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm space-y-6">
             <h4 className="text-lg font-semibold flex items-center border-b pb-4">
               <Building className="h-5 w-5 mr-3 text-slate-400" />
               Location Details
@@ -496,10 +496,10 @@ export default function OwnerPropertyDetail() {
               </div>
 
               {(property.latitude && property.longitude) && (
-                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
+                <div className="bg-muted dark:bg-card p-4 rounded-lg flex flex-col items-center justify-center border border-slate-100 dark:border-slate-700">
                   <Globe className="h-10 w-10 text-slate-300 mb-3" />
                   <h5 className="font-medium text-slate-700 dark:text-slate-300 mb-1">Coordinates</h5>
-                  <p className="text-primary font-mono bg-white dark:bg-slate-900 px-3 py-1.5 rounded shadow-sm text-sm">
+                  <p className="text-primary font-mono bg-card dark:bg-card px-3 py-1.5 rounded shadow-sm text-sm">
                     {property.latitude}, {property.longitude}
                   </p>
                 </div>
@@ -509,7 +509,7 @@ export default function OwnerPropertyDetail() {
         </TabsContent>
         
         <TabsContent value="amenities" className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+          <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm">
             <h4 className="text-lg font-semibold mb-6 flex items-center border-b pb-4">
               <Check className="h-5 w-5 mr-3 text-emerald-500" />
               Property Amenities
@@ -541,7 +541,7 @@ export default function OwnerPropertyDetail() {
                   };
                   
                   return (
-                    <div key={index} className="flex items-center p-3 sm:p-4 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700/80 rounded-lg transition-colors border border-slate-100 dark:border-slate-700">
+                    <div key={index} className="flex items-center p-3 sm:p-4 bg-muted hover:bg-muted dark:bg-card dark:hover:bg-secondary/80 rounded-lg transition-colors border border-slate-100 dark:border-slate-700">
                       <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mr-3 flex-shrink-0">
                         <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       </div>
@@ -560,7 +560,7 @@ export default function OwnerPropertyDetail() {
         </TabsContent>
         
         <TabsContent value="contact" className="space-y-4">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border shadow-sm">
+          <div className="bg-card dark:bg-card p-6 rounded-xl border shadow-sm">
             <h4 className="text-lg font-semibold mb-6 flex items-center border-b pb-4">
               <Phone className="h-5 w-5 mr-3 text-blue-500" />
               Contact Information
@@ -569,7 +569,7 @@ export default function OwnerPropertyDetail() {
             {/* Owner/Manager Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {property.manager ? (
-                <div className="bg-blue-50/50 dark:bg-slate-800 p-5 rounded-lg border border-blue-100 dark:border-slate-700">
+                <div className="bg-blue-50/50 dark:bg-card p-5 rounded-lg border border-blue-100 dark:border-slate-700">
                   <div className="space-y-4">
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-4">
@@ -615,7 +615,7 @@ export default function OwnerPropertyDetail() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center text-center">
+                <div className="bg-muted dark:bg-card p-8 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center text-center">
                   <UserCheck className="h-12 w-12 mx-auto mb-3 text-slate-300" />
                   <p className="text-slate-500">No designated property manager information available</p>
                 </div>
@@ -623,12 +623,12 @@ export default function OwnerPropertyDetail() {
 
               {/* General Property Contact */}
               {(property.phone || property.website) && (
-                <div className="bg-slate-50 dark:bg-slate-800 p-5 rounded-lg border border-slate-100 dark:border-slate-700">
+                <div className="bg-muted dark:bg-card p-5 rounded-lg border border-slate-100 dark:border-slate-700">
                   <h5 className="font-semibold text-slate-700 dark:text-slate-300 mb-4">Direct Contact</h5>
                   <div className="space-y-4">
                     {property.phone && (
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-3">
+                        <div className="h-10 w-10 rounded-full bg-muted dark:bg-secondary flex items-center justify-center mr-3">
                           <Phone className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                         </div>
                         <div>
@@ -642,7 +642,7 @@ export default function OwnerPropertyDetail() {
                     
                     {property.website && (
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-3">
+                        <div className="h-10 w-10 rounded-full bg-muted dark:bg-secondary flex items-center justify-center mr-3">
                           <Globe className="h-5 w-5 text-slate-600 dark:text-slate-300" />
                         </div>
                         <div>

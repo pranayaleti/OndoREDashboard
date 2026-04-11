@@ -36,7 +36,7 @@ interface VacancyMarketingProps {
 }
 
 const statusColors: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-600",
+  draft: "bg-muted text-slate-600",
   active: "bg-green-100 text-green-700",
   filled: "bg-blue-100 text-blue-700",
   expired: "bg-red-100 text-red-700",
@@ -159,7 +159,7 @@ export function VacancyMarketing({ propertyId }: VacancyMarketingProps) {
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-semibold text-sm leading-tight">{l.listingTitle}</p>
-                      <Badge className={statusColors[l.status] ?? "bg-slate-100 text-slate-600"}>
+                      <Badge className={statusColors[l.status] ?? "bg-muted text-slate-600"}>
                         {l.status}
                       </Badge>
                     </div>

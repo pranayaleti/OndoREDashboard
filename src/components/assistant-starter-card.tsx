@@ -32,7 +32,7 @@ export function AssistantStarterCard({
 
   return (
     <Card
-      className="overflow-hidden border-orange-200/70 bg-gradient-to-br from-white via-orange-50/60 to-amber-50/80 dark:border-orange-500/20 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900"
+      className="overflow-hidden border-orange-200/70 bg-gradient-to-br from-card via-orange-50/60 to-amber-50/80 dark:border-orange-500/20 dark:from-background dark:via-background dark:to-card"
       data-tour-target={dataTourTarget}
     >
       <CardHeader className="border-b border-orange-100/80 pb-5 dark:border-orange-500/10">
@@ -45,7 +45,7 @@ export function AssistantStarterCard({
             <CardTitle>{title}</CardTitle>
             <CardDescription className="max-w-2xl">{description}</CardDescription>
           </div>
-          <Button asChild variant="outline" className="border-orange-200 bg-white/80 text-orange-800 hover:bg-orange-50 dark:border-orange-500/20 dark:bg-slate-950/70 dark:text-orange-200">
+          <Button asChild variant="outline" className="border-orange-200 bg-card/80 text-orange-800 hover:bg-orange-50 dark:border-orange-500/20 dark:bg-background/70 dark:text-orange-200">
             <Link to={assistantHref}>
               {ctaLabel}
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -64,7 +64,7 @@ export function AssistantStarterCard({
               type="button"
               variant="outline"
               size="sm"
-              className="rounded-full border-orange-200 bg-white/80 text-orange-800 hover:bg-orange-50 dark:border-orange-500/20 dark:bg-slate-950/60 dark:text-orange-200"
+              className="rounded-full border-orange-200 bg-card/80 text-orange-800 hover:bg-orange-50 dark:border-orange-500/20 dark:bg-background/60 dark:text-orange-200"
               onClick={() => openAssistant(prompt)}
             >
               {prompt}

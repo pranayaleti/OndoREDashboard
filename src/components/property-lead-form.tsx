@@ -124,8 +124,8 @@ export function PropertyLeadForm({ open, onClose, propertyName }: PropertyLeadFo
                     className={cn(
                       "flex items-center justify-center w-10 h-10 rounded-full",
                       step === i
-                        ? "bg-black text-white dark:bg-white dark:text-black"
-                        : "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300",
+                        ? "bg-background text-white dark:bg-card dark:text-card-foreground"
+                        : "bg-muted text-gray-600 dark:bg-secondary dark:text-gray-300",
                     )}
                   >
                     {i}
@@ -232,7 +232,7 @@ export function PropertyLeadForm({ open, onClose, propertyName }: PropertyLeadFo
                       <Button
                         type="button"
                         onClick={handleNext}
-                        className="bg-black hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        className="bg-background hover:bg-muted dark:bg-card dark:text-card-foreground dark:hover:bg-muted"
                       >
                         Next
                       </Button>
@@ -310,7 +310,7 @@ export function PropertyLeadForm({ open, onClose, propertyName }: PropertyLeadFo
                       <Button
                         type="button"
                         onClick={handleNext}
-                        className="bg-black hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        className="bg-background hover:bg-muted dark:bg-card dark:text-card-foreground dark:hover:bg-muted"
                       >
                         Next
                       </Button>
@@ -409,7 +409,7 @@ export function PropertyLeadForm({ open, onClose, propertyName }: PropertyLeadFo
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-black hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        className="bg-background hover:bg-muted dark:bg-card dark:text-card-foreground dark:hover:bg-muted"
                       >
                         {isSubmitting ? "Submitting..." : "Submit Application"}
                       </Button>

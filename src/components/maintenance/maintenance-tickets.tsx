@@ -87,7 +87,7 @@ export default function MaintenanceTickets() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -100,9 +100,9 @@ export default function MaintenanceTickets() {
       case "pending":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
       case "cancelled":
-        return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+        return "bg-muted text-gray-600 dark:bg-card dark:text-gray-400"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 

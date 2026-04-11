@@ -321,7 +321,7 @@ function EquipmentGridInner({ propertyId }: { propertyId: string }) {
                             ? "bg-emerald-100 text-emerald-800"
                             : eq.condition === "poor" || eq.condition === "critical"
                               ? "bg-red-100 text-red-800"
-                              : "bg-slate-100 text-slate-700"
+                              : "bg-muted text-slate-700"
                         }
                       >
                         {CONDITION_LABEL[eq.condition] ?? eq.condition}

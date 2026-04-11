@@ -182,7 +182,7 @@ const getStatusColor = (status: string) => {
     case "expired":
       return "bg-red-500"
     default:
-      return "bg-gray-500"
+      return "bg-muted"
   }
 }
 

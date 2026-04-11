@@ -303,7 +303,7 @@ export default function ManagerReports() {
                 <div className="flex items-center gap-4">
                   <div className="text-3xl font-bold">{stats.approvalRate}%</div>
                   <div className="flex-1">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div 
                         className="bg-green-500 h-2 rounded-full" 
                         style={{ width: `${stats.approvalRate}%` }}
@@ -325,7 +325,7 @@ export default function ManagerReports() {
                 <div className="flex items-center gap-4">
                   <div className="text-3xl font-bold">{stats.conversionRate}%</div>
                   <div className="flex-1">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div 
                         className="bg-blue-500 h-2 rounded-full" 
                         style={{ width: `${stats.conversionRate}%` }}
@@ -351,7 +351,7 @@ export default function ManagerReports() {
                       : 0}%
                   </div>
                   <div className="flex-1">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div 
                         className="bg-orange-500 h-2 rounded-full" 
                         style={{ 
@@ -460,7 +460,7 @@ export default function ManagerReports() {
                         <div key={type} className="flex items-center justify-between">
                           <span className="text-sm font-medium capitalize">{type}</span>
                           <div className="flex items-center gap-3">
-                            <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div className="w-24 bg-muted dark:bg-secondary rounded-full h-2">
                               <div 
                                 className="bg-blue-500 h-2 rounded-full" 
                                 style={{ 
@@ -703,9 +703,9 @@ export default function ManagerReports() {
                           <div key={priority} className="flex items-center justify-between">
                             <span className="text-sm font-medium capitalize">{priority}</span>
                             <div className="flex items-center gap-3">
-                              <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div className="w-24 bg-muted dark:bg-secondary rounded-full h-2">
                                 <div 
-                                  className={`${colors[priority] || 'bg-gray-500'} h-2 rounded-full`}
+                                  className={`${colors[priority] || 'bg-muted'} h-2 rounded-full`}
                                   style={{ 
                                     width: `${(count / stats.totalMaintenance) * 100}%` 
                                   }}

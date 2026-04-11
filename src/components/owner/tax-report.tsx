@@ -166,7 +166,7 @@ export default function TaxReport() {
                   ${mockTaxData.revenue.rental.toLocaleString()}
                 </p>
               </div>
-              <div className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex justify-between items-center p-4 bg-muted dark:bg-card rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">Other Income</p>
                   <p className="text-sm text-gray-500">Fees, penalties, etc.</p>
@@ -230,7 +230,7 @@ export default function TaxReport() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="p-4 bg-muted dark:bg-card rounded-lg">
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600 dark:text-gray-400">Depreciation Method</span>
                   <span className="font-semibold">{mockTaxData.depreciation.method}</span>
@@ -298,7 +298,7 @@ export default function TaxReport() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div className="grid grid-cols-2 gap-4 p-4 bg-muted dark:bg-card rounded-lg">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Revenue</p>
                 <p className="text-xl font-bold">${mockTaxData.summary.totalRevenue.toLocaleString()}</p>

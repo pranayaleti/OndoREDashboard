@@ -359,7 +359,7 @@ export default function TenantProfile() {
                         type="email"
                         value={profileData.personalInfo.email}
                         disabled={true}
-                        className="bg-gray-50 dark:bg-gray-800"
+                        className="bg-muted dark:bg-card"
                       />
                       <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
                     </div>

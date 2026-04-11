@@ -23,7 +23,7 @@ export function AdminNav({ items, activeTab, className }: AdminNavProps) {
     <>
       {/* Desktop Navigation */}
       <div className={cn("hidden md:flex w-full", className)}>
-        <div className="w-full bg-gray-800 dark:bg-gray-900 rounded-lg p-1 flex gap-1 overflow-x-auto">
+        <div className="w-full bg-muted dark:bg-card rounded-lg p-1 flex gap-1 overflow-x-auto">
           {items.map((item) => (
             <Button
               key={item.value}
@@ -32,8 +32,8 @@ export function AdminNav({ items, activeTab, className }: AdminNavProps) {
               className={cn(
                 "flex-1 min-w-0 whitespace-nowrap text-sm font-medium transition-all",
                 activeTab === item.value
-                  ? "bg-black dark:bg-gray-950 text-white"
-                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-800"
+                  ? "bg-background dark:bg-background text-white"
+                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-secondary dark:hover:bg-card"
               )}
             >
               {item.label}
@@ -48,13 +48,13 @@ export function AdminNav({ items, activeTab, className }: AdminNavProps) {
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="w-full bg-gray-800 dark:bg-gray-900 text-white hover:bg-gray-700 dark:hover:bg-gray-800 border-gray-700"
+              className="w-full bg-muted dark:bg-card text-white hover:bg-secondary dark:hover:bg-card border-gray-700"
             >
               <Menu className="h-5 w-5 mr-2" />
               Menu
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] bg-gray-800 dark:bg-gray-900 text-white">
+          <SheetContent side="left" className="w-[300px] bg-muted dark:bg-card text-white">
             <div className="flex flex-col gap-2 mt-8">
               {items.map((item) => (
                 <Button
@@ -67,8 +67,8 @@ export function AdminNav({ items, activeTab, className }: AdminNavProps) {
                   className={cn(
                     "w-full justify-start text-left font-medium transition-all",
                     activeTab === item.value
-                      ? "bg-black dark:bg-gray-950 text-white"
-                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-700 dark:hover:bg-gray-800"
+                      ? "bg-background dark:bg-background text-white"
+                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-secondary dark:hover:bg-card"
                   )}
                 >
                   {item.label}

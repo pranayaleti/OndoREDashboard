@@ -176,7 +176,7 @@ function HomeownerDashboardInner({
             type="button"
             variant="outline"
             size="sm"
-            className="rounded-full border-orange-200 bg-orange-50/80 text-orange-800 hover:bg-orange-100"
+            className="rounded-full border-orange-200 dark:border-orange-500/30 bg-orange-500/10 dark:bg-orange-500/15 text-orange-800 dark:text-orange-300 hover:bg-orange-500/20"
             onClick={() => {
               setQuery(label)
               onSearch(label)
@@ -217,7 +217,7 @@ function HomeownerDashboardInner({
             />
           </div>
         ) : (
-          <Card className="border-orange-200/80 bg-gradient-to-br from-white via-orange-50/50 to-amber-50/70 shadow-sm dark:border-orange-500/20 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+          <Card className="border-orange-200/80 bg-gradient-to-br from-card via-orange-50/50 to-amber-50/70 shadow-sm dark:border-orange-500/20 dark:from-background dark:via-background dark:to-card">
             <CardContent className="flex flex-col gap-5 p-6 md:flex-row md:items-end md:justify-between">
               <div className="space-y-2">
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-300">
@@ -304,11 +304,11 @@ function HomeownerDashboardInner({
             asChild
             variant="outline"
             size="sm"
-            className="border-orange-200 text-orange-800 hover:bg-orange-50"
+            className="border-orange-200 dark:border-orange-500/30 text-orange-800 dark:text-orange-300 hover:bg-orange-500/10"
           >
             <Link to={`${basePath}/my-documents`}>{t("home.manageUploads")}</Link>
           </Button>
-          <Button asChild variant="ghost" size="sm" className="text-orange-700 hover:text-orange-800 hover:bg-orange-50">
+          <Button asChild variant="ghost" size="sm" className="text-orange-700 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 hover:bg-orange-500/10">
             <Link to={`${basePath}/documents`}>{t("home.viewSharedDocs")}</Link>
           </Button>
         </CardContent>

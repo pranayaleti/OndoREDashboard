@@ -98,7 +98,7 @@ const getActivityColor = (type: string) => {
     case "profile":
       return "bg-cyan-500"
     default:
-      return "bg-gray-500"
+      return "bg-muted"
   }
 }
 

@@ -255,7 +255,7 @@ export function TenantsView() {
                           {tenant.status === "active" ? (
                             <Badge className="bg-green-100 text-green-800">Active</Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-gray-100 text-gray-800">
+                            <Badge variant="outline" className="bg-muted text-gray-800">
                               Past
                             </Badge>
                           )}

@@ -170,7 +170,7 @@ export function ImageUploader({ onCropComplete, trigger }: ImageUploaderProps) {
             <DialogDescription>Adjust and crop your profile picture before uploading</DialogDescription>
           </DialogHeader>
           
-          <div className="relative w-full flex-1 min-h-[300px] bg-gray-900 overflow-hidden">
+          <div className="relative w-full flex-1 min-h-[300px] bg-card overflow-hidden">
             {imageSrc && (
               <div
                 ref={imageRef}
@@ -196,7 +196,7 @@ export function ImageUploader({ onCropComplete, trigger }: ImageUploaderProps) {
                 {/* Crop overlay */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border-2 border-white opacity-80" />
-                  <div className="absolute inset-0 bg-black/50" style={{
+                  <div className="absolute inset-0 bg-background/50" style={{
                     clipPath: 'circle(128px at center)',
                     WebkitClipPath: 'circle(128px at center)'
                   }} />
@@ -206,13 +206,13 @@ export function ImageUploader({ onCropComplete, trigger }: ImageUploaderProps) {
           </div>
 
           {/* Controls */}
-          <div className="px-6 py-4 bg-gray-900 flex items-center justify-center gap-4 flex-shrink-0">
+          <div className="px-6 py-4 bg-card flex items-center justify-center gap-4 flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => adjustZoom(-0.1)}
               disabled={zoom <= 1}
-              className="text-white hover:bg-gray-800"
+              className="text-white hover:bg-muted"
             >
               <ZoomOut className="h-5 w-5" />
             </Button>
@@ -221,7 +221,7 @@ export function ImageUploader({ onCropComplete, trigger }: ImageUploaderProps) {
               variant="ghost"
               size="icon"
               onClick={rotateImage}
-              className="text-white hover:bg-gray-800"
+              className="text-white hover:bg-muted"
             >
               <RotateCw className="h-5 w-5" />
             </Button>
@@ -231,7 +231,7 @@ export function ImageUploader({ onCropComplete, trigger }: ImageUploaderProps) {
               size="icon"
               onClick={() => adjustZoom(0.1)}
               disabled={zoom >= 4}
-              className="text-white hover:bg-gray-800"
+              className="text-white hover:bg-muted"
             >
               <ZoomIn className="h-5 w-5" />
             </Button>

@@ -545,7 +545,7 @@ export function DocumentsPage({
       inspection: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
       financial: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
     }
-    return colors[category] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+    return colors[category] || "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
   }
 
   const formatDate = (dateString: string) => {
@@ -601,7 +601,7 @@ export function DocumentsPage({
           {/* First Row: View Toggle, Search, Filters */}
           <div className="flex flex-wrap items-center gap-4">
             {/* View Toggle - Left */}
-            <div className="flex items-center gap-1 border rounded-md p-1 bg-white dark:bg-gray-800">
+            <div className="flex items-center gap-1 border rounded-md p-1 bg-card dark:bg-card">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="sm"
@@ -628,7 +628,7 @@ export function DocumentsPage({
                   placeholder="Search documents..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white dark:bg-gray-800"
+                  className="pl-10 bg-card dark:bg-card"
                 />
               </div>
             </div>
@@ -637,7 +637,7 @@ export function DocumentsPage({
             <div className="flex flex-wrap gap-2">
               {showPropertyFilter && (
                 <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                  <SelectTrigger className="w-[150px] bg-white dark:bg-gray-800">
+                  <SelectTrigger className="w-[150px] bg-card dark:bg-card">
                     <SelectValue placeholder="All Properties" />
                   </SelectTrigger>
                   <SelectContent>
@@ -652,7 +652,7 @@ export function DocumentsPage({
               )}
 
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[150px] bg-white dark:bg-gray-800">
+                <SelectTrigger className="w-[150px] bg-card dark:bg-card">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
@@ -667,7 +667,7 @@ export function DocumentsPage({
 
               {showFolders && (
                 <Select value={folderFilter} onValueChange={setFolderFilter}>
-                  <SelectTrigger className="w-[150px] bg-white dark:bg-gray-800">
+                  <SelectTrigger className="w-[150px] bg-card dark:bg-card">
                     <SelectValue placeholder="All Folders" />
                   </SelectTrigger>
                   <SelectContent>
@@ -686,7 +686,7 @@ export function DocumentsPage({
           {/* Second Row: Tabs and Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-              <TabsList className="bg-white dark:bg-gray-800">
+              <TabsList className="bg-card dark:bg-card">
                 <TabsTrigger value="all">All Documents</TabsTrigger>
                 <TabsTrigger value="recent">Recent</TabsTrigger>
                 {showShare && <TabsTrigger value="shared">Shared</TabsTrigger>}
@@ -702,7 +702,7 @@ export function DocumentsPage({
                 </>
               )}
               {showDownload && (
-                <Button variant="outline" size="sm" className="bg-white dark:bg-gray-800">
+                <Button variant="outline" size="sm" className="bg-card dark:bg-card">
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
@@ -769,7 +769,7 @@ export function DocumentsPage({
                 ) : viewMode === "grid" ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredDocuments.map((doc) => (
-                      <Card key={doc.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 border hover:border-primary/20 group bg-white dark:bg-gray-800">
+                      <Card key={doc.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 border hover:border-primary/20 group bg-card dark:bg-card">
                         <CardContent className="p-5">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center gap-3 flex-1 min-w-0">

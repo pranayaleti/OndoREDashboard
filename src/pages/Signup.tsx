@@ -296,7 +296,7 @@ export default function Signup() {
 
   if (invitationError || !invitation) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
         <div className="w-full max-w-md">
           {/* Ondo Real Estate Logo and Branding */}
           <div className="flex flex-col items-center mb-8">
@@ -336,7 +336,7 @@ export default function Signup() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
         <div className="w-full max-w-md">
           {/* Ondo Real Estate Logo and Branding */}
           <div className="flex flex-col items-center mb-8">
@@ -395,7 +395,7 @@ export default function Signup() {
       }
     >
       <div className="space-y-6">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
+        <div className="rounded-2xl border border-white/10 bg-card/60 p-4 text-sm text-white/80">
           <p>
             <strong>Email:</strong> {invitation.email}
           </p>
@@ -553,7 +553,7 @@ function TextField({
         onBlur={onBlur}
         required={required}
         aria-invalid={!!error}
-        className="rounded-xl border-white/15 bg-slate-900 text-white"
+        className="rounded-xl border-white/15 bg-card text-white"
       />
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
@@ -595,7 +595,7 @@ function PasswordField({
           onChange={onChange}
           onBlur={onBlur}
           aria-invalid={!!error}
-          className="rounded-xl border-white/15 bg-slate-900 pr-11 text-white"
+          className="rounded-xl border-white/15 bg-card pr-11 text-white"
         />
         <button
           type="button"

@@ -287,10 +287,10 @@ export default function Register() {
             value={values.portfolioSize}
             onChange={handleChange("portfolioSize")}
             onBlur={handleBlur("portfolioSize")}
-            className="w-full rounded-xl border border-white/20 bg-slate-900 p-3 text-sm"
+            className="w-full rounded-xl border border-white/20 bg-card p-3 text-sm"
           >
             {portfolioOptions.map((option) => (
-              <option key={option} value={option} className="bg-slate-900">
+              <option key={option} value={option} className="bg-card">
                 {option}
               </option>
             ))}

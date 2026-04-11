@@ -403,7 +403,7 @@ export function createTenantConfig(
                     <div>
                       <p className="text-sm font-medium text-muted-foreground mb-2">Completion Rate</p>
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div className="flex-1 bg-muted dark:bg-secondary rounded-full h-2">
                           <div 
                             className="bg-green-600 h-2 rounded-full transition-all"
                             style={{ width: `${maintenanceCompletionRate}%` }}
@@ -432,7 +432,7 @@ export function createTenantConfig(
                     <div>
                       <p className="text-sm font-medium text-muted-foreground mb-2">Lease Completion</p>
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                        <div className="flex-1 bg-muted dark:bg-secondary rounded-full h-3">
                           <div 
                             className="bg-blue-600 h-3 rounded-full transition-all"
                             style={{ width: `${leaseProgress}%` }}

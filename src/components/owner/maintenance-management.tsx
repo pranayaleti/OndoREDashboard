@@ -240,9 +240,9 @@ export function OwnerMaintenanceManagement() {
       case "medium":
         return <Badge className="bg-blue-500">Medium</Badge>
       case "low":
-        return <Badge className="bg-gray-500">Low</Badge>
+        return <Badge className="bg-muted">Low</Badge>
       default:
-        return <Badge className="bg-gray-500">Unknown</Badge>
+        return <Badge className="bg-muted">Unknown</Badge>
     }
   }
 
@@ -651,7 +651,7 @@ export function OwnerMaintenanceManagement() {
             <p className="text-gray-600 dark:text-gray-400">Manage and track maintenance requests</p>
           </div>
         </div>
-        <Button onClick={() => setIsNewRequestDialogOpen(true)} className="bg-white text-gray-900 hover:bg-gray-100">
+        <Button onClick={() => setIsNewRequestDialogOpen(true)} className="bg-card text-card-foreground hover:bg-muted">
           <PlusCircle className="h-4 w-4 mr-2" />
           New Request
         </Button>
@@ -1115,7 +1115,7 @@ export function OwnerMaintenanceManagement() {
                                 <TableCell>
                                   <div className="flex items-center gap-2">
                                     <Avatar className="h-8 w-8">
-                                      <AvatarFallback className="bg-gray-600 text-white text-xs">
+                                      <AvatarFallback className="bg-muted text-white text-xs">
                                         {getInitials(request.tenant)}
                                       </AvatarFallback>
                                     </Avatar>
@@ -1238,7 +1238,7 @@ export function OwnerMaintenanceManagement() {
                                 </div>
                                 <div className="flex items-center gap-2 text-sm">
                                   <Avatar className="h-6 w-6">
-                                    <AvatarFallback className="bg-gray-600 text-white text-xs">
+                                    <AvatarFallback className="bg-muted text-white text-xs">
                                       {getInitials(request.tenant)}
                                     </AvatarFallback>
                                   </Avatar>

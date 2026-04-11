@@ -44,7 +44,7 @@ export function DataPagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           aria-label="Previous page"
-          className="px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-400 hover:bg-muted dark:hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           ‹
         </button>
@@ -64,7 +64,7 @@ export function DataPagination({
               aria-current={p === currentPage ? 'page' : undefined}
               className={`px-3 py-1 rounded text-sm transition-colors ${p === currentPage
                   ? 'bg-blue-600 text-white font-medium'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-muted dark:hover:bg-card'
                 }`}
             >
               {p}
@@ -76,7 +76,7 @@ export function DataPagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           aria-label="Next page"
-          className="px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-400 hover:bg-muted dark:hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           ›
         </button>

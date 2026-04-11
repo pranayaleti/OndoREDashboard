@@ -360,7 +360,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                 </div>
               )}
               {selectedTemplate.checks?.includes("eviction") && (
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg">
                   <Label>{t("screeningConfig.criteria.noEvictions")}</Label>
                   <Switch
                     checked={criteria.noEvictions === true}
@@ -369,7 +369,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
                 </div>
               )}
               {selectedTemplate.checks?.includes("criminal") && (
-                <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg">
                   <Label>{t("screeningConfig.criteria.noCriminal")}</Label>
                   <Switch
                     checked={criteria.noCriminal === true}
@@ -379,7 +379,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
               )}
             </div>
             {availableOptionalChecks.length > 0 && (
-              <div className="mt-6 space-y-4 rounded-lg border bg-slate-50/60 p-4 dark:bg-slate-900/40">
+              <div className="mt-6 space-y-4 rounded-lg border bg-muted/60 p-4 dark:bg-card/40">
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {t("screeningConfig.optionalChecksTitle")}
@@ -460,7 +460,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
               {questions.map((q) => (
                 <div
                   key={q.id}
-                  className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border"
+                  className="flex items-start gap-3 p-3 bg-muted dark:bg-card rounded-lg border"
                 >
                   <GripVertical className="h-5 w-5 text-slate-300 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -509,7 +509,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
 
           {/* Add Question Form */}
           {showAddQuestion && (
-            <div className="mt-4 p-4 border rounded-lg bg-white dark:bg-slate-900 space-y-4">
+            <div className="mt-4 p-4 border rounded-lg bg-card dark:bg-card space-y-4">
               <div className="space-y-2">
                 <Label>{t("screeningConfig.questionText")}</Label>
                 <Input

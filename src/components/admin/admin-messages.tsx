@@ -156,7 +156,7 @@ function MessagesList() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -171,7 +171,7 @@ function MessagesList() {
       case "general":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -248,7 +248,7 @@ function MessagesList() {
                 className={`cursor-pointer transition-colors ${
                   selectedThreadId === thread.id
                     ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                    : "hover:bg-muted dark:hover:bg-card"
                 } ${thread.unreadCount > 0 ? "border-l-4 border-l-blue-500" : ""}`}
                 onClick={() => setSelectedThreadId(thread.id)}
               >
@@ -367,7 +367,7 @@ function MessagesList() {
                       <p className="text-sm text-gray-500 dark:text-gray-400">No messages in this thread yet.</p>
                     )}
                     {messages.map((msg) => (
-                      <div key={msg.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div key={msg.id} className="p-4 bg-muted dark:bg-card rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             {msg.senderId}

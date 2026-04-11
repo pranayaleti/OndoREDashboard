@@ -84,7 +84,7 @@ export function PropertyDetailsModal({ company, open, onOpenChange }: PropertyDe
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 rounded-full h-10 w-10"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-background/30 text-white hover:bg-background/50 rounded-full h-10 w-10"
                 onClick={prevImage}
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -93,21 +93,21 @@ export function PropertyDetailsModal({ company, open, onOpenChange }: PropertyDe
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 rounded-full h-10 w-10"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-background/30 text-white hover:bg-background/50 rounded-full h-10 w-10"
                 onClick={nextImage}
               >
                 <ChevronRight className="h-6 w-6" />
               </Button>
 
               {/* Image Counter */}
-              <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+              <div className="absolute bottom-4 right-4 bg-background/50 text-white px-3 py-1 rounded-full text-sm">
                 {currentImageIndex + 1} / {company.images.length}
               </div>
             </div>
 
             {/* Company Info */}
             <div className="flex items-center mb-6">
-              <div className="relative h-20 w-20 rounded-md overflow-hidden bg-gray-100 mr-4">
+              <div className="relative h-20 w-20 rounded-md overflow-hidden bg-muted mr-4">
                 <img
                   src={company.logo || `${import.meta.env.BASE_URL}placeholder.svg`}
                   alt={`${company.name} logo`}

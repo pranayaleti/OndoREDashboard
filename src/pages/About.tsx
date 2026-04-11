@@ -34,7 +34,7 @@ const milestones = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-slate-950 text-white">
+    <main className="bg-background text-white">
       <PageBanner
         title={`About ${companyInfo.name}`}
         subtitle="We build the operating system for modern landlords and tenants."
@@ -49,7 +49,7 @@ export default function AboutPage() {
         />
       </section>
 
-      <section className="bg-slate-900 px-4 py-16">
+      <section className="bg-card px-4 py-16">
         <div className="container mx-auto grid gap-8 lg:grid-cols-2">
           <div>
             <p className="text-xs uppercase tracking-[0.4em] text-orange-300">mission</p>
@@ -63,7 +63,7 @@ export default function AboutPage() {
           </div>
           <div className="grid gap-4">
             {values.map((value) => (
-              <Card key={value.title} className="border-white/10 bg-white/5">
+              <Card key={value.title} className="border-white/10 bg-card/60">
                 <CardHeader className="flex items-center gap-3">
                   <value.icon className="h-6 w-6 text-orange-300" />
                   <div>
@@ -88,7 +88,7 @@ export default function AboutPage() {
           </div>
           <div className="space-y-4">
             {milestones.map((entry) => (
-              <div key={entry.year} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div key={entry.year} className="rounded-2xl border border-white/10 bg-card/60 p-5">
                 <p className="text-sm uppercase tracking-[0.3em] text-orange-200">{entry.year}</p>
                 <p className="mt-2 text-lg text-white">{entry.detail}</p>
               </div>
@@ -97,7 +97,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-16 text-center">
+      <section className="bg-card px-4 py-16 text-center">
         <div className="container mx-auto">
           <h2 className="text-3xl font-semibold">Join the operators shaping {companyInfo.name}</h2>
           <p className="mt-4 text-white/70">
@@ -107,7 +107,7 @@ export default function AboutPage() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-card/75">
               <Link to="/contact">Contact us</Link>
             </Button>
           </div>

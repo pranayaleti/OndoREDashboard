@@ -186,7 +186,7 @@ function SearchResultsInner({ propertyId }: { propertyId: string }) {
           </Card>
 
           {result.sources && result.sources.length > 0 && (
-            <Card className="border-orange-200/50 bg-orange-50/30">
+            <Card className="border-orange-200/50 dark:border-orange-500/20 bg-orange-500/10 dark:bg-orange-500/15">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <FileText className="h-5 w-5 text-orange-600" />
@@ -262,7 +262,7 @@ function SearchResultsInner({ propertyId }: { propertyId: string }) {
                     key={i}
                     variant="outline"
                     size="sm"
-                    className="rounded-full border-orange-200 bg-orange-50/80 text-orange-800 hover:bg-orange-100"
+                    className="rounded-full border-orange-200 dark:border-orange-500/30 bg-orange-500/10 dark:bg-orange-500/15 text-orange-800 dark:text-orange-300 hover:bg-orange-500/20"
                     onClick={() => handleFollowUp(q)}
                   >
                     {q}

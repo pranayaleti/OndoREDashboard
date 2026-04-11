@@ -128,7 +128,7 @@ export default function TenantPayments() {
       case "overdue":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -433,7 +433,7 @@ export default function TenantPayments() {
                   {displayedPayments.map((payment) => (
                     <div key={payment.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-4">
-                        <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                        <div className="p-2 bg-muted dark:bg-card rounded-full">
                           {getStatusIcon(payment.status)}
                         </div>
                         <div>

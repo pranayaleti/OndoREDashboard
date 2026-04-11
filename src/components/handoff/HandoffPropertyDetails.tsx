@@ -166,7 +166,7 @@ export function HandoffPropertyDetails({
               {/* Utilities Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('utilities')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -183,7 +183,7 @@ export function HandoffPropertyDetails({
 
               {/* Access & Security Card */}
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                 onClick={() => setSelectedPropertySection('access')}
               >
                 <CardContent className="p-6 flex items-center gap-4">
@@ -200,7 +200,7 @@ export function HandoffPropertyDetails({
               {/* Mailbox Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('mailbox')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -217,7 +217,7 @@ export function HandoffPropertyDetails({
 
               {/* Appliances Card */}
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                 onClick={() => setSelectedPropertySection('appliances')}
               >
                 <CardContent className="p-6 flex items-center gap-4">
@@ -233,7 +233,7 @@ export function HandoffPropertyDetails({
 
               {/* Maintenance Card */}
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                 onClick={() => setSelectedPropertySection('maintenance')}
               >
                 <CardContent className="p-6 flex items-center gap-4">
@@ -250,7 +250,7 @@ export function HandoffPropertyDetails({
               {/* House Rules Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('policies')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -267,7 +267,7 @@ export function HandoffPropertyDetails({
 
               {/* Safety Card */}
               <Card 
-                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                 onClick={() => setSelectedPropertySection('safety')}
               >
                 <CardContent className="p-6 flex items-center gap-4">
@@ -284,7 +284,7 @@ export function HandoffPropertyDetails({
               {/* Parking Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('parking')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -302,7 +302,7 @@ export function HandoffPropertyDetails({
               {/* Documents Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('documents')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -320,7 +320,7 @@ export function HandoffPropertyDetails({
               {/* Seasonal Info Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('seasonal')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -338,7 +338,7 @@ export function HandoffPropertyDetails({
               {/* FAQs Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('faqs')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -356,7 +356,7 @@ export function HandoffPropertyDetails({
               {/* Owner Notes Card */}
               {!isMaintenance && (
                 <Card 
-                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+                  className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
                   onClick={() => setSelectedPropertySection('notes')}
                 >
                   <CardContent className="p-6 flex items-center gap-4">
@@ -999,33 +999,33 @@ export function HandoffPropertyDetails({
                 <AccordionContent>
                   <div className="space-y-4">
                     {/* Document Management Header */}
-                    <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700">
+                    <Card className="bg-muted dark:bg-card border-gray-700">
                       <CardContent className="p-4 space-y-4">
                         {/* Tabs and View Toggle */}
                         <div className="flex items-center justify-between flex-wrap gap-4">
                           <Tabs value={documentTab} onValueChange={setDocumentTab} className="flex-1">
-                            <TabsList className="bg-gray-900 dark:bg-black border border-gray-700 h-9">
+                            <TabsList className="bg-card dark:bg-background border border-gray-700 h-9">
                               <TabsTrigger 
                                 value="all" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 All Documents
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="recent" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Recent
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="shared" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Shared
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="folders" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Folders
                               </TabsTrigger>
@@ -1036,7 +1036,7 @@ export function HandoffPropertyDetails({
                               variant={documentViewMode === "grid" ? "default" : "ghost"}
                               size="icon"
                               onClick={() => setDocumentViewMode("grid")}
-                              className="h-8 w-8 bg-gray-700 hover:bg-gray-600 data-[state=active]:bg-gray-600"
+                              className="h-8 w-8 bg-secondary hover:bg-muted data-[state=active]:bg-muted"
                             >
                               <Grid3x3 className="h-4 w-4" />
                             </Button>
@@ -1044,7 +1044,7 @@ export function HandoffPropertyDetails({
                               variant={documentViewMode === "list" ? "default" : "ghost"}
                               size="icon"
                               onClick={() => setDocumentViewMode("list")}
-                              className="h-8 w-8 bg-gray-700 hover:bg-gray-600 data-[state=active]:bg-gray-600"
+                              className="h-8 w-8 bg-secondary hover:bg-muted data-[state=active]:bg-muted"
                             >
                               <List className="h-4 w-4" />
                             </Button>
@@ -1059,14 +1059,14 @@ export function HandoffPropertyDetails({
                               placeholder="Search documents..."
                               value={documentSearch}
                               onChange={(e) => setDocumentSearch(e.target.value)}
-                              className="pl-10 bg-gray-900 dark:bg-black border-gray-700 text-white placeholder:text-gray-500"
+                              className="pl-10 bg-card dark:bg-background border-gray-700 text-white placeholder:text-gray-500"
                             />
                           </div>
                           <Select value={documentPropertyFilter} onValueChange={setDocumentPropertyFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Properties" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Properties</SelectItem>
                               {properties.map((prop) => (
                                 <SelectItem key={prop.id} value={prop.id}>
@@ -1076,10 +1076,10 @@ export function HandoffPropertyDetails({
                             </SelectContent>
                           </Select>
                           <Select value={documentCategoryFilter} onValueChange={setDocumentCategoryFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Categories" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Categories</SelectItem>
                               <SelectItem value="insurance">Insurance</SelectItem>
                               <SelectItem value="tax">Tax</SelectItem>
@@ -1089,10 +1089,10 @@ export function HandoffPropertyDetails({
                             </SelectContent>
                           </Select>
                           <Select value={documentFolderFilter} onValueChange={setDocumentFolderFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Folders" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Folders</SelectItem>
                               <SelectItem value="legal">Legal</SelectItem>
                               <SelectItem value="financial">Financial</SelectItem>
@@ -1109,7 +1109,7 @@ export function HandoffPropertyDetails({
                               Upload Document
                             </Button>
                           )}
-                          <Button variant="outline" className="border-gray-700 bg-gray-800 hover:bg-gray-700 text-white">
+                          <Button variant="outline" className="border-gray-700 bg-muted hover:bg-secondary text-white">
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -4131,33 +4131,33 @@ export function HandoffPropertyDetails({
                   </DialogHeader>
                   <div className="space-y-4 mt-4">
                     {/* Document Management Header */}
-                    <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700">
+                    <Card className="bg-muted dark:bg-card border-gray-700">
                       <CardContent className="p-4 space-y-4">
                         {/* Tabs and View Toggle */}
                         <div className="flex items-center justify-between flex-wrap gap-4">
                           <Tabs value={documentTab} onValueChange={setDocumentTab} className="flex-1">
-                            <TabsList className="bg-gray-900 dark:bg-black border border-gray-700 h-9">
+                            <TabsList className="bg-card dark:bg-background border border-gray-700 h-9">
                               <TabsTrigger 
                                 value="all" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 All Documents
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="recent" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Recent
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="shared" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Shared
                               </TabsTrigger>
                               <TabsTrigger 
                                 value="folders" 
-                                className="data-[state=active]:bg-gray-700 data-[state=active]:text-white px-4"
+                                className="data-[state=active]:bg-secondary data-[state=active]:text-white px-4"
                               >
                                 Folders
                               </TabsTrigger>
@@ -4168,7 +4168,7 @@ export function HandoffPropertyDetails({
                               variant={documentViewMode === "grid" ? "default" : "ghost"}
                               size="icon"
                               onClick={() => setDocumentViewMode("grid")}
-                              className="h-8 w-8 bg-gray-700 hover:bg-gray-600"
+                              className="h-8 w-8 bg-secondary hover:bg-muted"
                             >
                               <Grid3x3 className="h-4 w-4" />
                             </Button>
@@ -4176,7 +4176,7 @@ export function HandoffPropertyDetails({
                               variant={documentViewMode === "list" ? "default" : "ghost"}
                               size="icon"
                               onClick={() => setDocumentViewMode("list")}
-                              className="h-8 w-8 bg-gray-700 hover:bg-gray-600"
+                              className="h-8 w-8 bg-secondary hover:bg-muted"
                             >
                               <List className="h-4 w-4" />
                             </Button>
@@ -4191,14 +4191,14 @@ export function HandoffPropertyDetails({
                               placeholder="Search documents..."
                               value={documentSearch}
                               onChange={(e) => setDocumentSearch(e.target.value)}
-                              className="pl-10 bg-gray-900 dark:bg-black border-gray-700 text-white placeholder:text-gray-500"
+                              className="pl-10 bg-card dark:bg-background border-gray-700 text-white placeholder:text-gray-500"
                             />
                           </div>
                           <Select value={documentPropertyFilter} onValueChange={setDocumentPropertyFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Properties" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Properties</SelectItem>
                               {properties.map((prop) => (
                                 <SelectItem key={prop.id} value={prop.id}>
@@ -4208,10 +4208,10 @@ export function HandoffPropertyDetails({
                             </SelectContent>
                           </Select>
                           <Select value={documentCategoryFilter} onValueChange={setDocumentCategoryFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Categories" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Categories</SelectItem>
                               <SelectItem value="insurance">Insurance</SelectItem>
                               <SelectItem value="tax">Tax</SelectItem>
@@ -4221,10 +4221,10 @@ export function HandoffPropertyDetails({
                             </SelectContent>
                           </Select>
                           <Select value={documentFolderFilter} onValueChange={setDocumentFolderFilter}>
-                            <SelectTrigger className="w-full md:w-[160px] bg-gray-900 dark:bg-black border-gray-700 text-white">
+                            <SelectTrigger className="w-full md:w-[160px] bg-card dark:bg-background border-gray-700 text-white">
                               <SelectValue placeholder="All Folders" />
                             </SelectTrigger>
-                            <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectContent className="bg-muted border-gray-700">
                               <SelectItem value="all">All Folders</SelectItem>
                               <SelectItem value="legal">Legal</SelectItem>
                               <SelectItem value="financial">Financial</SelectItem>
@@ -4241,7 +4241,7 @@ export function HandoffPropertyDetails({
                               Upload Document
                             </Button>
                           )}
-                          <Button variant="outline" className="border-gray-700 bg-gray-800 hover:bg-gray-700 text-white">
+                          <Button variant="outline" className="border-gray-700 bg-muted hover:bg-secondary text-white">
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -4328,7 +4328,7 @@ export function HandoffPropertyDetails({
                                                   documents: updatedDocs
                                                 })
                                               }}
-                                              className="text-white bg-gray-800 border-gray-700"
+                                              className="text-white bg-muted border-gray-700"
                                               placeholder="Document name"
                                             />
                                             <Select
@@ -4342,10 +4342,10 @@ export function HandoffPropertyDetails({
                                                 })
                                               }}
                                             >
-                                              <SelectTrigger className="w-full bg-gray-800 border-gray-700 text-white">
+                                              <SelectTrigger className="w-full bg-muted border-gray-700 text-white">
                                                 <SelectValue />
                                               </SelectTrigger>
-                                              <SelectContent className="bg-gray-800 border-gray-700">
+                                              <SelectContent className="bg-muted border-gray-700">
                                                 <SelectItem value="insurance">Insurance</SelectItem>
                                                 <SelectItem value="tax">Tax</SelectItem>
                                                 <SelectItem value="lease">Lease</SelectItem>
@@ -4364,7 +4364,7 @@ export function HandoffPropertyDetails({
                                                   documents: updatedDocs
                                                 })
                                               }}
-                                              className="bg-gray-800 border-gray-700 text-white"
+                                              className="bg-muted border-gray-700 text-white"
                                               placeholder="Notes (optional)"
                                               rows={2}
                                             />

@@ -107,7 +107,7 @@ export default function OwnerOccupancy() {
         </div>
       </div>
 
-      <Card className="border-0 shadow-sm relative overflow-hidden bg-gradient-to-br from-slate-900 via-[#1a2031] to-slate-900">
+      <Card className="border-0 shadow-sm relative overflow-hidden bg-gradient-to-br from-card via-card to-card">
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
           <Home className="w-48 h-48 text-white transform rotate-12" />
         </div>
@@ -123,7 +123,7 @@ export default function OwnerOccupancy() {
               </div>
               <span className="text-4xl font-bold text-white leading-none">{Math.round(portfolioStats.occupancyRate)}%</span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-3">
+            <div className="w-full bg-muted rounded-full h-3">
               <div
                 className="bg-gradient-to-r from-orange-500 to-orange-400 h-3 rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${portfolioStats.occupancyRate}%` }}
@@ -163,7 +163,7 @@ export default function OwnerOccupancy() {
                 <button
                   key={property.id}
                   onClick={() => handleViewProperty(property)}
-                  className="w-full text-left group flex items-center justify-between p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-orange-500/60 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                  className="w-full text-left group flex items-center justify-between p-4 bg-card dark:bg-card border border-slate-200 dark:border-slate-800 rounded-xl hover:border-orange-500/60 hover:shadow-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                   aria-label={`View details for ${propertyName}`}
                 >
                   <div className="flex items-center gap-4 min-w-0">
@@ -186,7 +186,7 @@ export default function OwnerOccupancy() {
                       variant={isOccupied ? "default" : "secondary"}
                       className={isOccupied 
                         ? "bg-green-500 hover:bg-green-600 text-white border-transparent" 
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-transparent"}
+                        : "bg-muted dark:bg-card text-slate-600 dark:text-slate-300 border-transparent"}
                     >
                       {isOccupied ? "Occupied" : "Vacant"}
                     </Badge>

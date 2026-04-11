@@ -7,7 +7,7 @@ interface PageBannerProps {
 export function PageBanner({ title, subtitle, backgroundImage }: PageBannerProps) {
   return (
     <section className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 to-black/90 z-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-card/90 to-background/90 z-10" />
       <div className="relative h-[300px] overflow-hidden">
         {backgroundImage ? (
           <img

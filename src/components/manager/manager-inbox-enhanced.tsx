@@ -110,7 +110,7 @@ export default function ManagerInboxEnhanced() {
     urgent: "text-red-600 bg-red-50",
     maintenance: "text-orange-600 bg-orange-50",
     payment: "text-green-600 bg-green-50",
-    general: "text-gray-600 bg-gray-50",
+    general: "text-gray-600 bg-muted",
     lease: "text-blue-600 bg-blue-50",
   }
 

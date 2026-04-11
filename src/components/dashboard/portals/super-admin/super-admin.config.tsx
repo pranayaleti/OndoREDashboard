@@ -370,7 +370,7 @@ export function createSuperAdminConfig(
                   <span className="text-sm text-muted-foreground">Uptime</span>
                   <span className="text-2xl font-bold">{stats.systemHealth}%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                   <div 
                     className="bg-green-500 h-2 rounded-full" 
                     style={{ width: `${stats.systemHealth}%` }}

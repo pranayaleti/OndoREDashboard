@@ -105,7 +105,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b">
+      <div className="bg-card dark:bg-card border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Navigation */}
-      <div className="bg-white dark:bg-gray-800 border-b">
+      <div className="bg-card dark:bg-card border-b">
         <div className="container mx-auto px-4">
           <AdminNav items={navItems} activeTab={activeTab} />
         </div>
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                       <span className="text-sm text-muted-foreground">Uptime</span>
                       <span className="text-2xl font-bold">{stats.systemHealth}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div 
                         className="bg-green-500 h-2 rounded-full" 
                         style={{ width: `${stats.systemHealth}%` }}

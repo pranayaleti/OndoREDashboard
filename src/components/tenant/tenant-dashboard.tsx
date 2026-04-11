@@ -491,7 +491,7 @@ export default function TenantDashboard() {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-2">Completion Rate</p>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="flex-1 bg-muted dark:bg-secondary rounded-full h-2">
                         <div 
                           className="bg-green-600 h-2 rounded-full transition-all"
                           style={{ width: `${maintenanceCompletionRate}%` }}
@@ -520,7 +520,7 @@ export default function TenantDashboard() {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-2">Lease Completion</p>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                      <div className="flex-1 bg-muted dark:bg-secondary rounded-full h-3">
                         <div 
                           className="bg-blue-600 h-3 rounded-full transition-all"
                           style={{ width: `${leaseProgress}%` }}
@@ -598,7 +598,7 @@ export default function TenantDashboard() {
                 ) : (
                   <div className="space-y-3">
                     {getRecentMaintenance().slice(0, 3).map((request) => (
-                      <div key={request.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div key={request.id} className="flex items-center justify-between p-2 bg-muted rounded-lg">
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{request.title}</p>
                           <p className="text-xs text-gray-500">
@@ -651,7 +651,7 @@ export default function TenantDashboard() {
                   <div className="space-y-3">
                     {recentActivity.map((activity) => (
                       <Link key={activity.id} to={activity.href}>
-                        <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                        <div className="flex items-center justify-between p-2 bg-muted dark:bg-card rounded-lg hover:bg-muted dark:hover:bg-secondary transition-colors cursor-pointer">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{activity.message}</p>
                             <p className="text-xs text-gray-500">{activity.time}</p>
@@ -772,7 +772,7 @@ export default function TenantDashboard() {
                   {assignedProperty?.owner && (
                     <div className="border-t pt-4">
                       <h4 className="font-medium text-gray-900 mb-2">Property Owner</h4>
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-muted rounded-lg p-3">
                         <p className="font-medium">{assignedProperty.owner.firstName} {assignedProperty.owner.lastName}</p>
                         <p className="text-sm text-gray-600">{assignedProperty.owner.email}</p>
                       </div>

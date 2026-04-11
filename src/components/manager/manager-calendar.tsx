@@ -68,7 +68,7 @@ export default function ManagerCalendar() {
       case "maintenance":
         return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 

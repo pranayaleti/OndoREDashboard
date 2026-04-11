@@ -172,7 +172,7 @@ export function InviteTenantDialog({ propertyId, open, onOpenChange }: InviteTen
                 {emailLinks.map((link) => (
                   <div
                     key={link.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg text-sm"
+                    className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg text-sm"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <Mail className="h-4 w-4 text-slate-400 flex-shrink-0" />
@@ -230,13 +230,13 @@ export function InviteTenantDialog({ propertyId, open, onOpenChange }: InviteTen
                 {publicLinks.map((link) => (
                   <div
                     key={link.id}
-                    className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg space-y-2"
+                    className="p-3 bg-muted dark:bg-card rounded-lg space-y-2"
                   >
                     <div className="flex items-center gap-2">
                       <Input
                         readOnly
                         value={link.applyUrl}
-                        className="text-xs font-mono bg-white dark:bg-slate-900"
+                        className="text-xs font-mono bg-card dark:bg-card"
                       />
                       <Button
                         variant="outline"

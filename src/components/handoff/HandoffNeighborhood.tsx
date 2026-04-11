@@ -60,7 +60,7 @@ export function HandoffNeighborhood({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Grocery Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('grocery')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -76,7 +76,7 @@ export function HandoffNeighborhood({
 
           {/* Dining Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('dining')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -92,7 +92,7 @@ export function HandoffNeighborhood({
 
           {/* Services Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('services')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -108,7 +108,7 @@ export function HandoffNeighborhood({
 
           {/* Healthcare Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('healthcare')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -124,7 +124,7 @@ export function HandoffNeighborhood({
 
           {/* Recreation Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('recreation')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -140,7 +140,7 @@ export function HandoffNeighborhood({
 
           {/* Schools Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('schools')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -156,7 +156,7 @@ export function HandoffNeighborhood({
 
           {/* Transportation Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('transportation')}
           >
             <CardContent className="p-6 flex items-center gap-4">
@@ -172,7 +172,7 @@ export function HandoffNeighborhood({
 
           {/* Local Services Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-gray-800 hover:bg-gray-750"
+            className="cursor-pointer hover:shadow-lg transition-all border border-gray-700 bg-muted hover:bg-secondary"
             onClick={() => setSelectedNeighborhoodSection('local-services')}
           >
             <CardContent className="p-6 flex items-center gap-4">

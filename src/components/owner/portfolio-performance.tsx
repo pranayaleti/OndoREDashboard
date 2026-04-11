@@ -154,7 +154,7 @@ export function PortfolioPerformance() {
 
               {/* Portfolio Average Row */}
               {avg && (
-                <TableRow className="bg-slate-50 font-semibold border-t-2">
+                <TableRow className="bg-muted font-semibold border-t-2">
                   <TableCell className="text-slate-700">Portfolio Average</TableCell>
                   <TableCell className="text-slate-700">{fmt(avg.monthlyRevenue)}</TableCell>
                   <TableCell className="text-slate-700">{pct(avg.occupancyRate)}</TableCell>

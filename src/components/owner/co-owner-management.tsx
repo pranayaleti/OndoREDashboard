@@ -131,7 +131,7 @@ export function CoOwnerManagement({ propertyId }: CoOwnerManagementProps) {
       </CardHeader>
       <CardContent>
         {showInvite && (
-          <div className="mb-4 p-4 border rounded-lg bg-slate-50 dark:bg-slate-800 space-y-3">
+          <div className="mb-4 p-4 border rounded-lg bg-muted dark:bg-card space-y-3">
             <Label>Co-Owner Email</Label>
             <div className="flex gap-2">
               <Input
@@ -169,7 +169,7 @@ export function CoOwnerManagement({ propertyId }: CoOwnerManagementProps) {
               return (
                 <div
                   key={co.id}
-                  className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border"
+                  className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg border"
                 >
                   <div className="flex items-center gap-3">
                     <Icon className={`h-5 w-5 ${cfg.color}`} />

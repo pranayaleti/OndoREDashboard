@@ -15,7 +15,7 @@ export function PageSizeSelector({
       <select
         value={pageSize}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-white dark:bg-gray-900"
+        className="border border-gray-200 dark:border-gray-700 rounded px-2 py-1 text-sm bg-card dark:bg-card"
       >
         {options.map((n) => (
           <option key={n} value={n}>

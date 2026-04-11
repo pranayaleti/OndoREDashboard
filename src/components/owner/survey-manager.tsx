@@ -37,7 +37,7 @@ interface SurveyManagerProps {
 }
 
 const statusColors: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-600",
+  draft: "bg-muted text-slate-600",
   active: "bg-green-100 text-green-700",
   closed: "bg-red-100 text-red-700",
 }
@@ -134,7 +134,7 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
       ) : (
         <div className="space-y-3">
           {surveys.map((s) => (
-            <div key={s.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border">
+            <div key={s.id} className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg border">
               <div>
                 <p className="font-medium text-sm">{s.title}</p>
                 <p className="text-xs text-slate-500">{new Date(s.createdAt).toLocaleDateString()}</p>
@@ -229,7 +229,7 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
             <div className="space-y-4">
               <p className="text-sm text-slate-500">{results.totalResponses} responses</p>
               {(results.questions || []).map((q: any) => (
-                <div key={q.questionId} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div key={q.questionId} className="p-3 bg-muted dark:bg-card rounded-lg">
                   <p className="text-sm font-medium mb-1">{q.questionText}</p>
                   <p className="text-xs text-slate-500">{q.totalAnswers} answers</p>
                   {q.average !== null && q.average !== undefined && (

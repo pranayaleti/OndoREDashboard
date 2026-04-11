@@ -126,9 +126,9 @@ export function OwnerMaintenanceDetail() {
       case "medium":
         return <Badge className="bg-blue-500">Medium</Badge>
       case "low":
-        return <Badge className="bg-gray-500">Low</Badge>
+        return <Badge className="bg-muted">Low</Badge>
       default:
-        return <Badge className="bg-gray-500">Unknown</Badge>
+        return <Badge className="bg-muted">Unknown</Badge>
     }
   }
 
@@ -247,9 +247,9 @@ export function OwnerMaintenanceDetail() {
                       key={update.id}
                       className={`p-3 rounded-lg ${
                         update.type === "status-change"
-                          ? "bg-gray-100 text-center text-sm text-gray-600"
+                          ? "bg-muted text-center text-sm text-gray-600"
                           : update.user === "Tenant"
-                            ? "bg-gray-50 ml-0 sm:ml-12"
+                            ? "bg-muted ml-0 sm:ml-12"
                             : "bg-blue-50 mr-0 sm:mr-12"
                       }`}
                     >

@@ -158,9 +158,9 @@ const getStatusColor = (status: string) => {
     case "pending":
       return "bg-yellow-500"
     case "inactive":
-      return "bg-gray-500"
+      return "bg-muted"
     default:
-      return "bg-gray-500"
+      return "bg-muted"
   }
 }
 

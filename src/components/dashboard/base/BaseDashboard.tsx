@@ -55,7 +55,7 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
     <div className={cn("min-h-screen bg-transparent", className)} style={getThemeStyle()}>
       {/* Header Section */}
       {config.showHeader !== false && (
-        <div className="bg-white dark:bg-gray-800 border-b">
+        <div className="bg-card dark:bg-card border-b">
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col items-center justify-center text-center">
               <h1 className="text-2xl md:text-3xl font-semibold" style={{ color: primaryColor }}>

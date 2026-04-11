@@ -117,7 +117,7 @@ export default function Header() {
         className={cn(
           "text-sm font-medium transition-colors",
           variant === "desktop"
-            ? "px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800"
+            ? "px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-muted"
             : "px-4 py-3 border-b border-gray-800 text-gray-300 hover:text-white",
           isMarketingActive(item.path) && "bg-orange-500 text-gray-900 font-semibold dark:text-gray-900"
         )}
@@ -130,7 +130,7 @@ export default function Header() {
     return (
       <header
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-200 bg-black/90 backdrop-blur dark:bg-gray-950/90",
+          "sticky top-0 z-50 w-full transition-all duration-200 bg-background/90 backdrop-blur dark:bg-background/90",
           isScrolled && "shadow-lg"
         )}
       >
@@ -143,12 +143,12 @@ export default function Header() {
             <LanguageSwitcher />
             <ModeToggle />
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800 dark:hover:bg-gray-900">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-muted dark:hover:bg-card">
                 {t("auth.login")}
               </Button>
             </Link>
             <Link to="/register">
-              <Button variant="outline" size="sm" className="border-gray-700 bg-transparent text-white hover:bg-gray-800">
+              <Button variant="outline" size="sm" className="border-gray-700 bg-transparent text-white hover:bg-muted">
                 {t("auth.ownerSignup")}
               </Button>
             </Link>
@@ -171,11 +171,11 @@ export default function Header() {
             </Link>
             <Sheet open={isMarketingMenuOpen} onOpenChange={setIsMarketingMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-gray-800 p-2">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-muted p-2">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[260px] bg-gray-900 text-white p-0">
+              <SheetContent side="right" className="w-[260px] bg-card text-white p-0">
                 <SheetTitle className="sr-only">{t("common.navigation")}</SheetTitle>
                 <SheetDescription className="sr-only">{t("common.marketingNav")}</SheetDescription>
                 <div className="flex flex-col h-full">
@@ -185,12 +185,12 @@ export default function Header() {
                   <div className="flex-1 overflow-y-auto">{marketingLinks("mobile")}</div>
                   <div className="p-4 border-t border-gray-800 space-y-2">
                     <Link to="/login" onClick={() => setIsMarketingMenuOpen(false)}>
-                      <Button variant="ghost" className="w-full justify-start text-gray-300 hover:bg-gray-800">
+                      <Button variant="ghost" className="w-full justify-start text-gray-300 hover:bg-muted">
                         {t("auth.login")}
                       </Button>
                     </Link>
                     <Link to="/register" onClick={() => setIsMarketingMenuOpen(false)}>
-                      <Button variant="outline" className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800">
+                      <Button variant="outline" className="w-full border-gray-700 bg-transparent text-white hover:bg-muted">
                         {t("auth.ownerSignup")}
                       </Button>
                     </Link>
@@ -212,7 +212,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-200 bg-black dark:bg-gray-950",
+        "sticky top-0 z-50 w-full transition-all duration-200 bg-background dark:bg-background",
         isScrolled && "shadow-lg"
       )}
     >
@@ -241,7 +241,7 @@ export default function Header() {
                     "px-2 sm:px-3 md:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap flex-shrink-0",
                     isActive(item)
                       ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                   )}
                 >
                   {t(item.labelKey)}
@@ -258,7 +258,7 @@ export default function Header() {
                     "flex items-center gap-2 px-2 sm:px-3 md:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap flex-shrink-0",
                     location.pathname === "/dashboard/owners" || location.pathname.startsWith("/dashboard/owners/")
                       ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                   )}
                 >
                   <Users className={cn(
@@ -281,7 +281,7 @@ export default function Header() {
                     "flex items-center gap-2 px-2 sm:px-3 md:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap flex-shrink-0",
                     location.pathname === "/dashboard/tenants" || location.pathname.startsWith("/dashboard/tenants/")
                       ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                      : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                   )}
                 >
                   <Users className={cn(
@@ -312,7 +312,7 @@ export default function Header() {
       </div>
 
       {/* Tablet/Mobile Navigation - Hamburger Menu */}
-      <div className="lg:hidden bg-black dark:bg-gray-950">
+      <div className="lg:hidden bg-background dark:bg-background">
         <div className="container mx-auto px-2 sm:px-4 h-16">
           <div className="flex items-center justify-between h-full gap-2 min-w-0">
             {/* Left: Logo */}
@@ -334,12 +334,12 @@ export default function Header() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-white hover:bg-gray-800 dark:hover:bg-gray-900 p-2"
+                    className="text-white hover:bg-muted dark:hover:bg-card p-2"
                   >
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-gray-900 text-white p-0">
+                <SheetContent side="right" className="w-[280px] sm:w-[300px] bg-card text-white p-0">
                   <SheetTitle className="sr-only">{t("common.navigation")}</SheetTitle>
                   <SheetDescription className="sr-only">{t("common.mobileNavDesc")}</SheetDescription>
                   <div className="flex flex-col h-full">
@@ -360,7 +360,7 @@ export default function Header() {
                                 "px-4 py-3 text-sm font-medium transition-colors border-b border-gray-800 rounded-md mx-2 my-1",
                                 isActive(item)
                                   ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                               )}
                             >
                               {t(item.labelKey)}
@@ -378,7 +378,7 @@ export default function Header() {
                                 "px-4 py-3 text-sm font-medium transition-colors border-b border-gray-800 rounded-md mx-2 my-1 flex items-center justify-between",
                                 location.pathname === "/dashboard/owners" || location.pathname.startsWith("/dashboard/owners/")
                                   ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                               )}
                             >
                               <div className="flex items-center gap-2">
@@ -404,7 +404,7 @@ export default function Header() {
                                 "px-4 py-3 text-sm font-medium transition-colors border-b border-gray-800 rounded-md mx-2 my-1 flex items-center justify-between",
                                 location.pathname === "/dashboard/tenants" || location.pathname.startsWith("/dashboard/tenants/")
                                   ? "bg-orange-500 text-gray-900 dark:text-gray-900 font-semibold"
-                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                                  : "text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                               )}
                             >
                               <div className="flex items-center gap-2">
@@ -434,7 +434,7 @@ export default function Header() {
                           logout()
                           setIsMobileMenuOpen(false)
                         }}
-                        className="w-full justify-start text-gray-300 dark:text-gray-400 hover:text-white hover:bg-gray-800"
+                        className="w-full justify-start text-gray-300 dark:text-gray-400 hover:text-white hover:bg-muted"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>{t("auth.logout")}</span>

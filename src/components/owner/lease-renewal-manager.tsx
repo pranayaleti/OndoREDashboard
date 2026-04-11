@@ -45,7 +45,7 @@ interface LeaseRenewalManagerProps {
 }
 
 const statusColors: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-600",
+  draft: "bg-muted text-slate-600",
   sent: "bg-blue-100 text-blue-700",
   accepted: "bg-green-100 text-green-700",
   declined: "bg-red-100 text-red-700",
@@ -177,7 +177,7 @@ export function LeaseRenewalManager({ propertyId }: LeaseRenewalManagerProps) {
                     {pctChange(r.currentRent, r.proposedRent)}
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusColors[r.status] ?? "bg-slate-100 text-slate-600"}>
+                    <Badge className={statusColors[r.status] ?? "bg-muted text-slate-600"}>
                       {r.status}
                     </Badge>
                   </TableCell>

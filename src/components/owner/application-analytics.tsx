@@ -98,7 +98,7 @@ export function ApplicationAnalytics() {
           <CardContent>
             <div className="space-y-4">
               {metrics.map((m) => (
-                <div key={m.propertyId} className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                <div key={m.propertyId} className="bg-muted dark:bg-card rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-medium text-sm">{m.propertyTitle || "Untitled"}</h4>
                     <Badge variant="secondary" className="text-xs">
@@ -132,7 +132,7 @@ export function ApplicationAnalytics() {
 
 function MetricCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-lg border p-4">
+    <div className="bg-card dark:bg-card rounded-lg border p-4">
       <div className="flex items-center gap-2 text-slate-500 mb-1">
         {icon}
         <span className="text-xs">{label}</span>

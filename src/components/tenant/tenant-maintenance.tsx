@@ -81,7 +81,7 @@ function MaintenanceList() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -226,7 +226,7 @@ function MaintenanceList() {
               {request.managerNotes && (
                 <div className="mt-4 pt-4 border-t">
                   <h4 className="font-medium mb-2">Manager Response:</h4>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded">
+                  <div className="bg-muted dark:bg-card p-3 rounded">
                     <p className="text-sm">{request.managerNotes}</p>
                     <p className="text-xs text-gray-500 mt-1">
                       Updated: {new Date(request.updatedAt).toLocaleDateString()}
@@ -324,7 +324,7 @@ function MaintenanceList() {
               {selectedRequest.managerNotes && (
                 <div>
                   <Label className="text-sm font-medium">Manager Response</Label>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded mt-1">
+                  <div className="bg-muted dark:bg-card p-3 rounded mt-1">
                     <p className="text-sm">{selectedRequest.managerNotes}</p>
                   </div>
                 </div>

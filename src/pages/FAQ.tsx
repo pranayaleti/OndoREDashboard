@@ -33,7 +33,7 @@ const ownerQuestions = [
 
 export default function FAQPage() {
   return (
-    <main className="bg-slate-950 text-white">
+    <main className="bg-background text-white">
       <PageBanner
         title="Frequently asked questions"
         subtitle="Everything owners, operators, and tenants ask before launching Ondo."
@@ -44,7 +44,7 @@ export default function FAQPage() {
           <h2 className="text-2xl font-semibold">For tenants</h2>
           <Accordion type="single" collapsible className="mt-6 space-y-4">
             {tenantQuestions.map((item, index) => (
-              <AccordionItem key={item.q} value={`tenant-${index}`} className="border border-white/10 bg-white/5">
+              <AccordionItem key={item.q} value={`tenant-${index}`} className="border border-white/10 bg-card/60">
                 <AccordionTrigger className="px-4 text-left text-white">{item.q}</AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-sm text-white/80">{item.a}</AccordionContent>
               </AccordionItem>
@@ -55,7 +55,7 @@ export default function FAQPage() {
           <h2 className="text-2xl font-semibold">For owners & operators</h2>
           <Accordion type="single" collapsible className="mt-6 space-y-4">
             {ownerQuestions.map((item, index) => (
-              <AccordionItem key={item.q} value={`owner-${index}`} className="border border-white/10 bg-white/5">
+              <AccordionItem key={item.q} value={`owner-${index}`} className="border border-white/10 bg-card/60">
                 <AccordionTrigger className="px-4 text-left text-white">{item.q}</AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 text-sm text-white/80">{item.a}</AccordionContent>
               </AccordionItem>

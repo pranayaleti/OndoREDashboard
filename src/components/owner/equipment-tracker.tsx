@@ -131,7 +131,7 @@ export function EquipmentTracker({ propertyId }: EquipmentTrackerProps) {
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {atRisk.map((eq) => (
-                <div key={eq.id} className="bg-white border border-red-200 rounded px-3 py-1.5 text-sm">
+                <div key={eq.id} className="bg-card border border-red-200 rounded px-3 py-1.5 text-sm">
                   <span className="font-medium text-red-700">{eq.name}</span>
                   <span className="text-muted-foreground ml-2">{eq.category}</span>
                   <Badge className="ml-2 bg-red-100 text-red-700 text-xs">{eq.condition}</Badge>
@@ -189,7 +189,7 @@ export function EquipmentTracker({ propertyId }: EquipmentTrackerProps) {
                     </TableCell>
                     <TableCell className="text-sm capitalize">{eq.category}</TableCell>
                     <TableCell>
-                      <Badge className={conditionColors[eq.condition] ?? "bg-slate-100 text-slate-600"}>
+                      <Badge className={conditionColors[eq.condition] ?? "bg-muted text-slate-600"}>
                         {eq.condition}
                       </Badge>
                     </TableCell>

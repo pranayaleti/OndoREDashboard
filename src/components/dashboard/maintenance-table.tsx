@@ -177,7 +177,7 @@ const getStatusColor = (status: string) => {
     case "cancelled":
       return "bg-red-500"
     default:
-      return "bg-gray-500"
+      return "bg-muted"
   }
 }
 

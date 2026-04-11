@@ -185,7 +185,7 @@ function DocumentsPanelInner({ propertyId }: { propertyId: string }) {
           <div
             className={`flex min-h-[120px] items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
               dragOver
-                ? "border-orange-400 bg-orange-50/50"
+                ? "border-orange-400 bg-orange-500/10 dark:bg-orange-500/15"
                 : "border-border/60 bg-muted/20"
             }`}
             onDragOver={(e) => {

@@ -134,7 +134,7 @@ export default function OwnerTenants() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {tenants.map((tenant) => (
-                <Card key={tenant.id} className="bg-gray-900 border border-gray-700 hover:border-orange-500/80 transition-all">
+                <Card key={tenant.id} className="bg-card border border-gray-700 hover:border-orange-500/80 transition-all">
                 <CardContent className="pt-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg">

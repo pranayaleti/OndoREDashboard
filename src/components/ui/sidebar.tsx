@@ -55,7 +55,7 @@ export function Sidebar({
         {/* Backdrop */}
         {expanded && (
           <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-background/50 backdrop-blur-sm"
             onClick={() => setExpanded(false)}
             aria-hidden
           />
@@ -64,7 +64,7 @@ export function Sidebar({
         <aside
           className={cn(
             "fixed inset-y-0 left-0 z-50 flex w-72 flex-col transition-transform duration-300 ease-in-out",
-            "bg-[#1e293b] dark:bg-[#0f172a]",
+            "bg-card dark:bg-card",
             expanded ? "translate-x-0" : "-translate-x-full",
             className,
           )}
@@ -79,7 +79,7 @@ export function Sidebar({
     <aside
       className={cn(
         "h-screen sticky top-0 z-30 flex flex-col transition-all duration-300 ease-in-out",
-        "bg-[#1e293b] dark:bg-[#0f172a]",
+        "bg-card dark:bg-card",
         expanded ? "w-64" : "w-16",
         className,
       )}
@@ -147,7 +147,7 @@ export function SidebarTrigger() {
       variant="ghost"
       size="icon"
       onClick={toggleExpanded}
-      className="absolute top-4 -right-4 h-8 w-8 rounded-full border border-slate-700 dark:border-slate-800 shadow-md bg-slate-800 dark:bg-slate-950 hover:bg-slate-700 dark:hover:bg-slate-900 text-white z-10"
+      className="absolute top-4 -right-4 h-8 w-8 rounded-full border border-slate-700 dark:border-slate-800 shadow-md bg-muted dark:bg-background hover:bg-secondary dark:hover:bg-card text-white z-10"
     >
       {expanded ? <PanelLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
     </Button>
@@ -180,14 +180,14 @@ export function SidebarMenuButton({
             child.props.className,
             "flex w-full items-center rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors gap-3",
             isActive
-              ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
-              : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",
+              ? "bg-secondary/50 dark:bg-card/50 text-white font-semibold"
+              : "text-slate-300 dark:text-slate-400 hover:bg-secondary/30 dark:hover:bg-card/30 hover:text-white",
             expanded ? "justify-start" : "justify-center",
             className,
           ),
         })}
         {tooltip && !expanded && (
-          <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 rounded bg-slate-800 dark:bg-slate-950 px-2 py-1 text-xs text-white opacity-0 shadow-lg group-hover:opacity-100 z-50 whitespace-nowrap">
+          <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 rounded bg-muted dark:bg-background px-2 py-1 text-xs text-white opacity-0 shadow-lg group-hover:opacity-100 z-50 whitespace-nowrap">
             {tooltip}
           </div>
         )}
@@ -201,15 +201,15 @@ export function SidebarMenuButton({
       className={cn(
         "group relative flex w-full items-center rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors gap-3",
         isActive
-          ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
-          : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",
+          ? "bg-secondary/50 dark:bg-card/50 text-white font-semibold"
+          : "text-slate-300 dark:text-slate-400 hover:bg-secondary/30 dark:hover:bg-card/30 hover:text-white",
         expanded ? "justify-start" : "justify-center",
         className,
       )}
     >
       {children}
       {tooltip && !expanded && (
-        <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 rounded bg-slate-800 dark:bg-slate-950 px-2 py-1 text-xs text-white opacity-0 shadow-lg group-hover:opacity-100 z-50 whitespace-nowrap">
+        <div className="absolute left-full top-1/2 ml-4 -translate-y-1/2 rounded bg-muted dark:bg-background px-2 py-1 text-xs text-white opacity-0 shadow-lg group-hover:opacity-100 z-50 whitespace-nowrap">
           {tooltip}
         </div>
       )}

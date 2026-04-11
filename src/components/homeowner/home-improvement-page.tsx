@@ -34,7 +34,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 
 const STATUS_CLASS: Record<string, string> = {
-  planning: "bg-slate-100 text-slate-800",
+  planning: "bg-muted text-slate-800",
   scheduled: "bg-violet-100 text-violet-800",
   in_progress: "bg-blue-100 text-blue-800",
   completed: "bg-green-100 text-green-800",

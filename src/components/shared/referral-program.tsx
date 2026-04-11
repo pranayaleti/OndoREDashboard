@@ -573,7 +573,7 @@ export function ReferralProgram() {
                           entry.rank === 1
                             ? "bg-yellow-400 text-yellow-900"
                             : entry.rank === 2
-                            ? "bg-slate-300 text-slate-800"
+                            ? "bg-muted text-slate-800"
                             : entry.rank === 3
                             ? "bg-amber-600 text-amber-50"
                             : "bg-muted text-muted-foreground"
@@ -737,7 +737,7 @@ function StatusBadge({ status }: { status: ReferralHistoryItem["status"] }) {
     clicked: {
       label: t("referral.statusClicked"),
       className:
-        "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+        "bg-muted text-slate-700 dark:bg-card dark:text-slate-300",
     },
     signed_up: {
       label: t("referral.statusSignedUp"),

@@ -576,8 +576,8 @@ function SidebarLayout({
               className={cn(
                 "flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm lg:text-base font-medium transition-colors group",
                 location.pathname === `${basePath}/profile` || location.pathname.startsWith(`${basePath}/profile`)
-                  ? "bg-slate-700/50 dark:bg-slate-800/50 text-white font-semibold"
-                  : "text-slate-300 dark:text-slate-400 hover:bg-slate-700/30 dark:hover:bg-slate-800/30 hover:text-white",
+                  ? "bg-secondary/50 dark:bg-card/50 text-white font-semibold"
+                  : "text-slate-300 dark:text-slate-400 hover:bg-secondary/30 dark:hover:bg-card/30 hover:text-white",
                 expanded ? "justify-start" : "justify-center"
               )}
             >
@@ -586,7 +586,7 @@ function SidebarLayout({
                   src={user.profilePicture} 
                   alt={`${user.firstName} ${user.lastName}`} 
                 />
-                <AvatarFallback className="bg-slate-700 dark:bg-slate-800 text-white">{getInitials(user.firstName, user.lastName)}</AvatarFallback>
+                <AvatarFallback className="bg-secondary dark:bg-card text-white">{getInitials(user.firstName, user.lastName)}</AvatarFallback>
               </Avatar>
               {expanded && (
                 <div className="flex flex-col text-left leading-tight">
@@ -596,7 +596,7 @@ function SidebarLayout({
               )}
             </Link>
             {!expanded && (
-              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-2 rounded-md bg-slate-800 dark:bg-slate-950 text-white text-xs shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-2 rounded-md bg-muted dark:bg-background text-white text-xs shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 <div className="font-semibold">{user.firstName} {user.lastName}</div>
                 <div className="text-slate-400 capitalize">{user.role.replace("_", " ")}</div>
               </div>
@@ -607,7 +607,7 @@ function SidebarLayout({
               <Button
                 variant="ghost"
                 className={cn(
-                  "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
+                  "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30",
                   expanded ? "justify-start w-full" : "justify-center w-full"
                 )}
               >
@@ -658,7 +658,7 @@ function SidebarLayout({
             <Link
               to="/contact"
               className={cn(
-                "flex items-center gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30 rounded-md px-3 py-2 transition-colors group",
+                "flex items-center gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30 rounded-md px-3 py-2 transition-colors group",
                 expanded ? "justify-start w-full" : "justify-center w-full"
               )}
             >
@@ -666,7 +666,7 @@ function SidebarLayout({
               {expanded && <span>Need help? Contact support</span>}
             </Link>
             {!expanded && (
-              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-2 rounded-md bg-slate-800 dark:bg-slate-950 text-white text-xs shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-2 rounded-md bg-muted dark:bg-background text-white text-xs shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 Need help? Contact support
               </div>
             )}
@@ -675,7 +675,7 @@ function SidebarLayout({
             variant="ghost"
             onClick={logout}
             className={cn(
-              "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-slate-700/30 dark:hover:bg-slate-800/30",
+              "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30",
               expanded ? "justify-start w-full" : "justify-center w-full"
             )}
           >
@@ -685,17 +685,17 @@ function SidebarLayout({
         </SidebarFooter>
       </Sidebar>
       
-      <main className="relative flex-1 overflow-auto bg-stone-50 dark:bg-zinc-950">
+      <main className="relative flex-1 overflow-auto bg-background dark:bg-background">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.07),transparent_55%)] dark:bg-[radial-gradient(ellipse_100%_60%_at_50%_-15%,rgba(234,88,12,0.12),transparent_55%)]"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-stone-100/80 to-stone-100 dark:from-transparent dark:via-zinc-950/40 dark:to-zinc-950"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-muted/80 to-muted dark:from-transparent dark:via-background/40 dark:to-background"
           aria-hidden
         />
         <div className="relative z-[1] min-h-full">
-          <div className="sticky top-0 z-20 border-b border-stone-200/80 bg-stone-50/90 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
+          <div className="sticky top-0 z-20 border-b border-stone-200/80 bg-background/90 backdrop-blur dark:border-zinc-800 dark:bg-background/90">
             <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
               <div className="flex min-w-0 items-center gap-3">
                 {isMobile ? (

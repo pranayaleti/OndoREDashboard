@@ -69,7 +69,7 @@ export default function SuperAdminCalendar() {
       case "security":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -186,7 +186,7 @@ export default function SuperAdminCalendar() {
                 {upcomingEvents.map((event) => (
                   <div
                     key={String(event.id)}
-                    className="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                    className="flex items-center gap-3 p-2 border rounded-lg hover:bg-muted dark:hover:bg-card cursor-pointer"
                     onClick={() => setSelectedDate(new Date(event.date))}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {

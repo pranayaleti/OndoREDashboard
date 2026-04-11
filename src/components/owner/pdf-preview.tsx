@@ -115,7 +115,7 @@ export default function PDFPreview() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header with actions */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 shadow-sm">
+      <div className="bg-card dark:bg-card border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -142,7 +142,7 @@ export default function PDFPreview() {
 
       {/* PDF Preview Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-card rounded-lg shadow-lg overflow-hidden">
           {htmlContent && (
             <iframe
               ref={iframeRef}

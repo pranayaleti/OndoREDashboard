@@ -156,7 +156,7 @@ export function ManagerOnboardingChecklist() {
           {remainingItems.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col gap-3 rounded-2xl border border-white/70 bg-white/80 p-4 dark:border-zinc-800 dark:bg-zinc-950/60 lg:flex-row lg:items-center lg:justify-between"
+              className="flex flex-col gap-3 rounded-2xl border border-white/70 bg-card/80 p-4 dark:border-zinc-800 dark:bg-background/60 lg:flex-row lg:items-center lg:justify-between"
             >
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{item.title}</p>

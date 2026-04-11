@@ -154,7 +154,7 @@ export function PortalOnboardingTour({ role, basePath }: PortalOnboardingTourPro
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[120]">
-      <div className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px]" />
+      <div className="absolute inset-0 bg-background/35 backdrop-blur-[1px]" />
 
       {highlightRect ? (
         <div
@@ -169,7 +169,7 @@ export function PortalOnboardingTour({ role, basePath }: PortalOnboardingTourPro
       ) : null}
 
       <div className="pointer-events-auto absolute bottom-6 right-6 w-[min(92vw,28rem)]">
-        <Card className="border-orange-200 bg-white/95 shadow-2xl backdrop-blur dark:border-orange-500/20 dark:bg-slate-950/95">
+        <Card className="border-orange-200 bg-card/95 shadow-2xl backdrop-blur dark:border-orange-500/20 dark:bg-background/95">
           <CardHeader className="space-y-3 pb-3">
             <div className="text-xs font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-300">
               {t("common:tour.step", { current: stepIndex + 1, total: steps.length })}

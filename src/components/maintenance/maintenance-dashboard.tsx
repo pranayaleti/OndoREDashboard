@@ -41,7 +41,7 @@ export default function MaintenanceDashboard() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -54,14 +54,14 @@ export default function MaintenanceDashboard() {
       case "pending":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b">
+      <div className="bg-card dark:bg-card border-b">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -83,7 +83,7 @@ export default function MaintenanceDashboard() {
       </div>
 
       {/* Navigation */}
-      <div className="bg-white dark:bg-gray-800 border-b">
+      <div className="bg-card dark:bg-card border-b">
         <div className="container mx-auto px-4">
           <MaintenanceNav items={navItems} activeTab={activeTab} />
         </div>

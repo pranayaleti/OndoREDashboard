@@ -47,7 +47,7 @@ export function SiteVisitProposer({ leadId, propertyId, leadEmail, onSuccess, on
   }
 
   return (
-    <div className="mt-3 p-4 border rounded-lg bg-gray-50 space-y-3">
+    <div className="mt-3 p-4 border rounded-lg bg-muted space-y-3">
       <h4 className="text-sm font-medium">Propose Visit Times</h4>
       {slots.map((slot, i) => (
         <div key={i} className="flex gap-2 items-center">

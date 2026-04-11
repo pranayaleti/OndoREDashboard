@@ -215,7 +215,7 @@ export default function OwnerDashboard() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -403,7 +403,7 @@ export default function OwnerDashboard() {
                       <span className="text-sm font-medium">Total Revenue</span>
                       <span className="text-lg font-bold">${portfolioStats.monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
                     </div>
                   </div>
@@ -414,7 +414,7 @@ export default function OwnerDashboard() {
                       <span className="text-sm font-medium">Expenses</span>
                       <span className="text-lg font-bold">${portfolioStats.monthlyExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                       <div className="bg-red-500 h-2 rounded-full" style={{ width: `${Math.min((portfolioStats.monthlyExpenses / Math.max(portfolioStats.monthlyRevenue, 1)) * 100, 100)}%` }}></div>
                     </div>
                   </div>
@@ -464,7 +464,7 @@ export default function OwnerDashboard() {
                   <span className="text-sm font-medium">Overall Occupancy</span>
                   <span className="text-lg font-bold">{Math.round(portfolioStats.occupancyRate)}%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                   <div
                     className="bg-orange-500 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${portfolioStats.occupancyRate}%` }}

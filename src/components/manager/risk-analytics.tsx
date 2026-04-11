@@ -60,7 +60,7 @@ interface RecommendationCardProps {
 
 function RecommendationCard({ rec, onApprove, onDismiss, loading }: RecommendationCardProps) {
   return (
-    <div className="flex items-start gap-3 p-3 rounded-lg border bg-white dark:bg-gray-900 shadow-sm">
+    <div className="flex items-start gap-3 p-3 rounded-lg border bg-card dark:bg-card shadow-sm">
       <Brain className="h-5 w-5 mt-0.5 text-orange-500 shrink-0" />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -90,7 +90,7 @@ function RecommendationCard({ rec, onApprove, onDismiss, loading }: Recommendati
         <Button
           size="icon"
           variant="ghost"
-          className="h-7 w-7 text-gray-400 hover:bg-gray-100"
+          className="h-7 w-7 text-gray-400 hover:bg-muted"
           onClick={() => onDismiss(rec.id)}
           disabled={loading}
           title="Dismiss"

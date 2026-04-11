@@ -41,7 +41,7 @@ export function ScoreBreakdownTooltip({ score, breakdown, children }: ScoreBreak
               <div key={key} className="flex items-center justify-between text-xs">
                 <span className="text-slate-500">{checkLabels[key] ?? key}</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
                         val.earned === val.max

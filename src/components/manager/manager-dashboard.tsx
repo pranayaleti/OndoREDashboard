@@ -495,7 +495,7 @@ export default function ManagerDashboard() {
                 {pendingProperties.slice(0, 5).map((property) => (
                   <div 
                     key={property.id} 
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 border rounded-lg cursor-pointer hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/50 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 gap-3"
+                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 border rounded-lg cursor-pointer hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-black/50 transition-all hover:bg-muted dark:hover:bg-card/50 gap-3"
                     onClick={() => handleViewProperty(property)}
                   >
                     <div className="flex items-center space-x-3 md:space-x-4 flex-1 min-w-0">
@@ -1006,7 +1006,7 @@ export default function ManagerDashboard() {
               ) : leads.length > 0 ? (
                 <div className="space-y-4">
                   {leads.map((lead) => (
-                    <div key={lead.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={lead.id} className="bg-card dark:bg-card border border-gray-200 dark:border-gray-700 rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow">
                       {/* Header - Compact */}
                       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
                         <div className="flex-1 min-w-0">
@@ -1027,7 +1027,7 @@ export default function ManagerDashboard() {
                       </div>
                       
                       {/* Property Information - Compact */}
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-md p-3 mb-3">
+                      <div className="bg-muted dark:bg-card rounded-md p-3 mb-3">
                         <div className="flex items-center gap-2 mb-1">
                           <Building className="h-4 w-4 text-gray-500" />
                           <span className="font-medium text-gray-900 dark:text-gray-100">{lead.propertyTitle}</span>

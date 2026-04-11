@@ -196,7 +196,7 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
                     ${portfolioStats.monthlyRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                   <div className="bg-green-500 h-2 rounded-full" style={{ width: '100%' }}></div>
                 </div>
               </div>
@@ -207,7 +207,7 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
                     ${portfolioStats.monthlyExpenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-muted dark:bg-secondary rounded-full h-2">
                   <div className="bg-red-500 h-2 rounded-full" style={{ width: `${(portfolioStats.monthlyExpenses / portfolioStats.monthlyRevenue) * 100}%` }}></div>
                 </div>
               </div>

@@ -41,7 +41,7 @@ export default function FreeTrialPage() {
   }
 
   return (
-    <main className="bg-slate-950 px-4 py-16 text-white">
+    <main className="bg-background px-4 py-16 text-white">
       <div className="container mx-auto grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">
           <p className="text-xs uppercase tracking-[0.4em] text-orange-300">Free trial</p>
@@ -49,7 +49,7 @@ export default function FreeTrialPage() {
           <p className="text-lg text-white/70">
             We’ll configure roles, data seeding, and onboarding checklists so you can invite owners + tenants, run screening, and collect rent inside your trial. No credit card required.
           </p>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="rounded-2xl border border-white/10 bg-card/60 p-6">
             <h2 className="text-2xl font-semibold">What's included</h2>
             <ul className="mt-4 space-y-2 text-white/80 text-sm">
               <li>✔️ 14-day access to every module</li>
@@ -62,7 +62,7 @@ export default function FreeTrialPage() {
             Need a custom security review or paper? Email us at {companyInfo.email}.
           </p>
         </div>
-        <Card className="border-white/10 bg-white/5">
+        <Card className="border-white/10 bg-card/60">
           <CardHeader>
             <CardTitle className="text-white">Tell us about your portfolio</CardTitle>
             <CardDescription className="text-white/70">We use this to tailor workflows + data.</CardDescription>
@@ -77,7 +77,7 @@ export default function FreeTrialPage() {
                   value={form.name}
                   onChange={handleChange("name")}
                   required
-                  className="border-white/20 bg-slate-900 text-white"
+                  className="border-white/20 bg-card text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -89,7 +89,7 @@ export default function FreeTrialPage() {
                   value={form.email}
                   onChange={handleChange("email")}
                   required
-                  className="border-white/20 bg-slate-900 text-white"
+                  className="border-white/20 bg-card text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -100,7 +100,7 @@ export default function FreeTrialPage() {
                   value={form.portfolioSize}
                   onChange={handleChange("portfolioSize")}
                   required
-                  className="border-white/20 bg-slate-900 text-white"
+                  className="border-white/20 bg-card text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -111,7 +111,7 @@ export default function FreeTrialPage() {
                   value={form.role}
                   onChange={handleChange("role")}
                   required
-                  className="border-white/20 bg-slate-900 text-white"
+                  className="border-white/20 bg-card text-white"
                 />
               </div>
               <div className="space-y-2">
@@ -122,7 +122,7 @@ export default function FreeTrialPage() {
                   value={form.goals}
                   onChange={(event) => handleChange("goals")(event)}
                   required
-                  className="min-h-[120px] border-white/20 bg-slate-900 text-white"
+                  className="min-h-[120px] border-white/20 bg-card text-white"
                 />
               </div>
               <Button type="submit" className="w-full bg-orange-500 text-black hover:bg-orange-400">

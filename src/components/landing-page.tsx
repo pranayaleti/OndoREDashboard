@@ -157,9 +157,9 @@ const testimonials = [
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col bg-slate-950 text-white">
+    <div className="flex flex-col bg-background text-white">
       <section id="product" className="relative overflow-hidden px-4 py-20 sm:py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/0 via-slate-900/70 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-b from-card/0 via-card/70 to-background" />
         <div className="container relative z-10 mx-auto grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-wide text-white/80">
@@ -175,7 +175,7 @@ export default function LandingPage() {
               <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
                 <Link to="/free-trial">Start free trial</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
+              <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-card/75">
                 <Link to="/register">Owner sign up</Link>
               </Button>
               <Button asChild size="lg" variant="ghost" className="text-white/70 hover:text-white">
@@ -191,7 +191,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <Card className="border-white/10 bg-white/5 backdrop-blur">
+          <Card className="border-white/10 bg-card/60 backdrop-blur">
             <CardHeader>
               <CardTitle className="text-white">Unified owner & tenant portal</CardTitle>
               <CardDescription className="text-white/70">
@@ -225,7 +225,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-16" id="features">
+      <section className="bg-card px-4 py-16" id="features">
         <div className="container mx-auto space-y-10">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400">Feature deep dive</p>
@@ -234,9 +234,9 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {featureHighlights.map((feature) => (
-              <Card key={feature.title} className="border-white/10 bg-white/5">
+              <Card key={feature.title} className="border-white/10 bg-card/60">
                 <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="rounded-full bg-white/10 p-3">
+                  <div className="rounded-full bg-card/75 p-3">
                     <feature.icon className="h-6 w-6 text-orange-300" />
                   </div>
                   <div>
@@ -250,7 +250,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-16" id="property-management">
+      <section className="bg-background px-4 py-16" id="property-management">
         <div className="container mx-auto space-y-10">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400">Utah property management</p>
@@ -261,9 +261,9 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {propertyManagementServices.map((service) => (
-              <Card key={service.title} className="border-white/10 bg-white/5">
+              <Card key={service.title} className="border-white/10 bg-card/60">
                 <CardHeader className="text-center">
-                  <div className="mx-auto mb-2 rounded-full bg-white/10 p-3 w-fit">
+                  <div className="mx-auto mb-2 rounded-full bg-card/75 p-3 w-fit">
                     <service.icon className="h-6 w-6 text-orange-300" />
                   </div>
                   <CardTitle className="text-lg text-white">{service.title}</CardTitle>
@@ -289,7 +289,7 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-            <Card className="border-white/10 bg-white/5">
+            <Card className="border-white/10 bg-card/60">
               <CardHeader>
                 <CardTitle className="text-white">Ready to simplify property management?</CardTitle>
                 <CardDescription className="text-white/70">
@@ -306,10 +306,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-16" id="workflows">
+      <section className="bg-card px-4 py-16" id="workflows">
         <div className="container mx-auto grid gap-8 lg:grid-cols-2">
           {workflowTracks.map((track) => (
-            <Card key={track.title} className="border-white/10 bg-white/5">
+            <Card key={track.title} className="border-white/10 bg-card/60">
               <CardHeader>
                 <CardTitle className="text-white">{track.title}</CardTitle>
                 <CardDescription className="text-white/70">{track.description}</CardDescription>
@@ -331,7 +331,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-16" id="modules">
+      <section className="bg-card px-4 py-16" id="modules">
         <div className="container mx-auto">
           <div className="flex flex-col gap-4 text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Micro-feature architecture</p>
@@ -340,7 +340,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {moduleCards.map((module) => (
-              <Card key={module.title} className="border-white/10 bg-white/5">
+              <Card key={module.title} className="border-white/10 bg-card/60">
                 <CardHeader>
                   <CardTitle className="text-white">{module.title}</CardTitle>
                   <CardDescription className="text-orange-300">{module.tag}</CardDescription>
@@ -354,16 +354,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-950 px-4 py-16">
+      <section className="bg-background px-4 py-16">
         <div className="container mx-auto grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <Card className="border-white/10 bg-white/5">
+          <Card className="border-white/10 bg-card/60">
             <CardHeader>
               <CardTitle className="text-white">Why operators switch to {companyInfo.name}</CardTitle>
               <CardDescription className="text-white/70">Purpose-built for lean teams running 1–20 units (and scaling).</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {testimonials.map((testimonial) => (
-                <blockquote key={testimonial.author} className="rounded-xl bg-white/5 p-5 text-white/80">
+                <blockquote key={testimonial.author} className="rounded-xl bg-card/60 p-5 text-white/80">
                   “{testimonial.quote}”
                   <footer className="mt-3 text-sm text-white/60">
                     {testimonial.author} · {testimonial.role}
@@ -379,7 +379,7 @@ export default function LandingPage() {
               ctaLabel="Book screening prep"
               ctaHref={companyInfo.calendlyUrl}
             />
-            <Card className="border-white/10 bg-slate-900">
+            <Card className="border-white/10 bg-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <Building2 className="h-5 w-5" /> Pricing snapshot
@@ -402,7 +402,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-slate-900 px-4 py-16" id="cta">
+      <section className="bg-card px-4 py-16" id="cta">
         <div className="container mx-auto text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Ready when you are</p>
           <h2 className="mt-4 text-3xl font-semibold text-white">Launch Ondo Property Management in under a week</h2>
@@ -413,7 +413,7 @@ export default function LandingPage() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-card/75">
               <Link to="/contact">Talk to our team — we're your first point of contact</Link>
             </Button>
           </div>

@@ -312,7 +312,7 @@ export default function LoginPage() {
       }
     >
       <div className="space-y-4">
-        <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <section className="rounded-2xl border border-white/10 bg-card/60 p-4">
           <p className="text-xs uppercase tracking-[0.3em] text-orange-300">{t('login.stepOne')}</p>
           <h2 className="mt-2 text-xl font-semibold text-white">{t('login.roleSelectorLabel')}</h2>
           <p className="mt-2 text-sm text-white/70">{t('login.roleSelectorIntro')}</p>
@@ -326,11 +326,11 @@ export default function LoginPage() {
                 className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${
                   selectedRole === option.role
                     ? "border-orange-400/70 bg-orange-500/15 text-white"
-                    : "border-white/10 bg-slate-900/80 text-white/75 hover:border-white/20 hover:text-white"
+                    : "border-white/10 bg-card/80 text-white/75 hover:border-white/20 hover:text-white"
                 }`}
                 onClick={() => handleRoleSelect(option.role)}
               >
-                <span className={`rounded-xl p-2 ${selectedRole === option.role ? "bg-orange-500/15 text-orange-200" : "bg-white/5 text-white/70"}`}>
+                <span className={`rounded-xl p-2 ${selectedRole === option.role ? "bg-orange-500/15 text-orange-200" : "bg-card/60 text-white/70"}`}>
                   {option.icon}
                 </span>
                 <span>{option.label}</span>
@@ -340,7 +340,7 @@ export default function LoginPage() {
           <p className="mt-4 text-sm text-white/70">{selectedRoleHint}</p>
         </section>
 
-        <section ref={credentialStepRef} className="rounded-2xl border border-white/10 bg-slate-950/55 p-4">
+        <section ref={credentialStepRef} className="rounded-2xl border border-white/10 bg-background/55 p-4">
           <div className="mb-5 flex items-start gap-3">
             <span className="rounded-2xl bg-orange-500/10 p-3 text-orange-300">
               {selectedRoleConfig.icon}
@@ -377,7 +377,7 @@ export default function LoginPage() {
                 }}
                 aria-invalid={!!emailErrorMessage}
                 aria-describedby={emailErrorMessage ? "email-error" : undefined}
-                className="rounded-xl border-white/15 bg-slate-900 text-white"
+                className="rounded-xl border-white/15 bg-card text-white"
               />
               {emailErrorMessage && (
                 <p id="email-error" role="alert" className="text-xs text-red-400">{emailErrorMessage}</p>
@@ -407,13 +407,13 @@ export default function LoginPage() {
                   }}
                   aria-invalid={!!passwordErrorMessage}
                   aria-describedby={passwordErrorMessage ? "password-error" : undefined}
-                  className="rounded-xl border-white/15 bg-slate-900 pr-11 text-white"
+                  className="rounded-xl border-white/15 bg-card pr-11 text-white"
                 />
                 <button
                   type="button"
                   aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
                   title={showPassword ? t('login.hidePassword') : t('login.showPassword')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/5 p-2 text-white/75 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/60 p-2 text-white/75 transition hover:bg-card/75 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOffIcon aria-hidden="true" className="h-4 w-4" /> : <EyeIcon aria-hidden="true" className="h-4 w-4" />}
@@ -424,7 +424,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-card/50 px-3 py-3">
               <label htmlFor="remember-me" className="flex items-center gap-3 text-sm text-white/80">
                 <Checkbox
                   id="remember-me"
@@ -460,14 +460,14 @@ export default function LoginPage() {
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                className="h-11 rounded-xl border-white/15 bg-card/60 text-white hover:bg-card/75 hover:text-white"
               >
                 <Link to="/register">{t('login.ownerSignup')}</Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
-                className="h-11 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+                className="h-11 rounded-xl border-white/15 bg-card/60 text-white hover:bg-card/75 hover:text-white"
               >
                 <Link to="/contact">{t('login.contactSupport')}</Link>
               </Button>
@@ -485,7 +485,7 @@ export default function LoginPage() {
         </div>
 
         {ENABLE_PUBLIC_DEMO && DEMO_PASSWORD && (
-          <div className="rounded-2xl border border-white/15 bg-white/5 p-4 text-sm text-white/80">
+          <div className="rounded-2xl border border-white/15 bg-card/60 p-4 text-sm text-white/80">
             <button
               type="button"
               className="flex w-full items-center justify-between text-left font-semibold text-white"
@@ -557,12 +557,12 @@ function CredentialButton({
       className={`flex w-full flex-col rounded-2xl border px-4 py-3 text-left text-xs text-white/80 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${
         selected
           ? "border-orange-400/70 bg-orange-500/10"
-          : "border-white/10 bg-slate-900 hover:border-orange-400"
+          : "border-white/10 bg-card hover:border-orange-400"
       }`}
     >
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-semibold text-white">{label}</span>
-        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
+        <span className="rounded-full border border-white/10 bg-card/60 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
           {badgeLabel}
         </span>
       </div>

@@ -158,9 +158,9 @@ export default function ManagerLeads() {
       case "converted":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
       case "closed":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -231,7 +231,7 @@ export default function ManagerLeads() {
             return (
             <Card
               key={lead.id}
-              className="hover:shadow-md transition-shadow cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              className="hover:shadow-md transition-shadow cursor-pointer hover:bg-muted dark:hover:bg-card/50"
               onClick={() => setSelectedLead(lead)}
             >
               <CardContent className="pt-6">
@@ -264,7 +264,7 @@ export default function ManagerLeads() {
                 </div>
 
                 {/* Property Information */}
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
+                <div className="bg-muted dark:bg-card rounded-lg p-4 mb-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Building className="h-5 w-5 text-gray-500" />
                     <span className="font-medium text-gray-900 dark:text-gray-100">

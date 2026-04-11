@@ -57,7 +57,7 @@ function App() {
   const shouldHideChrome = HIDE_CHROME_PREFIXES.some(route => location.pathname.startsWith(route))
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <AuthProvider>
         <div className="min-h-screen flex flex-col">
           <a

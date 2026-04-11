@@ -135,17 +135,17 @@ export function BookkeepingReportingWidget({
   taxPackageCardHref,
 }: BookkeepingReportingProps) {
   const transactionsPanelClass = cn(
-    "rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur",
-    transactionsHref && "transition-colors hover:bg-white/10 hover:border-white/20 focus-within:ring-2 focus-within:ring-emerald-300/50"
+    "rounded-2xl border border-white/10 bg-card/60 p-5 backdrop-blur",
+    transactionsHref && "transition-colors hover:bg-card/75 hover:border-white/20 focus-within:ring-2 focus-within:ring-emerald-300/50"
   )
 
   const cashFlowPanelClass = cn(
-    "rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur",
-    cashFlowHref && "transition-colors hover:bg-white/10 hover:border-white/20 focus-within:ring-2 focus-within:ring-emerald-300/50"
+    "rounded-2xl border border-white/10 bg-card/60 p-5 backdrop-blur",
+    cashFlowHref && "transition-colors hover:bg-card/75 hover:border-white/20 focus-within:ring-2 focus-within:ring-emerald-300/50"
   )
 
   const taxCardClass =
-    "sm:col-span-2 rounded-2xl border border-white/10 bg-white text-slate-900 p-6 shadow-xl"
+    "sm:col-span-2 rounded-2xl border border-white/10 bg-card text-card-foreground p-6 shadow-xl"
 
   const taxCardBody = (
     <>
@@ -166,7 +166,7 @@ export function BookkeepingReportingWidget({
           <p className="font-medium">{taxSummary.properties}</p>
         </div>
       </div>
-      <div className="mt-4 space-y-2 rounded-2xl bg-slate-100 p-4 text-sm">
+      <div className="mt-4 space-y-2 rounded-2xl bg-muted p-4 text-sm">
         <div className="flex items-center justify-between">
           <span>Categorized Transactions</span>
           <strong>{taxSummary.categorized}</strong>
@@ -180,7 +180,7 @@ export function BookkeepingReportingWidget({
           <strong>{taxSummary.attachments}</strong>
         </div>
       </div>
-      <span className="mt-4 flex h-10 w-full items-center justify-center rounded-md bg-slate-900 text-sm font-medium text-white">
+      <span className="mt-4 flex h-10 w-full items-center justify-center rounded-md bg-card text-sm font-medium text-white">
         {taxSummary.ctaLabel || "Download"}
       </span>
     </>
@@ -189,7 +189,7 @@ export function BookkeepingReportingWidget({
   return (
     <Card
       className={cn(
-        "overflow-hidden border-0 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 text-white shadow-2xl",
+        "overflow-hidden border-0 bg-gradient-to-br from-card via-card to-muted text-white shadow-2xl",
         className
       )}
     >
@@ -200,7 +200,7 @@ export function BookkeepingReportingWidget({
             <h3 className="text-3xl font-semibold leading-tight">{title}</h3>
             <p className="mt-3 text-base text-slate-200/90">{subtitle}</p>
           </div>
-          <Button asChild variant="secondary" className="bg-white text-slate-900 hover:bg-slate-100">
+          <Button asChild variant="secondary" className="bg-card text-card-foreground hover:bg-muted">
             <SmartLink href={ctaHref} className="inline-flex items-center gap-2">
               {ctaLabel}
               <ArrowRight className="h-4 w-4" />
@@ -225,7 +225,7 @@ export function BookkeepingReportingWidget({
                   <SmartLink
                     key={feature.label}
                     href={feature.href}
-                    className="flex items-start gap-3 rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60"
+                    className="flex items-start gap-3 rounded-xl bg-card/60 p-4 transition-colors hover:bg-card/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60"
                     aria-label={`${feature.label} — open`}
                   >
                     {inner}
@@ -234,7 +234,7 @@ export function BookkeepingReportingWidget({
               }
 
               return (
-                <div key={feature.label} className="flex items-start gap-3 rounded-xl bg-white/5 p-4">
+                <div key={feature.label} className="flex items-start gap-3 rounded-xl bg-card/60 p-4">
                   {inner}
                 </div>
               )
@@ -309,7 +309,7 @@ export function BookkeepingReportingWidget({
                   const barHeight = heights[idx % heights.length]
                   return (
                     <div key={month} className="flex-1">
-                      <div className="flex h-24 items-end rounded-full bg-white/10">
+                      <div className="flex h-24 items-end rounded-full bg-card/75">
                         <div
                           className="w-full rounded-full bg-emerald-300/80"
                           style={{ height: `${barHeight}%` }}
@@ -341,7 +341,7 @@ export function BookkeepingReportingWidget({
                   const barHeight = heights[idx % heights.length]
                   return (
                     <div key={month} className="flex-1">
-                      <div className="flex h-24 items-end rounded-full bg-white/10">
+                      <div className="flex h-24 items-end rounded-full bg-card/75">
                         <div
                           className="w-full rounded-full bg-emerald-300/80"
                           style={{ height: `${barHeight}%` }}
@@ -382,7 +382,7 @@ export function BookkeepingReportingWidget({
                   <p className="font-medium">{taxSummary.properties}</p>
                 </div>
               </div>
-              <div className="mt-4 space-y-2 rounded-2xl bg-slate-100 p-4 text-sm">
+              <div className="mt-4 space-y-2 rounded-2xl bg-muted p-4 text-sm">
                 <div className="flex items-center justify-between">
                   <span>Categorized Transactions</span>
                   <strong>{taxSummary.categorized}</strong>
@@ -399,7 +399,7 @@ export function BookkeepingReportingWidget({
               <Button
                 asChild
                 variant="secondary"
-                className="mt-4 w-full bg-slate-900 text-white hover:bg-slate-800"
+                className="mt-4 w-full bg-card text-white hover:bg-muted"
               >
                 <SmartLink href={taxSummary.ctaHref || "#"}>{taxSummary.ctaLabel || "Download"}</SmartLink>
               </Button>

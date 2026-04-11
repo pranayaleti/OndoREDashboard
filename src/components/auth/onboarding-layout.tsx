@@ -13,14 +13,14 @@ interface OnboardingLayoutProps {
 
 export function OnboardingLayout({ title, subtitle, hero, sidebar, children, className, compact = false }: OnboardingLayoutProps) {
   return (
-    <div className={cn("relative min-h-screen overflow-hidden bg-slate-950 px-4 py-10 text-white", className)}>
-      <div className="pointer-events-none absolute inset-0 bg-slate-950" />
+    <div className={cn("relative min-h-screen overflow-hidden bg-background px-4 py-10 text-white", className)}>
+      <div className="pointer-events-none absolute inset-0 bg-background" />
       <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-orange-500/15 blur-3xl" />
       <div className="pointer-events-none absolute right-0 top-1/3 h-80 w-80 rounded-full bg-red-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/[0.03] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-card/30 to-transparent" />
       {compact ? (
         <div className="relative mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-md items-center justify-center">
-          <div className="w-full space-y-6 rounded-3xl border border-white/10 bg-slate-950/70 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+          <div className="w-full space-y-6 rounded-3xl border border-white/10 bg-background/70 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
             <div className="space-y-3 text-center">
               <h1 className="text-3xl font-semibold leading-tight sm:text-4xl">{title}</h1>
               {subtitle ? <p className="text-sm text-white/70 sm:text-base">{subtitle}</p> : null}
@@ -38,7 +38,7 @@ export function OnboardingLayout({ title, subtitle, hero, sidebar, children, cla
             {hero}
             {sidebar}
           </div>
-          <div className="rounded-3xl border border-white/10 bg-slate-950/60 p-6 shadow-2xl backdrop-blur-xl">
+          <div className="rounded-3xl border border-white/10 bg-background/60 p-6 shadow-2xl backdrop-blur-xl">
             {children}
           </div>
         </div>

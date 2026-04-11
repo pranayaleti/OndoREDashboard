@@ -83,7 +83,7 @@ export function LanguageSwitcher({ variant = 'header', className }: LanguageSwit
           variant="ghost"
           size="sm"
           className={cn(
-            'gap-1.5 text-white hover:bg-gray-800 dark:hover:bg-gray-900 shrink-0',
+            'gap-1.5 text-white hover:bg-muted dark:hover:bg-card shrink-0',
             className
           )}
           aria-label="Change language"

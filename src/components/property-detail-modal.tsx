@@ -73,7 +73,7 @@ export function PropertyDetailModal({
         <div className="mt-4">
           {/* Image Slider */}
           {hasImages ? (
-            <div className="relative h-[300px] md:h-[400px] mb-6 rounded-lg overflow-hidden bg-gray-100">
+            <div className="relative h-[300px] md:h-[400px] mb-6 rounded-lg overflow-hidden bg-muted">
               <img
                 src={property.photos?.[currentImageIndex]?.url || `${import.meta.env.BASE_URL}placeholder.svg`}
                 alt={`${property.title} - Image ${currentImageIndex + 1}`}
@@ -86,7 +86,7 @@ export function PropertyDetailModal({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 rounded-full h-10 w-10"
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-background/30 text-white hover:bg-background/50 rounded-full h-10 w-10"
                     onClick={prevImage}
                   >
                     <ChevronLeft className="h-6 w-6" />
@@ -95,26 +95,26 @@ export function PropertyDetailModal({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 rounded-full h-10 w-10"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-background/30 text-white hover:bg-background/50 rounded-full h-10 w-10"
                     onClick={nextImage}
                   >
                     <ChevronRight className="h-6 w-6" />
                   </Button>
                   {/* Image Counter */}
-                  <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                  <div className="absolute bottom-4 right-4 bg-background/50 text-white px-3 py-1 rounded-full text-sm">
                     {currentImageIndex + 1} / {property.photos?.length || 0}
                   </div>
                 </>
               )}
               {/* Caption */}
               {property.photos?.[currentImageIndex]?.caption && (
-                <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-md text-sm max-w-xs">
+                <div className="absolute bottom-4 left-4 bg-background/50 text-white px-3 py-1 rounded-md text-sm max-w-xs">
                   {property.photos?.[currentImageIndex]?.caption}
                 </div>
               )}
             </div>
           ) : (
-            <div className="h-[300px] md:h-[400px] mb-6 rounded-lg bg-gray-100 flex items-center justify-center">
+            <div className="h-[300px] md:h-[400px] mb-6 rounded-lg bg-muted flex items-center justify-center">
               <div className="text-center text-gray-500">
                 <Building className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p>No images available</p>
@@ -256,7 +256,7 @@ export function PropertyDetailModal({
               </div>
               {/* Description */}
               {property.description && (
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+                <div className="bg-card dark:bg-card p-6 rounded-lg border">
                   <h4 className="text-lg font-semibold mb-3 flex items-center">
                     <FileText className="h-5 w-5 mr-2 text-gray-500" />
                     Description
@@ -268,7 +268,7 @@ export function PropertyDetailModal({
               )}
               {/* Property Categories */}
               {((property.specialties?.length ?? 0) > 0 || (property.services?.length ?? 0) > 0 || (property.valueRanges?.length ?? 0) > 0) && (
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+                <div className="bg-card dark:bg-card p-6 rounded-lg border">
                   <h4 className="text-lg font-semibold mb-4">Property Categories</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {property.specialties && property.specialties.length > 0 && (
@@ -323,7 +323,7 @@ export function PropertyDetailModal({
               )}
               {/* Lease Information */}
               {(property.leaseTerms || property.fees || property.availability) && (
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+                <div className="bg-card dark:bg-card p-6 rounded-lg border">
                   <h4 className="text-lg font-semibold mb-4">Lease Information</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {property.availability && (
@@ -360,7 +360,7 @@ export function PropertyDetailModal({
               )}
               {/* Contact Information */}
               {property.phone && (
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border">
+                <div className="bg-card dark:bg-card p-6 rounded-lg border">
                   <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
                   <div className="flex flex-wrap gap-6">
                     <div className="flex items-center">
@@ -391,7 +391,7 @@ export function PropertyDetailModal({
               <div className="space-y-4">
                 <h4 className="text-lg font-semibold">Location Details</h4>
                 
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                <div className="bg-muted dark:bg-card p-4 rounded-lg">
                   <div className="space-y-2">
                     <p><strong>Address:</strong> {property.addressLine1}</p>
                     {property.addressLine2 && <p><strong>Address Line 2:</strong> {property.addressLine2}</p>}
@@ -442,7 +442,7 @@ export function PropertyDetailModal({
                       };
                       
                       return (
-                        <div key={index} className="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={index} className="flex items-center p-3 bg-muted dark:bg-card rounded-lg">
                           <Check className="h-4 w-4 mr-3 text-green-500" />
                           <span>{amenityLabels[amenityKey] || amenityKey}</span>
                         </div>
@@ -458,7 +458,7 @@ export function PropertyDetailModal({
               <div>
                 <h4 className="text-lg font-semibold mb-4">Property Manager Contact</h4>
                 {property.manager ? (
-                  <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <div className="bg-muted dark:bg-card p-6 rounded-lg">
                     <div className="space-y-4">
                       {/* Manager Name */}
                       <div className="flex items-center">

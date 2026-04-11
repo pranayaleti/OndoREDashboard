@@ -77,7 +77,7 @@ export function ApplicationComments({ applicationId }: ApplicationCommentsProps)
       {comments.length > 0 && (
         <div className="space-y-2 max-h-60 overflow-y-auto">
           {comments.map((c) => (
-            <div key={c.id} className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm group">
+            <div key={c.id} className="bg-muted dark:bg-card rounded-lg p-3 text-sm group">
               <div className="flex items-center justify-between mb-1">
                 <span className="font-medium text-xs text-slate-600 dark:text-slate-400">
                   {c.user ? `${c.user.firstName} ${c.user.lastName}` : "Unknown"}

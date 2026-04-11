@@ -135,9 +135,9 @@ export default function Handoff() {
       tax: "bg-amber-500/20 text-amber-300 border-amber-500/30",
       lease: "bg-blue-500/20 text-blue-300 border-blue-500/30",
       inspection: "bg-green-500/20 text-green-300 border-green-500/30",
-      manual: "bg-gray-500/20 text-gray-300 border-gray-500/30",
+      manual: "bg-muted/20 text-gray-300 border-gray-500/30",
     }
-    return colors[type.toLowerCase()] || "bg-gray-500/20 text-gray-300 border-gray-500/30"
+    return colors[type.toLowerCase()] || "bg-muted/20 text-gray-300 border-gray-500/30"
   }
 
   // Format file size
@@ -990,18 +990,18 @@ export default function Handoff() {
           <div className="mb-6">
             {isOwner ? (
               <Tabs value={selectedPropertyId || ""} onValueChange={handlePropertyChange}>
-                <TabsList className="w-full bg-gray-900 dark:bg-black rounded-lg p-1.5 flex gap-1.5 overflow-x-auto h-auto">
+                <TabsList className="w-full bg-card dark:bg-background rounded-lg p-1.5 flex gap-1.5 overflow-x-auto h-auto">
                   {properties.map((property) => (
                     <TabsTrigger 
                       key={property.id} 
                       value={property.id}
                       className={cn(
                         "flex-1 min-w-[200px] max-w-[300px] px-4 py-3 rounded-md text-left transition-all border-0",
-                        "data-[state=active]:bg-gray-700 dark:data-[state=active]:bg-gray-700",
+                        "data-[state=active]:bg-secondary dark:data-[state=active]:bg-secondary",
                         "data-[state=active]:text-white",
-                        "data-[state=inactive]:bg-gray-800 dark:data-[state=inactive]:bg-gray-800",
+                        "data-[state=inactive]:bg-muted dark:data-[state=inactive]:bg-muted",
                         "data-[state=inactive]:text-gray-400 dark:data-[state=inactive]:text-gray-500",
-                        "hover:data-[state=inactive]:bg-gray-750 dark:hover:data-[state=inactive]:bg-gray-750",
+                        "hover:data-[state=inactive]:bg-secondary dark:hover:data-[state=inactive]:bg-secondary",
                         "hover:data-[state=inactive]:text-gray-300"
                       )}
                     >
@@ -1018,7 +1018,7 @@ export default function Handoff() {
                 </TabsList>
               </Tabs>
             ) : (
-              <Card className="bg-gray-800 dark:bg-gray-900 border-gray-700">
+              <Card className="bg-muted dark:bg-card border-gray-700">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-4">
                     <Label htmlFor="property-select" className="font-medium whitespace-nowrap text-gray-300">
@@ -1027,16 +1027,16 @@ export default function Handoff() {
                     <Select value={selectedPropertyId || ""} onValueChange={handlePropertyChange}>
                       <SelectTrigger 
                         id="property-select" 
-                        className="w-full max-w-[500px] bg-gray-700 dark:bg-gray-800 border-gray-600 text-white"
+                        className="w-full max-w-[500px] bg-secondary dark:bg-card border-gray-600 text-white"
                       >
                         <SelectValue placeholder="Select a property" />
                       </SelectTrigger>
-                      <SelectContent className="bg-gray-800 dark:bg-gray-900 border-gray-700">
+                      <SelectContent className="bg-muted dark:bg-card border-gray-700">
                         {properties.map((property) => (
                           <SelectItem 
                             key={property.id} 
                             value={property.id}
-                            className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                            className="text-white hover:bg-secondary focus:bg-secondary"
                           >
                             {property.title || property.addressLine1} - {property.city}, {property.state}
                           </SelectItem>

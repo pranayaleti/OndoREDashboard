@@ -347,7 +347,7 @@ export function ApplicationDetailView({
                 return (
                   <div
                     key={check.id}
-                    className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border"
+                    className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg border"
                   >
                     <div className="flex items-center gap-3">
                       <Icon
@@ -399,7 +399,7 @@ export function ApplicationDetailView({
           <CardContent>
             <div className="space-y-3">
               {app.answers.map((ans, i) => (
-                <div key={i} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border">
+                <div key={i} className="p-3 bg-muted dark:bg-card rounded-lg border">
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className="text-sm font-medium text-slate-600 dark:text-slate-400">

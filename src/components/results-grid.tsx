@@ -229,7 +229,7 @@ export default function ResultsGrid({ properties }: ResultsGridProps) {
                 alt={property.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background/70 to-transparent p-4">
                 <h3 className="font-bold text-lg text-white">{property.title}</h3>
                 <p className="text-white/90 text-sm">{property.address}</p>
               </div>
@@ -264,7 +264,7 @@ export default function ResultsGrid({ properties }: ResultsGridProps) {
               </div>
             </CardContent>
 
-            <CardFooter className="bg-gray-50 dark:bg-gray-800 px-4 py-3" onClick={(e) => e.stopPropagation()}>
+            <CardFooter className="bg-muted dark:bg-card px-4 py-3" onClick={(e) => e.stopPropagation()}>
               <Button className="w-full" onClick={() => setSelectedCompany(property.id)}>
                 View Details
               </Button>

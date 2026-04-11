@@ -101,7 +101,7 @@ export default function PricingPage() {
   const selectedPlanDetails = plans.find((p) => p.planKey === selectedPlan)
 
   return (
-    <main className="bg-slate-950 px-4 py-16 text-white">
+    <main className="bg-background px-4 py-16 text-white">
       <div className="container mx-auto max-w-5xl text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-1 text-xs uppercase tracking-[0.3em] text-white/80">
           <Sparkles className="h-3.5 w-3.5" /> pricing
@@ -114,7 +114,7 @@ export default function PricingPage() {
           <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
             <Link to="/free-trial">Start free trial</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10">
+          <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-card/75">
             <Link to="/contact">Talk with sales</Link>
           </Button>
         </div>
@@ -124,7 +124,7 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={plan.featured ? "border-orange-400 bg-white/10" : "border-white/10 bg-white/5"}
+            className={plan.featured ? "border-orange-400 bg-card/75" : "border-white/10 bg-card/60"}
           >
             <CardHeader>
               <CardTitle className="text-2xl text-white">{plan.name}</CardTitle>
@@ -169,7 +169,7 @@ export default function PricingPage() {
       </div>
 
       <div className="container mx-auto mt-16 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-white/10 bg-white/5">
+        <Card className="border-white/10 bg-card/60">
           <CardHeader>
             <CardTitle className="text-white">What every plan includes</CardTitle>
             <CardDescription className="text-white/70">
@@ -177,7 +177,7 @@ export default function PricingPage() {
             </CardDescription>
           </CardHeader>
         </Card>
-        <Card className="border-white/10 bg-white/5">
+        <Card className="border-white/10 bg-card/60">
           <CardHeader>
             <CardTitle className="text-white">Popular add-ons</CardTitle>
             <CardDescription className="text-white/70">Bring your own API keys.</CardDescription>
@@ -199,7 +199,7 @@ export default function PricingPage() {
       <Dialog open={isDialogOpen} onOpenChange={(open) => {
         if (!open) { setIsDialogOpen(false); setClientSecret(null); setSelectedPlan(null) }
       }}>
-        <DialogContent className="sm:max-w-lg border-2 border-orange-500 bg-white text-black">
+        <DialogContent className="sm:max-w-lg border-2 border-orange-500 bg-card text-card-foreground">
           <DialogHeader>
             <DialogTitle>
               Subscribe to {selectedPlanDetails?.name}

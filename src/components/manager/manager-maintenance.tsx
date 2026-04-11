@@ -169,7 +169,7 @@ export default function ManagerMaintenance() {
       case "low":
         return "bg-green-100 text-green-800 border-green-200"
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-muted text-gray-800 border-gray-200"
     }
   }
 
@@ -535,7 +535,7 @@ export default function ManagerMaintenance() {
                 </div>
 
                 {/* Property and Tenant Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4 p-4 bg-muted dark:bg-card rounded-lg">
                   <div>
                     <span className="text-gray-500 font-medium">Property Details:</span>
                     <p className="font-medium">{request.propertyTitle || "Property Title N/A"}</p>

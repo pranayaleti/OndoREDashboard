@@ -48,7 +48,7 @@ const statusColors: Record<string, string> = {
   scheduled: "bg-blue-100 text-blue-700",
   in_progress: "bg-amber-100 text-amber-700",
   completed: "bg-green-100 text-green-700",
-  cancelled: "bg-slate-100 text-slate-500",
+  cancelled: "bg-muted text-slate-500",
 }
 
 export function InspectionManager({ propertyId }: InspectionManagerProps) {
@@ -145,7 +145,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
       ) : (
         <div className="space-y-3">
           {inspections.map((insp) => (
-            <div key={insp.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border">
+            <div key={insp.id} className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg border">
               <div>
                 <p className="font-medium text-sm">{typeLabels[insp.inspectionType] || insp.inspectionType} Inspection</p>
                 <p className="text-xs text-slate-500">
@@ -218,13 +218,13 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                 <div><span className="text-slate-500">Scheduled:</span> {new Date(detail.scheduledDate).toLocaleDateString()}</div>
                 {detail.overallCondition && <div><span className="text-slate-500">Condition:</span> {detail.overallCondition}</div>}
               </div>
-              {detail.notes && <p className="text-sm bg-slate-50 dark:bg-slate-800 p-3 rounded">{detail.notes}</p>}
+              {detail.notes && <p className="text-sm bg-muted dark:bg-card p-3 rounded">{detail.notes}</p>}
 
               {detail.items && detail.items.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Checklist Items</p>
                   {detail.items.map((item: any) => (
-                    <div key={item.id} className="flex items-center justify-between text-sm p-2 bg-slate-50 dark:bg-slate-800 rounded">
+                    <div key={item.id} className="flex items-center justify-between text-sm p-2 bg-muted dark:bg-card rounded">
                       <span>{item.area} — {item.itemName}</span>
                       {item.condition && (
                         <Badge variant="secondary" className="text-xs capitalize">{item.condition}</Badge>

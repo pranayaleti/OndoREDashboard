@@ -30,7 +30,7 @@ interface RentIncrease {
 }
 
 const statusColors: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-600",
+  draft: "bg-muted text-slate-600",
   notice_sent: "bg-blue-100 text-blue-700",
   acknowledged: "bg-green-100 text-green-700",
   effective: "bg-emerald-100 text-emerald-700",

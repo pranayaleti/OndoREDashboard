@@ -55,7 +55,7 @@ export default function OwnerDashboardNew() {
 
       <section className="grid gap-4 md:grid-cols-3">
         {quickActions.map((action) => (
-          <Card key={action.label} className="border border-white/10 bg-white/5 dark:bg-slate-900">
+          <Card key={action.label} className="border border-white/10 bg-card/60 dark:bg-card">
             <CardContent className="flex flex-col gap-2 p-5 text-sm text-slate-600 dark:text-slate-300">
               <div className="flex items-center justify-between">
                 <p className="font-semibold text-slate-900 dark:text-white">{action.label}</p>

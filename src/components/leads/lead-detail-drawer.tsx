@@ -51,8 +51,8 @@ export function LeadDetailDrawer({ lead, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/20" onClick={onClose} />
-      <div className="relative w-[480px] bg-white h-full shadow-xl overflow-y-auto p-6 flex flex-col gap-6">
+      <div className="absolute inset-0 bg-background/20" onClick={onClose} />
+      <div className="relative w-[480px] bg-card h-full shadow-xl overflow-y-auto p-6 flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">{lead.tenantName}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
@@ -85,7 +85,7 @@ export function LeadDetailDrawer({ lead, onClose }: Props) {
                     <span>{BREAKDOWN_LABELS[key] ?? key}</span>
                     <span>{val}/{BREAKDOWN_MAX[key] ?? 25}</span>
                   </div>
-                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-indigo-500 rounded-full"
                       style={{ width: `${(val / (BREAKDOWN_MAX[key] ?? 25)) * 100}%` }}
@@ -136,7 +136,7 @@ export function LeadDetailDrawer({ lead, onClose }: Props) {
                     <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
                       v.status === "confirmed" ? "bg-green-100 text-green-700" :
                       v.status === "proposed" ? "bg-yellow-100 text-yellow-700" :
-                      "bg-gray-100 text-gray-500"
+                      "bg-muted text-gray-500"
                     }`}>{v.status}</span>
                     {v.scheduledAt && <span className="text-gray-500">{new Date(v.scheduledAt).toLocaleString()}</span>}
                   </div>

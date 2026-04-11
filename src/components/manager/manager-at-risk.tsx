@@ -76,7 +76,7 @@ const RECOMMENDATION_COLORS: Record<CreateRiskInterventionRequest["interventionT
 function FeaturePill({ label, value, warn }: { label: string; value: number | string; warn?: boolean }) {
   return (
     <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
-      warn ? "bg-red-50 text-red-700 border-red-200" : "bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+      warn ? "bg-red-50 text-red-700 border-red-200" : "bg-muted text-gray-600 border-gray-200 dark:bg-card dark:text-gray-400 dark:border-gray-700"
     }`}>
       {label}: <strong>{value}</strong>
     </span>
@@ -87,7 +87,7 @@ function ScoreBar({ score, band }: { score: number; band: string }) {
   const color = band === "high" ? "bg-red-500" : band === "medium" ? "bg-amber-500" : "bg-green-500"
   return (
     <div className="flex items-center gap-2 mt-1">
-      <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-muted dark:bg-card rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${score * 100}%` }} />
       </div>
       <span className="text-xs text-gray-500 w-8 text-right">{(score * 100).toFixed(0)}%</span>
@@ -296,7 +296,7 @@ function HistoryDialog({ tenantId, onClose }: HistoryDialogProps) {
                 {scores.slice(0, 10).map((s) => (
                   <div key={s.id} className="flex items-center gap-2 text-xs">
                     <span className="text-gray-400 w-24 shrink-0">{formatUSDate(s.scoredAt)}</span>
-                    <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                    <div className="flex-1 h-1.5 bg-muted dark:bg-card rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${s.band === "high" ? "bg-red-500" : s.band === "medium" ? "bg-amber-500" : "bg-green-500"}`}
                         style={{ width: `${s.score * 100}%` }}
@@ -452,14 +452,14 @@ export default function ManagerAtRisk() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg w-fit">
+      <div className="flex gap-1 p-1 bg-muted dark:bg-card rounded-lg w-fit">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 shadow-sm"
+                ? "bg-card dark:bg-card text-card-foreground dark:text-gray-100 shadow-sm"
                 : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
@@ -490,8 +490,8 @@ export default function ManagerAtRisk() {
                         ? "bg-red-500 text-white border-red-500"
                         : band === "medium"
                           ? "bg-amber-500 text-white border-amber-500"
-                          : "bg-gray-800 text-white border-gray-800 dark:bg-gray-200 dark:text-gray-800"
-                      : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-400"
+                          : "bg-muted text-white border-gray-800 dark:bg-muted dark:text-gray-800"
+                      : "bg-card dark:bg-card text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-400"
                   }`}
                 >
                   {band === "all" ? `All (${list.length})` : band === "high" ? `High (${highCount})` : `Medium (${mediumCount})`}

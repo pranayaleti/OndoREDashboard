@@ -94,7 +94,7 @@ function MessagesList() {
       case "low":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -107,7 +107,7 @@ function MessagesList() {
       case "maintenance":
         return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+        return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
     }
   }
 
@@ -168,7 +168,7 @@ function MessagesList() {
                 className={`cursor-pointer transition-colors ${
                   selectedMessage === message.id 
                     ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
-                    : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                    : "hover:bg-muted dark:hover:bg-card"
                 } ${!message.isRead ? "border-l-4 border-l-blue-500" : ""}`}
                 onClick={() => setSelectedMessage(message.id)}
               >
@@ -255,7 +255,7 @@ function MessagesList() {
                 </div>
 
                 {/* Tenant Info Card */}
-                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="mt-6 p-4 bg-muted dark:bg-card rounded-lg">
                   <h4 className="font-medium mb-3">Tenant Information</h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>

@@ -229,7 +229,7 @@ const roleHighlights = [
 
 export default function Features() {
   return (
-    <div className="flex flex-col bg-slate-950 text-white min-h-screen">
+    <div className="flex flex-col bg-background text-white min-h-screen">
       {/* Hero */}
       <section className="px-4 py-20 sm:py-28 text-center">
         <div className="container mx-auto max-w-3xl">
@@ -247,7 +247,7 @@ export default function Features() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-card/75">
               <Link to="/pricing">See pricing</Link>
             </Button>
           </div>
@@ -271,7 +271,7 @@ export default function Features() {
                     {f.badge}
                   </Badge>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="rounded-full bg-white/10 p-2.5">
+                    <div className="rounded-full bg-card/75 p-2.5">
                       <Icon className={`h-5 w-5 ${f.color}`} />
                     </div>
                     <h2 className="text-2xl font-semibold">{f.title}</h2>
@@ -287,9 +287,9 @@ export default function Features() {
                   </ul>
                 </div>
                 {/* Card visual */}
-                <Card className="border-white/10 bg-white/5 backdrop-blur">
+                <Card className="border-white/10 bg-card/60 backdrop-blur">
                   <CardHeader>
-                    <div className={`mb-2 rounded-full bg-white/10 p-3 w-fit`}>
+                    <div className={`mb-2 rounded-full bg-card/75 p-3 w-fit`}>
                       <Icon className={`h-8 w-8 ${f.color}`} />
                     </div>
                     <CardTitle className="text-white">{f.badge}</CardTitle>
@@ -313,7 +313,7 @@ export default function Features() {
       </section>
 
       {/* Role highlights */}
-      <section className="bg-slate-900 px-4 py-20">
+      <section className="bg-card px-4 py-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400 mb-2">Role-aware platform</p>
@@ -326,7 +326,7 @@ export default function Features() {
             {roleHighlights.map((r) => {
               const Icon = r.icon
               return (
-                <Card key={r.role} className="border-white/10 bg-white/5">
+                <Card key={r.role} className="border-white/10 bg-card/60">
                   <CardHeader>
                     <div className="rounded-full bg-orange-500/20 p-2.5 w-fit mb-2">
                       <Icon className="h-5 w-5 text-orange-400" />
@@ -361,7 +361,7 @@ export default function Features() {
             <Button asChild size="lg" className="bg-orange-500 text-black hover:bg-orange-400">
               <Link to="/free-trial">Start free trial</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
+            <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-card/75">
               <Link to="/contact">Talk to the team</Link>
             </Button>
           </div>

@@ -180,7 +180,7 @@ export default function ResetPassword() {
   // Show error if token is invalid
   if (tokenValid === false) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
         <div className="w-full max-w-md">
           {/* Ondo Real Estate Logo and Branding */}
           <div className="flex flex-col items-center mb-8">
@@ -222,7 +222,7 @@ export default function ResetPassword() {
   // Show loading while verifying token
   if (tokenValid === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
         <div className="w-full max-w-md">
           {/* Ondo Real Estate Logo and Branding */}
           <div className="flex flex-col items-center mb-8">
@@ -253,7 +253,7 @@ export default function ResetPassword() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
         <div className="w-full max-w-md">
           {/* Ondo Real Estate Logo and Branding */}
           <div className="flex flex-col items-center mb-8">
@@ -293,7 +293,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted dark:bg-card p-4">
       <div className="w-full max-w-md">
         {/* Ondo Real Estate Logo and Branding */}
         <div className="flex flex-col items-center mb-8">

@@ -102,10 +102,10 @@ export function TenantScreeningSection({
   cards = defaultCards,
 }: TenantScreeningSectionProps) {
   return (
-    <section className={cn("relative overflow-hidden rounded-3xl bg-slate-900 text-white", className)}>
+    <section className={cn("relative overflow-hidden rounded-3xl bg-card text-white", className)}>
       <div className="absolute inset-0">
-        <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-emerald-500/20 blur-3xl" />
-        <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+        <div className="absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-secondary/40 blur-3xl" />
       </div>
       <div className="relative z-10 mx-auto max-w-6xl px-6 py-16 sm:px-10 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -117,7 +117,7 @@ export function TenantScreeningSection({
               {highlightBadges.map((badge) => (
                 <div
                   key={badge.label}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-card/60 px-4 py-2"
                 >
                   {badge.icon}
                   <span>{badge.label}</span>
@@ -125,7 +125,7 @@ export function TenantScreeningSection({
               ))}
             </div>
             <div className="mt-10">
-              <Button asChild size="lg" className="bg-white text-slate-900 hover:bg-slate-100">
+              <Button asChild size="lg" className="bg-card text-card-foreground hover:bg-muted">
                 {isExternalHref(ctaHref) ? (
                   <a href={ctaHref} target="_blank" rel="noopener noreferrer">
                     {ctaLabel}
@@ -140,7 +140,7 @@ export function TenantScreeningSection({
             {cards.map((card) => (
               <Card
                 key={card.title}
-                className="border-white/10 bg-white/5 text-white backdrop-blur"
+                className="border-white/10 bg-card/60 text-white backdrop-blur"
               >
                 <CardContent className="space-y-3 p-5">
                   <div className="flex items-center gap-2">
@@ -157,9 +157,8 @@ export function TenantScreeningSection({
           </div>
         </div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-card/40 to-transparent" />
     </section>
   )
 }
-
 

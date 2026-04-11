@@ -33,7 +33,7 @@ export function ProfilePictureViewer({ imageSrc, userName }: ProfilePictureViewe
           <DialogDescription className="sr-only">Viewing profile picture for {userName}</DialogDescription>
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-4 right-4 z-10 bg-black/80 hover:bg-black text-white rounded-full p-2 transition-colors"
+            className="absolute top-4 right-4 z-10 bg-background/80 hover:bg-background text-white rounded-full p-2 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>

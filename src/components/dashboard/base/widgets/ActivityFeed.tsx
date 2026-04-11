@@ -93,7 +93,7 @@ export function ActivityFeed({
             <div
               className={cn(
                 "flex items-start justify-between p-3 border rounded-lg",
-                activity.href && "hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                activity.href && "hover:bg-muted dark:hover:bg-card cursor-pointer transition-colors"
               )}
             >
               <div className="flex items-start gap-3 flex-1">

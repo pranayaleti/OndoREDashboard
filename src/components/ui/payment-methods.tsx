@@ -181,7 +181,7 @@ export function PaymentMethods({
             normalizedMethods.map((method) => (
               <div key={method.id} className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="p-2 bg-muted dark:bg-card rounded-full">
                     {getIcon(method.type)}
                   </div>
                   <div className="space-y-1">

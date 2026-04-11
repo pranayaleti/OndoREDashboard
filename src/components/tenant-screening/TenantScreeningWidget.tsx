@@ -12,7 +12,7 @@ const statusStyles: Record<string, string> = {
   approved: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300",
   flagged: "bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300",
   in_review: "bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
-  pending: "bg-slate-100 text-slate-600 dark:bg-slate-500/10 dark:text-slate-300",
+  pending: "bg-muted text-slate-600 dark:bg-muted/10 dark:text-slate-300",
 }
 
 export interface TenantScreeningWidgetProps {
@@ -155,11 +155,11 @@ export function TenantScreeningWidget({
         ) : (
           <>
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-3xl border bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-inner">
+              <div className="rounded-3xl border bg-gradient-to-br from-card via-muted to-card p-6 text-white shadow-inner">
                 <p className="text-sm text-white/70">Average applicant score</p>
                 <div className="mt-3 text-4xl font-semibold">{averageScore || "—"}</div>
                 <div className="mt-4">
-                  <Progress value={averageScore ? Math.min(averageScore / 8, 100) : 0} className="h-2 bg-white/20" indicatorClassName="bg-white" />
+                  <Progress value={averageScore ? Math.min(averageScore / 8, 100) : 0} className="h-2 bg-card/70" indicatorClassName="bg-card" />
                 </div>
                 <p className="mt-4 text-xs text-white/70">Timeframe • {summary?.timeframe || "30d"}</p>
               </div>
