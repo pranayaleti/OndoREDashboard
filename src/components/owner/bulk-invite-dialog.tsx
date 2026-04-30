@@ -51,6 +51,7 @@ export function BulkInviteDialog({ propertyId, open, onOpenChange }: BulkInviteD
     if (emails.length === 0) return
     try {
       setSending(true)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = await featureApi.applicationActions.bulkInvite(propertyId, emails) as any
       const data = res?.data ?? res
       setResult(data)

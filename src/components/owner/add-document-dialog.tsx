@@ -20,6 +20,7 @@ import { FileUp, AlertTriangle, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface AddDocumentDialogProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onAddDocument?: (data: any) => void
 }
 

@@ -592,6 +592,7 @@ export default function ManagerDashboard() {
                 acc[ownerKey].properties.push(property);
               }
               return acc;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             }, {} as Record<string, { owner: any, properties: Property[] }>);
 
             const ownerGroups = Object.values(propertiesByOwner);

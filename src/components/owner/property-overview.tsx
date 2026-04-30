@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 
 interface PropertyOverviewProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   property: any
 }
 
@@ -101,6 +102,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
 
           <div>
             <div className="text-sm font-medium mb-2">Current Tenants</div>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {property.units.map((unit: any) => (
               <div key={unit.id} className="flex justify-between items-center py-2 border-b last:border-0">
                 <div>

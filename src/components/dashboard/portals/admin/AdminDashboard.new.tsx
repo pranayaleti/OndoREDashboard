@@ -29,6 +29,7 @@ function AdminDashboardContent() {
     const maintenanceRequests = data.maintenanceRequests || []
 
     return [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...properties.slice(0, 3).map((p: any, idx: number) => ({
         id: `prop-${idx}`,
         type: "property" as const,
@@ -37,6 +38,7 @@ function AdminDashboardContent() {
         status: p.status === 'approved' ? 'success' as const : p.status === 'rejected' ? 'error' as const : 'warning' as const,
         href: `/admin/properties`,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...maintenanceRequests.slice(0, 2).map((m: any, idx: number) => ({
         id: `maint-${idx}`,
         type: "maintenance" as const,

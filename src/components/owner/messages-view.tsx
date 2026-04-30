@@ -190,6 +190,7 @@ export function MessagesView() {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCreateConversation = async (data: any) => {
     try {
       const newThread = await featureApi.communication.createThread({

@@ -12,7 +12,11 @@ module.exports = {
   rules: {
     'react-refresh/only-export-components': 'off',
     'react-hooks/exhaustive-deps': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    // Re-enabled as error to gate new `any` usage. Existing 105 sites have
+    // explicit eslint-disable-next-line comments so the migration is gradual
+    // and reviewers see each one in source. Drop a disable comment whenever
+    // you replace `any` with a real type.
+    '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-unused-vars': [
       'error',
       {

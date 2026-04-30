@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { FolderPlus } from "lucide-react"
 
 interface CreateFolderDialogProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCreateFolder: (data: any) => void
 }
 

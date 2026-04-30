@@ -27,9 +27,11 @@ export function ChartContainer({ className, children }: ChartContainerProps) {
 }
 
 interface ChartLineProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]
   x: string
   y: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueFormatter?: (value: any) => string
   showGridLines?: boolean
   showXAxis?: boolean
@@ -63,9 +65,11 @@ export function ChartLine({
 }
 
 interface ChartPieProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]
   index: string
   category: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueFormatter?: (value: any) => string
   className?: string
 }
@@ -88,9 +92,11 @@ export function ChartPie({ data, index, category, valueFormatter, className }: C
 }
 
 interface ChartBarProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]
   x: string
   y: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueFormatter?: (value: any) => string
   className?: string
   colors?: string[]
@@ -113,6 +119,7 @@ export function ChartBar({ data, x, y, valueFormatter, className, colors = ["#88
 
 interface ChartLegendProps {
   className?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[]
   index: string
   color: string

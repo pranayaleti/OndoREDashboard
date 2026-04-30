@@ -175,6 +175,7 @@ export function FinancesView() {
     )
   }, [filteredTransactions])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddTransaction = (data: any) => {
     const newTx: Transaction = {
       id: `local-${Date.now()}`,

@@ -62,7 +62,9 @@ export default function AdminMaintenance() {
             await maintenanceApi.createMaintenanceRequest({
               title: data.title,
               description: data.description,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               category: data.category as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               priority: data.priority as any,
               photos: [] // ROADMAP: Handle photo uploads (Q2 2026 - document management).
             })

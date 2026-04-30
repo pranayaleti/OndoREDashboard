@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router-dom"
 // import Image from "next/image" // Replaced with img tag
 
 interface PropertyCardProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   property: any
   getPropertyTypeIcon: (type: string) => React.ReactNode
 }

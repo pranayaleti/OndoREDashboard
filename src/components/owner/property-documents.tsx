@@ -113,6 +113,7 @@ export function PropertyDocuments() {
     return matchesSearch && matchesCategory
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddDocument = (data: any) => {
     // In a real app, this would call an API to upload the document
     const newDocument = {
@@ -272,6 +273,7 @@ export function PropertyDocuments() {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AddDocumentDialog({ onAddDocument }: { onAddDocument: (data: any) => void }) {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({

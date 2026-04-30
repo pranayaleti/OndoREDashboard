@@ -9,6 +9,7 @@ interface BaseDashboardContextType {
   loading: boolean
   error: Error | null
   refreshData: () => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateData: (key: string, value: any) => void
   addActivity: (activity: ActivityItem) => void
   updateConfig: (updates: Partial<PortalConfig>) => void
@@ -67,6 +68,7 @@ export function BaseDashboardProvider({
       })
 
       const results = await Promise.all(fetchPromises)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fetchedData: Record<string, any> = {}
 
       results.forEach(([key, value]) => {
@@ -101,6 +103,7 @@ export function BaseDashboardProvider({
     await fetchData()
   }, [fetchData])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData = useCallback((key: string, value: any) => {
     setData((prev) => ({
       ...prev,

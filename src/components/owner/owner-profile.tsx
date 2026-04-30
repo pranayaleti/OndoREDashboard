@@ -26,6 +26,7 @@ import { US_TIMEZONES } from "@/constants/us"
 import { useUserTimezone } from "@/hooks/use-user-timezone"
 import { LoginHistory } from "@/components/shared/login-history"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getInitialProfileData = (user: any) => ({
   personalInfo: {
     firstName: user?.firstName || "",
@@ -211,6 +212,7 @@ export default function OwnerProfile() {
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [setting]: !(prev[category as keyof typeof prev] as any)[setting],
       },
     }))

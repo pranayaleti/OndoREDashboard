@@ -74,6 +74,7 @@ export default function ResetPassword() {
         const contentType = response.headers.get('content-type');
         const isJson = contentType && contentType.includes('application/json');
         
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let data: any;
         if (isJson) {
           try {
@@ -140,6 +141,7 @@ export default function ResetPassword() {
       const contentType = response.headers.get('content-type');
       const isJson = contentType && contentType.includes('application/json');
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let data: any;
       if (isJson) {
         try {

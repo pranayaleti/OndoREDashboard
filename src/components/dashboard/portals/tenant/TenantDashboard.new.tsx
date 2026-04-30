@@ -27,6 +27,7 @@ function TenantDashboardContent() {
   const activities = useMemo(() => {
     const maintenanceRequests = data.maintenanceRequests || []
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return maintenanceRequests.slice(0, 3).map((m: any, idx: number) => ({
       id: `maint-${idx}`,
       type: "maintenance" as const,

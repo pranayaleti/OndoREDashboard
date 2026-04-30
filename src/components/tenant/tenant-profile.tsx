@@ -23,6 +23,7 @@ import { useUserTimezone } from "@/hooks/use-user-timezone"
 import { LoginHistory } from "@/components/shared/login-history"
 
 // Mock tenant profile data - will be replaced with real data from API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getInitialProfileData = (user: any) => ({
   personalInfo: {
     firstName: user?.firstName || "John",
@@ -116,7 +117,9 @@ export default function TenantProfile() {
       [category]: {
         ...prev[category as keyof typeof prev],
         [subcategory]: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ...(prev[category as keyof typeof prev] as any)[subcategory],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [setting]: !(prev[category as keyof typeof prev] as any)[subcategory][setting],
         },
       },

@@ -27,6 +27,7 @@ function ManagerDashboardContent() {
     const leads = data.leads || []
 
     return [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...properties.slice(0, 3).map((p: any, idx: number) => ({
         id: `prop-${idx}`,
         type: "property" as const,
@@ -35,6 +36,7 @@ function ManagerDashboardContent() {
         status: p.status === 'approved' ? 'success' as const : p.status === 'rejected' ? 'error' as const : 'warning' as const,
         href: `/dashboard/properties`,
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...leads.slice(0, 2).map((l: any, idx: number) => ({
         id: `lead-${idx}`,
         type: "user" as const,

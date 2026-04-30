@@ -35,6 +35,7 @@ export function LateFeeConfig({ propertyId }: LateFeeConfigProps) {
   const loadRule = async () => {
     try {
       setLoading(true)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = await featureApi.lateFees.getRule(propertyId) as any
       const rule = res?.data ?? res
       if (rule) {
@@ -71,6 +72,7 @@ export function LateFeeConfig({ propertyId }: LateFeeConfigProps) {
 
   const handleApply = async () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const res = await featureApi.lateFees.apply(propertyId) as any
       toast({ title: (res?.data ?? res)?.message || "Late fees applied" })
     } catch {

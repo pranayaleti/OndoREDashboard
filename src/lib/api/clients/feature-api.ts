@@ -2699,6 +2699,7 @@ export const featureApi = {
         .then((r) => unwrapDataArray(r));
     },
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     add(item: any): Promise<unknown> {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('POST', '/inventory', item, headers);
@@ -3031,6 +3032,7 @@ export const featureApi = {
     listTransactions: () => Promise<unknown[]>;
     listDistributions: () => Promise<unknown[]>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recordTransaction: (txn: any) => Promise<void>;
   },
   utilities: undefined as undefined | {
@@ -3043,17 +3045,22 @@ export const featureApi = {
     getPolicy: () => Promise<unknown>;
     list: () => Promise<unknown[]>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updatePolicy: (draft: any) => Promise<void>;
   },
   investor: undefined as undefined | {
     listDeals: () => Promise<unknown[]>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createDeal: (deal: any) => Promise<void>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addInvestor: (inv: any) => Promise<void>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createCapitalCall: (call: any) => Promise<void>;
      
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createDistribution: (dist: any) => Promise<void>;
   },
 };

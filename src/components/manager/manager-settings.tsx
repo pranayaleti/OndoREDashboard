@@ -31,6 +31,7 @@ export default function ManagerSettings() {
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [setting]: !(prev[category as keyof typeof prev] as any)[setting],
       },
     }))

@@ -21,6 +21,7 @@ import { Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface NewMessageDialogProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCreateConversation: (data: any) => void
 }
 

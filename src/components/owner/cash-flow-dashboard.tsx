@@ -57,10 +57,14 @@ export function CashFlowDashboard() {
         featureApi.cashFlow.historical(6),
       ])
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const fRows = Array.isArray((forecast as any)?.months)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ? (forecast as any).months
         : Array.isArray(forecast) ? forecast : []
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const hRows = Array.isArray((historical as any)?.months)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ? (historical as any).months
         : Array.isArray(historical) ? historical : []
 

@@ -86,6 +86,7 @@ export function TwoFactorAuthDialog({
     try {
       if (!supabase) throw new Error("Supabase client is not configured")
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: enrollData, error: enrollError } = await (supabase as any).auth.mfa.enroll({
         factorType: "phone",
         phone: phoneNumber,

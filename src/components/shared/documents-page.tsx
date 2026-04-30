@@ -416,6 +416,7 @@ export function DocumentsPage({
     })
   }, [documentsState, searchTerm, propertyFilter, categoryFilter, folderFilter, activeTab])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddDocument = (data: any) => {
     const newDocument: Document = {
       id: `doc${documentsState.length + 1}`,
@@ -438,6 +439,7 @@ export function DocumentsPage({
     })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCreateFolder = (data: any) => {
     const newFolder: DocumentFolder = {
       id: `folder${foldersState.length + 1}`,

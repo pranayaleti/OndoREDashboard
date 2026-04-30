@@ -41,6 +41,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 
 interface PropertyDetailsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   property: any
 }
 

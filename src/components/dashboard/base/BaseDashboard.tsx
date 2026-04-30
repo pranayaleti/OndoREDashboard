@@ -85,6 +85,7 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
 /**
  * Renders common dashboard sections based on configuration
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function renderDashboardContent(config: BaseDashboardProps["config"], data: any): ReactNode {
   return (
     <>

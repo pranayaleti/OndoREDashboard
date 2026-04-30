@@ -239,6 +239,7 @@ export function InventoryManager() {
                   id={f.id}
                   type={f.type}
                   placeholder={f.placeholder}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   value={(newItem as any)[f.key]}
                   onChange={(e) => setNewItem((d) => ({ ...d, [f.key]: e.target.value }))}
                 />

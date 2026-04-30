@@ -685,9 +685,12 @@ export async function generatePDFFromHTMLWithLibrary(
   // Check if html2pdf.js is available in the global scope
   // Note: For build compatibility, we only check window.html2pdf
   // To use html2pdf.js, load it via script tag or install and configure Vite to handle it
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let html2pdf: any = null;
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window !== 'undefined' && (window as any).html2pdf) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     html2pdf = (window as any).html2pdf;
   } else {
     // Library not available, fall back to print method

@@ -116,7 +116,9 @@ export default function MaintenanceProfile() {
       [category]: {
         ...prev[category as keyof typeof prev],
         [subcategory]: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ...(prev[category as keyof typeof prev] as any)[subcategory],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           [setting]: !(prev[category as keyof typeof prev] as any)[subcategory][setting],
         },
       },
