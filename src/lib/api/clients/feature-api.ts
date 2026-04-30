@@ -8,9 +8,14 @@
  *   featureApi.stripe.createPaymentIntent(...)
  */
 
-import { apiRequest, getAuthHeaders } from "../http";
+import { ApiError as OntoApiError } from "@ondo/types";
+import { apiRequest, getAuthHeaders, parseApiErrorBody } from "../http";
 import { getApiBaseUrl } from "../base-url";
-import { tokenManager } from "./token-manager";
+import {
+  getValidAccessToken,
+  refreshAccessToken,
+  clearAccessToken,
+} from "./token-manager";
 import { leadApi } from "./lead";
 import {
   ListPaymentMethodsResponseSchema,
@@ -615,16 +620,24 @@ export interface UpdateMaintenanceRequestRequest {
 // ─── Internal helpers used by featureApi ─────────────────────────────────────
 
 /**
- * Make a raw fetch with auth token and JSON parsing.
- * Used only for maintenance photo upload which needs multipart form.
+ * Make a raw fetch (typically multipart/binary body) with the auth token and
+ * JSON-aware response parsing.
+ *
+ * Aligned with apiRequest in lib/api/http.ts:
+ *   - awaits getValidAccessToken() so an expiring token silently refreshes
+ *   - on 401 retries once after refreshAccessToken() succeeds
+ *   - on terminal 401 dispatches auth:session-expired (matches http.ts)
+ *   - throws OntoApiError (parsed via parseApiErrorBody) so callers get the
+ *     same instance type as apiRequest — single error model in the dashboard
  */
 async function rawAuthRequest<T>(
   method: string,
   endpoint: string,
   body?: BodyInit,
   extraHeaders?: Record<string, string>,
+  isRetry = false,
 ): Promise<T> {
-  const token = tokenManager.getToken();
+  const token = await getValidAccessToken();
   const url = `${API_BASE_URL}${endpoint}`;
   const response = await fetch(url, {
     method,
@@ -635,23 +648,43 @@ async function rawAuthRequest<T>(
     body,
     credentials: 'include',
   });
+
+  if (response.status === 401 && !isRetry) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      return rawAuthRequest<T>(method, endpoint, body, extraHeaders, true);
+    }
+    clearAccessToken();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('auth:session-expired'));
+    }
+    throw new OntoApiError('Session expired. Please log in again.', 401, 'SESSION_EXPIRED');
+  }
+
   const contentType = response.headers.get('content-type');
   const isJson = contentType?.includes('application/json');
   const text = await response.text();
 
-  let data: Record<string, unknown>;
+  let data: unknown;
   if (isJson && text) {
     try {
-      data = JSON.parse(text) as Record<string, unknown>;
+      data = JSON.parse(text);
     } catch {
       data = { message: text };
     }
   } else {
-    data = { message: text };
+    data = text ? { message: text } : null;
   }
 
   if (!response.ok) {
-    throw new Error(typeof data.message === 'string' ? data.message : `HTTP ${response.status}`);
+    const errorData = parseApiErrorBody(data, response.status);
+    throw new OntoApiError(
+      errorData.message,
+      response.status,
+      errorData.code,
+      errorData.errors,
+      errorData.correlationId,
+    );
   }
 
   // Type assertion is safe here because we control the return type T
