@@ -1,13 +1,17 @@
 #!/usr/bin/env npx tsx
 /**
- * CI guard: ensures all 8 locale translation files have the same key paths.
- * Walks JSON recursively and reports any keys missing from non-English locales.
+ * CI guard: ensures every locale namespace shipped under public/locales/en/
+ * is mirrored across all 8 locales with the same key paths.
+ *
+ * Walks each en/<namespace>.json, flattens its keys, and reports any keys
+ * missing from the equivalent locale file. Per AGENTS.md, every key in
+ * en/*.json must exist in all 7 other locales in the same change.
  *
  * Usage: npx tsx scripts/check-locale-parity.ts
  * Exit 0 = all in sync, Exit 1 = missing keys found.
  */
 
-import { readFileSync, readdirSync } from "fs";
+import { readFileSync, readdirSync, existsSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -30,60 +34,89 @@ function flattenKeys(obj: unknown, prefix = ""): Set<string> {
   return keys;
 }
 
+const enDir = resolve(LOCALES_DIR, "en");
+if (!existsSync(enDir)) {
+  console.error("Missing reference locale dir:", enDir);
+  process.exit(1);
+}
+
+const namespaces = readdirSync(enDir)
+  .filter((f) => f.endsWith(".json"))
+  .map((f) => f.replace(/\.json$/, ""))
+  .sort();
+
+if (namespaces.length === 0) {
+  console.error("No JSON namespaces under en/. Nothing to check.");
+  process.exit(1);
+}
+
 const locales = readdirSync(LOCALES_DIR).filter((d) => {
   try {
-    return readdirSync(resolve(LOCALES_DIR, d)).includes("common.json");
+    return readdirSync(resolve(LOCALES_DIR, d)).some((f) => f.endsWith(".json"));
   } catch {
     return false;
   }
 });
 
-if (locales.length === 0) {
-  console.error("No locale directories found in", LOCALES_DIR);
-  process.exit(1);
-}
-
-// Use 'en' as the reference
-const enPath = resolve(LOCALES_DIR, "en/common.json");
-const enData = JSON.parse(readFileSync(enPath, "utf-8"));
-const enKeys = flattenKeys(enData);
-
-console.log(`Reference: en (${enKeys.size} keys)`);
+console.log(`Namespaces: ${namespaces.join(", ")}`);
+console.log(`Locales: ${locales.join(", ")}`);
 
 let hasGaps = false;
 
-for (const locale of locales) {
-  if (locale === "en") continue;
-  const filePath = resolve(LOCALES_DIR, locale, "common.json");
-  const data = JSON.parse(readFileSync(filePath, "utf-8"));
-  const localeKeys = flattenKeys(data);
+for (const namespace of namespaces) {
+  const enPath = resolve(LOCALES_DIR, "en", `${namespace}.json`);
+  const enKeys = flattenKeys(JSON.parse(readFileSync(enPath, "utf-8")));
+  console.log(`\n[${namespace}] reference: en (${enKeys.size} keys)`);
 
-  const missingFromLocale = [...enKeys].filter((k) => !localeKeys.has(k));
-  const extraInLocale = [...localeKeys].filter((k) => !enKeys.has(k));
+  for (const locale of locales) {
+    if (locale === "en") continue;
+    const filePath = resolve(LOCALES_DIR, locale, `${namespace}.json`);
+    if (!existsSync(filePath)) {
+      console.error(`  ${locale}/${namespace}.json: MISSING entire file`);
+      hasGaps = true;
+      continue;
+    }
+    let data: unknown;
+    try {
+      data = JSON.parse(readFileSync(filePath, "utf-8"));
+    } catch (err) {
+      console.error(`  ${locale}/${namespace}.json: invalid JSON (${(err as Error).message})`);
+      hasGaps = true;
+      continue;
+    }
+    const localeKeys = flattenKeys(data);
 
-  if (missingFromLocale.length > 0) {
-    console.error(`\n${locale}: MISSING ${missingFromLocale.length} keys from en:`);
-    for (const key of missingFromLocale.slice(0, 20)) {
-      console.error(`  - ${key}`);
-    }
-    if (missingFromLocale.length > 20) {
-      console.error(`  ... and ${missingFromLocale.length - 20} more`);
-    }
-    hasGaps = true;
-  }
+    const missingFromLocale = [...enKeys].filter((k) => !localeKeys.has(k));
+    const extraInLocale = [...localeKeys].filter((k) => !enKeys.has(k));
 
-  if (extraInLocale.length > 0) {
-    console.warn(`\n${locale}: has ${extraInLocale.length} EXTRA keys not in en (may be stale):`);
-    for (const key of extraInLocale.slice(0, 10)) {
-      console.warn(`  + ${key}`);
+    if (missingFromLocale.length > 0) {
+      console.error(
+        `  ${locale}/${namespace}.json: MISSING ${missingFromLocale.length} keys from en:`
+      );
+      for (const key of missingFromLocale.slice(0, 20)) {
+        console.error(`    - ${key}`);
+      }
+      if (missingFromLocale.length > 20) {
+        console.error(`    ... and ${missingFromLocale.length - 20} more`);
+      }
+      hasGaps = true;
     }
-    if (extraInLocale.length > 10) {
-      console.warn(`  ... and ${extraInLocale.length - 10} more`);
-    }
-  }
 
-  if (missingFromLocale.length === 0 && extraInLocale.length === 0) {
-    console.log(`${locale}: OK (${localeKeys.size} keys)`);
+    if (extraInLocale.length > 0) {
+      console.warn(
+        `  ${locale}/${namespace}.json: has ${extraInLocale.length} EXTRA keys not in en (stale?):`
+      );
+      for (const key of extraInLocale.slice(0, 10)) {
+        console.warn(`    + ${key}`);
+      }
+      if (extraInLocale.length > 10) {
+        console.warn(`    ... and ${extraInLocale.length - 10} more`);
+      }
+    }
+
+    if (missingFromLocale.length === 0 && extraInLocale.length === 0) {
+      console.log(`  ${locale}/${namespace}.json: OK (${localeKeys.size} keys)`);
+    }
   }
 }
 
@@ -91,6 +124,6 @@ if (hasGaps) {
   console.error("\nLocale parity check FAILED — missing keys detected.");
   process.exit(1);
 } else {
-  console.log("\nAll locales are in sync with en.");
+  console.log("\nAll locales are in sync with en across every namespace.");
   process.exit(0);
 }
