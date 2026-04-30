@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { Link } from "react-router-dom"
+import { formatDate } from "@/lib/locale-format"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -45,7 +46,7 @@ function getNextDueDate(moveInDateIso: string): Date {
 }
 
 function formatMonthDay(date: Date): string {
-  return date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+  return formatDate(date, { month: "long", day: "numeric", year: "numeric" })
 }
 
 const INITIAL_LIMIT = 10

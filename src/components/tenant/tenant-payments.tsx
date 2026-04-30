@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast"
 import { ExportPDFButton } from "@/components/ui/export-pdf-button"
 import { formatUSD, formatUSDate } from "@/lib/us-format"
 import { PaymentMethods } from "@/components/ui/payment-methods"
+import { PlaidLinkButton } from "@/components/tenant/plaid-link-button"
 import { StripePaymentForm } from "@/components/stripe/StripePaymentForm"
 import { featureApi, type StripePaymentMethod, type PaymentRecord } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
@@ -466,6 +467,12 @@ export default function TenantPayments() {
 
         {/* Payment Methods Tab */}
         <TabsContent value="methods" className="space-y-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <PlaidLinkButton onSuccess={() => loadPaymentMethods()} />
+            <span className="text-xs text-muted-foreground">
+              Lower fees with bank-funded ACH. Add a card below for instant payments.
+            </span>
+          </div>
           <PaymentMethods />
         </TabsContent>
       </Tabs>

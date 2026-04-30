@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { FileText, Download, Search, Loader2, AlertCircle } from "lucide-react"
 import { documentsApi, type DocumentListRecord } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { formatDate as formatLocaleDate } from "@/lib/locale-format"
 
 function formatSize(bytes?: number): string {
   if (bytes == null) return "—"
@@ -15,11 +16,7 @@ function formatSize(bytes?: number): string {
 
 function formatDate(iso?: string): string {
   if (!iso) return "—"
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
+  return formatLocaleDate(iso, { month: "short", day: "numeric", year: "numeric" })
 }
 
 export default function TenantDocuments() {

@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/hooks/use-toast"
 import { AddDocumentDialog } from "@/components/owner/add-document-dialog"
+import { formatDate as formatLocaleDate } from "@/lib/locale-format"
 import { CreateFolderDialog } from "@/components/owner/create-folder-dialog"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
@@ -549,8 +550,7 @@ export function DocumentsPage({
   }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" })
+    return formatLocaleDate(dateString, { month: "numeric", day: "numeric", year: "numeric" })
   }
 
   if (fetchFromApi && apiLoading) {

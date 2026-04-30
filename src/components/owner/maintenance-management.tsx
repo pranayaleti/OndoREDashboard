@@ -28,6 +28,7 @@ import { CheckCircle, Clock, PenToolIcon as Tool, Search, Calendar, Home, AlertC
 import { MAINTENANCE_STATUSES, MAINTENANCE_PRIORITIES, MAINTENANCE_CATEGORIES } from "@/constants/maintenance.constants"
 import { propertyApi, maintenanceApi, type Property } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
+import { formatDate } from "@/lib/locale-format"
 
 // Display shape for Owner maintenance list (maps from API response for filters/table)
 export type OwnerMaintenanceRequest = {
@@ -323,7 +324,7 @@ export function OwnerMaintenanceManagement() {
 
     if (filterDate) {
       filtered = filtered.filter((req) => {
-        const requestDate = new Date(req.dateSubmitted).toLocaleDateString("en-US", {
+        const requestDate = formatDate(req.dateSubmitted, {
           month: "short",
           day: "numeric",
           year: "numeric",
@@ -1132,7 +1133,7 @@ export function OwnerMaintenanceManagement() {
                                 </TableCell>
                                 <TableCell>{getStatusBadge(request.status)}</TableCell>
                                 <TableCell>
-                                  {new Date(request.dateSubmitted).toLocaleDateString("en-US", {
+                                  {formatDate(request.dateSubmitted, {
                                     month: "short",
                                     day: "numeric",
                                     year: "numeric",
@@ -1402,27 +1403,27 @@ export function OwnerMaintenanceManagement() {
                   <div className="space-y-3">
                     <div>
                       <p className="text-xs text-muted-foreground">Submitted</p>
-                      <p className="font-semibold">{new Date(selectedRequest.dateSubmitted).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      <p className="font-semibold">{formatDate(selectedRequest.dateSubmitted, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                       })}</p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Last Updated</p>
-                      <p className="font-semibold">{new Date(selectedRequest.lastUpdated).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      <p className="font-semibold">{formatDate(selectedRequest.lastUpdated, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                       })}</p>
                     </div>
                     {selectedRequest.scheduledDate && (
                       <div>
                         <p className="text-xs text-muted-foreground">Scheduled Date</p>
-                        <p className="font-semibold">{new Date(selectedRequest.scheduledDate).toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
+                        <p className="font-semibold">{formatDate(selectedRequest.scheduledDate, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
                         })}</p>
                       </div>
                     )}

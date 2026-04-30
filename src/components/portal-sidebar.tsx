@@ -606,6 +606,7 @@ function SidebarLayout({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
+                aria-label="Appearance"
                 className={cn(
                   "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30",
                   expanded ? "justify-start w-full" : "justify-center w-full"
@@ -657,12 +658,13 @@ function SidebarLayout({
           <div className="relative">
             <Link
               to="/contact"
+              aria-label="Need help? Contact support"
               className={cn(
                 "flex items-center gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30 rounded-md px-3 py-2 transition-colors group",
                 expanded ? "justify-start w-full" : "justify-center w-full"
               )}
             >
-              <HelpCircle className="h-4 w-4" />
+              <HelpCircle className="h-4 w-4" aria-hidden="true" />
               {expanded && <span>Need help? Contact support</span>}
             </Link>
             {!expanded && (
@@ -674,12 +676,13 @@ function SidebarLayout({
           <Button
             variant="ghost"
             onClick={logout}
+            aria-label="Log out"
             className={cn(
               "gap-2 text-sm lg:text-base text-slate-400 hover:text-white hover:bg-secondary/30 dark:hover:bg-card/30",
               expanded ? "justify-start w-full" : "justify-center w-full"
             )}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4" aria-hidden="true" />
             {expanded && <span>Log out</span>}
           </Button>
         </SidebarFooter>

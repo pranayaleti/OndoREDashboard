@@ -7,13 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { propertyApi, type Property } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { formatCurrency as formatCurrencyLocale } from "@/lib/locale-format"
 
 const formatCurrency = (value?: number | null) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value || 0)
+  formatCurrencyLocale(value || 0, "USD", { maximumFractionDigits: 0 })
 
 const formatDate = (value?: string | number | Date) => {
   if (!value) return "—"

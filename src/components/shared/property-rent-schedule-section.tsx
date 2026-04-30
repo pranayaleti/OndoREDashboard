@@ -7,13 +7,10 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, Loader2, Calendar } from "lucide-react"
 import { rentSchedulesApi, type RentSchedule, type RentSummary } from "@/lib/api/clients/rent-schedules"
+import { formatCurrency } from "@/lib/locale-format"
 
 function formatCents(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(cents / 100)
+  return formatCurrency(cents / 100, "USD", { minimumFractionDigits: 2 })
 }
 
 interface PropertyRentScheduleSectionProps {

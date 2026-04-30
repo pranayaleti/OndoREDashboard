@@ -34,6 +34,10 @@ import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { PropertyDetailModal } from "@/components/property-detail-modal"
 import { ModernPropertyCard } from "@/components/owner/modern-property-card"
 import ManagerMaintenance from "./manager-maintenance"
+import ManagerLeases from "./manager-leases"
+import ManagerAuditLog from "./manager-audit-log"
+import { KpiCharts } from "./kpi-charts"
+import { CommandPalette } from "./command-palette"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 
 export default function ManagerDashboard() {
@@ -1143,7 +1147,21 @@ export default function ManagerDashboard() {
         <TabsContent value="maintenance" className="space-y-4">
           <ManagerMaintenance />
         </TabsContent>
+
+        <TabsContent value="leases" className="space-y-4">
+          <ManagerLeases />
+        </TabsContent>
+
+        <TabsContent value="kpi" className="space-y-4">
+          <KpiCharts properties={properties} maintenanceRequests={[]} />
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-4">
+          <ManagerAuditLog />
+        </TabsContent>
       </Tabs>
+
+      <CommandPalette switchTab={(tab) => handleTabChange(tab)} />
 
       {/* Property Detail Modal */}
       <PropertyDetailModal

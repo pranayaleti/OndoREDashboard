@@ -1303,6 +1303,40 @@ export const featureApi = {
     },
   },
 
+  plaid: {
+    async configured(): Promise<{ success: boolean; configured: boolean }> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ success: boolean; configured: boolean }>(
+        'GET',
+        '/plaid/configured',
+        undefined,
+        headers,
+      );
+    },
+    async createLinkToken(): Promise<{ success: boolean; linkToken: string }> {
+      const headers = getAuthHeaders();
+      return apiRequest<{ success: boolean; linkToken: string }>(
+        'POST',
+        '/plaid/link-token',
+        undefined,
+        headers,
+      );
+    },
+    async exchangePublicToken(args: {
+      publicToken: string;
+      selectedAccountId?: string;
+    }): Promise<{
+      success: boolean;
+      data: { bankSourceId: string; bankName: string; last4: string; plaidItemRowId: string };
+    }> {
+      const headers = getAuthHeaders();
+      return apiRequest<{
+        success: boolean;
+        data: { bankSourceId: string; bankName: string; last4: string; plaidItemRowId: string };
+      }>('POST', '/plaid/exchange-public-token', args, headers);
+    },
+  },
+
   subscriptions: {
     create(
       planName: string,
@@ -2631,7 +2665,7 @@ export const featureApi = {
       return apiRequest<unknown>('GET', '/inventory', undefined, headers)
         .then((r) => unwrapDataArray(r));
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     add(item: any): Promise<unknown> {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('POST', '/inventory', item, headers);
@@ -2963,7 +2997,7 @@ export const featureApi = {
     listAccounts: () => Promise<unknown[]>;
     listTransactions: () => Promise<unknown[]>;
     listDistributions: () => Promise<unknown[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     recordTransaction: (txn: any) => Promise<void>;
   },
   utilities: undefined as undefined | {
@@ -2975,18 +3009,18 @@ export const featureApi = {
   pets: undefined as undefined | {
     getPolicy: () => Promise<unknown>;
     list: () => Promise<unknown[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     updatePolicy: (draft: any) => Promise<void>;
   },
   investor: undefined as undefined | {
     listDeals: () => Promise<unknown[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     createDeal: (deal: any) => Promise<void>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     addInvestor: (inv: any) => Promise<void>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     createCapitalCall: (call: any) => Promise<void>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     createDistribution: (dist: any) => Promise<void>;
   },
 };

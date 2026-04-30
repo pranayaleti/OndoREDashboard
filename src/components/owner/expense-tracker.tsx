@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { formatCurrency } from "@/lib/locale-format"
 import {
   Select,
   SelectContent,
@@ -131,7 +132,7 @@ export function ExpenseTracker({ propertyId }: ExpenseTrackerProps) {
     load()
   }
 
-  const fmt = (cents: number) => `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+  const fmt = (cents: number) => formatCurrency(cents / 100, "USD", { minimumFractionDigits: 2 })
 
   if (loading) {
     return <div className="space-y-4"><Skeleton className="h-32 w-full" /><Skeleton className="h-48 w-full" /></div>

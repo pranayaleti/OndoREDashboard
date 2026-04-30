@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { formatDate } from "@/lib/locale-format"
 
 // Mock data for recent leads
 const recentLeads = [
@@ -137,19 +138,15 @@ export function RecentLeads() {
               </Badge>
             </TableCell>
             <TableCell>
-              {new Date(lead.date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+              {formatDate(lead.date, { month: "short", day: "numeric", year: "numeric" })}
             </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
-                <Button size="icon" variant="ghost">
-                  <Phone className="h-4 w-4" />
+                <Button size="icon" variant="ghost" aria-label="Call lead">
+                  <Phone className="h-4 w-4" aria-hidden="true" />
                 </Button>
-                <Button size="icon" variant="ghost">
-                  <Mail className="h-4 w-4" />
+                <Button size="icon" variant="ghost" aria-label="Email lead">
+                  <Mail className="h-4 w-4" aria-hidden="true" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

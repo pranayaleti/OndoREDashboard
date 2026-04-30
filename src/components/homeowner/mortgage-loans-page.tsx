@@ -30,14 +30,11 @@ import {
 } from "@/lib/api"
 import { Pencil, Plus, Trash2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { formatCurrency } from "@/lib/locale-format"
 
 function money(cents: number | null | undefined) {
   if (cents == null) return "—"
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(cents / 100)
+  return formatCurrency(cents / 100, "USD", { maximumFractionDigits: 0 })
 }
 
 export function MortgageLoansPage() {

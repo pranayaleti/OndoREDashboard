@@ -1,25 +1,26 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
-import TenantDashboard from "@/components/dashboard/portals/tenant/TenantDashboard.new"
-import TenantMaintenance from "@/components/tenant/tenant-maintenance"
-import TenantPayments from "@/components/tenant/tenant-payments"
-import TenantDocuments from "@/components/tenant/tenant-documents"
-import TenantMessages from "@/components/tenant/tenant-messages"
-import TenantProfile from "@/components/tenant/tenant-profile"
-import TenantLeaseDetails from "@/components/tenant/tenant-lease-details"
-import ManagerAssistant from "@/components/manager/manager-assistant"
-import TenantCalendar from "@/components/tenant/tenant-calendar"
-import TenantNotifications from "@/components/tenant/tenant-notifications"
-import TenantFinances from "@/components/tenant/tenant-finances"
-import { MortgageLoansPage } from "@/components/homeowner/mortgage-loans-page"
-import { HomeImprovementPage } from "@/components/homeowner/home-improvement-page"
-import { EquipmentGridPage } from "@/components/homeowner/equipment-grid"
-import { HomeownerSearchResults } from "@/components/homeowner/homeowner-search-results"
-import { DocumentsPanel } from "@/components/homeowner/documents-panel"
-import TenantSettings from "@/components/tenant/tenant-settings"
-import { ReferralProgram } from "@/components/shared/referral-program"
+
+const TenantDashboard = lazy(() => import("@/components/dashboard/portals/tenant/TenantDashboard.new"))
+const TenantMaintenance = lazy(() => import("@/components/tenant/tenant-maintenance"))
+const TenantPayments = lazy(() => import("@/components/tenant/tenant-payments"))
+const TenantDocuments = lazy(() => import("@/components/tenant/tenant-documents"))
+const TenantMessages = lazy(() => import("@/components/tenant/tenant-messages"))
+const TenantProfile = lazy(() => import("@/components/tenant/tenant-profile"))
+const TenantLeaseDetails = lazy(() => import("@/components/tenant/tenant-lease-details"))
+const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const TenantCalendar = lazy(() => import("@/components/tenant/tenant-calendar"))
+const TenantNotifications = lazy(() => import("@/components/tenant/tenant-notifications"))
+const TenantFinances = lazy(() => import("@/components/tenant/tenant-finances"))
+const MortgageLoansPage = lazy(() => import("@/components/homeowner/mortgage-loans-page").then((m) => ({ default: m.MortgageLoansPage })))
+const HomeImprovementPage = lazy(() => import("@/components/homeowner/home-improvement-page").then((m) => ({ default: m.HomeImprovementPage })))
+const EquipmentGridPage = lazy(() => import("@/components/homeowner/equipment-grid").then((m) => ({ default: m.EquipmentGridPage })))
+const HomeownerSearchResults = lazy(() => import("@/components/homeowner/homeowner-search-results").then((m) => ({ default: m.HomeownerSearchResults })))
+const DocumentsPanel = lazy(() => import("@/components/homeowner/documents-panel").then((m) => ({ default: m.DocumentsPanel })))
+const TenantSettings = lazy(() => import("@/components/tenant/tenant-settings"))
+const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 
 export default function Tenant() {
   return (

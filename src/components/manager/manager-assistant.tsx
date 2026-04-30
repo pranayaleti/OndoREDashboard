@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useLocation } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -20,16 +21,17 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-const QUICK_PROMPTS: { id: string; label: string; icon: string; prompt: string }[] = [
-  { id: "portfolio-stats", label: "Portfolio stats", icon: "📊", prompt: "What are my portfolio stats?" },
-  { id: "at-risk-tenants", label: "At-risk tenants", icon: "⚠️", prompt: "Show me at-risk tenants" },
-  { id: "pending-maintenance", label: "Pending maintenance", icon: "🔧", prompt: "List pending maintenance requests" },
-  { id: "rent-collection", label: "Rent collection status", icon: "💰", prompt: "What's my rent collection rate?" },
-  { id: "risk-trends", label: "Risk trends", icon: "📈", prompt: "Show risk trends for my portfolio" },
-  { id: "occupancy-rate", label: "Occupancy rate", icon: "🏢", prompt: "What's my current occupancy rate?" },
+const QUICK_PROMPTS: { id: string; labelKey: string; icon: string; prompt: string }[] = [
+  { id: "portfolio-stats", labelKey: "assistant.quickPrompts.portfolioStats", icon: "📊", prompt: "What are my portfolio stats?" },
+  { id: "at-risk-tenants", labelKey: "assistant.quickPrompts.atRiskTenants", icon: "⚠️", prompt: "Show me at-risk tenants" },
+  { id: "pending-maintenance", labelKey: "assistant.quickPrompts.pendingMaintenance", icon: "🔧", prompt: "List pending maintenance requests" },
+  { id: "rent-collection", labelKey: "assistant.quickPrompts.rentCollection", icon: "💰", prompt: "What's my rent collection rate?" },
+  { id: "risk-trends", labelKey: "assistant.quickPrompts.riskTrends", icon: "📈", prompt: "Show risk trends for my portfolio" },
+  { id: "occupancy-rate", labelKey: "assistant.quickPrompts.occupancyRate", icon: "🏢", prompt: "What's my current occupancy rate?" },
 ]
 
 function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
+  const { t } = useTranslation("dashboard")
   return (
     <div className="text-center py-8 px-4">
       <div className="flex justify-center mb-3">
@@ -37,19 +39,19 @@ function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
           <Sparkles className="h-6 w-6 text-orange-500" />
         </div>
       </div>
-      <p className="text-sm font-medium text-foreground mb-1">Ask me anything</p>
+      <p className="text-sm font-medium text-foreground mb-1">{t("assistant.askAnything")}</p>
       <p className="text-xs text-muted-foreground mb-4">
-        Portfolio insights, maintenance, at-risk tenants, and more.
+        {t("assistant.quickPromptHint")}
       </p>
       <div className="flex flex-wrap gap-2 justify-center">
-        {QUICK_PROMPTS.map(({ id, label, icon, prompt }) => (
+        {QUICK_PROMPTS.map(({ id, labelKey, icon, prompt }) => (
           <button
             key={id}
             onClick={() => onSelect(prompt)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100 transition-colors"
           >
             <span aria-hidden="true">{icon}</span>
-            <span>{label}</span>
+            <span>{t(labelKey)}</span>
           </button>
         ))}
       </div>
@@ -58,6 +60,7 @@ function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
 }
 
 export default function ManagerAssistant() {
+  const { t } = useTranslation("dashboard")
   const location = useLocation()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
@@ -118,11 +121,11 @@ export default function ManagerAssistant() {
       const message =
         err instanceof ApiError
           ? err.status === 429
-            ? "Too many requests. Please wait a few minutes before sending more messages."
+            ? t("assistant.rateLimitError")
             : err.message
           : err && typeof err === "object" && "message" in err
             ? String((err as { message: string }).message)
-            : "Failed to get reply"
+            : t("assistant.genericError")
       setError(message)
     } finally {
       setIsLoading(false)
@@ -153,18 +156,18 @@ export default function ManagerAssistant() {
           <Sparkles className="h-8 w-8 text-orange-500" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">AI Assistant</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{t("assistant.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Portfolio insights, maintenance, and more. Ask in plain language.
+            {t("assistant.subtitle")}
           </p>
         </div>
       </div>
 
       <Card className="flex-1 flex flex-col min-h-0">
         <CardHeader className="flex-shrink-0">
-          <CardTitle>Chat</CardTitle>
+          <CardTitle>{t("assistant.chatTitle")}</CardTitle>
           <CardDescription>
-            Ask about portfolio stats, revenue, occupancy, at-risk tenants, or list and create maintenance requests.
+            {t("assistant.chatDescription")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
@@ -204,7 +207,7 @@ export default function ManagerAssistant() {
                   <Loader2 className="h-4 w-4 text-orange-500 animate-spin" />
                 </div>
                 <div className="bg-muted rounded-lg px-4 py-2">
-                  <p className="text-sm text-muted-foreground">Thinking…</p>
+                  <p className="text-sm text-muted-foreground">{t("assistant.thinking")}</p>
                 </div>
               </div>
             )}
@@ -218,7 +221,7 @@ export default function ManagerAssistant() {
           <div className="flex-shrink-0 p-4 border-t flex gap-2">
             <Textarea
               ref={textareaRef}
-              placeholder="Ask about portfolio, maintenance…"
+              placeholder={t("assistant.placeholder")}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}

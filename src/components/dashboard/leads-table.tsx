@@ -16,6 +16,7 @@ import { MoreHorizontal, Phone, Mail, Search, Filter } from "lucide-react"
 import { Link } from "react-router-dom"
 import { usePagination } from "@/hooks/usePagination"
 import { DataPagination } from "@/components/ui/DataPagination"
+import { formatDate } from "@/lib/locale-format"
 
 // Mock data for tenant applications
 const applications = [
@@ -276,19 +277,15 @@ export function LeadsTable() {
                 <div className="text-sm text-muted-foreground">Credit: {application.creditScore}</div>
               </TableCell>
               <TableCell>
-                {new Date(application.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(application.date, { month: "short", day: "numeric", year: "numeric" })}
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  <Button size="icon" variant="ghost">
-                    <Phone className="h-4 w-4" />
+                  <Button size="icon" variant="ghost" aria-label="Call applicant">
+                    <Phone className="h-4 w-4" aria-hidden="true" />
                   </Button>
-                  <Button size="icon" variant="ghost">
-                    <Mail className="h-4 w-4" />
+                  <Button size="icon" variant="ghost" aria-label="Email applicant">
+                    <Mail className="h-4 w-4" aria-hidden="true" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

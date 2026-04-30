@@ -146,18 +146,20 @@ export function PropertyImageCarousel({
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Previous image"
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               onClick={goToPrevious}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Next image"
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
               onClick={goToNext}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Button>
           </>
         )}
@@ -176,6 +178,9 @@ export function PropertyImageCarousel({
           {images.map((_, index: number) => (
             <button
               key={index}
+              type="button"
+              aria-label={`Go to image ${index + 1}`}
+              aria-current={index === currentIndex ? "true" : undefined}
               className={cn(
                 "w-2 h-2 rounded-full transition-all duration-200",
                 index === currentIndex

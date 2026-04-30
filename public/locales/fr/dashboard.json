@@ -41,6 +41,26 @@
     "viewAll": "Voir tout",
     "export": "Exporter"
   },
+  "assistant": {
+    "title": "Assistant IA",
+    "subtitle": "Informations sur le portefeuille, maintenance et plus. Posez vos questions en langage naturel.",
+    "chatTitle": "Discussion",
+    "chatDescription": "Posez des questions sur les statistiques du portefeuille, les revenus, l'occupation, les locataires à risque ou créez des demandes de maintenance.",
+    "askAnything": "Posez-moi n'importe quelle question",
+    "quickPromptHint": "Informations sur le portefeuille, maintenance, locataires à risque et plus.",
+    "thinking": "Réflexion en cours…",
+    "placeholder": "Questions sur le portefeuille, la maintenance…",
+    "rateLimitError": "Trop de requêtes. Veuillez patienter quelques minutes avant d'envoyer d'autres messages.",
+    "genericError": "Impossible d'obtenir une réponse",
+    "quickPrompts": {
+      "portfolioStats": "Statistiques du portefeuille",
+      "atRiskTenants": "Locataires à risque",
+      "pendingMaintenance": "Maintenance en attente",
+      "rentCollection": "État des loyers collectés",
+      "riskTrends": "Tendances de risque",
+      "occupancyRate": "Taux d'occupation"
+    }
+  },
   "portfolio": {
     "accounting": {
       "title": "Profits et pertes",

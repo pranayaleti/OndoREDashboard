@@ -26,6 +26,7 @@ import {
 import { Link } from "react-router-dom"
 import { usePagination } from "@/hooks/usePagination"
 import { DataPagination } from "@/components/ui/DataPagination"
+import { formatDate } from "@/lib/locale-format"
 
 // Mock data for properties
 const properties = [
@@ -260,11 +261,7 @@ export function PropertiesTable() {
               </TableCell>
               <TableCell>{property.owner}</TableCell>
               <TableCell>
-                {new Date(property.dateAdded).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(property.dateAdded, { month: "short", day: "numeric", year: "numeric" })}
               </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>

@@ -1,3 +1,5 @@
+import { getCurrentLocale } from "@/lib/locale-format";
+
 export const companyInfo = {
   name: "Ondo Real Estate",
   email: "pranay1917@gmail.com",
@@ -197,7 +199,7 @@ export function getUserTimezone(): DetectedTimezone {
 
     // Get timezone abbreviation (e.g., "PST", "EST", "GMT")
     const date = new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", {
+    const formatter = new Intl.DateTimeFormat(getCurrentLocale(), {
       timeZone,
       timeZoneName: "short",
     });

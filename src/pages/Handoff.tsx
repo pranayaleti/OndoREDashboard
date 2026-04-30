@@ -16,6 +16,7 @@ import { propertyApi, handoffApi, type Property } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { getDashboardPath } from "@/lib/auth-utils"
+import { formatDate } from "@/lib/locale-format"
 
 import { HandoffCelebration, HandoffChecklist, HandoffOverview, HandoffPropertyDetails, HandoffNeighborhood, HandoffMoveOutResources } from "@/components/handoff"
 
@@ -150,7 +151,7 @@ export default function Handoff() {
     if (!date) return "Unknown date"
     const dateObj = date instanceof Date ? date : new Date(date)
     if (isNaN(dateObj.getTime())) return "Invalid date"
-    return dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })
+    return formatDate(dateObj, { month: 'numeric', day: 'numeric', year: 'numeric' })
   }
 
   // Handle document actions
@@ -678,12 +679,8 @@ export default function Handoff() {
     }
 
     fetchProperties()
-     
-  }, [requestedPropertyId, selectedPropertyId, user?.id, user?.role])
 
-  if (!requestedPropertyId) {
-    return null
-  }
+  }, [requestedPropertyId, selectedPropertyId, user?.id, user?.role])
 
   // Fetch handoff data when property is selected
   useEffect(() => {
@@ -786,6 +783,10 @@ export default function Handoff() {
   const handlePropertyChange = (newPropertyId: string) => {
     setSelectedPropertyId(newPropertyId)
     navigate(`/handoff/${newPropertyId}`)
+  }
+
+  if (!requestedPropertyId) {
+    return null
   }
 
   // Show loading state for properties first

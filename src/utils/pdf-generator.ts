@@ -1,4 +1,5 @@
 import { companyInfo } from "@/constants/companyInfo";
+import { formatDate, formatTime } from "@/lib/locale-format";
 
 /** Escape user-supplied strings before embedding them in HTML templates. */
 function escapeHtml(value: string | number | undefined | null): string {
@@ -105,8 +106,8 @@ function detectTheme(): 'dark' | 'light' {
  */
 export function generateOccupancyReportHTML(data: OccupancyReportData): string {
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = formatDate(now, { year: 'numeric', month: 'long', day: 'numeric' });
+  const timeStr = formatTime(now, { hour: '2-digit', minute: '2-digit' });
   const generatedText = `${dateStr} at ${timeStr}`;
 
   const propertyName = data.propertyName || "Oak Street Apartments";
@@ -725,8 +726,8 @@ export async function generatePDFFromHTMLWithLibrary(
  */
 export function generateGenericPDFHTML(data: PDFContent, fileName: string = 'report'): string {
   const now = new Date();
-  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = formatDate(now, { year: 'numeric', month: 'long', day: 'numeric' });
+  const timeStr = formatTime(now, { hour: '2-digit', minute: '2-digit' });
   const generatedText = `${dateStr} at ${timeStr}`;
   const userEmail = data.userEmail || '';
 

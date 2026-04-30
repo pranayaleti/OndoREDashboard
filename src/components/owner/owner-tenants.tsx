@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { propertyApi, type Tenant, type OwnerTenantsSummary } from "@/lib/api"
 import { AddTenantDialog } from "@/components/owner/add-tenant-dialog"
+import { formatDate } from "@/lib/locale-format"
 
 export default function OwnerTenants() {
   const [tenants, setTenants] = useState<Tenant[]>([])
@@ -177,10 +178,7 @@ export default function OwnerTenants() {
                         <span className="text-gray-400">Move-in:</span>
                         <span className="text-white">
                           {tenant.leaseStart
-                            ? new Date(tenant.leaseStart).toLocaleDateString("en-US", {
-                                month: "short",
-                                year: "numeric",
-                              })
+                            ? formatDate(tenant.leaseStart, { month: "short", year: "numeric" })
                             : "—"}
                         </span>
                     </div>

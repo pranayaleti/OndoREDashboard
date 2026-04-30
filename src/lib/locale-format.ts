@@ -11,7 +11,7 @@ const LOCALE_MAP: Record<string, string> = {
   kn: 'kn-IN',
 };
 
-function getCurrentLocale(): string {
+export function getCurrentLocale(): string {
   return LOCALE_MAP[i18n.language] ?? 'en-US';
 }
 
@@ -43,6 +43,19 @@ export function formatDateTime(
     ...options,
   };
   return d.toLocaleString(getCurrentLocale(), mergedOptions);
+}
+
+export function formatTime(
+  date: Date | string | number,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  const d = date instanceof Date ? date : new Date(date);
+  const mergedOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...options,
+  };
+  return d.toLocaleTimeString(getCurrentLocale(), mergedOptions);
 }
 
 export function formatNumber(

@@ -1,5 +1,6 @@
 // Site configuration constants - Imported from companyInfo for single source of truth
 import { companyInfo } from "@/constants/companyInfo"
+import { formatTime } from "@/lib/locale-format"
 
 // Social media links array
 export const SITE_SOCIALS = [
@@ -31,25 +32,19 @@ export const SITE_EMAILS = {
 }
 
 // Hours label - formatted from companyInfo hours
-export const SITE_HOURS_LABEL = (() => {
+// NOTE(i18n): function form so it re-evaluates against the user's current locale on each call
+export function getSiteHoursLabel(): string {
   const weekday = companyInfo.hours.find(h => h.day === "Mon-Fri")
-  if (weekday) {
-    // Convert 24-hour format to 12-hour format
-    const [opensHour, opensMin] = (weekday.opens ?? "09:00").split(":").map(Number)
-    const [closesHour, closesMin] = (weekday.closes ?? "17:00").split(":").map(Number)
-    
-    const opens12 = new Date(2000, 0, 1, opensHour, opensMin).toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit', 
-      hour12: true 
-    })
-    const closes12 = new Date(2000, 0, 1, closesHour, closesMin).toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit', 
-      hour12: true 
-    })
-    return `Monday - Friday: ${opens12} - ${closes12}`
-  }
-  return "Monday - Friday: 9am - 5pm"
-})()
+  if (!weekday) return "Monday - Friday: 9am - 5pm"
+
+  const [opensHour, opensMin] = (weekday.opens ?? "09:00").split(":").map(Number)
+  const [closesHour, closesMin] = (weekday.closes ?? "17:00").split(":").map(Number)
+  const opens12 = formatTime(new Date(2000, 0, 1, opensHour, opensMin), {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  })
+  const closes12 = formatTime(new Date(2000, 0, 1, closesHour, closesMin), {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  })
+  return `Monday - Friday: ${opens12} - ${closes12}`
+}
 

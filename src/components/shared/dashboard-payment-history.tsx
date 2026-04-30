@@ -7,18 +7,15 @@ import { useAuth } from "@/lib/auth-context"
 import { getDemoDashboardPayments } from "@/lib/seed-data"
 import { ListRowsSkeleton } from "@/components/ui/list-skeletons"
 import { EmptyState } from "@/components/ui/empty-state"
+import { formatCurrency, formatDate as formatLocaleDate } from "@/lib/locale-format"
 
 function formatUSD(cents: number): string {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100)
+  return formatCurrency(cents / 100, "USD")
 }
 
 function formatDate(iso: string | null): string {
   if (!iso) return "—"
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
+  return formatLocaleDate(iso, { month: "short", day: "numeric", year: "numeric" })
 }
 
 interface DashboardPaymentHistoryProps {

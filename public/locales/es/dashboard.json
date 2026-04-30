@@ -41,6 +41,26 @@
     "viewAll": "Ver todo",
     "export": "Exportar"
   },
+  "assistant": {
+    "title": "Asistente IA",
+    "subtitle": "Información del portafolio, mantenimiento y más. Pregunte en lenguaje natural.",
+    "chatTitle": "Chat",
+    "chatDescription": "Pregunte sobre estadísticas del portafolio, ingresos, ocupación, inquilinos en riesgo o cree solicitudes de mantenimiento.",
+    "askAnything": "Pregúntame lo que sea",
+    "quickPromptHint": "Información del portafolio, mantenimiento, inquilinos en riesgo y más.",
+    "thinking": "Pensando…",
+    "placeholder": "Pregunte sobre portafolio, mantenimiento…",
+    "rateLimitError": "Demasiadas solicitudes. Espere unos minutos antes de enviar más mensajes.",
+    "genericError": "No se pudo obtener una respuesta",
+    "quickPrompts": {
+      "portfolioStats": "Estadísticas del portafolio",
+      "atRiskTenants": "Inquilinos en riesgo",
+      "pendingMaintenance": "Mantenimiento pendiente",
+      "rentCollection": "Estado de cobro de alquiler",
+      "riskTrends": "Tendencias de riesgo",
+      "occupancyRate": "Tasa de ocupación"
+    }
+  },
   "portfolio": {
     "accounting": {
       "title": "Pérdidas y ganancias",

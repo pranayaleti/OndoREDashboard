@@ -2,23 +2,23 @@ import { Suspense, lazy } from "react"
 import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
-import AdminDashboard from "@/components/dashboard/portals/admin/AdminDashboard.new"
-import AdminManagers from "@/components/admin/admin-managers"
-import AdminOwners from "@/components/admin/admin-owners"
-import AdminTenants from "@/components/admin/admin-tenants"
-import AdminMaintenance from "@/components/admin/admin-maintenance"
-import AdminProperties from "@/components/admin/admin-properties"
-import AdminFinances from "@/components/admin/admin-finances"
-import AdminReports from "@/components/admin/admin-reports"
-import AdminProfile from "@/components/admin/admin-profile"
-import AdminDocuments from "@/components/admin/admin-documents"
-import AdminMessages from "@/components/admin/admin-messages"
-import AdminCalendar from "@/components/admin/admin-calendar"
-import AdminNotifications from "@/components/admin/admin-notifications"
-import ManagerAssistant from "@/components/manager/manager-assistant"
-import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
-import { ReferralProgram } from "@/components/shared/referral-program"
 
+const AdminDashboard = lazy(() => import("@/components/dashboard/portals/admin/AdminDashboard.new"))
+const AdminManagers = lazy(() => import("@/components/admin/admin-managers"))
+const AdminOwners = lazy(() => import("@/components/admin/admin-owners"))
+const AdminTenants = lazy(() => import("@/components/admin/admin-tenants"))
+const AdminMaintenance = lazy(() => import("@/components/admin/admin-maintenance"))
+const AdminProperties = lazy(() => import("@/components/admin/admin-properties"))
+const AdminFinances = lazy(() => import("@/components/admin/admin-finances"))
+const AdminReports = lazy(() => import("@/components/admin/admin-reports"))
+const AdminProfile = lazy(() => import("@/components/admin/admin-profile"))
+const AdminDocuments = lazy(() => import("@/components/admin/admin-documents"))
+const AdminMessages = lazy(() => import("@/components/admin/admin-messages"))
+const AdminCalendar = lazy(() => import("@/components/admin/admin-calendar"))
+const AdminNotifications = lazy(() => import("@/components/admin/admin-notifications"))
+const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const ScreeningListPageWithOwnerFilter = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPageWithOwnerFilter })))
+const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 
 export default function Admin() {

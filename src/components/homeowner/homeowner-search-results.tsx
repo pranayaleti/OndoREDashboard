@@ -9,6 +9,7 @@ import { homeownerApi, type HomeownerSearchResult } from "@/lib/api"
 import { validateChatInput } from "@/lib/aiGuardrails"
 import { useAuth } from "@/lib/auth-context"
 import { getDashboardPath } from "@/lib/auth-utils"
+import { formatDate, formatTime } from "@/lib/locale-format"
 import {
   Search,
   ArrowLeft,
@@ -90,12 +91,12 @@ function SearchResultsInner({ propertyId }: { propertyId: string }) {
   }
 
   const now = new Date()
-  const timeStr = now.toLocaleTimeString("en-US", {
+  const timeStr = formatTime(now, {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
   })
-  const dateStr = now.toLocaleDateString("en-US", {
+  const dateStr = formatDate(now, {
     weekday: "long",
     month: "long",
     day: "numeric",

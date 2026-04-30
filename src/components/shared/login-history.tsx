@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Clock, MapPin, Monitor, Smartphone, Tablet, Shield, ChevronRight } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { formatDistanceToNow } from "date-fns"
+import { formatDateTime } from "@/lib/locale-format"
 
 export interface LoginSession {
   id: string
@@ -109,7 +110,7 @@ export function LoginHistory({ lastLogin, loginHistory, onViewHistory }: LoginHi
     const date = new Date(timestamp)
     return {
       relative: formatDistanceToNow(date, { addSuffix: true }),
-      absolute: date.toLocaleString("en-US", {
+      absolute: formatDateTime(date, {
         month: "short",
         day: "numeric",
         year: "numeric",

@@ -16,6 +16,7 @@ import { MoreHorizontal, Search, Filter, Clock, AlertTriangle } from "lucide-rea
 import { Link } from "react-router-dom"
 import { usePagination } from "@/hooks/usePagination"
 import { DataPagination } from "@/components/ui/DataPagination"
+import { formatDate } from "@/lib/locale-format"
 
 // Sample data for maintenance requests
 const maintenanceRequests = [
@@ -258,11 +259,7 @@ export function MaintenanceTable({ status }: { status?: string }) {
                 </Badge>
               </TableCell>
               <TableCell>
-                {new Date(request.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formatDate(request.date, { month: "short", day: "numeric", year: "numeric" })}
               </TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>

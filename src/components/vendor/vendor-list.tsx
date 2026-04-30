@@ -321,17 +321,19 @@ export default function VendorList() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="Edit vendor"
                             onClick={() => setEditVendor(vendor)}
                           >
-                            <Edit2 className="h-4 w-4" />
+                            <Edit2 className="h-4 w-4" aria-hidden="true" />
                           </Button>
                           {vendor.status === "active" && (
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Deactivate vendor"
                               onClick={() => handleDeactivate(vendor)}
                             >
-                              <Trash2 className="h-4 w-4 text-red-500" />
+                              <Trash2 className="h-4 w-4 text-red-500" aria-hidden="true" />
                             </Button>
                           )}
                         </div>

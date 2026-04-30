@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { formatUSDate } from "@/lib/us-format"
+import { formatDate } from "@/lib/locale-format"
 import type { ActivityItem } from "../../base/types"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { AssistantStarterCard } from "@/components/assistant-starter-card"
@@ -46,7 +47,7 @@ export function createTenantConfig(
 
   const nextRentDue = getNextRentDueDate()
   const formatRentDueDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    return formatDate(date, { month: 'long', day: 'numeric', year: 'numeric' })
   }
 
   // Calculate lease expiration (12 months from property creation)
@@ -60,7 +61,7 @@ export function createTenantConfig(
 
   const leaseExpiration = getLeaseExpiration()
   const formatLeaseExpiration = (date: Date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    return formatDate(date, { month: 'short', day: 'numeric', year: 'numeric' })
   }
   const getMonthsRemaining = () => {
     if (!leaseExpiration) return 0

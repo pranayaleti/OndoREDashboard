@@ -8,6 +8,7 @@ import { Wrench, CreditCard, FileText, MessageSquare, Calendar, DollarSign, Cloc
 import { useAuth } from "@/lib/auth-context"
 import { propertyApi, maintenanceApi, type Property, type MaintenanceRequest } from "@/lib/api"
 import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
+import { formatDate } from "@/lib/locale-format"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { formatUSDate } from "@/lib/us-format"
 
@@ -88,11 +89,7 @@ export default function TenantDashboard() {
 
   // Format date for display
   const formatRentDueDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric'
-    })
+    return formatDate(date, { month: 'long', day: 'numeric', year: 'numeric' })
   }
 
   // Calculate lease expiration (12 months from property creation)
@@ -303,10 +300,10 @@ export default function TenantDashboard() {
                 {getLeaseExpiration ? (
                   <>
                     <div className="text-2xl font-bold">
-                      {getLeaseExpiration.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {formatDate(getLeaseExpiration.date, { month: 'short', day: 'numeric' })}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {getLeaseExpiration.date.toLocaleDateString('en-US', { year: 'numeric' })}
+                      {formatDate(getLeaseExpiration.date, { year: 'numeric' })}
                     </p>
                     <Badge variant="outline" className="mt-3">
                       {getLeaseExpiration.monthsRemaining} {getLeaseExpiration.monthsRemaining === 1 ? 'month' : 'months'} left

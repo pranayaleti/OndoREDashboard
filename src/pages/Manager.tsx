@@ -2,24 +2,24 @@ import { Suspense, lazy } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
-import ManagerDashboard from "@/components/dashboard/portals/manager/ManagerDashboard.new"
-import ManagerProperties from "@/components/manager/manager-property-review"
-import ManagerTenants from "@/components/manager/manager-tenants"
-import ManagerOwners from "@/components/manager/manager-owners"
-import ManagerMaintenance from "@/components/manager/manager-maintenance"
-import ManagerLeads from "@/components/manager/manager-leads"
-import { ScreeningListPage } from "@/components/shared/screening-list-page"
-import ManagerFinances from "@/components/manager/manager-finances"
-import ManagerReports from "@/components/manager/manager-reports"
-import ManagerProfile from "@/components/manager/manager-profile"
-import ManagerDocuments from "@/components/manager/manager-documents"
-import ManagerMessages from "@/components/manager/manager-messages"
-import ManagerCalendar from "@/components/manager/manager-calendar"
-import ManagerNotifications from "@/components/manager/manager-notifications"
-import ManagerAssistant from "@/components/manager/manager-assistant"
-import { DashboardPaymentHistory } from "@/components/shared/dashboard-payment-history"
-import { ReferralProgram } from "@/components/shared/referral-program"
 
+const ManagerDashboard = lazy(() => import("@/components/dashboard/portals/manager/ManagerDashboard.new"))
+const ManagerProperties = lazy(() => import("@/components/manager/manager-property-review"))
+const ManagerTenants = lazy(() => import("@/components/manager/manager-tenants"))
+const ManagerOwners = lazy(() => import("@/components/manager/manager-owners"))
+const ManagerMaintenance = lazy(() => import("@/components/manager/manager-maintenance"))
+const ManagerLeads = lazy(() => import("@/components/manager/manager-leads"))
+const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
+const ManagerFinances = lazy(() => import("@/components/manager/manager-finances"))
+const ManagerReports = lazy(() => import("@/components/manager/manager-reports"))
+const ManagerProfile = lazy(() => import("@/components/manager/manager-profile"))
+const ManagerDocuments = lazy(() => import("@/components/manager/manager-documents"))
+const ManagerMessages = lazy(() => import("@/components/manager/manager-messages"))
+const ManagerCalendar = lazy(() => import("@/components/manager/manager-calendar"))
+const ManagerNotifications = lazy(() => import("@/components/manager/manager-notifications"))
+const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
+const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 
 export default function Manager() {

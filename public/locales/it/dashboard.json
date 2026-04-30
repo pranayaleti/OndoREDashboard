@@ -41,6 +41,26 @@
     "viewAll": "Vedi tutto",
     "export": "Esporta"
   },
+  "assistant": {
+    "title": "Assistente IA",
+    "subtitle": "Approfondimenti sul portafoglio, manutenzione e altro. Chiedi in linguaggio naturale.",
+    "chatTitle": "Chat",
+    "chatDescription": "Chiedi informazioni sulle statistiche del portafoglio, entrate, occupazione, inquilini a rischio o crea richieste di manutenzione.",
+    "askAnything": "Chiedimi qualsiasi cosa",
+    "quickPromptHint": "Approfondimenti sul portafoglio, manutenzione, inquilini a rischio e altro.",
+    "thinking": "Sto pensando…",
+    "placeholder": "Chiedi informazioni su portafoglio, manutenzione…",
+    "rateLimitError": "Troppe richieste. Attendi qualche minuto prima di inviare altri messaggi.",
+    "genericError": "Impossibile ottenere una risposta",
+    "quickPrompts": {
+      "portfolioStats": "Statistiche del portafoglio",
+      "atRiskTenants": "Inquilini a rischio",
+      "pendingMaintenance": "Manutenzione in sospeso",
+      "rentCollection": "Stato riscossione affitti",
+      "riskTrends": "Tendenze di rischio",
+      "occupancyRate": "Tasso di occupazione"
+    }
+  },
   "portfolio": {
     "accounting": {
       "title": "Profitti e perdite",

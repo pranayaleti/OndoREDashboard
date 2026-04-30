@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Zap, Plus, DivideCircle } from "lucide-react"
+import { formatCurrency } from "@/lib/locale-format"
 import { featureApi } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 
@@ -62,7 +63,7 @@ const MOCK_BILLS: UtilityBill[] = [
 
 const UTILITY_ICONS: Record<string, string> = { electricity: "⚡", gas: "🔥", water: "💧", trash: "🗑️" }
 
-function fmt(cents: number) { return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}` }
+function fmt(cents: number) { return formatCurrency(cents / 100, "USD", { minimumFractionDigits: 2 }) }
 
 export function UtilityBillingManager() {
   const { toast } = useToast()

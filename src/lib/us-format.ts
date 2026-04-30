@@ -1,11 +1,5 @@
 import { DEFAULT_US_COUNTRY, DEFAULT_US_COUNTRY_CODE, US_PHONE_REGEX, US_ZIP_REGEX } from "@/constants"
-
-const USD_FORMATTER = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-})
+import { formatCurrency, formatDate } from "@/lib/locale-format"
 
 const US_DATE_DEFAULTS: Intl.DateTimeFormatOptions = {
   month: "2-digit",
@@ -17,18 +11,18 @@ export function formatUSDate(value?: string | number | Date, options?: Intl.Date
   if (!value) return "—"
   const date = value instanceof Date ? value : new Date(value)
   if (Number.isNaN(date.getTime())) return "—"
-  return date.toLocaleDateString("en-US", { ...US_DATE_DEFAULTS, ...options })
+  return formatDate(date, { ...US_DATE_DEFAULTS, ...options })
 }
 
 export function formatUSD(value?: number | string | null) {
   if (value === null || value === undefined || value === "") {
-    return USD_FORMATTER.format(0)
+    return formatCurrency(0, "USD", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
   const numeric = typeof value === "string" ? Number(value) : value
   if (Number.isNaN(numeric)) {
-    return USD_FORMATTER.format(0)
+    return formatCurrency(0, "USD", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   }
-  return USD_FORMATTER.format(numeric)
+  return formatCurrency(numeric, "USD", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 export function normalizeUSPhone(value: string) {

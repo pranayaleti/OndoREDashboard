@@ -15,6 +15,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useNavigate } from "react-router-dom"
 import { getDashboardPath } from "@/lib/auth-utils"
 import { TenantScreeningSection } from "@/components/tenant-screening/TenantScreeningSection"
+import { formatTime as formatLocaleTime } from "@/lib/locale-format"
 
 export default function ContactPage() {
   const { toast } = useToast()
@@ -175,10 +176,10 @@ export default function ContactPage() {
                           const sunday = companyInfo.hours.find(h => h.day === "Sun")
                           const formatTime = (time: string) => {
                             const [hour, min] = time.split(":").map(Number)
-                            return new Date(2000, 0, 1, hour, min).toLocaleTimeString('en-US', { 
-                              hour: 'numeric', 
-                              minute: '2-digit', 
-                              hour12: true 
+                            return formatLocaleTime(new Date(2000, 0, 1, hour, min), {
+                              hour: 'numeric',
+                              minute: '2-digit',
+                              hour12: true
                             })
                           }
                           return (

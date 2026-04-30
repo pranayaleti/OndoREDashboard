@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { apiPut, getAuthHeaders } from '@/lib/api';
 
 const LOCALES = [
   { code: 'en', label: 'English (United States)' },
@@ -33,20 +34,12 @@ export function LanguageSwitcher({ variant = 'header', className }: LanguageSwit
   const handleLanguageChange = async (code: string) => {
     await i18n.changeLanguage(code);
     try {
-      const token = localStorage.getItem('ondo_access_token');
-      if (token) {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3030/api';
-        fetch(`${baseUrl}/users/me/locale`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ locale: code }),
-        }).catch(() => {});
+      const headers = getAuthHeaders();
+      if (headers.Authorization) {
+        apiPut('/users/me/locale', { locale: code }, headers).catch(() => {});
       }
     } catch {
-      // Best effort — localStorage/API may not be available
+      // Best effort — API may not be available
     }
   };
 

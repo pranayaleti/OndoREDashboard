@@ -41,6 +41,26 @@
     "viewAll": "View All",
     "export": "Export"
   },
+  "assistant": {
+    "title": "AI Assistant",
+    "subtitle": "Portfolio insights, maintenance, and more. Ask in plain language.",
+    "chatTitle": "Chat",
+    "chatDescription": "Ask about portfolio stats, revenue, occupancy, at-risk tenants, or list and create maintenance requests.",
+    "askAnything": "Ask me anything",
+    "quickPromptHint": "Portfolio insights, maintenance, at-risk tenants, and more.",
+    "thinking": "Thinking…",
+    "placeholder": "Ask about portfolio, maintenance…",
+    "rateLimitError": "Too many requests. Please wait a few minutes before sending more messages.",
+    "genericError": "Failed to get reply",
+    "quickPrompts": {
+      "portfolioStats": "Portfolio stats",
+      "atRiskTenants": "At-risk tenants",
+      "pendingMaintenance": "Pending maintenance",
+      "rentCollection": "Rent collection status",
+      "riskTrends": "Risk trends",
+      "occupancyRate": "Occupancy rate"
+    }
+  },
   "portfolio": {
     "accounting": {
       "title": "Profit & Loss",
