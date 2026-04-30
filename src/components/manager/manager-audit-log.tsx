@@ -52,7 +52,6 @@ export default function ManagerAuditLog() {
 
   useEffect(() => {
     void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset, resourceFilter])
 
   const filteredEntries = useMemo(() => {
