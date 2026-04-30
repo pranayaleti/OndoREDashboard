@@ -121,9 +121,12 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                {/* Semi-protected routes (available to logged-in users) */}
+                {/* Handoff is available to staff (super_admin, admin, manager) and to
+                    the owner / tenant / maintenance roles that work directly with the
+                    property. The page renders different content per role internally,
+                    but unauthorized roles must not even reach the route. */}
                 <Route path="/handoff/:propertyId?" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={["super_admin", "admin", "manager", "owner", "tenant", "maintenance"]}>
                     <Handoff />
                   </ProtectedRoute>
                 } />
