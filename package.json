@@ -17,7 +17,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "check:locales": "tsx scripts/check-locale-parity.ts"
+    "check:locales": "tsx scripts/check-locale-parity.ts",
+    "check:bundles": "tsx scripts/check-bundle-budgets.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
