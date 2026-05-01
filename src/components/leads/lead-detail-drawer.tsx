@@ -1,5 +1,5 @@
 // src/components/leads/lead-detail-drawer.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { featureApi } from "@/lib/api";
 import type { LeadScore, SiteVisit } from "@/lib/api/clients/lead";
 import { SiteVisitProposer } from "./site-visit-proposer";
@@ -25,12 +25,50 @@ export function LeadDetailDrawer({ lead, onClose }: Props) {
   const [score, setScore] = useState<LeadScore | null>(null);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
   const [showProposer, setShowProposer] = useState(false);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!lead) return;
     featureApi.leads.getLeadScore(lead.id).then(setScore);
     featureApi.leads.getSiteVisits({ leadId: lead.id }).then(setVisits);
   }, [lead?.id]);
+
+  useEffect(() => {
+    if (!lead) return;
+    closeButtonRef.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const drawer = drawerRef.current;
+      if (!drawer) return;
+      const focusable = Array.from(
+        drawer.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.hasAttribute("disabled") && el.offsetParent !== null);
+
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [lead?.id, onClose]);
 
   if (!lead) return null;
 
@@ -51,11 +89,24 @@ export function LeadDetailDrawer({ lead, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-background/20" onClick={onClose} />
-      <div className="relative w-[480px] bg-card h-full shadow-xl overflow-y-auto p-6 flex flex-col gap-6">
+      <div className="absolute inset-0 bg-background/20" onClick={onClose} aria-hidden="true" />
+      <div
+        ref={drawerRef}
+        className="relative w-[480px] bg-card h-full shadow-xl overflow-y-auto p-6 flex flex-col gap-6"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lead-detail-title"
+      >
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">{lead.tenantName}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+          <h2 id="lead-detail-title" className="text-lg font-semibold">{lead.tenantName}</h2>
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+            aria-label="Close lead details"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Contact info */}
