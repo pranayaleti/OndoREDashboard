@@ -29,6 +29,7 @@ export type ToasterToast = ToastProps & {
 };
 
 type ToastInput = {
+  id?: string | number;
   title?: React.ReactNode;
   description?: React.ReactNode;
   variant?: Variant | null;
@@ -57,6 +58,7 @@ function toast(input: ToastInput | string) {
   const variant: Variant = opts.variant ?? "default";
 
   const sonnerOptions = {
+    ...(opts.id !== undefined ? { id: opts.id } : {}),
     description,
     ...(duration !== undefined ? { duration } : {}),
   };

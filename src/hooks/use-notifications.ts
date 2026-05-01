@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { notificationsApi, type Notification } from "@/lib/api";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth-context";
 import { getDemoNotifications } from "@/lib/seed-data";
 
@@ -41,7 +41,9 @@ export function useNotifications(enabled: boolean): UseNotificationsReturn {
         // Show toast for each newly appeared unread notification
         for (const n of newUnread) {
           if (!seenIds.current.has(n.id)) {
-            toast.error(n.title, {
+            toast({
+              title: n.title,
+              variant: "destructive",
               description: n.message,
               duration: 8000,
               id: n.id, // prevents duplicate toasts for the same id

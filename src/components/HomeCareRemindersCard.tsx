@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Bell, CheckCircle, Calendar, AlertCircle } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/hooks/use-toast"
 import { dashboardApi, type PropertyReminderItem } from "@/lib/api"
 import { formatUSDate } from "@/lib/us-format"
 import { useAuth } from "@/lib/auth-context"
@@ -66,7 +66,9 @@ export function HomeCareRemindersCard() {
     setReminders((prev) => prev.filter((r) => `${r.propertyId}:${r.reminderType}` !== key))
     try {
       await dashboardApi.completeReminder(propertyId, reminderType)
-      toast.success("Reminder completed", {
+      toast({
+        title: "Reminder completed",
+        variant: "success",
         description: "Next due date has been updated.",
       })
       // Background sync to get updated due dates
@@ -74,7 +76,9 @@ export function HomeCareRemindersCard() {
     } catch (err) {
       // Revert optimistic update on failure
       void fetchReminders()
-      toast.error("Could not mark complete", {
+      toast({
+        title: "Could not mark complete",
+        variant: "destructive",
         description: err instanceof Error ? err.message : "Please try again.",
       })
     } finally {
@@ -98,13 +102,17 @@ export function HomeCareRemindersCard() {
           dashboardApi.completeReminder(target.propertyId, target.reminderType)
         )
       )
-      toast.success("Reminder completed", {
+      toast({
+        title: "Reminder completed",
+        variant: "success",
         description: "Next due date has been updated.",
       })
       void fetchReminders()
     } catch (err) {
       void fetchReminders()
-      toast.error("Could not mark complete", {
+      toast({
+        title: "Could not mark complete",
+        variant: "destructive",
         description: err instanceof Error ? err.message : "Please try again.",
       })
     } finally {

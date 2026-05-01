@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
+import { toast } from "@/hooks/use-toast"
 
 const VISIBLE_PREFIXES = [
   "/login",
@@ -37,11 +37,13 @@ export function SupportWidget() {
 
   const handleSend = () => {
     if (!email.trim()) {
-      toast.error("Add your email to contact support.")
+      toast({ title: "Add your email to contact support.", variant: "destructive" })
       return
     }
 
-    toast.success("Support message queued.", {
+    toast({
+      title: "Support message queued.",
+      variant: "success",
       description: "Our team will follow up shortly.",
     })
     setMessage("")
