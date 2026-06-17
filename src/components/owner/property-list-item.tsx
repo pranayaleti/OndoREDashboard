@@ -15,9 +15,24 @@ import {
 import { Link } from "react-router-dom"
 // import Image from "next/image" // Replaced with img tag
 
+interface MockPropertySummary {
+  id: string
+  name: string
+  image?: string
+  address: string
+  city: string
+  state: string
+  zipCode: string
+  type: string
+  occupancy: string
+  occupancyRate: number
+  monthlyIncome: number
+  units: number
+  leaseEnd?: string | null
+}
+
 interface PropertyListItemProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property: any
+  property: MockPropertySummary
   getPropertyTypeIcon: (type: string) => React.ReactNode
 }
 

@@ -40,9 +40,56 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 
+interface MockPropertyUnit {
+  id: string
+  name: string
+  bedrooms: number
+  bathrooms: number
+  status: string
+  rent: number
+}
+
+interface MockPropertyFinancials {
+  monthlyRent: number
+  expenses: Record<string, number>
+}
+
+interface MockProperty {
+  id: string
+  name: string
+  image?: string
+  address: string
+  city: string
+  state: string
+  zipCode: string
+  type: string
+  description: string
+  status: string
+  occupancy: string
+  occupancyRate: number
+  monthlyIncome: number
+  yearBuilt: number
+  squareFeet: number
+  bedrooms: number
+  bathrooms: number
+  amenities: string[]
+  tenants: number
+  leaseEnd?: string | null
+  value?: number
+  units: MockPropertyUnit[]
+  financials: MockPropertyFinancials
+  maintenanceHistory?: Array<{
+    id: string
+    date: string
+    type: string
+    description: string
+    cost: number
+    status: string
+  }>
+}
+
 interface PropertyDetailsProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property: any
+  property: MockProperty
 }
 
 export function PropertyDetails({ property }: PropertyDetailsProps) {

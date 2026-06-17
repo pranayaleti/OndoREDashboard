@@ -34,8 +34,7 @@ export function PropertyPerformanceChart({ data }: PropertyPerformanceChartProps
           outerRadius={80}
           fill="#8884d8"
           dataKey="value"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+          label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} ${((percent ?? 0) * 100).toFixed(0)}%`}
         >
           {chartData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />

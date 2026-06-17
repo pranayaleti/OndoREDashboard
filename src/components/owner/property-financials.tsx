@@ -8,9 +8,25 @@ import { Progress } from "@/components/ui/progress"
 import { DollarSign, TrendingUp, TrendingDown, Calendar } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
+interface MockPropertyUnit {
+  id: string
+  name: string
+  rent: number
+}
+
+interface MockPropertyFinancials {
+  monthlyRent: number
+  expenses: Record<string, number>
+}
+
+interface MockPropertyWithFinancials {
+  financials: MockPropertyFinancials
+  units: MockPropertyUnit[]
+  value?: number
+}
+
 interface PropertyFinancialsProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property: any
+  property: MockPropertyWithFinancials
 }
 
 export function PropertyFinancials({ property }: PropertyFinancialsProps) {
@@ -18,8 +34,7 @@ export function PropertyFinancials({ property }: PropertyFinancialsProps) {
 
   // Calculate financial metrics
   const financials = property.financials
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const totalExpenses = Object.values(financials?.expenses || {}).reduce((sum: number, expense: any) => sum + (Number(expense) || 0), 0) as number
+  const totalExpenses = Object.values(financials?.expenses || {}).reduce((sum: number, expense: number) => sum + (Number(expense) || 0), 0) as number
   const monthlyRent = Number(financials?.monthlyRent) || 0
   const netIncome = monthlyRent - totalExpenses
   const cashFlowPercentage = monthlyRent > 0 ? (netIncome / monthlyRent) * 100 : 0
@@ -125,8 +140,7 @@ export function PropertyFinancials({ property }: PropertyFinancialsProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {property.units.map((unit: any) => (
+              {property.units.map((unit) => (
                 <div key={unit.id}>
                   <div className="flex justify-between text-sm mb-1">
                     <span>{unit.name}</span>
@@ -146,8 +160,7 @@ export function PropertyFinancials({ property }: PropertyFinancialsProps) {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {Object.entries(financials.expenses).map(([category, amount]: [string, any]) => (
+              {Object.entries(financials.expenses).map(([category, amount]) => (
                 <div key={category}>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="capitalize">{category}</span>

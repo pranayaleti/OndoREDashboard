@@ -124,8 +124,7 @@ export function TenantsView() {
     return matchesSearch
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const _handleAddTenant = (data: any) => {
+  const _handleAddTenant = (data: { name: string; email: string; phone: string; property: string; propertyId: string; unit: string; leaseStart: string; leaseEnd: string; rent: string }) => {
     // In a real app, this would call an API to add the tenant
     const newTenant = {
       id: `tenant${tenants.length + 1}`,

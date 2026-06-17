@@ -66,8 +66,7 @@ export default function ForgotPassword() {
       const contentType = response.headers.get('content-type');
       const isJson = contentType && contentType.includes('application/json');
       
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let data: any;
+      let data: { message?: string };
       if (isJson) {
         try {
           const text = await response.text();
