@@ -15,6 +15,7 @@ import {
   Bar,
   Legend,
 } from "recharts"
+import type { ValueType } from "recharts/types/component/DefaultTooltipContent"
 
 // Original chart components
 interface ChartContainerProps {
@@ -27,12 +28,10 @@ export function ChartContainer({ className, children }: ChartContainerProps) {
 }
 
 interface ChartLineProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[]
+  data: Record<string, unknown>[]
   x: string
   y: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueFormatter?: (value: any) => string
+  valueFormatter?: (value: ValueType) => string
   showGridLines?: boolean
   showXAxis?: boolean
   showYAxis?: boolean
@@ -65,12 +64,10 @@ export function ChartLine({
 }
 
 interface ChartPieProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[]
+  data: Record<string, unknown>[]
   index: string
   category: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueFormatter?: (value: any) => string
+  valueFormatter?: (value: ValueType) => string
   className?: string
 }
 
@@ -92,12 +89,10 @@ export function ChartPie({ data, index, category, valueFormatter, className }: C
 }
 
 interface ChartBarProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[]
+  data: Record<string, unknown>[]
   x: string
   y: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  valueFormatter?: (value: any) => string
+  valueFormatter?: (value: ValueType) => string
   className?: string
   colors?: string[]
 }
@@ -119,8 +114,7 @@ export function ChartBar({ data, x, y, valueFormatter, className, colors = ["#88
 
 interface ChartLegendProps {
   className?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[]
+  data: Record<string, unknown>[]
   index: string
   color: string
 }
@@ -130,8 +124,8 @@ export function ChartLegend({ className, data, index, color }: ChartLegendProps)
     <div className={className}>
       {data.map((item, i) => (
         <div key={i} className="flex items-center">
-          <div className="mr-2 h-4 w-4 rounded-full" style={{ backgroundColor: item[color] }} />
-          <span>{item[index]}</span>
+          <div className="mr-2 h-4 w-4 rounded-full" style={{ backgroundColor: item[color] as string }} />
+          <span>{item[index] as React.ReactNode}</span>
         </div>
       ))}
     </div>
