@@ -23,8 +23,7 @@ import { useUserTimezone } from "@/hooks/use-user-timezone"
 import { LoginHistory } from "@/components/shared/login-history"
 
 // Mock tenant profile data - will be replaced with real data from API
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getInitialProfileData = (user: any) => ({
+const getInitialProfileData = (user: { firstName?: string; lastName?: string; email?: string; phone?: string; address?: string } | null) => ({
   personalInfo: {
     firstName: user?.firstName || "John",
     lastName: user?.lastName || "Smith",
@@ -112,15 +111,14 @@ export default function TenantProfile() {
   const { displayTimezone, storageTimezone } = useUserTimezone()
 
   const handleToggleChange = (category: string, subcategory: string, setting: string) => {
+    type CategoryMap = Record<string, boolean | string | Record<string, boolean>>
     setSettings((prev) => ({
       ...prev,
       [category]: {
         ...prev[category as keyof typeof prev],
         [subcategory]: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...(prev[category as keyof typeof prev] as any)[subcategory],
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [setting]: !(prev[category as keyof typeof prev] as any)[subcategory][setting],
+          ...((prev[category as keyof typeof prev] as CategoryMap)[subcategory] as Record<string, boolean>),
+          [setting]: !((prev[category as keyof typeof prev] as CategoryMap)[subcategory] as Record<string, boolean>)[setting],
         },
       },
     }))
