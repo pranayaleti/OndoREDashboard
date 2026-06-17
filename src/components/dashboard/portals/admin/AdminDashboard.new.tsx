@@ -5,6 +5,7 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createAdminConfig } from "./admin.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
+import type { Property, MaintenanceRequest } from "@/lib/api"
 /**
  * New AdminDashboard using BaseDashboard architecture
  * 
@@ -29,8 +30,7 @@ function AdminDashboardContent() {
     const maintenanceRequests = data.maintenanceRequests || []
 
     return [
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...properties.slice(0, 3).map((p: any, idx: number) => ({
+      ...(properties as Property[]).slice(0, 3).map((p: Property, idx: number) => ({
         id: `prop-${idx}`,
         type: "property" as const,
         message: `Property "${p.title}" ${p.status === 'pending' ? 'submitted for review' : p.status === 'approved' ? 'approved' : 'rejected'}`,
@@ -38,8 +38,7 @@ function AdminDashboardContent() {
         status: p.status === 'approved' ? 'success' as const : p.status === 'rejected' ? 'error' as const : 'warning' as const,
         href: `/admin/properties`,
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...maintenanceRequests.slice(0, 2).map((m: any, idx: number) => ({
+      ...(maintenanceRequests as MaintenanceRequest[]).slice(0, 2).map((m: MaintenanceRequest, idx: number) => ({
         id: `maint-${idx}`,
         type: "maintenance" as const,
         message: `Maintenance request "${m.title}" ${m.status === 'completed' ? 'completed' : 'updated'}`,

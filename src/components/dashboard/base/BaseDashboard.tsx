@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { BaseDashboardProps } from "./types"
+import { BaseDashboardProps, DashboardData } from "./types"
 import { useBaseDashboard } from "./BaseDashboardContext"
 import { StatCard } from "./widgets/StatCard"
 import { ActivityFeed } from "./widgets/ActivityFeed"
@@ -85,8 +85,7 @@ export function BaseDashboard({ config, children, className }: BaseDashboardProp
 /**
  * Renders common dashboard sections based on configuration
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function renderDashboardContent(config: BaseDashboardProps["config"], data: any): ReactNode {
+function renderDashboardContent(config: BaseDashboardProps["config"], data: DashboardData): ReactNode {
   return (
     <>
       {/* Custom Sections */}

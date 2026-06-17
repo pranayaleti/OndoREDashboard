@@ -28,7 +28,7 @@ import {
   Wrench
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { propertyApi, authApi, leadApi, ApiError, type Property, type InvitedUser, type Lead } from "@/lib/api"
+import { propertyApi, authApi, leadApi, ApiError, type Property, type PropertyOwner, type InvitedUser, type Lead } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
 import { PropertyDetailModal } from "@/components/property-detail-modal"
@@ -592,8 +592,7 @@ export default function ManagerDashboard() {
                 acc[ownerKey].properties.push(property);
               }
               return acc;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            }, {} as Record<string, { owner: any, properties: Property[] }>);
+            }, {} as Record<string, { owner: PropertyOwner, properties: Property[] }>);
 
             const ownerGroups = Object.values(propertiesByOwner);
 
