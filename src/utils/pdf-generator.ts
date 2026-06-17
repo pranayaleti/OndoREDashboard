@@ -685,19 +685,23 @@ export async function generatePDFFromHTMLWithLibrary(
   // Check if html2pdf.js is available in the global scope
   // Note: For build compatibility, we only check window.html2pdf
   // To use html2pdf.js, load it via script tag or install and configure Vite to handle it
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let html2pdf: any = null;
-  
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (typeof window !== 'undefined' && (window as any).html2pdf) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    html2pdf = (window as any).html2pdf;
+  type Html2PdfFn = () => { set(opt: object): { from(el: HTMLElement): { save(): Promise<void> } } };
+  type WindowWithHtml2Pdf = Window & { html2pdf?: Html2PdfFn };
+  let html2pdf: Html2PdfFn | null = null;
+
+  if (typeof window !== 'undefined' && (window as WindowWithHtml2Pdf).html2pdf) {
+    html2pdf = (window as WindowWithHtml2Pdf).html2pdf ?? null;
   } else {
     // Library not available, fall back to print method
     console.warn('html2pdf.js not available. Load it via script tag or use print method. Falling back to print method.');
     return generatePDFFromHTML(htmlContent, fileName);
   }
 
+  if (!html2pdf) {
+    return generatePDFFromHTML(htmlContent, fileName);
+  }
+
+  const html2pdfLib: Html2PdfFn = html2pdf;
   const element = document.createElement('div');
   try {
     element.innerHTML = htmlContent;
@@ -711,7 +715,7 @@ export async function generatePDFFromHTMLWithLibrary(
       jsPDF: options?.jsPDF || { unit: 'in', format: 'letter', orientation: 'portrait' },
     };
 
-    await html2pdf().set(opt).from(element).save();
+    await html2pdfLib().set(opt).from(element).save();
   } catch (error) {
     console.error('Error generating PDF with library:', error);
     // Fallback to print method

@@ -19,6 +19,15 @@ interface LateFeeConfigProps {
   propertyId: string
 }
 
+interface LateFeeRule {
+  feeType?: string
+  gracePeriodDays?: number
+  feeAmountCents?: number
+  feePercentage?: number
+  dailyAmountCents?: number
+  maxFeeCents?: number
+}
+
 export function LateFeeConfig({ propertyId }: LateFeeConfigProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
@@ -35,9 +44,8 @@ export function LateFeeConfig({ propertyId }: LateFeeConfigProps) {
   const loadRule = async () => {
     try {
       setLoading(true)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await featureApi.lateFees.getRule(propertyId) as any
-      const rule = res?.data ?? res
+      const raw = await featureApi.lateFees.getRule(propertyId) as { data?: LateFeeRule } | LateFeeRule
+      const rule: LateFeeRule | null = (raw as { data?: LateFeeRule }).data ?? (raw as LateFeeRule) ?? null
       if (rule) {
         setFeeType(rule.feeType || "flat")
         setGracePeriod(String(rule.gracePeriodDays || 5))
@@ -72,9 +80,8 @@ export function LateFeeConfig({ propertyId }: LateFeeConfigProps) {
 
   const handleApply = async () => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await featureApi.lateFees.apply(propertyId) as any
-      toast({ title: (res?.data ?? res)?.message || "Late fees applied" })
+      const applyRes = await featureApi.lateFees.apply(propertyId) as { data?: { message?: string }; message?: string }
+      toast({ title: (applyRes?.data ?? applyRes)?.message || "Late fees applied" })
     } catch {
       toast({ title: "Failed to apply fees", variant: "destructive" })
     }

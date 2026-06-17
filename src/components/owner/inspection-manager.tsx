@@ -37,6 +37,23 @@ interface InspectionManagerProps {
   propertyId: string
 }
 
+interface InspectionItem {
+  id: string
+  area: string
+  itemName: string
+  condition?: string
+}
+
+interface InspectionDetail {
+  id: string
+  inspectionType: string
+  status: string
+  scheduledDate: string
+  overallCondition?: string | null
+  notes?: string | null
+  items?: InspectionItem[]
+}
+
 const typeLabels: Record<string, string> = {
   move_in: "Move-In",
   move_out: "Move-Out",
@@ -57,8 +74,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
   const [inspections, setInspections] = useState<Inspection[]>([])
   const [createOpen, setCreateOpen] = useState(false)
   const [detailId, setDetailId] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [detail, setDetail] = useState<any>(null)
+  const [detail, setDetail] = useState<InspectionDetail | null>(null)
 
   // Create form
   const [inspType, setInspType] = useState("periodic")
@@ -104,8 +120,8 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
   const loadDetail = async (id: string) => {
     try {
       const data = await featureApi.inspections.get(id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setDetail((data as any)?.data ?? data)
+      const raw = data as { data?: InspectionDetail } | InspectionDetail
+      setDetail((raw as { data?: InspectionDetail }).data ?? (raw as InspectionDetail))
       setDetailId(id)
     } catch {
       toast({ title: "Failed to load inspection", variant: "destructive" })
@@ -225,8 +241,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
               {detail.items && detail.items.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Checklist Items</p>
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {detail.items.map((item: any) => (
+                  {detail.items.map((item: InspectionItem) => (
                     <div key={item.id} className="flex items-center justify-between text-sm p-2 bg-muted dark:bg-card rounded">
                       <span>{item.area} — {item.itemName}</span>
                       {item.condition && (

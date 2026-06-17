@@ -839,10 +839,8 @@ export default function ManagerMaintenance() {
             await maintenanceApi.createMaintenanceRequest({
               title: data.title,
               description: data.description,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              category: data.category as any,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              priority: data.priority as any,
+              category: data.category as MaintenanceRequest["category"],
+              priority: data.priority as MaintenanceRequest["priority"],
               ...(data.photoUrl && { photoUrl: data.photoUrl }),
             } as Parameters<typeof maintenanceApi.createMaintenanceRequest>[0])
 

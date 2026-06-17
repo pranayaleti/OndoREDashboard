@@ -265,8 +265,7 @@ export function ESGDashboard() {
                   type="number"
                   min={0}
                   placeholder={f.placeholder}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  value={(form as any)[f.key]}
+                  value={form[f.key as keyof typeof form]}
                   onChange={(e) => setForm((d) => ({ ...d, [f.key]: e.target.value }))}
                 />
               </div>

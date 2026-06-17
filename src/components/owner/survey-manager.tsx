@@ -36,6 +36,18 @@ interface SurveyManagerProps {
   propertyId: string
 }
 
+interface SurveyQuestionResult {
+  questionId: string
+  questionText: string
+  totalAnswers: number
+  average?: number | null
+}
+
+interface SurveyResults {
+  totalResponses: number
+  questions?: SurveyQuestionResult[]
+}
+
 const statusColors: Record<string, string> = {
   draft: "bg-muted text-slate-600",
   active: "bg-green-100 text-green-700",
@@ -48,8 +60,7 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
   const [surveys, setSurveys] = useState<Survey[]>([])
   const [createOpen, setCreateOpen] = useState(false)
   const [resultsId, setResultsId] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [results, setResults] = useState<any>(null)
+  const [results, setResults] = useState<SurveyResults | null>(null)
 
   // Create form
   const [title, setTitle] = useState("")
@@ -106,8 +117,8 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
   const viewResults = async (id: string) => {
     try {
       const data = await featureApi.surveys.getResults(id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setResults((data as any)?.data ?? data)
+      const raw = data as { data?: SurveyResults } | SurveyResults
+      setResults((raw as { data?: SurveyResults }).data ?? (raw as SurveyResults))
       setResultsId(id)
     } catch {
       toast({ title: "Failed to load results", variant: "destructive" })
@@ -230,8 +241,7 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
           {results && (
             <div className="space-y-4">
               <p className="text-sm text-slate-500">{results.totalResponses} responses</p>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {(results.questions || []).map((q: any) => (
+              {(results.questions || []).map((q: SurveyQuestionResult) => (
                 <div key={q.questionId} className="p-3 bg-muted dark:bg-card rounded-lg">
                   <p className="text-sm font-medium mb-1">{q.questionText}</p>
                   <p className="text-xs text-slate-500">{q.totalAnswers} answers</p>
