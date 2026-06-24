@@ -190,8 +190,7 @@ export function MessagesView() {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCreateConversation = async (data: any) => {
+  const handleCreateConversation = async (data: { recipient: string; recipientType: string; property: string; message: string }) => {
     try {
       const newThread = await featureApi.communication.createThread({
         subject: data.message?.substring(0, 80) ?? "New Message",

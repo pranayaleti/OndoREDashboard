@@ -51,9 +51,9 @@ export function BulkInviteDialog({ propertyId, open, onOpenChange }: BulkInviteD
     if (emails.length === 0) return
     try {
       setSending(true)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await featureApi.applicationActions.bulkInvite(propertyId, emails) as any
-      const data = res?.data ?? res
+      const res = await featureApi.applicationActions.bulkInvite(propertyId, emails)
+      const raw = (res as Record<string, unknown>)
+      const data = (raw["data"] ?? raw) as { sent: string[]; failed: string[] }
       setResult(data)
       toast({
         title: `${data.sent?.length ?? 0} invitations sent, ${data.failed?.length ?? 0} failed`,

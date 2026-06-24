@@ -5,6 +5,7 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createManagerConfig } from "./manager.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
+import type { Property, Lead } from "@/lib/api"
 /**
  * New ManagerDashboard using BaseDashboard architecture
  */
@@ -27,8 +28,7 @@ function ManagerDashboardContent() {
     const leads = data.leads || []
 
     return [
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...properties.slice(0, 3).map((p: any, idx: number) => ({
+      ...(properties as Property[]).slice(0, 3).map((p: Property, idx: number) => ({
         id: `prop-${idx}`,
         type: "property" as const,
         message: `Property "${p.title}" ${p.status === 'pending' ? 'submitted for review' : p.status === 'approved' ? 'approved' : 'rejected'}`,
@@ -36,8 +36,7 @@ function ManagerDashboardContent() {
         status: p.status === 'approved' ? 'success' as const : p.status === 'rejected' ? 'error' as const : 'warning' as const,
         href: `/dashboard/properties`,
       })),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...leads.slice(0, 2).map((l: any, idx: number) => ({
+      ...(leads as Lead[]).slice(0, 2).map((l: Lead, idx: number) => ({
         id: `lead-${idx}`,
         type: "user" as const,
         message: `New lead from ${l.tenantName}`,

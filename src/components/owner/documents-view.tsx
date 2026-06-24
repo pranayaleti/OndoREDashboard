@@ -258,8 +258,7 @@ export function DocumentsView() {
     return matchesSearch && matchesProperty && matchesCategory && matchesFolder
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const _handleAddDocument = (data: any) => {
+  const _handleAddDocument = (data: { name: string; category: string; property: string; folder: string }) => {
     // In a real app, this would call an API to upload the document
     const newDocument = {
       id: `doc${documents.length + 1}`,
@@ -282,8 +281,7 @@ export function DocumentsView() {
   }
   void _handleAddDocument
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCreateFolder = (data: any) => {
+  const handleCreateFolder = (data: { name: string; description: string }) => {
     // In a real app, this would call an API to create the folder
     const newFolder = {
       id: `folder${folders.length + 1}`,

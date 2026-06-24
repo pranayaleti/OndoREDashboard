@@ -28,8 +28,7 @@ function MaintenanceDashboardContent() {
     return maintenanceRequests
       .filter((r: MaintenanceRequest) => r.assignedTo)
       .slice(0, 5)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((r: any, idx: number) => ({
+      .map((r: MaintenanceRequest, idx: number) => ({
         id: `ticket-${idx}`,
         type: "maintenance" as const,
         message: `Ticket "${r.title}" ${r.status === 'completed' ? 'completed' : r.status === 'in_progress' ? 'in progress' : 'pending'}`,

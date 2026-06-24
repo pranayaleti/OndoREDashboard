@@ -6,6 +6,7 @@ import { BaseDashboard, BaseDashboardProvider } from "../../base"
 import { createTenantConfig } from "./tenant.config"
 import { useBaseDashboard } from "../../base/BaseDashboardContext"
 import { formatUSDate } from "@/lib/us-format"
+import type { MaintenanceRequest } from "@/lib/api"
 /**
  * New TenantDashboard using BaseDashboard architecture
  */
@@ -27,8 +28,7 @@ function TenantDashboardContent() {
   const activities = useMemo(() => {
     const maintenanceRequests = data.maintenanceRequests || []
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return maintenanceRequests.slice(0, 3).map((m: any, idx: number) => ({
+    return (maintenanceRequests as MaintenanceRequest[]).slice(0, 3).map((m: MaintenanceRequest, idx: number) => ({
       id: `maint-${idx}`,
       type: "maintenance" as const,
       message: `Maintenance request "${m.title}" ${m.status === 'completed' ? 'completed' : 'updated'}`,

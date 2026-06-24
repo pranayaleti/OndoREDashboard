@@ -113,8 +113,7 @@ export function PropertyDocuments() {
     return matchesSearch && matchesCategory
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleAddDocument = (data: any) => {
+  const handleAddDocument = (data: { name: string; category: string }) => {
     // In a real app, this would call an API to upload the document
     const newDocument = {
       id: `doc${documents.length + 1}`,
@@ -273,8 +272,7 @@ export function PropertyDocuments() {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function AddDocumentDialog({ onAddDocument }: { onAddDocument: (data: any) => void }) {
+function AddDocumentDialog({ onAddDocument }: { onAddDocument: (data: { name: string; category: string }) => void }) {
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
     name: "",

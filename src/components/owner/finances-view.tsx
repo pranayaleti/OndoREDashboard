@@ -175,8 +175,7 @@ export function FinancesView() {
     )
   }, [filteredTransactions])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleAddTransaction = (data: any) => {
+  const handleAddTransaction = (data: { property: string; category: string; description: string; amount: string; type: "income" | "expense" }) => {
     const newTx: Transaction = {
       id: `local-${Date.now()}`,
       date: format(new Date(), "yyyy-MM-dd"),

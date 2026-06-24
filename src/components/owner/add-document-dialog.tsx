@@ -19,9 +19,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileUp, AlertTriangle, Upload } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
+interface DocumentFormData {
+  name: string
+  category: string
+  property: string
+  folder: string
+}
+
 interface AddDocumentDialogProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onAddDocument?: (data: any) => void
+  onAddDocument?: (data: DocumentFormData) => void
 }
 
 export function AddDocumentDialog({ onAddDocument }: AddDocumentDialogProps) {

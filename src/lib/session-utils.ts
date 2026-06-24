@@ -1,6 +1,5 @@
 // Function to save user information to session storage
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function saveUserInfo(zipCode: string, userData?: Record<string, any>) {
+export function saveUserInfo(zipCode: string, userData?: Record<string, unknown>) {
   if (typeof window !== "undefined") {
     // Save ZIP code
     sessionStorage.setItem("userZipCode", zipCode)
@@ -24,8 +23,7 @@ export function getUserZipCode(): string | null {
 }
 
 // Function to get user data from session storage
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getUserData(): Record<string, any> | null {
+export function getUserData(): Record<string, unknown> | null {
   if (typeof window !== "undefined") {
     const userData = sessionStorage.getItem("userData")
     if (!userData) return null

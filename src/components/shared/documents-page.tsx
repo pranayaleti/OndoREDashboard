@@ -416,8 +416,7 @@ export function DocumentsPage({
     })
   }, [documentsState, searchTerm, propertyFilter, categoryFilter, folderFilter, activeTab])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleAddDocument = (data: any) => {
+  const handleAddDocument = (data: { name: string; category: string; property: string; folder: string }) => {
     const newDocument: Document = {
       id: `doc${documentsState.length + 1}`,
       name: data.name,
@@ -439,8 +438,7 @@ export function DocumentsPage({
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCreateFolder = (data: any) => {
+  const handleCreateFolder = (data: { name: string; description: string }) => {
     const newFolder: DocumentFolder = {
       id: `folder${foldersState.length + 1}`,
       name: data.name,

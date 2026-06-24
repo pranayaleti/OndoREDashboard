@@ -102,8 +102,7 @@ export interface PortalConfig {
   
   // Data fetching
   dataFetchers?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: () => Promise<any>
+    [key: string]: () => Promise<unknown>
   }
   
   // Permissions
@@ -125,8 +124,7 @@ export interface BaseDashboardProps {
 export interface DashboardData {
   loading: boolean
   error: Error | null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stats?: Record<string, any>
+  stats?: Record<string, unknown>
   activities?: ActivityItem[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any

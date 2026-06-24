@@ -18,9 +18,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { FolderPlus } from "lucide-react"
 
+interface FolderFormData {
+  name: string
+  description: string
+}
+
 interface CreateFolderDialogProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onCreateFolder: (data: any) => void
+  onCreateFolder: (data: FolderFormData) => void
 }
 
 export function CreateFolderDialog({ onCreateFolder }: CreateFolderDialogProps) {

@@ -20,9 +20,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Plus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
+interface MessageFormData {
+  recipient: string
+  recipientType: string
+  property: string
+  message: string
+}
+
 interface NewMessageDialogProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onCreateConversation: (data: any) => void
+  onCreateConversation: (data: MessageFormData) => void
 }
 
 export function NewMessageDialog({ onCreateConversation }: NewMessageDialogProps) {

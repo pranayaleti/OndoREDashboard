@@ -9,8 +9,7 @@ interface BaseDashboardContextType {
   loading: boolean
   error: Error | null
   refreshData: () => Promise<void>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateData: (key: string, value: any) => void
+  updateData: (key: string, value: unknown) => void
   addActivity: (activity: ActivityItem) => void
   updateConfig: (updates: Partial<PortalConfig>) => void
 }
@@ -57,7 +56,7 @@ export function BaseDashboardProvider({
       setLoading(true)
       setError(null)
 
-      const fetchPromises = Object.entries(config.dataFetchers).map(async ([key, fetcher]) => {
+      const fetchPromises = Object.entries(config.dataFetchers).map(async ([key, fetcher]): Promise<[string, unknown]> => {
         try {
           const result = await fetcher()
           return [key, result]
@@ -68,8 +67,7 @@ export function BaseDashboardProvider({
       })
 
       const results = await Promise.all(fetchPromises)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const fetchedData: Record<string, any> = {}
+      const fetchedData: Record<string, unknown> = {}
 
       results.forEach(([key, value]) => {
         fetchedData[key] = value
@@ -103,8 +101,7 @@ export function BaseDashboardProvider({
     await fetchData()
   }, [fetchData])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateData = useCallback((key: string, value: any) => {
+  const updateData = useCallback((key: string, value: unknown) => {
     setData((prev) => ({
       ...prev,
       [key]: value,

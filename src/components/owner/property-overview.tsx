@@ -13,9 +13,31 @@ import {
   TreesIcon as Tree,
 } from "lucide-react"
 
+interface MockPropertyUnit {
+  id: string
+  name: string
+  bedrooms: number
+  bathrooms: number
+  status: string
+}
+
+interface MockPropertyDetail {
+  type: string
+  yearBuilt: number
+  squareFeet: number
+  bedrooms: number
+  bathrooms: number
+  amenities: string[]
+  occupancy: string
+  occupancyRate: number
+  tenants: number
+  leaseEnd?: string | null
+  description: string
+  units: MockPropertyUnit[]
+}
+
 interface PropertyOverviewProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property: any
+  property: MockPropertyDetail
 }
 
 export function PropertyOverview({ property }: PropertyOverviewProps) {
@@ -102,8 +124,7 @@ export function PropertyOverview({ property }: PropertyOverviewProps) {
 
           <div>
             <div className="text-sm font-medium mb-2">Current Tenants</div>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {property.units.map((unit: any) => (
+            {property.units.map((unit) => (
               <div key={unit.id} className="flex justify-between items-center py-2 border-b last:border-0">
                 <div>
                   <div className="font-medium">{unit.name}</div>
