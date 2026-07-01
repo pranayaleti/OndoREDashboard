@@ -9,7 +9,6 @@ import { Menu, LogOut, Users } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { authApi, type InvitedUser } from "@/lib/api"
-import { LanguageSwitcher } from "@/components/ui/language-switcher"
 import { useTranslation } from "react-i18next"
 
 // Navigation items - only shown for managers
@@ -140,7 +139,6 @@ export default function Header() {
           </div>
           <nav className="flex items-center gap-1">{marketingLinks("desktop")}</nav>
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
             <ModeToggle />
             <Link to="/login">
               <Button variant="ghost" size="sm" className="text-white hover:bg-muted dark:hover:bg-card">
@@ -305,7 +303,6 @@ export default function Header() {
 
         {/* Right: Mode Toggle, User Menu */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-shrink-0">
-          <LanguageSwitcher />
           <ModeToggle />
           <UserMenu />
         </div>
@@ -326,7 +323,6 @@ export default function Header() {
 
             {/* Right: Menu, Mode Toggle, User Menu */}
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              <LanguageSwitcher variant="compact" />
               <ModeToggle />
               <UserMenu />
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>

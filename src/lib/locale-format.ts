@@ -1,18 +1,5 @@
-import i18n from '@/lib/i18n';
-
-const LOCALE_MAP: Record<string, string> = {
-  en: 'en-US',
-  es: 'es-ES',
-  fr: 'fr-FR',
-  it: 'it-IT',
-  te: 'te-IN',
-  hi: 'hi-IN',
-  ta: 'ta-IN',
-  kn: 'kn-IN',
-};
-
 export function getCurrentLocale(): string {
-  return LOCALE_MAP[i18n.language] ?? 'en-US';
+  return 'en-US';
 }
 
 export function formatDate(
