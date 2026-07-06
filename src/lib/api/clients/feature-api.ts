@@ -1116,14 +1116,14 @@ export const featureApi = {
       const rows = unwrapDataArray(raw);
       return rows.map((r) => ({
         id: String(r.id ?? ''),
-        propertyId: String(r.property_id ?? params.propertyId ?? ''),
-        ownerId: String(r.created_by ?? ''),
+        propertyId: String(r.propertyId ?? params.propertyId ?? ''),
+        ownerId: String(r.createdBy ?? ''),
         type: 'expense' as LedgerEntryType,
         category: String(r.category ?? ''),
         description: String(r.description ?? ''),
-        amount: typeof r.amount_cents === 'number' ? r.amount_cents / 100 : 0,
-        date: String(r.expense_date ?? r.created_at ?? ''),
-        createdAt: String(r.created_at ?? ''),
+        amount: typeof r.amountCents === 'number' ? r.amountCents / 100 : 0,
+        date: String(r.expenseDate ?? r.createdAt ?? ''),
+        createdAt: String(r.createdAt ?? ''),
       }));
     },
     async createLedgerEntry(entry: LedgerEntry): Promise<LedgerEntry> {
@@ -1131,9 +1131,9 @@ export const featureApi = {
       const payload = {
         category: entry.category ?? 'other',
         description: entry.description,
-        amount_cents: Math.round(entry.amount * 100),
-        expense_date: entry.date,
-        tax_deductible: true,
+        amountCents: Math.round(entry.amount * 100),
+        expenseDate: entry.date,
+        taxDeductible: true,
       };
       const raw = await apiRequest<unknown>(
         'POST',
@@ -1145,7 +1145,7 @@ export const featureApi = {
       return {
         ...entry,
         id: String((r as Record<string, unknown>)?.id ?? entry.id),
-        createdAt: String((r as Record<string, unknown>)?.created_at ?? new Date().toISOString()),
+        createdAt: String((r as Record<string, unknown>)?.createdAt ?? new Date().toISOString()),
       };
     },
     async recordExpense(
@@ -1155,9 +1155,9 @@ export const featureApi = {
       const payload = {
         category: entry.category ?? 'other',
         description: entry.description,
-        amount_cents: Math.round(entry.amount * 100),
-        expense_date: entry.date,
-        tax_deductible: true,
+        amountCents: Math.round(entry.amount * 100),
+        expenseDate: entry.date,
+        taxDeductible: true,
       };
       const raw = await apiRequest<unknown>(
         'POST',
@@ -1170,7 +1170,7 @@ export const featureApi = {
         ...entry,
         id: String(r?.id ?? ''),
         type: 'expense' as LedgerEntryType,
-        createdAt: String(r?.created_at ?? new Date().toISOString()),
+        createdAt: String(r?.createdAt ?? new Date().toISOString()),
       };
     },
     async getProfitLoss(params?: {
