@@ -114,8 +114,8 @@ export const handoffApi = {
     propertyAddress: string,
   ): Promise<{ message: string }> {
     return apiPost<{ message: string }>(
-      "/handoff/checklist-completion",
-      { propertyId, tenantName, propertyAddress },
+      `/properties/${propertyId}/handoff/checklist-completion`,
+      { tenantName, propertyAddress },
     );
   },
 };

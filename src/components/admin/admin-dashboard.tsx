@@ -58,6 +58,26 @@ export default function AdminDashboard() {
 
   // Calculate stats from real data
   // Note: Managers are not included in invitedUsers (only owners and tenants)
+  const approvedCount = properties.filter(p => p.status === 'approved').length
+  const rejectedCount = properties.filter(p => p.status === 'rejected').length
+  const completedMaintenanceCount = maintenanceRequests.filter(m => m.status === 'completed').length
+  const cancelledMaintenanceCount = maintenanceRequests.filter(m => m.status === 'cancelled').length
+
+  // System health signal — derived from actual operational data instead of a
+  // fixed 98.5% placeholder. Blends two health indicators (property approval
+  // rate + maintenance completion rate) weighted 50/50. Returns 100 when
+  // there is nothing to measure so an empty tenant environment doesn't look
+  // like an outage.
+  const propertyHealthDenom = approvedCount + rejectedCount
+  const propertyHealth = propertyHealthDenom > 0
+    ? (approvedCount / propertyHealthDenom) * 100
+    : 100
+  const maintenanceHealthDenom = completedMaintenanceCount + cancelledMaintenanceCount
+  const maintenanceHealth = maintenanceHealthDenom > 0
+    ? (completedMaintenanceCount / maintenanceHealthDenom) * 100
+    : 100
+  const systemHealth = Math.round(((propertyHealth + maintenanceHealth) / 2) * 10) / 10
+
   const stats = {
     totalManagers: 0, // Managers are managed separately, not through invitations
     totalOwners: invitedUsers.filter(u => u.role === 'owner').length,
@@ -65,11 +85,11 @@ export default function AdminDashboard() {
     totalMaintenance: maintenanceRequests.length,
     totalProperties: properties.length,
     pendingProperties: properties.filter(p => p.status === 'pending').length,
-    approvedProperties: properties.filter(p => p.status === 'approved').length,
-    rejectedProperties: properties.filter(p => p.status === 'rejected').length,
+    approvedProperties: approvedCount,
+    rejectedProperties: rejectedCount,
     activeMaintenance: maintenanceRequests.filter(m => m.status === 'in_progress' || m.status === 'pending').length,
-    completedMaintenance: maintenanceRequests.filter(m => m.status === 'completed').length,
-    systemHealth: 98.5, // Mock for now
+    completedMaintenance: completedMaintenanceCount,
+    systemHealth,
   }
 
   const recentActivity = [
