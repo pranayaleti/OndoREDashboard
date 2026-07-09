@@ -71,7 +71,7 @@ export default function ForgotPassword() {
         try {
           const text = await response.text();
           data = text ? JSON.parse(text) : {};
-        } catch (parseError) {
+        } catch (_parseError) {
           throw new Error('Invalid response from server');
         }
       } else {

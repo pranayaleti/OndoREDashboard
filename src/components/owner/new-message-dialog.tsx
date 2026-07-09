@@ -74,7 +74,7 @@ export function NewMessageDialog({ onCreateConversation }: NewMessageDialogProps
         property: "",
         message: "",
       })
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",

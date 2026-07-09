@@ -91,7 +91,7 @@ export default function PDFPreview() {
         title: "PDF Ready",
         description: "Use your browser's print dialog to save as PDF.",
       })
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Download Failed",
         description: "There was an error generating the PDF. Please try again.",

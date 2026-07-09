@@ -21,7 +21,7 @@ For shared product context (mission, roles, brand, repo map), see `../soul.md` a
 ## Running the app
 
 ```bash
-npm run dev       # Start dev server (Vite, default :5173 or :3001)
+npm run dev       # Start dev server (http://localhost:3001)
 npm run build     # Production build to dist/
 npm run preview   # Preview production build locally
 npm run lint      # ESLint

@@ -76,7 +76,7 @@ export function SearchForm() {
         navigate(`/search/${city}`)
         setIsLoading(false)
       }, 1000) // Simulate network delay
-    } catch (error) {
+    } catch (_error) {
       setIsLoading(false)
       toast({
         title: "Location Error",

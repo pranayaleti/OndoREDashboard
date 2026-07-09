@@ -1442,7 +1442,7 @@ cd /Users/pranay/Documents/RE/OndoREDashboard && npm run build 2>&1 | tail -20
 
 Expected: build succeeds with no errors. Fix any issues before marking complete.
 
-- [ ] **Manual smoke test checklist** (run `npm run dev`, visit `http://localhost:5173`)
+- [ ] **Manual smoke test checklist** (run `npm run dev`, visit `http://localhost:3001`)
 
 | URL | Role | Check |
 |---|---|---|

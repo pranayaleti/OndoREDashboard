@@ -79,7 +79,7 @@ export default function ResetPassword() {
           try {
             const text = await response.text();
             data = text ? JSON.parse(text) : {};
-          } catch (parseError) {
+          } catch (_parseError) {
             setTokenValid(false)
             setTokenError("Invalid response from server")
             return
@@ -95,7 +95,7 @@ export default function ResetPassword() {
           setTokenValid(false)
           setTokenError(data.message || "Invalid or expired reset token")
         }
-      } catch (error) {
+      } catch (_error) {
         setTokenValid(false)
         setTokenError("Failed to verify reset token")
       }
@@ -145,7 +145,7 @@ export default function ResetPassword() {
         try {
           const text = await response.text();
           data = text ? JSON.parse(text) : {};
-        } catch (parseError) {
+        } catch (_parseError) {
           throw new Error('Invalid response from server');
         }
       } else {

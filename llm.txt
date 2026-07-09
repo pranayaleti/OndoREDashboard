@@ -4,7 +4,7 @@ Purpose: React/Vite SPA for Manager, Owner, and Tenant portals. Connects to Ondo
 
 Stack: React 18, TypeScript, Vite, Tailwind CSS (OnDo gradient from-orange-500 to-red-800), Radix UI, React Router DOM, React Hook Form + Zod, Lucide. API client: src/lib/api.ts. Auth: src/lib/auth-context.tsx.
 
-Run: npm run dev (Vite, default :5173). Set VITE_API_URL in .env to backend. npm run build, npm run preview, npm run lint.
+Run: npm run dev (Vite on :3001). Set VITE_API_URL in .env to backend. npm run build, npm run preview, npm run lint.
 
 Structure: src/pages/ (Login, Signup, Dashboard/Manager, Owner, Tenant, SuperAdmin). src/components/ui/ (Radix), admin/, owner/, tenant/, portal-sidebar, manager-assistant, risk-analytics, manager-at-risk, sparkline-chart. src/lib/auth-context.tsx, api.ts, utils.ts. src/hooks/ (use-notifications, useApi).
 

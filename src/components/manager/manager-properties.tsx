@@ -133,7 +133,7 @@ export default function ManagerProperties() {
       setReviewDialog(null)
       setReviewComment("")
       fetchProperties() // Refresh the list
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: `Failed to ${action} property. Please try again.`,

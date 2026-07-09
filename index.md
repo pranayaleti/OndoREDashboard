@@ -2,7 +2,7 @@
 
 > Internal web portal for property managers, property owners, and tenants.
 > Live app: https://app.ondorealestate.com
-> Local dev: `npm run dev` → http://localhost:5173
+> Local dev: `npm run dev` → http://localhost:3001
 
 ## What This Application Does
 
@@ -127,7 +127,7 @@ VITE_API_BASE_URL=http://localhost:3000/api   # OndoREBackend URL + /api
 ```bash
 cp .env.example .env        # Set VITE_API_BASE_URL
 npm install
-npm run dev                 # Starts Vite dev server on :5173
+npm run dev                 # Starts Vite dev server on :3001
 ```
 
 Test accounts (created by `npm run seed` in backend):

@@ -110,7 +110,7 @@ export default function ManagerPropertyReview() {
       setSelectedProperty(null)
       setReviewComment("")
       setIsDialogOpen(false)
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to update property status",

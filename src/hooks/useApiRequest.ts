@@ -33,7 +33,7 @@ export default function useApiRequest() {
         try {
           const text = await res.text();
           json = text ? JSON.parse(text) : {};
-        } catch (parseError) {
+        } catch (_parseError) {
           throw new Error('Invalid JSON response from server');
         }
       } else {
@@ -48,7 +48,7 @@ export default function useApiRequest() {
         throw new Error(errorMessage);
       }
       return json as TResponse;
-    } catch (e) {
+    } catch (_e) {
       // Error is handled by caller, just return null
       return null;
     } finally {

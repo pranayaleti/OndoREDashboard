@@ -129,7 +129,7 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
     try {
       const s = await screeningApi.get(id)
       setDetail(s)
-    } catch (e) {
+    } catch (_e) {
       toast({ title: "Error", description: "Could not load screening details", variant: "destructive" })
       setSelectedId(null)
     } finally {

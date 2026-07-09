@@ -7,7 +7,7 @@ Admin dashboard frontend for the Ondo Real Estate platform. React/Vite SPA with 
 ## Quick Start
 
 ```bash
-npm run dev       # Vite dev server (default :5173 or :3001)
+npm run dev       # Vite dev server (http://localhost:3001)
 npm run build     # Production build to dist/
 npm run lint      # ESLint
 npm run preview   # Preview production build locally

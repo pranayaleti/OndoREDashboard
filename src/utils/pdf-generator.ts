@@ -89,7 +89,7 @@ function detectTheme(): 'dark' | 'light' {
     const theme = localStorage.getItem('theme');
     if (theme === 'dark') return 'dark';
     if (theme === 'light') return 'light';
-  } catch (e) {
+  } catch (_e) {
     // localStorage might not be available
   }
   
