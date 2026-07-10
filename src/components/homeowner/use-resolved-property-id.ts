@@ -45,7 +45,14 @@ export function useResolvedPropertyId() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Failed to load properties")
+          // ZodError.message is a JSON dump; prefer a short user-facing string.
+          const message =
+            e && typeof e === "object" && "name" in e && (e as { name: string }).name === "ZodError"
+              ? "Failed to load properties"
+              : e instanceof Error
+                ? e.message
+                : "Failed to load properties"
+          setError(message)
         }
       } finally {
         if (!cancelled) setLoading(false)

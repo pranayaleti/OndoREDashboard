@@ -221,18 +221,30 @@ export const GetPropertyResponseSchema = z.object({
   property: PropertySchema,
 });
 
-export const GetPropertiesResponseSchema = z.object({
-  data: z.array(PropertySchema),
-  pagination: z.object({
+/**
+ * Accept Node pagination (hasNextPage/hasPreviousPage) and older Edge
+ * responses that only sent hasMore — derive the missing flags.
+ */
+const PropertiesPaginationSchema = z
+  .object({
     page: z.number(),
     limit: z.number(),
     total: z.number(),
     totalPages: z.number(),
     hasMore: z.boolean(),
-    hasNextPage: z.boolean(),
-    hasPreviousPage: z.boolean(),
+    hasNextPage: z.boolean().optional(),
+    hasPreviousPage: z.boolean().optional(),
     nextPage: z.number().optional(),
-  }),
+  })
+  .transform((p) => ({
+    ...p,
+    hasNextPage: p.hasNextPage ?? p.hasMore,
+    hasPreviousPage: p.hasPreviousPage ?? p.page > 1,
+  }));
+
+export const GetPropertiesResponseSchema = z.object({
+  data: z.array(PropertySchema),
+  pagination: PropertiesPaginationSchema,
 });
 
 // ─── Maintenance schemas ───────────────────────────────────────────────────────
