@@ -22,15 +22,17 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { NewMessageDialog } from "@/components/owner/new-message-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
+import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
-
-function normalizeThreads(threads: MessageThread[]): MessageThread[] {
-  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
-  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
-}
+import {
+  DEMO_MESSAGE_RECORDS,
+  DEMO_MESSAGE_THREAD,
+  normalizeThreadsForUser,
+  shouldUseDemoThreadMessages,
+} from "@/lib/seed-data"
 
 export function MessagesView() {
+  const { user } = useAuth()
   const [activeTab, setActiveTab] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedThread, setSelectedThread] = useState<MessageThread | null>(null)
@@ -51,12 +53,12 @@ export function MessagesView() {
         status: filterStatus || undefined,
         priority: filterPriority || undefined,
       })
-      .then((data) => setThreads(normalizeThreads(data)))
+      .then((data) => setThreads(normalizeThreadsForUser(data, user)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load conversations.", variant: "destructive" })
       })
       .finally(() => setLoading(false))
-  }, [filterStatus, filterPriority])
+  }, [filterStatus, filterPriority, toast, user])
 
   // Scroll to bottom of messages when a thread is selected or new message is added
   useEffect(() => {
@@ -121,7 +123,7 @@ export function MessagesView() {
         () => {
           featureApi.communication
             .listThreads()
-            .then((data) => setThreads(normalizeThreads(data)))
+            .then((data) => setThreads(normalizeThreadsForUser(data, user)))
             .catch((err) => console.error("Failed to refresh threads", err));
         }
       )
@@ -130,7 +132,7 @@ export function MessagesView() {
     return () => {
       client.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
   const handleSelectThread = async (thread: MessageThread) => {
     setSelectedThread(thread)
@@ -140,7 +142,7 @@ export function MessagesView() {
         featureApi.communication.listMessages(thread.id),
         featureApi.communication.markRead(thread.id),
       ])
-      if (shouldReplacePlaceholderThread(thread, msgs)) {
+      if (shouldUseDemoThreadMessages(user, thread, msgs)) {
         setSelectedThread(DEMO_MESSAGE_THREAD)
         setMessages(DEMO_MESSAGE_RECORDS)
         setThreads((prev) =>

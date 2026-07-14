@@ -498,6 +498,37 @@ export function shouldReplacePlaceholderThread(thread: MessageThread | null | un
   return subject.length <= 2 || subject === "nj" || lastMessage === "k"
 }
 
+/** Demo inbox fill is only for seeded demo accounts — never for real users. */
+export function isDemoUser(user?: UserLike | null): boolean {
+  return isDemoEmail(user?.email)
+}
+
+/**
+ * Normalize thread list for the UI. Empty inboxes stay empty unless the signed-in
+ * user is a seeded demo account (admin/owner/tenant@ondorealestate.com).
+ */
+export function normalizeThreadsForUser(
+  threads: MessageThread[],
+  user?: UserLike | null,
+): MessageThread[] {
+  if (threads.length === 0) {
+    return isDemoUser(user) ? [DEMO_MESSAGE_THREAD] : []
+  }
+  if (!isDemoUser(user)) return threads
+  return threads.map((thread) =>
+    shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread,
+  )
+}
+
+/** Whether selecting a thread should show canned demo messages. */
+export function shouldUseDemoThreadMessages(
+  user: UserLike | null | undefined,
+  thread: MessageThread | null | undefined,
+  messages: MessageRecord[] = [],
+): boolean {
+  return isDemoUser(user) && shouldReplacePlaceholderThread(thread, messages)
+}
+
 export function getDemoNotifications(user?: UserLike | null): Notification[] {
   if (isOwnerDemoUser(user)) {
     return DEMO_OWNER_NOTIFICATIONS.map((notification) => ({

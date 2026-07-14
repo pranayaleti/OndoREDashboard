@@ -23,35 +23,31 @@ interface DashboardProperty extends Property {
   currentValue?: number;
 }
 
-// Mock data for features not yet implemented
-const mockStaticData = {
-  recentActivity: [
-    { id: 1, type: "payment", message: "Monthly management report received", time: "2 hours ago", property: "Property Management" },
-    { id: 2, type: "maintenance", message: "Maintenance request submitted", time: "1 day ago", property: "Property Management", cost: 350 },
-    { id: 3, type: "tenant", message: "New tenant inquiry received", time: "2 days ago", property: "Property Management" },
-    { id: 4, type: "financial", message: "Monthly reports available", time: "3 days ago", property: "All Properties" }
-  ],
-  alerts: [
-    { id: 1, type: "financial", message: "Property insurance renewal due", priority: "high", dueDate: "December 1, 2025" },
-    { id: 2, type: "maintenance", message: "Property maintenance scheduled", priority: "medium", dueDate: "November 25, 2025" },
-    { id: 3, type: "legal", message: "Document review required", priority: "medium", dueDate: "November 30, 2025" }
-  ],
-  unreadMessages: 3,
+// Placeholders until activity/alerts/payments feed from live APIs
+const emptyDashboardExtras = {
+  recentActivity: [] as Array<{
+    id: number
+    type: string
+    message: string
+    time: string
+    property: string
+    cost?: number
+  }>,
+  alerts: [] as Array<{
+    id: number
+    type: string
+    message: string
+    priority: string
+    dueDate: string
+  }>,
+  unreadMessages: 0,
   maintenanceRequests: {
-    active: 5,
-    completedThisMonth: 3
+    active: 0,
+    completedThisMonth: 0,
   },
-  recentPayments: [
-    { id: 1, tenant: "John Smith", date: "May 1, 2023", amount: 1250.00 },
-    { id: 2, tenant: "Sarah Johnson", date: "May 1, 2023", amount: 950.00 },
-    { id: 3, tenant: "Michael Brown", date: "May 2, 2023", amount: 1100.00 }
-  ],
-  upcomingEvents: [
-    { id: 1, type: "Lease Renewal", property: "123 Main St", date: "May 15, 2023" },
-    { id: 2, type: "Property Inspection", property: "456 Oak Ave", date: "May 20, 2023" },
-    { id: 3, type: "Insurance Payment Due", property: "All Properties", date: "May 31, 2023" }
-  ],
-  lastMonthRevenue: 0 // Will be calculated
+  recentPayments: [] as Array<{ id: number; tenant: string; date: string; amount: number }>,
+  upcomingEvents: [] as Array<{ id: number; type: string; property: string; date: string }>,
+  lastMonthRevenue: 0,
 }
 
 export default function OwnerDashboard() {
@@ -280,9 +276,9 @@ export default function OwnerDashboard() {
             <Wrench className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockStaticData.maintenanceRequests.active} Active</div>
+            <div className="text-2xl font-bold">{emptyDashboardExtras.maintenanceRequests.active} Active</div>
             <p className="text-xs text-muted-foreground">
-              {mockStaticData.maintenanceRequests.completedThisMonth} completed this month
+              {emptyDashboardExtras.maintenanceRequests.completedThisMonth} completed this month
             </p>
           </CardContent>
         </Card>
@@ -321,7 +317,7 @@ export default function OwnerDashboard() {
               <MessageSquare className="h-8 w-8 text-blue-500 mr-3" />
               <div>
                 <p className="text-sm font-medium">Messages</p>
-                <p className="text-xs text-gray-500">{mockStaticData.unreadMessages} Unread</p>
+                <p className="text-xs text-gray-500">{emptyDashboardExtras.unreadMessages} Unread</p>
               </div>
             </CardContent>
           </Card>
@@ -542,7 +538,7 @@ export default function OwnerDashboard() {
                 <CardDescription>Latest tenant payments</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockStaticData.recentPayments.map((payment) => (
+                {emptyDashboardExtras.recentPayments.map((payment) => (
                   <div key={payment.id} className="flex justify-between items-center p-2 border rounded-lg">
                     <div>
                       <p className="font-medium text-sm">{payment.tenant}</p>
@@ -600,7 +596,7 @@ export default function OwnerDashboard() {
                 <CardDescription>Important dates to remember</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockStaticData.upcomingEvents.map((event) => (
+                {emptyDashboardExtras.upcomingEvents.map((event) => (
                   <div key={event.id} className="flex items-start gap-3 p-2 border rounded-lg">
                     <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div className="flex-1">
@@ -665,7 +661,7 @@ export default function OwnerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockStaticData.alerts.map((alert) => (
+                {emptyDashboardExtras.alerts.map((alert) => (
                   <Card key={alert.id} className="border-l-4 border-l-orange-500">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
@@ -698,7 +694,7 @@ export default function OwnerDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockStaticData.recentActivity.map((activity) => (
+                {emptyDashboardExtras.recentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-start justify-between p-4 border rounded-lg">
                     <div className="flex items-start space-x-3">
                       {getActivityIcon(activity.type)}

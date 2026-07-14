@@ -12,6 +12,7 @@ const AdminProperties = lazy(() => import("@/components/admin/admin-properties")
 const AdminFinances = lazy(() => import("@/components/admin/admin-finances"))
 const AdminReports = lazy(() => import("@/components/admin/admin-reports"))
 const AdminProfile = lazy(() => import("@/components/admin/admin-profile"))
+const AdminSettings = lazy(() => import("@/components/admin/admin-settings"))
 const AdminDocuments = lazy(() => import("@/components/admin/admin-documents"))
 const AdminMessages = lazy(() => import("@/components/admin/admin-messages"))
 const AdminCalendar = lazy(() => import("@/components/admin/admin-calendar"))
@@ -42,6 +43,7 @@ export default function Admin() {
             <Route path="/documents" element={<AdminDocuments />} />
             <Route path="/calendar" element={<AdminCalendar />} />
             <Route path="/notifications" element={<AdminNotifications />} />
+            <Route path="/settings" element={<AdminSettings />} />
             <Route path="/profile" element={<AdminProfile />} />
             <Route path="/referrals" element={<ReferralProgram />} />
           </Routes>

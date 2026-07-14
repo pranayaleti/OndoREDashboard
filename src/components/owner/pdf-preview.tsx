@@ -1,28 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Download, ArrowLeft } from "lucide-react"
+import { Download, ArrowLeft, FileText } from "lucide-react"
 import { generateOccupancyReportPDF, OccupancyReportData, generateOccupancyReportHTML } from "@/utils/pdf-generator"
 import { useToast } from "@/hooks/use-toast"
 import { useEffect, useState, useRef } from "react"
-import { mockOccupancyData } from "./occupancy-report"
-
-// Generate default report data from mock data
-const getDefaultReportData = (): OccupancyReportData => ({
-  propertyName: "Oak Street Apartments",
-  period: mockOccupancyData.period,
-  summary: {
-    totalUnits: mockOccupancyData.summary.totalUnits,
-    occupiedUnits: mockOccupancyData.summary.occupiedUnits,
-    vacantUnits: mockOccupancyData.summary.vacantUnits,
-    occupancyRate: mockOccupancyData.summary.occupancyRate,
-    averageRent: mockOccupancyData.summary.averageRent,
-    totalMonthlyRevenue: mockOccupancyData.summary.totalMonthlyRevenue,
-    averageTenancy: mockOccupancyData.trends.averageTenancy
-  },
-  tenants: mockOccupancyData.tenants,
-  properties: mockOccupancyData.properties,
-  trends: mockOccupancyData.trends
-})
+import { EmptyState } from "@/components/ui/empty-state"
 
 export default function PDFPreview() {
   const location = useLocation()
@@ -34,36 +16,30 @@ export default function PDFPreview() {
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
-    // Get data from location state, sessionStorage, or use default mock data
     let data: OccupancyReportData | null = null
-    
-    // Try location state first
+
     if (location.state) {
       data = location.state as OccupancyReportData
-    }
-    // Try sessionStorage (for new tab)
-    else if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('pdfPreviewData')
+    } else if (typeof window !== "undefined") {
+      const storedData = sessionStorage.getItem("pdfPreviewData")
       if (storedData) {
         try {
           data = JSON.parse(storedData) as OccupancyReportData
-          // Clear after use
-          sessionStorage.removeItem('pdfPreviewData')
+          sessionStorage.removeItem("pdfPreviewData")
         } catch (e) {
-          console.error('Failed to parse stored PDF data:', e)
+          console.error("Failed to parse stored PDF data:", e)
         }
       }
     }
-    
-    // Fall back to default data
+
     if (!data) {
-      data = getDefaultReportData()
+      setReportData(null)
+      setHtmlContent("")
+      return
     }
 
     setReportData(data)
-    // Generate HTML content
-    const html = generateOccupancyReportHTML(data)
-    setHtmlContent(html)
+    setHtmlContent(generateOccupancyReportHTML(data))
   }, [location])
 
   // Cleanup blob URL on unmount
@@ -100,14 +76,16 @@ export default function PDFPreview() {
     }
   }
 
-  if (!htmlContent) {
+  if (!reportData || !htmlContent) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <p className="text-gray-600 dark:text-gray-400">Loading preview...</p>
-          </div>
-        </div>
+        <EmptyState
+          icon={<FileText className="h-12 w-12" />}
+          title="No report to preview"
+          description="Open a report from the Reports page once live occupancy data is available."
+          ctaLabel="Back to reports"
+          ctaHref="/owner/reports"
+        />
       </div>
     )
   }

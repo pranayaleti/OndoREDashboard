@@ -35,6 +35,7 @@ import { AnnouncementBoard } from "@/components/owner/announcement-board"
 import { SurveyManager } from "@/components/owner/survey-manager"
 import { RentIncreaseManager } from "@/components/owner/rent-increase-manager"
 import { LateFeeConfig } from "@/components/owner/late-fee-config"
+import { PropertyUnits } from "@/components/owner/property-units"
 
 export default function OwnerPropertyDetail() {
   const { id } = useParams<{ id: string }>()
@@ -196,6 +197,7 @@ export default function OwnerPropertyDetail() {
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="flex flex-wrap mb-8 bg-muted/50 dark:bg-card/50 p-1 h-auto gap-1">
           <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="units">Units</TabsTrigger>
           <TabsTrigger value="screening">Screening</TabsTrigger>
           <TabsTrigger value="applications">Applications</TabsTrigger>
           <TabsTrigger value="leases">Leases</TabsTrigger>
@@ -215,6 +217,32 @@ export default function OwnerPropertyDetail() {
           ) : (
             <p className="text-sm text-muted-foreground">Select a property to view rent schedule.</p>
           )}
+        </TabsContent>
+        <TabsContent value="units" className="space-y-6">
+          {property ? (
+            <PropertyUnits
+              property={{
+                id: property.id,
+                title: property.title,
+                type: property.type,
+                bedrooms: property.bedrooms,
+                bathrooms: property.bathrooms,
+                sqft: property.sqft,
+                price: property.price,
+                tenantId: property.tenantId,
+                status: property.status,
+                tenant: property.tenant
+                  ? {
+                      id: property.tenant.id,
+                      firstName: property.tenant.firstName,
+                      lastName: property.tenant.lastName,
+                      email: property.tenant.email,
+                      phone: property.tenant.phone,
+                    }
+                  : null,
+              }}
+            />
+          ) : null}
         </TabsContent>
         <TabsContent value="screening" className="space-y-6">
           {property?.id && <ScreeningConfigWizard propertyId={property.id} />}

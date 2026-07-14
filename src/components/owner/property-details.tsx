@@ -280,7 +280,20 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
         </TabsContent>
 
         <TabsContent value="units">
-          <PropertyUnits />
+          <PropertyUnits
+            property={{
+              id: property.id,
+              title: property.name,
+              type: property.type,
+              bedrooms: property.bedrooms,
+              bathrooms: property.bathrooms,
+              sqft: property.squareFeet,
+              price: property.monthlyIncome,
+              // Mock detail view has no real tenant ids — occupancy only.
+              tenantId: null,
+              status: property.occupancy === "Occupied" || property.tenants > 0 ? "occupied" : "vacant",
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="financials">
