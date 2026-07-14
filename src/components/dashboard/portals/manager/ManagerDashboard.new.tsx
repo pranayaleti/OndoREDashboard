@@ -10,7 +10,7 @@ import type { Property, Lead } from "@/lib/api"
  * New ManagerDashboard using BaseDashboard architecture
  */
 function ManagerDashboardContent() {
-  const { user: _user } = useAuth()
+  const { user } = useAuth()
   const { data, updateData } = useBaseDashboard()
 
   // Transform fetched data into config format
@@ -19,8 +19,14 @@ function ManagerDashboardContent() {
     const invitedUsers = data.invitedUsers || []
     const leads = data.leads || []
 
-    return createManagerConfig(properties, invitedUsers, leads, data.financialSummary || null)
-  }, [data.properties, data.invitedUsers, data.leads, data.financialSummary])
+    return createManagerConfig(
+      properties,
+      invitedUsers,
+      leads,
+      data.financialSummary || null,
+      user?.email,
+    )
+  }, [data.properties, data.invitedUsers, data.leads, data.financialSummary, user?.email])
 
   // Generate activities from fetched data
   const activities = useMemo(() => {

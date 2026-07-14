@@ -12,14 +12,16 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { MessageSquare, Send, Search, Plus, Reply, User, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
-import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
-
-function normalizeThreads(threads: MessageThread[]): MessageThread[] {
-  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
-  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
-}
+import { useAuth } from "@/lib/auth-context"
+import {
+  DEMO_MESSAGE_RECORDS,
+  DEMO_MESSAGE_THREAD,
+  normalizeThreadsForUser,
+  shouldUseDemoThreadMessages,
+} from "@/lib/seed-data"
 
 function MessagesList() {
+  const { user } = useAuth()
   const { toast } = useToast()
   const [threads, setThreads] = useState<MessageThread[]>([])
   const [messages, setMessages] = useState<MessageRecord[]>([])
@@ -36,12 +38,12 @@ function MessagesList() {
     setLoadingThreads(true)
     featureApi.communication
       .listThreads()
-      .then((data) => setThreads(normalizeThreads(data)))
+      .then((data) => setThreads(normalizeThreadsForUser(data, user)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
       })
       .finally(() => setLoadingThreads(false))
-  }, [])
+  }, [toast, user])
 
   // Load messages when thread selected
   useEffect(() => {
@@ -57,7 +59,7 @@ function MessagesList() {
     ])
       .then(([msgs]) => {
         const currentThread = threads.find((thread) => thread.id === selectedThreadId)
-        if (shouldReplacePlaceholderThread(currentThread, msgs)) {
+        if (shouldUseDemoThreadMessages(user, currentThread, msgs)) {
           setMessages(DEMO_MESSAGE_RECORDS)
           setThreads((prev) =>
             prev.map((t) => (t.id === selectedThreadId ? { ...DEMO_MESSAGE_THREAD, unreadCount: 0 } : t))
@@ -73,7 +75,7 @@ function MessagesList() {
         toast({ title: "Error", description: "Failed to load messages.", duration: 3000 })
       })
       .finally(() => setLoadingMessages(false))
-  }, [selectedThreadId])
+  }, [selectedThreadId, toast, user])
 
   const selectedThread = threads.find((t) => t.id === selectedThreadId) ?? null
 

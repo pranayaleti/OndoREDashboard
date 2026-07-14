@@ -7,30 +7,11 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Calendar, Plus, Clock, Building } from "lucide-react"
 import { format } from "date-fns"
 import { OWNER_CALENDAR_SCHEDULE_TYPES } from "@/lib/calendar-schedule-presets"
-import { seedEventToVM, storedToVM, uniqueEventDates, type CalendarEventVM } from "@/lib/calendar-events"
+import { storedToVM, uniqueEventDates, type CalendarEventVM } from "@/lib/calendar-events"
 import { usePersistedCalendarEvents } from "@/hooks/use-persisted-calendar-events"
 import { ScheduleEventDialog } from "@/components/shared/schedule-event-dialog"
 
 const STORAGE_KEY = "ondo-dashboard:calendar-events:owner"
-
-const seedEvents = [
-  {
-    id: 1,
-    title: "Property Inspection",
-    date: new Date(2024, 0, 25),
-    time: "10:00 AM - 12:00 PM",
-    type: "inspection",
-    property: "Oak Street Apartments",
-  },
-  {
-    id: 2,
-    title: "Maintenance Appointment",
-    date: new Date(2024, 0, 22),
-    time: "2:00 PM - 4:00 PM",
-    type: "maintenance",
-    property: "Pine View Complex",
-  },
-]
 
 export default function OwnerCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
@@ -38,7 +19,7 @@ export default function OwnerCalendar() {
   const { userEvents, addEvent } = usePersistedCalendarEvents(STORAGE_KEY)
 
   const allEvents = useMemo((): CalendarEventVM[] => {
-    return [...seedEvents.map(seedEventToVM), ...userEvents.map(storedToVM)]
+    return userEvents.map(storedToVM)
   }, [userEvents])
 
   const datesWithEvents = useMemo(() => uniqueEventDates(allEvents), [allEvents])

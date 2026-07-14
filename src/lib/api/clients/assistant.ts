@@ -17,16 +17,50 @@ export interface ChatRequest {
   context?: Record<string, unknown>;
 }
 
-/** Backend returns { reply: string, session_id?: string }. */
+export interface PendingMaintenanceDraft {
+  confirmation_token: string;
+  draft: {
+    title: string;
+    description: string;
+    category: string;
+    priority: string;
+    property_id: string;
+    tenant_id: string | null;
+  };
+  expires_in_minutes: number;
+}
+
+/** Backend returns { reply, session_id?, pending_maintenance_draft? }. */
 export interface ChatResponse {
   reply: string;
   session_id?: string;
+  pending_maintenance_draft?: PendingMaintenanceDraft;
+}
+
+export interface ConfirmMaintenanceDraftResponse {
+  message: string;
+  id?: string;
+  title?: string;
+  status?: string;
+  createdAt?: string;
 }
 
 export const assistantApi = {
   async chat(request: ChatRequest): Promise<ChatResponse> {
     const headers = getAuthHeaders();
     return apiPost<ChatResponse>("/dashboard/assistant/chat", request, headers);
+  },
+
+  async confirmMaintenanceDraft(
+    confirmationToken: string,
+    draft: PendingMaintenanceDraft["draft"],
+  ): Promise<ConfirmMaintenanceDraftResponse> {
+    const headers = getAuthHeaders();
+    return apiPost<ConfirmMaintenanceDraftResponse>(
+      "/dashboard/assistant/confirm-maintenance-draft",
+      { confirmation_token: confirmationToken, draft },
+      headers,
+    );
   },
 
   async sendMessage(

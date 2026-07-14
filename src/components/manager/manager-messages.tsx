@@ -12,15 +12,17 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { MessageSquare, Send, Search, Plus, Reply, User, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { featureApi, type MessageThread, type MessageRecord } from "@/lib/api"
+import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
-import { DEMO_MESSAGE_RECORDS, DEMO_MESSAGE_THREAD, shouldReplacePlaceholderThread } from "@/lib/seed-data"
-
-function normalizeThreads(threads: MessageThread[]): MessageThread[] {
-  if (threads.length === 0) return [DEMO_MESSAGE_THREAD]
-  return threads.map((thread) => (shouldReplacePlaceholderThread(thread) ? DEMO_MESSAGE_THREAD : thread))
-}
+import {
+  DEMO_MESSAGE_RECORDS,
+  DEMO_MESSAGE_THREAD,
+  normalizeThreadsForUser,
+  shouldUseDemoThreadMessages,
+} from "@/lib/seed-data"
 
 function MessagesList() {
+  const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedThread, setSelectedThread] = useState<MessageThread | null>(null)
   const [threads, setThreads] = useState<MessageThread[]>([])
@@ -35,12 +37,12 @@ function MessagesList() {
     setLoading(true)
     featureApi.communication
       .listThreads()
-      .then((data) => setThreads(normalizeThreads(data)))
+      .then((data) => setThreads(normalizeThreadsForUser(data, user)))
       .catch(() => {
         toast({ title: "Error", description: "Failed to load messages.", variant: "destructive" })
       })
       .finally(() => setLoading(false))
-  }, [])
+  }, [toast, user])
 
   // Realtime: subscribe to new messages in the selected thread
   useEffect(() => {
@@ -98,7 +100,7 @@ function MessagesList() {
         () => {
           featureApi.communication
             .listThreads()
-            .then((data) => setThreads(normalizeThreads(data)))
+            .then((data) => setThreads(normalizeThreadsForUser(data, user)))
             .catch(() => {});
         }
       )
@@ -107,7 +109,7 @@ function MessagesList() {
     return () => {
       client.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
   const handleSelectThread = async (thread: MessageThread) => {
     setSelectedThread(thread)
@@ -118,7 +120,7 @@ function MessagesList() {
         featureApi.communication.listMessages(thread.id),
         featureApi.communication.markRead(thread.id),
       ])
-      if (shouldReplacePlaceholderThread(thread, msgs)) {
+      if (shouldUseDemoThreadMessages(user, thread, msgs)) {
         setSelectedThread(DEMO_MESSAGE_THREAD)
         setMessages(DEMO_MESSAGE_RECORDS)
         setThreads((prev) =>

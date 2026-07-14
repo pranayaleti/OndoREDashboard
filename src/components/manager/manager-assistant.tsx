@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Sparkles, Send, Loader2, User, Bot } from "lucide-react"
+import { Sparkles, Send, Loader2, User, Bot, Check, X } from "lucide-react"
 import { dashboardApi, ApiError } from "@/lib/api"
 import { validateChatInput } from "@/lib/aiGuardrails"
+import type { PendingMaintenanceDraft } from "@/lib/api/clients/assistant"
 
 type MessageRole = "user" | "assistant"
 
@@ -59,6 +60,66 @@ function QuickPrompts({ onSelect }: { onSelect: (prompt: string) => void }) {
   )
 }
 
+function MaintenanceDraftCard({
+  pending,
+  isConfirming,
+  onConfirm,
+  onCancel,
+}: {
+  pending: PendingMaintenanceDraft
+  isConfirming: boolean
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  const { t } = useTranslation("dashboard")
+  const { draft } = pending
+  return (
+    <div
+      className="mx-6 mb-2 rounded-lg border border-orange-200 bg-orange-50/80 p-4"
+      role="region"
+      aria-label={t("assistant.draftTitle")}
+    >
+      <p className="text-sm font-medium text-foreground mb-1">{t("assistant.draftTitle")}</p>
+      <p className="text-xs text-muted-foreground mb-3">{t("assistant.draftHint")}</p>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm mb-3">
+        <dt className="text-muted-foreground">Title</dt>
+        <dd className="font-medium text-foreground">{draft.title}</dd>
+        <dt className="text-muted-foreground">Description</dt>
+        <dd className="text-foreground whitespace-pre-wrap">{draft.description}</dd>
+        <dt className="text-muted-foreground">Category</dt>
+        <dd className="text-foreground">{draft.category}</dd>
+        <dt className="text-muted-foreground">Priority</dt>
+        <dd className="text-foreground">{draft.priority}</dd>
+      </dl>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          className="bg-orange-500 hover:bg-orange-600"
+          disabled={isConfirming}
+          onClick={onConfirm}
+        >
+          {isConfirming ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              {t("assistant.confirmingDraft")}
+            </>
+          ) : (
+            <>
+              <Check className="h-3.5 w-3.5 mr-1.5" />
+              {t("assistant.confirmDraft")}
+            </>
+          )}
+        </Button>
+        <Button type="button" size="sm" variant="outline" disabled={isConfirming} onClick={onCancel}>
+          <X className="h-3.5 w-3.5 mr-1.5" />
+          {t("assistant.cancelDraft")}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export default function ManagerAssistant() {
   const { t } = useTranslation("dashboard")
   const location = useLocation()
@@ -67,6 +128,8 @@ export default function ManagerAssistant() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  const [pendingDraft, setPendingDraft] = useState<PendingMaintenanceDraft | null>(null)
+  const [isConfirmingDraft, setIsConfirmingDraft] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initialNavMessageSent = useRef(false)
@@ -76,7 +139,7 @@ export default function ManagerAssistant() {
   }
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, pendingDraft])
 
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim()
@@ -105,11 +168,12 @@ export default function ManagerAssistant() {
     setError(null)
 
     try {
-      const { reply, session_id } = await dashboardApi.assistantChat(
+      const { reply, session_id, pending_maintenance_draft } = await dashboardApi.assistantChat(
         guardrail.messages,
         sessionId ?? undefined,
       )
       if (session_id) setSessionId(session_id)
+      setPendingDraft(pending_maintenance_draft ?? null)
       const assistantMessage: Message = {
         id: createId(),
         role: "assistant",
@@ -131,6 +195,53 @@ export default function ManagerAssistant() {
       setIsLoading(false)
       textareaRef.current?.focus()
     }
+  }
+
+  const confirmPendingDraft = async () => {
+    if (!pendingDraft || isConfirmingDraft) return
+    setIsConfirmingDraft(true)
+    setError(null)
+    try {
+      const result = await dashboardApi.confirmMaintenanceDraft(
+        pendingDraft.confirmation_token,
+        pendingDraft.draft,
+      )
+      setPendingDraft(null)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: createId(),
+          role: "assistant",
+          content: result.id
+            ? `${t("assistant.draftConfirmed")} (#${result.id})`
+            : t("assistant.draftConfirmed"),
+          createdAt: new Date(),
+        },
+      ])
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : err && typeof err === "object" && "message" in err
+            ? String((err as { message: string }).message)
+            : t("assistant.genericError")
+      setError(message)
+    } finally {
+      setIsConfirmingDraft(false)
+    }
+  }
+
+  const cancelPendingDraft = () => {
+    setPendingDraft(null)
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: createId(),
+        role: "assistant",
+        content: t("assistant.draftCancelled"),
+        createdAt: new Date(),
+      },
+    ])
   }
 
   useEffect(() => {
@@ -213,6 +324,14 @@ export default function ManagerAssistant() {
             )}
             <div ref={messagesEndRef} />
           </div>
+          {pendingDraft && (
+            <MaintenanceDraftCard
+              pending={pendingDraft}
+              isConfirming={isConfirmingDraft}
+              onConfirm={() => void confirmPendingDraft()}
+              onCancel={cancelPendingDraft}
+            />
+          )}
           {error && (
             <div className="px-6 pb-2 text-sm text-destructive">
               {error}
@@ -225,13 +344,13 @@ export default function ManagerAssistant() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={isLoading}
+              disabled={isLoading || isConfirmingDraft}
               className="min-h-[44px] max-h-32 resize-none"
               rows={1}
             />
             <Button
               onClick={() => sendMessage()}
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || isConfirmingDraft}
               size="icon"
               className="h-11 w-11 shrink-0 bg-orange-500 hover:bg-orange-600"
             >

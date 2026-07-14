@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, lazy } from "react"
 import { Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
@@ -10,6 +10,8 @@ import MaintenanceCalendar from "@/components/maintenance/maintenance-calendar"
 import MaintenanceNotifications from "@/components/maintenance/maintenance-notifications"
 import MaintenanceFinances from "@/components/maintenance/maintenance-finances"
 import VendorList from "@/components/vendor/vendor-list"
+
+const MaintenanceSettings = lazy(() => import("@/components/maintenance/maintenance-settings"))
 
 export default function Maintenance() {
   return (
@@ -24,6 +26,7 @@ export default function Maintenance() {
             <Route path="/documents" element={<MaintenanceDocuments />} />
             <Route path="/calendar" element={<MaintenanceCalendar />} />
             <Route path="/notifications" element={<MaintenanceNotifications />} />
+            <Route path="/settings" element={<MaintenanceSettings />} />
             <Route path="/profile" element={<MaintenanceProfile />} />
           </Routes>
         </Suspense>

@@ -113,6 +113,79 @@ function rentScheduleRowToUi(row: Record<string, unknown>): RentSchedule {
   };
 }
 
+function mapRentPaymentStatus(status: string): RentPaymentStatus {
+  switch (status) {
+    case 'succeeded':
+    case 'paid':
+      return 'succeeded';
+    case 'processing':
+      return 'processing';
+    case 'failed':
+    case 'overdue':
+      return 'failed';
+    case 'refunded':
+      return 'refunded';
+    case 'pending':
+      return 'pending';
+    default:
+      return 'pending';
+  }
+}
+
+/** Map GET /dashboard/payments rows → RentPayment UI shape. */
+function dashboardPaymentToRentPayment(row: Record<string, unknown>): RentPayment {
+  const createdAt = row.createdAt != null ? String(row.createdAt) : new Date().toISOString();
+  const amountCents = Number(row.amountCents ?? 0);
+  return {
+    id: String(row.id ?? ''),
+    scheduleId: '',
+    tenantId: row.userId != null ? String(row.userId) : '',
+    propertyId: row.propertyId != null ? String(row.propertyId) : '',
+    amount: amountCents / 100,
+    status: mapRentPaymentStatus(String(row.status ?? 'pending')),
+    method: 'ach',
+    scheduledFor: createdAt,
+    processedAt: createdAt,
+  };
+}
+
+/** Map GET /tenant/receipts rows → RentReceipt UI shape. */
+function receiptRowToUi(row: Record<string, unknown>): RentReceipt {
+  const issuedAt =
+    row.paymentDate != null
+      ? String(row.paymentDate)
+      : row.createdAt != null
+        ? String(row.createdAt)
+        : new Date().toISOString();
+  return {
+    id: String(row.id ?? ''),
+    paymentId: String(row.paymentId ?? ''),
+    tenantId: String(row.tenantId ?? ''),
+    propertyId: String(row.propertyId ?? ''),
+    issuedAt,
+    downloadUrl: row.pdfUrl != null ? String(row.pdfUrl) : undefined,
+  };
+}
+
+/** Map GET /owner-statements rows → LandlordStatement UI shape. */
+function statementRowToUi(row: Record<string, unknown>): LandlordStatement {
+  const incomeCents = Number(row.totalIncomeCents ?? 0);
+  const expenseCents = Number(row.totalExpenseCents ?? 0);
+  const netCents = Number(
+    row.netCents ?? row.netIncomeCents ?? incomeCents - expenseCents,
+  );
+  return {
+    id: String(row.id ?? ''),
+    ownerId: String(row.ownerId ?? ''),
+    periodStart: String(row.periodStart ?? ''),
+    periodEnd: String(row.periodEnd ?? ''),
+    totalCollected: incomeCents / 100,
+    totalFees: expenseCents / 100,
+    netPayout: netCents / 100,
+    downloadUrl: row.pdfUrl != null ? String(row.pdfUrl) : undefined,
+  };
+}
+
 function documentRowToLease(row: Record<string, unknown>): LeaseDocument {
   const created = String(row.createdAt ?? new Date().toISOString());
   return {
@@ -812,14 +885,37 @@ export const featureApi = {
         headers,
       );
     },
-    listPayments(_params?: { propertyId?: string; tenantId?: string }): Promise<RentPayment[]> {
-      return Promise.resolve([]);
+    async listPayments(params?: {
+      propertyId?: string;
+      tenantId?: string;
+    }): Promise<RentPayment[]> {
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<unknown>(
+        'GET',
+        `/dashboard/payments${buildQueryString({ page: 1, limit: 100 })}`,
+        undefined,
+        headers,
+      );
+      let rows = unwrapDataArray(raw);
+      if (params?.propertyId) {
+        rows = rows.filter((r) => String(r.propertyId ?? '') === params.propertyId);
+      }
+      if (params?.tenantId) {
+        rows = rows.filter((r) => String(r.userId ?? r.tenantId ?? '') === params.tenantId);
+      }
+      return rows.map(dashboardPaymentToRentPayment);
     },
-    listReceipts(_tenantId?: string): Promise<RentReceipt[]> {
-      return Promise.resolve([]);
+    async listReceipts(_tenantId?: string): Promise<RentReceipt[]> {
+      // Scoped to the authenticated tenant by the backend; ignore optional override.
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<unknown>('GET', '/tenant/receipts', undefined, headers);
+      return unwrapDataArray(raw).map(receiptRowToUi);
     },
-    getLandlordStatements(_ownerId?: string): Promise<LandlordStatement[]> {
-      return Promise.resolve([]);
+    async getLandlordStatements(_ownerId?: string): Promise<LandlordStatement[]> {
+      // Scoped to the authenticated owner by the backend; ignore optional override.
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<unknown>('GET', '/owner-statements', undefined, headers);
+      return unwrapDataArray(raw).map(statementRowToUi);
     },
   },
 

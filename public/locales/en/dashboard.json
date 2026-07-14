@@ -52,6 +52,13 @@
     "placeholder": "Ask about portfolio, maintenance…",
     "rateLimitError": "Too many requests. Please wait a few minutes before sending more messages.",
     "genericError": "Failed to get reply",
+    "draftTitle": "Confirm maintenance request",
+    "draftHint": "Review the details below, then confirm to create the request. The confirmation token stays in this control and is not sent as chat text.",
+    "confirmDraft": "Confirm create",
+    "cancelDraft": "Cancel",
+    "confirmingDraft": "Creating…",
+    "draftConfirmed": "Maintenance request created.",
+    "draftCancelled": "Draft discarded.",
     "quickPrompts": {
       "portfolioStats": "Portfolio stats",
       "atRiskTenants": "At-risk tenants",

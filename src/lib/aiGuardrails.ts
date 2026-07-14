@@ -2,6 +2,10 @@
  * Client-side AI guardrails for the assistant chat. Mirrors backend limits
  * (OndoREBackend src/lib/aiGuardrails.ts) so we validate before sending and show
  * clear errors. Backend enforces the same rules; this is for UX and defense in depth.
+ *
+ * Scope: user/assistant message text only (length + prompt-injection patterns).
+ * Tool-result scanning (maintenance notes, message bodies, `_injectionRisk`) is
+ * server-side only — do not duplicate heavy untrusted-content scanning here.
  */
 
 export type ChatMessage = { role: "user" | "assistant" | "system"; content: string };

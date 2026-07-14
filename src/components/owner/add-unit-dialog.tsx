@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,33 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, AlertTriangle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { Plus, Home } from "lucide-react"
 
+/**
+ * Multi-unit-within-property create is not supported yet (no units table/API).
+ * Each property is one dwelling; adding another unit means creating another property.
+ */
 export function AddUnitDialog() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate submission process
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setIsOpen(false)
-
-      toast({
-        title: "Feature in development",
-        description: "Adding units functionality is coming soon. We're working on it!",
-        variant: "destructive",
-      })
-    }, 1500)
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -49,112 +29,29 @@ export function AddUnitDialog() {
           Add Unit
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>Add New Unit</DialogTitle>
-          <DialogDescription>Enter the details of the new unit to add it to your property.</DialogDescription>
+          <DialogTitle>Add another dwelling</DialogTitle>
+          <DialogDescription>
+            OnDo manages each property as a single unit today. To add another dwelling, create a new
+            property. Multi-unit buildings will be supported when per-property unit records ship.
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="unit-number">Unit Number/Name</Label>
-              <Input id="unit-number" placeholder="e.g., Apt 101, Unit A, etc." />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="unit-type">Unit Type</Label>
-              <Select>
-                <SelectTrigger id="unit-type">
-                  <SelectValue placeholder="Select unit type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="studio">Studio</SelectItem>
-                  <SelectItem value="condo">Condo</SelectItem>
-                  <SelectItem value="townhouse">Townhouse</SelectItem>
-                  <SelectItem value="house">House</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="bedrooms">Bedrooms</Label>
-                <Select>
-                  <SelectTrigger id="bedrooms">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Studio</SelectItem>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="4">4</SelectItem>
-                    <SelectItem value="5+">5+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="bathrooms">Bathrooms</Label>
-                <Select>
-                  <SelectTrigger id="bathrooms">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1</SelectItem>
-                    <SelectItem value="1.5">1.5</SelectItem>
-                    <SelectItem value="2">2</SelectItem>
-                    <SelectItem value="2.5">2.5</SelectItem>
-                    <SelectItem value="3">3</SelectItem>
-                    <SelectItem value="3+">3+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="square-feet">Square Feet</Label>
-              <Input id="square-feet" type="number" placeholder="Enter square footage" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="rent-amount">Monthly Rent</Label>
-              <Input id="rent-amount" type="number" placeholder="Enter monthly rent amount" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="deposit-amount">Security Deposit</Label>
-              <Input id="deposit-amount" type="number" placeholder="Enter security deposit amount" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
-              <Select>
-                <SelectTrigger id="status">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="vacant">Vacant</SelectItem>
-                  <SelectItem value="occupied">Occupied</SelectItem>
-                  <SelectItem value="maintenance">Under Maintenance</SelectItem>
-                  <SelectItem value="reserved">Reserved</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="bg-amber-50 p-3 rounded-md flex items-start gap-2 border border-amber-200">
-              <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-amber-800">Feature in Development</p>
-                <p className="text-xs text-amber-700">
-                  Unit management functionality is currently being developed. This form is for demonstration purposes
-                  only.
-                </p>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Adding..." : "Add Unit"}
-            </Button>
-          </DialogFooter>
-        </form>
+        <div className="flex items-start gap-3 rounded-md border bg-muted/40 p-3">
+          <Home className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Use Add Property for address, beds/baths, rent, and tenant assignment. That becomes the
+            unit you manage under Units &amp; Tenants.
+          </p>
+        </div>
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+          <Button asChild onClick={() => setIsOpen(false)}>
+            <Link to="/owner/properties/add">Add Property</Link>
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

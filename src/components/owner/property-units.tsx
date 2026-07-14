@@ -1,129 +1,183 @@
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Users, AlertTriangle } from "lucide-react"
+import { Users, Home } from "lucide-react"
 import { AddUnitDialog } from "./add-unit-dialog"
-import { useToast } from "@/hooks/use-toast"
+import { EmptyState } from "@/components/ui/empty-state"
+import { formatCurrency } from "@/lib/locale-format"
 
-export function PropertyUnits() {
-  const { toast } = useToast()
+/** Minimal property shape for unit display (real API Property or adapted mock). */
+export interface PropertyUnitsProperty {
+  id: string
+  title: string
+  type?: string | null
+  bedrooms?: number | null
+  bathrooms?: number | null
+  sqft?: number | null
+  price?: number | null
+  tenantId?: string | null
+  status?: string | null
+  tenant?: {
+    id: string
+    firstName?: string
+    lastName?: string
+    email?: string
+    phone?: string
+  } | null
+}
 
-  const handleManageTenants = () => {
-    toast({
-      title: "Feature in development",
-      description: "Tenant management for specific units is coming soon.",
-      variant: "destructive",
-    })
+interface PropertyUnitsProps {
+  property: PropertyUnitsProperty
+}
+
+function occupancyLabel(property: PropertyUnitsProperty): { label: string; className: string } {
+  if (property.tenantId || property.tenant) {
+    return {
+      label: "Occupied",
+      className: "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-200",
+    }
   }
+  if (property.status === "occupied") {
+    return {
+      label: "Occupied",
+      className: "bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-200",
+    }
+  }
+  return {
+    label: "Vacant",
+    className: "bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-200",
+  }
+}
+
+function formatBedsBaths(property: PropertyUnitsProperty): string {
+  const beds = property.bedrooms
+  const baths = property.bathrooms
+  const bedLabel = beds == null ? "—" : beds === 0 ? "Studio" : `${beds} bed`
+  const bathLabel = baths == null ? "—" : `${baths} bath`
+  const sqft =
+    property.sqft != null && property.sqft > 0
+      ? ` • ${property.sqft.toLocaleString()} sq ft`
+      : ""
+  return `${bedLabel}, ${bathLabel}${sqft}`
+}
+
+function tenantDisplayName(tenant: NonNullable<PropertyUnitsProperty["tenant"]>): string {
+  const name = [tenant.firstName, tenant.lastName].filter(Boolean).join(" ").trim()
+  return name || tenant.email || "Tenant"
+}
+
+export function PropertyUnits({ property }: PropertyUnitsProps) {
+  const occupancy = occupancyLabel(property)
+  const tenant = property.tenant
+  const tenantId = tenant?.id ?? property.tenantId ?? null
+  const rentLabel =
+    property.price != null && property.price > 0
+      ? `${formatCurrency(property.price, "USD")}/month`
+      : "Rent not set"
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div>
           <CardTitle>Units & Tenants</CardTitle>
-          <CardDescription>Manage property units and tenants</CardDescription>
+          <CardDescription>
+            This property is managed as one unit. Add another property to track an additional
+            dwelling.
+          </CardDescription>
         </div>
         <AddUnitDialog />
       </CardHeader>
       <CardContent>
-        <div className="bg-amber-50 p-3 rounded-md flex items-start gap-2 border border-amber-200 mb-4">
-          <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-amber-800">Feature in Development</p>
-            <p className="text-xs text-amber-700">
-              Unit and tenant management functionality is currently being developed. Some features may not be fully
-              functional.
-            </p>
-          </div>
-        </div>
-
         <Tabs defaultValue="units" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="units">Units</TabsTrigger>
             <TabsTrigger value="tenants">Tenants</TabsTrigger>
           </TabsList>
           <TabsContent value="units" className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div className="border rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">Unit 101</h3>
-                    <p className="text-sm text-muted-foreground">2 bed, 1 bath • 950 sq ft</p>
-                  </div>
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Occupied</Badge>
+            <div className="border rounded-lg p-4">
+              <div className="flex justify-between items-start gap-3">
+                <div>
+                  <h3 className="font-medium">{property.title || "Primary unit"}</h3>
+                  <p className="text-sm text-muted-foreground">{formatBedsBaths(property)}</p>
+                  {property.type ? (
+                    <p className="text-xs text-muted-foreground mt-1 capitalize">
+                      {property.type.replace(/-/g, " ")}
+                    </p>
+                  ) : null}
                 </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-sm font-medium">$1,250/month</p>
-                    <p className="text-xs text-muted-foreground">Lease ends: Dec 31, 2023</p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handleManageTenants}>
-                    <Users className="h-4 w-4 mr-2" />
-                    Manage Tenants
-                  </Button>
-                </div>
+                <Badge className={occupancy.className}>{occupancy.label}</Badge>
               </div>
-              <div className="border rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">Unit 102</h3>
-                    <p className="text-sm text-muted-foreground">1 bed, 1 bath • 650 sq ft</p>
-                  </div>
-                  <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Vacant</Badge>
+              <div className="mt-4 flex flex-wrap justify-between items-center gap-3">
+                <div>
+                  <p className="text-sm font-medium">{rentLabel}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {tenantId ? "Tenant assigned" : "Available — invite a tenant when ready"}
+                  </p>
                 </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-sm font-medium">$950/month</p>
-                    <p className="text-xs text-muted-foreground">Available now</p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handleManageTenants}>
-                    <Users className="h-4 w-4 mr-2" />
-                    Manage Tenants
+                {tenantId ? (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/owner/tenants/${encodeURIComponent(tenantId)}`}>
+                      <Users className="h-4 w-4 mr-2" />
+                      View Tenant
+                    </Link>
                   </Button>
-                </div>
+                ) : (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/owner/tenants">
+                      <Users className="h-4 w-4 mr-2" />
+                      Manage Tenants
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
           </TabsContent>
           <TabsContent value="tenants" className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+            {tenant || tenantId ? (
               <div className="border rounded-lg p-4">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-3">
                   <div>
-                    <h3 className="font-medium">John Smith</h3>
-                    <p className="text-sm text-muted-foreground">Unit 101 • Primary tenant</p>
+                    <h3 className="font-medium">
+                      {tenant ? tenantDisplayName(tenant) : "Assigned tenant"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {property.title} • Primary tenant
+                    </p>
                   </div>
-                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Active</Badge>
+                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-200">
+                    Active
+                  </Badge>
                 </div>
-                <div className="mt-4 flex justify-between items-center">
+                <div className="mt-4 flex flex-wrap justify-between items-center gap-3">
                   <div>
-                    <p className="text-sm">john.smith@example.com</p>
-                    <p className="text-sm">555-123-4567</p>
+                    {tenant?.email ? <p className="text-sm">{tenant.email}</p> : null}
+                    {tenant?.phone ? <p className="text-sm">{tenant.phone}</p> : null}
+                    {!tenant?.email && !tenant?.phone ? (
+                      <p className="text-sm text-muted-foreground">
+                        Contact details will appear when the tenant profile loads.
+                      </p>
+                    ) : null}
                   </div>
-                  <Button variant="outline" size="sm" onClick={handleManageTenants}>
-                    View Details
-                  </Button>
+                  {tenantId ? (
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to={`/owner/tenants/${encodeURIComponent(tenantId)}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                  ) : null}
                 </div>
               </div>
-              <div className="border rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-medium">Sarah Johnson</h3>
-                    <p className="text-sm text-muted-foreground">Unit 101 • Co-tenant</p>
-                  </div>
-                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Active</Badge>
-                </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-sm">sarah.johnson@example.com</p>
-                    <p className="text-sm">555-987-6543</p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={handleManageTenants}>
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </div>
+            ) : (
+              <EmptyState
+                icon={<Home className="h-12 w-12" />}
+                title="No tenant assigned"
+                description="This unit is vacant. Invite or assign a tenant from the Tenants page."
+                ctaLabel="Go to Tenants"
+                ctaHref="/owner/tenants"
+              />
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>

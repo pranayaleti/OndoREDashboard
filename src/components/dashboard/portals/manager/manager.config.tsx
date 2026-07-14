@@ -26,7 +26,7 @@ import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
-import { DEMO_MANAGER_FINANCIAL_SUMMARY, isDemoPortfolio } from "@/lib/seed-data"
+import { DEMO_MANAGER_FINANCIAL_SUMMARY, isDemoPortfolio, isManagerDemoUser } from "@/lib/seed-data"
 import { ManagerOnboardingChecklist } from "@/components/manager/manager-onboarding-checklist"
 
 /**
@@ -36,9 +36,12 @@ export function createManagerConfig(
   properties: Property[],
   invitedUsers: InvitedUser[],
   leads: Lead[],
-  financialSummary: PnLStatement | null = null
+  financialSummary: PnLStatement | null = null,
+  managerEmail?: string | null,
 ): PortalConfig {
-  const effectiveFinancialSummary = financialSummary ?? DEMO_MANAGER_FINANCIAL_SUMMARY
+  const allowDemoFinance = isManagerDemoUser({ email: managerEmail ?? undefined })
+  const effectiveFinancialSummary =
+    financialSummary ?? (allowDemoFinance ? DEMO_MANAGER_FINANCIAL_SUMMARY : null)
   const pendingProperties = properties.filter(p => p.status === "pending")
   
   // Calculate stats from data
@@ -110,7 +113,7 @@ export function createManagerConfig(
     {
       id: "revenue-mtd",
       title: "Revenue (MTD)",
-      value: formatUSD(effectiveFinancialSummary.income.total),
+      value: formatUSD(effectiveFinancialSummary?.income.total ?? 0),
       subtitle: "Month-to-date income",
       icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -118,7 +121,7 @@ export function createManagerConfig(
     {
       id: "expenses-mtd",
       title: "Expenses (MTD)",
-      value: formatUSD(effectiveFinancialSummary.expenses.total),
+      value: formatUSD(effectiveFinancialSummary?.expenses.total ?? 0),
       subtitle: "Month-to-date expenses",
       icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -126,7 +129,7 @@ export function createManagerConfig(
     {
       id: "net-income-mtd",
       title: "Net Income (MTD)",
-      value: formatUSD(effectiveFinancialSummary.netIncome),
+      value: formatUSD(effectiveFinancialSummary?.netIncome ?? 0),
       subtitle: "Month-to-date net income",
       icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       href: "/dashboard/finances",
@@ -431,7 +434,7 @@ export function createManagerConfig(
             .map((u) => u.id)
           return await reportsApi.getAggregatedPnLForStaff({ startDate, endDate }, ownerIds)
         } catch {
-          return DEMO_MANAGER_FINANCIAL_SUMMARY
+          return null
         }
       },
     },
