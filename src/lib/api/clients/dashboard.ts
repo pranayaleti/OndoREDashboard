@@ -13,6 +13,7 @@ import type {
   PropertyReminderItem,
 } from "./legacy-types";
 import { assistantApi } from "./assistant";
+import type { PendingMaintenanceDraft } from "./assistant";
 
 export interface DashboardStats {
   propertiesCount: number;
@@ -150,13 +151,28 @@ export const dashboardApi = {
     );
   },
 
-  async assistantChat(messages: { role: string; content: string }[], sessionId?: string): Promise<{ reply: string; session_id: string | undefined }> {
+  async assistantChat(messages: { role: string; content: string }[], sessionId?: string): Promise<{
+    reply: string;
+    session_id: string | undefined;
+    pending_maintenance_draft?: PendingMaintenanceDraft;
+  }> {
     const chatMessages = messages.map((m) => ({
       role: m.role as "user" | "assistant" | "system",
       content: m.content,
     }));
     const res = await assistantApi.chat({ messages: chatMessages, session_id: sessionId });
-    return { reply: res.reply ?? "", session_id: res.session_id };
+    return {
+      reply: res.reply ?? "",
+      session_id: res.session_id,
+      pending_maintenance_draft: res.pending_maintenance_draft,
+    };
+  },
+
+  async confirmMaintenanceDraft(
+    confirmationToken: string,
+    draft: PendingMaintenanceDraft["draft"],
+  ) {
+    return assistantApi.confirmMaintenanceDraft(confirmationToken, draft);
   },
 
   async getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {
