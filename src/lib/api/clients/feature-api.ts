@@ -876,7 +876,8 @@ export const featureApi = {
       amount: number,
       method: RentPaymentMethod = 'ach',
     ): Promise<RentPayment> {
-      // ROADMAP: Wire to Stripe + Plaid ACH once credentials provided (Q2 2026 - payment system).
+      // Ledger write via rent-schedules API. Card/ACH collection uses
+      // featureApi.stripe.createPaymentIntent + Elements (tenant Payments UI).
       const headers = getAuthHeaders();
       return apiRequest<RentPayment>(
         'POST',
@@ -1463,6 +1464,51 @@ export const featureApi = {
         success: boolean;
         data: { bankSourceId: string; bankName: string; last4: string; plaidItemRowId: string };
       }>('POST', '/plaid/exchange-public-token', args, headers);
+    },
+  },
+
+  connect: {
+    async getStatus(): Promise<{
+      connected: boolean;
+      stripeAccountId: string | null;
+      chargesEnabled: boolean;
+      payoutsEnabled: boolean;
+      detailsSubmitted: boolean;
+      requirementsDueCount: number;
+      payoutsReady: boolean;
+    }> {
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<{
+        message: string;
+        data: {
+          connected: boolean;
+          stripeAccountId: string | null;
+          chargesEnabled: boolean;
+          payoutsEnabled: boolean;
+          detailsSubmitted: boolean;
+          requirementsDueCount: number;
+          payoutsReady: boolean;
+        };
+      }>('GET', '/connect/status', undefined, headers);
+      return raw.data;
+    },
+    async createOnboardingLink(): Promise<{ url: string; stripeAccountId: string }> {
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<{
+        message: string;
+        data: { url: string; stripeAccountId: string };
+      }>('POST', '/connect/onboarding-link', {}, headers);
+      return raw.data;
+    },
+    async createLoginLink(): Promise<{ url: string }> {
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<{ message: string; data: { url: string } }>(
+        'POST',
+        '/connect/login-link',
+        {},
+        headers,
+      );
+      return raw.data;
     },
   },
 

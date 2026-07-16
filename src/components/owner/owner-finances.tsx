@@ -19,6 +19,7 @@ import { getAuthHeaders } from "@/lib/api/http"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/auth-context"
 import { DEMO_OWNER_FINANCIAL_SUMMARY, isOwnerDemoUser } from "@/lib/seed-data"
+import { OwnerConnectPayouts } from "@/components/owner/owner-connect-payouts"
 
 function formatDateRange(start: string, end: string): string {
   return `${start} to ${end}`
@@ -180,6 +181,8 @@ export default function OwnerFinances() {
           </div>
         </div>
       </div>
+
+      <OwnerConnectPayouts />
 
       {error && (
         <Card className="mb-6 border-red-200 dark:border-red-800">

@@ -22,24 +22,47 @@ function AddMethodInner({ onSuccess, onError }: AddMethodInnerProps) {
     setIsProcessing(true)
     setErrorMessage(null)
 
-    const { error, setupIntent } = await stripe.confirmSetup({
-      elements,
-      confirmParams: {
-        return_url: window.location.href,
-      },
-      redirect: "if_required",
-    })
+    try {
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        const msg = submitError.message || "Please check your payment details."
+        setErrorMessage(msg)
+        onError?.(msg)
+        return
+      }
 
-    if (error) {
-      const msg = error.message || "Failed to save payment method."
+      const { error, setupIntent } = await stripe.confirmSetup({
+        elements,
+        confirmParams: {
+          return_url: window.location.href,
+        },
+        redirect: "if_required",
+      })
+
+      if (error) {
+        const msg = error.message || "Failed to save payment method."
+        setErrorMessage(msg)
+        onError?.(msg)
+        return
+      }
+
+      if (!setupIntent?.payment_method) {
+        const msg = "Payment method was not returned. Please try again."
+        setErrorMessage(msg)
+        onError?.(msg)
+        return
+      }
+
+      const pmId =
+        typeof setupIntent.payment_method === "string"
+          ? setupIntent.payment_method
+          : setupIntent.payment_method.id
+      onSuccess?.(pmId)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to save payment method."
       setErrorMessage(msg)
       onError?.(msg)
-      setIsProcessing(false)
-    } else if (setupIntent?.payment_method) {
-      const pmId = typeof setupIntent.payment_method === "string"
-        ? setupIntent.payment_method
-        : setupIntent.payment_method.id
-      onSuccess?.(pmId)
+    } finally {
       setIsProcessing(false)
     }
   }
@@ -79,6 +102,14 @@ export function StripeAddPaymentMethod({
   onSuccess,
   onError,
 }: StripeAddPaymentMethodProps) {
+  if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+    return (
+      <p role="alert" className="text-sm text-muted-foreground">
+        Stripe is not configured. Set VITE_STRIPE_PUBLISHABLE_KEY in your environment.
+      </p>
+    )
+  }
+
   return (
     <Elements
       stripe={stripePromise}

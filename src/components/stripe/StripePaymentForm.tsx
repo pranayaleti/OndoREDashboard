@@ -24,21 +24,44 @@ function PaymentFormInner({ amount, onSuccess, onError, submitLabel }: PaymentFo
     setIsProcessing(true)
     setErrorMessage(null)
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.href,
-      },
-      redirect: "if_required",
-    })
+    try {
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        const msg = submitError.message || "Please check your payment details."
+        setErrorMessage(msg)
+        onError?.(msg)
+        return
+      }
 
-    if (error) {
-      const msg = error.message || "Payment failed. Please try again."
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.href,
+        },
+        redirect: "if_required",
+      })
+
+      if (error) {
+        const msg = error.message || "Payment failed. Please try again."
+        setErrorMessage(msg)
+        onError?.(msg)
+        return
+      }
+
+      const status = paymentIntent?.status
+      if (status === "succeeded" || status === "processing" || status === "requires_capture") {
+        onSuccess?.()
+        return
+      }
+
+      const msg = "Payment did not complete. Please try again."
       setErrorMessage(msg)
       onError?.(msg)
-      setIsProcessing(false)
-    } else {
-      onSuccess?.()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Payment failed. Please try again."
+      setErrorMessage(msg)
+      onError?.(msg)
+    } finally {
       setIsProcessing(false)
     }
   }
@@ -82,6 +105,14 @@ export function StripePaymentForm({
   onError,
   submitLabel,
 }: StripePaymentFormProps) {
+  if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+    return (
+      <p role="alert" className="text-sm text-muted-foreground">
+        Stripe is not configured. Set VITE_STRIPE_PUBLISHABLE_KEY in your environment.
+      </p>
+    )
+  }
+
   return (
     <Elements
       stripe={stripePromise}

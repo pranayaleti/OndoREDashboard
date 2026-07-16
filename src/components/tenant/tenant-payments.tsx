@@ -24,7 +24,7 @@ import { formatUSD, formatUSDate } from "@/lib/us-format"
 import { PaymentMethods } from "@/components/ui/payment-methods"
 import { PlaidLinkButton } from "@/components/tenant/plaid-link-button"
 import { StripePaymentForm } from "@/components/stripe/StripePaymentForm"
-import { featureApi, type StripePaymentMethod, type PaymentRecord } from "@/lib/api"
+import { featureApi, propertyApi, type StripePaymentMethod, type PaymentRecord, type Property } from "@/lib/api"
 import { useAuth } from "@/lib/auth-context"
 import { EmptyState } from "@/components/ui/empty-state"
 import { getDemoPaymentHistory } from "@/lib/seed-data"
@@ -39,6 +39,7 @@ export default function TenantPayments() {
   // Real data from API
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
   const [payments, setPayments] = useState<PaymentRecord[]>([])
+  const [tenantProperty, setTenantProperty] = useState<Property | null>(null)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [showAllPayments, setShowAllPayments] = useState(false)
 
@@ -76,14 +77,36 @@ export default function TenantPayments() {
     }
   }, [user])
 
+  const loadTenantProperty = useCallback(async () => {
+    try {
+      const res = await propertyApi.getTenantProperty()
+      const prop = (res as { property?: Property }).property ?? (res as unknown as Property)
+      setTenantProperty(prop?.id ? prop : null)
+      if (prop?.price && prop.price > 0) {
+        setPaymentAmount(String(prop.price))
+      }
+    } catch {
+      setTenantProperty(null)
+    }
+  }, [])
+
   useEffect(() => {
     loadPaymentMethods()
     loadPaymentHistory()
-  }, [loadPaymentMethods, loadPaymentHistory])
+    loadTenantProperty()
+  }, [loadPaymentMethods, loadPaymentHistory, loadTenantProperty])
 
   const handlePayRent = async () => {
     if (paymentAmountNumber < 0.5) {
       toast({ title: "Invalid Amount", description: "Minimum payment is $0.50", variant: "destructive" })
+      return
+    }
+    if (!tenantProperty?.id) {
+      toast({
+        title: "No property linked",
+        description: "We could not find your lease property. Contact your property manager.",
+        variant: "destructive",
+      })
       return
     }
 
@@ -92,6 +115,7 @@ export default function TenantPayments() {
       const result = await featureApi.stripe.createPaymentIntent({
         amountCents: Math.round(paymentAmountNumber * 100),
         paymentType: "rent",
+        propertyId: tenantProperty.id,
         description: "Monthly Rent Payment",
       })
       setClientSecret(result.clientSecret)
