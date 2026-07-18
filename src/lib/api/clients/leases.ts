@@ -75,7 +75,8 @@ export const leasesApi = {
   },
 
   async getUpcomingRenewals(daysAhead = 90): Promise<Array<Lease & { daysUntilExpiry: number }>> {
-    const res = await apiGet(`/lease-renewals/upcoming?days=${daysAhead}`);
+    // Edge + Express both accept daysAhead (not `days`).
+    const res = await apiGet(`/lease-renewals/upcoming?daysAhead=${daysAhead}`);
     return ((res as { data: Array<Lease & { daysUntilExpiry: number }> }).data ?? []);
   },
 };
