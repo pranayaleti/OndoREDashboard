@@ -2778,6 +2778,20 @@ export const featureApi = {
     },
   },
 
+  // ── Owner Distributions (owner_distributions, separate from trust ledger) ──
+
+  ownerDistributions: {
+    getDistributions(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/distributions', undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getNextPayout(): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', '/owner/distributions/next-payout', undefined, headers);
+    },
+  },
+
   // ── 1099 Filing ───────────────────────────────────────────────────────────
 
   form1099: {
@@ -3070,6 +3084,21 @@ export const featureApi = {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('GET', `/investments/deals/${dealId}`, undefined, headers);
     },
+    getInvestors(dealId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/investments/deals/${dealId}/investors`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getCapitalCalls(dealId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/investments/deals/${dealId}/capital-calls`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    getDistributions(dealId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/investments/deals/${dealId}/distributions`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
     addInvestor(dealId: string, data: Record<string, unknown>): Promise<unknown> {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('POST', `/investments/deals/${dealId}/investors`, data, headers);
@@ -3168,12 +3197,6 @@ export const featureApi = {
     generate1099s: (year: number) => Promise<void>;
     file1099: (formId: string) => Promise<void>;
   },
-  trust: undefined as undefined | {
-    listAccounts: () => Promise<unknown[]>;
-    listTransactions: () => Promise<unknown[]>;
-    listDistributions: () => Promise<unknown[]>;
-    recordTransaction: (txn: unknown) => Promise<void>;
-  },
   utilities: undefined as undefined | {
     listAccounts: () => Promise<unknown[]>;
     listBills: () => Promise<unknown[]>;
@@ -3184,13 +3207,6 @@ export const featureApi = {
     getPolicy: () => Promise<unknown>;
     list: () => Promise<unknown[]>;
     updatePolicy: (draft: unknown) => Promise<void>;
-  },
-  investor: undefined as undefined | {
-    listDeals: () => Promise<unknown[]>;
-    createDeal: (deal: unknown) => Promise<void>;
-    addInvestor: (inv: unknown) => Promise<void>;
-    createCapitalCall: (call: unknown) => Promise<void>;
-    createDistribution: (dist: unknown) => Promise<void>;
   },
 };
 

@@ -37,6 +37,9 @@ const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const InvestorPortal = lazy(() =>
   import("@/components/owner/investor-portal").then((m) => ({ default: m.InvestorPortal })),
 )
+const TrustAccountingPanel = lazy(() =>
+  import("@/components/owner/trust-accounting-panel").then((m) => ({ default: m.TrustAccountingPanel })),
+)
 
 export default function Owner() {
   return (
@@ -74,6 +77,7 @@ export default function Owner() {
             <Route path="/profile" element={<OwnerProfile />} />
             <Route path="/referrals" element={<ReferralProgram />} />
             <Route path="/investor-portal" element={<InvestorPortal />} />
+            <Route path="/trust-accounting" element={<TrustAccountingPanel />} />
           </Routes>
         </Suspense>
       </div>
