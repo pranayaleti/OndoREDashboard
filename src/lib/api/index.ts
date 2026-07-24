@@ -30,6 +30,8 @@ export { accountingApi } from "./clients/accounting";
 export { assistantApi } from "./clients/assistant";
 export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
+export { eventsApi } from "./clients/events";
+export type { EventItem, CreateEventInput, UpdateEventInput } from "./clients/events";
 export {
   tenantScreeningApi,
   getTenantScreeningWidgetData,

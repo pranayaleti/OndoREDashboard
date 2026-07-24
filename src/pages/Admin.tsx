@@ -16,6 +16,7 @@ const AdminSettings = lazy(() => import("@/components/admin/admin-settings"))
 const AdminDocuments = lazy(() => import("@/components/admin/admin-documents"))
 const AdminMessages = lazy(() => import("@/components/admin/admin-messages"))
 const AdminCalendar = lazy(() => import("@/components/admin/admin-calendar"))
+const AdminEvents = lazy(() => import("@/components/admin/admin-events"))
 const AdminNotifications = lazy(() => import("@/components/admin/admin-notifications"))
 const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
 const ScreeningListPageWithOwnerFilter = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPageWithOwnerFilter })))
@@ -42,6 +43,7 @@ export default function Admin() {
             <Route path="/messages/*" element={<AdminMessages />} />
             <Route path="/documents" element={<AdminDocuments />} />
             <Route path="/calendar" element={<AdminCalendar />} />
+            <Route path="/events" element={<AdminEvents />} />
             <Route path="/notifications" element={<AdminNotifications />} />
             <Route path="/settings" element={<AdminSettings />} />
             <Route path="/profile" element={<AdminProfile />} />
