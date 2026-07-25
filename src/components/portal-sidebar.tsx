@@ -33,6 +33,7 @@ import {
   Laptop,
   Bell,
   Calendar,
+  CalendarDays,
   Settings,
   HelpCircle,
   AlertTriangle,
@@ -117,11 +118,12 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
+        { title: "Events", href: `${basePath}/events`, icon: <CalendarDays className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
-    
+
     case "admin":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
@@ -138,11 +140,12 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
+        { title: "Events", href: `${basePath}/events`, icon: <CalendarDays className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
-    
+
     case "manager":
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
