@@ -3,6 +3,7 @@
  * List/get return role-shaped views (`scorecard` | `full` | `status`).
  */
 
+import { ApiError } from "@ondo/types"
 import { apiGet, apiPost, apiPut, getAuthHeaders } from "../http"
 
 export type ScreeningStatus =
@@ -210,13 +211,35 @@ export const screeningApi = {
   async attach(
     screeningId: string,
     payload: AttachScreeningPayload
-  ): Promise<{ message: string; shareId: string }> {
+  ): Promise<{ message: string; shareId: string; screeningId: string }> {
     const headers = getAuthHeaders()
-    return apiPost<{ message: string; shareId: string }>(
+    const res = await apiPost<{ message: string; shareId: string; screeningId?: string }>(
       `/screening/${screeningId}/attach`,
       payload,
       headers
     )
+    // Backend may omit screeningId; fall back to the id we attached.
+    return { ...res, screeningId: res.screeningId ?? screeningId }
+  },
+
+  /**
+   * Linked package for an application (role-shaped).
+   * Returns null when the endpoint is missing (404) or no package is linked.
+   */
+  async getScreeningPackage(applicationId: string): Promise<ScreeningViewResponse | null> {
+    const headers = getAuthHeaders()
+    try {
+      const res = await apiGet<{
+        screening?: ScreeningViewResponse
+        data?: ScreeningViewResponse
+      }>(`/applications/${applicationId}/screening-package`, headers)
+      return res.screening ?? res.data ?? null
+    } catch (err) {
+      if (err instanceof ApiError && (err.status === 404 || err.status === 501)) {
+        return null
+      }
+      throw err
+    }
   },
 
   async createFeeIntent(screeningId: string): Promise<CreateFeeIntentResponse> {

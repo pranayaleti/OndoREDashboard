@@ -69,6 +69,7 @@ interface VerificationCheck {
   passes: boolean | null
   result: Record<string, unknown> | null
   completedAt: string | null
+  screeningId?: string | null
 }
 
 interface ApplicationDetail {
@@ -128,18 +129,77 @@ export function ApplicationDetailView({
   const [showApprove, setShowApprove] = useState(false)
   const [showReject, setShowReject] = useState(false)
   const [showAttach, setShowAttach] = useState(false)
+  const [showWaive, setShowWaive] = useState(false)
   const [acting, setActing] = useState(false)
   const [attachCandidates, setAttachCandidates] = useState<ScreeningViewResponse[]>([])
   const [attachLoading, setAttachLoading] = useState(false)
   const [selectedScreeningId, setSelectedScreeningId] = useState("")
   const [manualScreeningId, setManualScreeningId] = useState("")
   const [linkedScreening, setLinkedScreening] = useState<ScreeningViewResponse | null>(null)
+  /** Stable id from attach / package resolution — preferred over email heuristics. */
+  const [linkedScreeningId, setLinkedScreeningId] = useState<string | null>(null)
 
   useEffect(() => {
-    loadApplication()
+    setLinkedScreeningId(null)
+    setLinkedScreening(null)
+    void loadApplication(null)
   }, [applicationId])
 
-  const loadApplication = async () => {
+  const resolveLinkedScreening = async (
+    nextChecks: VerificationCheck[],
+    email: string | undefined,
+    preferredId: string | null
+  ): Promise<void> => {
+    // 1) Dedicated application package endpoint (when backend ships it)
+    try {
+      const fromPackage = await screeningApi.getScreeningPackage(applicationId)
+      if (fromPackage) {
+        setLinkedScreeningId(fromPackage.id)
+        setLinkedScreening(fromPackage)
+        return
+      }
+    } catch {
+      // Non-404 failures fall through to other strategies
+    }
+
+    // 2) Explicit preferred id (just attached) or screening_id on verification checks
+    const checkScreeningId =
+      nextChecks.map((c) => c.screeningId).find((id): id is string => !!id) ?? null
+    const candidateId = preferredId ?? checkScreeningId
+
+    if (candidateId) {
+      try {
+        const view = await screeningApi.get(candidateId)
+        setLinkedScreeningId(view.id)
+        setLinkedScreening(view)
+        return
+      } catch {
+        // fall through
+      }
+    }
+
+    // 3) Last resort: initiated-by list email heuristic
+    if (email) {
+      try {
+        const matches = await screeningApi.listMatchingEmail(email)
+        const completed = matches.filter((s) => s.status === "completed")
+        const pick = completed[0] ?? null
+        setLinkedScreeningId(pick?.id ?? null)
+        setLinkedScreening(pick)
+        return
+      } catch {
+        // ignore
+      }
+    }
+
+    setLinkedScreeningId(null)
+    setLinkedScreening(null)
+  }
+
+  /** Pass `null` to clear preferred id; omit to keep prior `linkedScreeningId`. */
+  const loadApplication = async (preferredScreeningId?: string | null) => {
+    const preferred =
+      preferredScreeningId !== undefined ? preferredScreeningId : linkedScreeningId
     try {
       setLoading(true)
       const [appData, checksData] = await Promise.all([
@@ -147,20 +207,16 @@ export function ApplicationDetailView({
         featureApi.applications.getChecks(applicationId),
       ])
       const detail = (appData as { data?: ApplicationDetail })?.data ?? appData
+      const nextChecks = checksData as VerificationCheck[]
       setApp(detail as ApplicationDetail)
-      setChecks(checksData as VerificationCheck[])
+      setChecks(nextChecks)
       setNotes((detail as ApplicationDetail)?.ownerNotes ?? "")
 
-      const email = (detail as ApplicationDetail)?.email
-      if (email) {
-        try {
-          const matches = await screeningApi.listMatchingEmail(email)
-          const completed = matches.filter((s) => s.status === "completed")
-          setLinkedScreening(completed[0] ?? null)
-        } catch {
-          setLinkedScreening(null)
-        }
-      }
+      await resolveLinkedScreening(
+        nextChecks,
+        (detail as ApplicationDetail)?.email,
+        preferred
+      )
     } catch {
       toast({ title: "Failed to load application", variant: "destructive" })
     } finally {
@@ -192,10 +248,18 @@ export function ApplicationDetailView({
     }
     try {
       setActing(true)
-      await screeningApi.attach(screeningId, { applicationId })
+      const res = await screeningApi.attach(screeningId, { applicationId })
+      const attachedId = res.screeningId || screeningId
+      setLinkedScreeningId(attachedId)
+      try {
+        const view = await screeningApi.get(attachedId)
+        setLinkedScreening(view)
+      } catch {
+        // Package will resolve on reload via checks / package endpoint
+      }
       toast({ title: "Screening package attached" })
       setShowAttach(false)
-      await loadApplication()
+      await loadApplication(attachedId)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to attach screening"
       toast({ title: message, variant: "destructive" })
@@ -209,6 +273,7 @@ export function ApplicationDetailView({
       setActing(true)
       await screeningApi.waiveFee(applicationId)
       toast({ title: "Screening fee waived" })
+      setShowWaive(false)
       await loadApplication()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to waive screening fee"
@@ -331,7 +396,7 @@ export function ApplicationDetailView({
               <Button variant="outline" onClick={openAttachDialog} disabled={acting}>
                 <Link2 className="h-4 w-4 mr-1.5" /> Attach existing screening
               </Button>
-              <Button variant="outline" onClick={handleWaiveFee} disabled={acting}>
+              <Button variant="outline" onClick={() => setShowWaive(true)} disabled={acting}>
                 <BadgeDollarSign className="h-4 w-4 mr-1.5" /> Waive fee
               </Button>
             </>
@@ -632,6 +697,29 @@ export function ApplicationDetailView({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Waive screening fee */}
+      <AlertDialog open={showWaive} onOpenChange={setShowWaive}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Waive screening fee?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This waives the applicant screening fee for {app.firstName} {app.lastName}
+              and lets provider screening continue without payment. This cannot be undone from here.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={acting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleWaiveFee}
+              disabled={acting}
+              className="bg-ondo-orange hover:bg-ondo-red"
+            >
+              {acting ? "Waiving…" : "Waive fee"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Approve Dialog */}
       <AlertDialog open={showApprove} onOpenChange={setShowApprove}>

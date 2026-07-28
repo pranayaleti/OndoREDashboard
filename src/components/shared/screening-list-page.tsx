@@ -243,7 +243,7 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-medium">{listPrimaryLabel(s)}</span>
                     <Badge variant="outline">{s.status}</Badge>
-                    {s.view !== "status" && s.view === "scorecard" && (
+                    {s.view !== "status" && (
                       <Badge variant="secondary">{s.creditScoreBand}</Badge>
                     )}
                     {recommendationBadge(listRecommendation(s))}
