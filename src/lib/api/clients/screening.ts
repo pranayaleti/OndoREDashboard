@@ -225,6 +225,10 @@ export const screeningApi = {
   /**
    * Linked package for an application (role-shaped).
    * Returns null when the endpoint is missing (404) or no package is linked.
+   *
+   * TODO(Task 8+): wire this from application detail once
+   * GET /applications/:id/screening-package exists on the backend.
+   * Do not call from UI load paths until then (guaranteed 404).
    */
   async getScreeningPackage(applicationId: string): Promise<ScreeningViewResponse | null> {
     const headers = getAuthHeaders()

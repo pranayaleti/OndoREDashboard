@@ -150,26 +150,28 @@ export function ApplicationDetailView({
     email: string | undefined,
     preferredId: string | null
   ): Promise<void> => {
-    // 1) Dedicated application package endpoint (when backend ships it)
-    try {
-      const fromPackage = await screeningApi.getScreeningPackage(applicationId)
-      if (fromPackage) {
-        setLinkedScreeningId(fromPackage.id)
-        setLinkedScreening(fromPackage)
+    // TODO(Task 8+): prefer screeningApi.getScreeningPackage(applicationId) once
+    // GET /applications/:id/screening-package ships on the backend. Do not probe
+    // that route yet — it guarantees a 404 on every detail load.
+
+    // 1) Preferred attached id (local state / attach response)
+    if (preferredId) {
+      try {
+        const view = await screeningApi.get(preferredId)
+        setLinkedScreeningId(view.id)
+        setLinkedScreening(view)
         return
+      } catch {
+        // fall through
       }
-    } catch {
-      // Non-404 failures fall through to other strategies
     }
 
-    // 2) Explicit preferred id (just attached) or screening_id on verification checks
+    // 2) Linked screening_id from verification checks
     const checkScreeningId =
       nextChecks.map((c) => c.screeningId).find((id): id is string => !!id) ?? null
-    const candidateId = preferredId ?? checkScreeningId
-
-    if (candidateId) {
+    if (checkScreeningId && checkScreeningId !== preferredId) {
       try {
-        const view = await screeningApi.get(candidateId)
+        const view = await screeningApi.get(checkScreeningId)
         setLinkedScreeningId(view.id)
         setLinkedScreening(view)
         return
