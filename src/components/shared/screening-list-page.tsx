@@ -1,6 +1,7 @@
 /**
  * Tenant screening: list, detail, and initiate.
  * Used by Owner and Manager (and Admin with optional owner filter).
+ * Detail rendering follows API `view` discriminator (scorecard / full / status).
  */
 
 import { useState, useEffect, useCallback } from "react"
@@ -24,11 +25,18 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { UserPlus, Loader2, ChevronRight, CheckCircle, XCircle, AlertCircle } from "lucide-react"
-import { screeningApi, type Screening, type ScreeningRecommendation } from "@/lib/api/clients/screening"
+import { UserPlus, Loader2, ChevronRight } from "lucide-react"
+import {
+  screeningApi,
+  type ScreeningViewResponse,
+} from "@/lib/api/clients/screening"
 import { propertyApi, authApi, type Property } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { EmptyState } from "@/components/ui/empty-state"
+import {
+  ScreeningViewCard,
+  recommendationBadge,
+} from "@/components/tenant-screening/ScreeningViewCard"
 
 export interface OwnerOption {
   id: string
@@ -48,42 +56,23 @@ export interface ScreeningListPageProps {
   title?: string
 }
 
-function recommendationBadge(recommendation: ScreeningRecommendation | undefined) {
-  if (!recommendation) return null
-  switch (recommendation) {
-    case "approved":
-      return (
-        <Badge className="bg-green-600">
-          <CheckCircle className="h-3 w-3 mr-1" />
-          Approved
-        </Badge>
-      )
-    case "conditional":
-      return (
-        <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-          <AlertCircle className="h-3 w-3 mr-1" />
-          Conditional
-        </Badge>
-      )
-    case "denied":
-      return (
-        <Badge variant="destructive">
-          <XCircle className="h-3 w-3 mr-1" />
-          Denied
-        </Badge>
-      )
-    default:
-      return <Badge variant="outline">{recommendation}</Badge>
-  }
+function listPrimaryLabel(s: ScreeningViewResponse): string {
+  if (s.view === "status") return s.id.slice(0, 8)
+  return s.tenantEmail
+}
+
+function listRecommendation(s: ScreeningViewResponse) {
+  if (s.view === "status") return null
+  return s.recommendation
 }
 
 export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant screening" }: ScreeningListPageProps) {
   const { toast } = useToast()
-  const [screenings, setScreenings] = useState<Screening[]>([])
+  const [screenings, setScreenings] = useState<ScreeningViewResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [detail, setDetail] = useState<Screening | null>(null)
+  const [detail, setDetail] = useState<ScreeningViewResponse | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [initiateOpen, setInitiateOpen] = useState(false)
   const [properties, setProperties] = useState<Property[]>([])
@@ -155,7 +144,12 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
         tenantName: form.tenantName.trim(),
         propertyId: form.propertyId,
       })
-      toast({ title: "Invitation sent", description: `Screening invite sent to ${form.tenantEmail}. Invite link: ${res.inviteUrl}` })
+      const inviteHint = res.inviteUrl ? ` Invite link: ${res.inviteUrl}` : ""
+      const payHint = res.needsPayment ? " Fee payment is required before the provider invite is sent." : ""
+      toast({
+        title: "Invitation sent",
+        description: `Screening started for ${form.tenantEmail}.${payHint}${inviteHint}`,
+      })
       setInitiateOpen(false)
       setForm({ tenantEmail: "", tenantName: "", propertyId: "" })
       fetchList()
@@ -247,9 +241,12 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
                   className="w-full flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 text-left transition-colors"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{s.tenantEmail}</span>
+                    <span className="font-medium">{listPrimaryLabel(s)}</span>
                     <Badge variant="outline">{s.status}</Badge>
-                    {s.result?.recommendation && recommendationBadge(s.result.recommendation)}
+                    {s.view !== "status" && s.view === "scorecard" && (
+                      <Badge variant="secondary">{s.creditScoreBand}</Badge>
+                    )}
+                    {recommendationBadge(listRecommendation(s))}
                   </div>
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </button>
@@ -265,7 +262,7 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
           <DialogHeader>
             <DialogTitle>Screening details</DialogTitle>
             <DialogDescription>
-              {detail ? detail.tenantEmail : "Loading…"}
+              {detail && detail.view !== "status" ? detail.tenantEmail : "Loading…"}
             </DialogDescription>
           </DialogHeader>
           {detailLoading && (
@@ -275,60 +272,21 @@ export function ScreeningListPage({ ownerIdFilter, ownerFilter, title = "Tenant 
           )}
           {detail && !detailLoading && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <span className="text-muted-foreground">Status</span>
-                <span>{detail.status}</span>
-                <span className="text-muted-foreground">Property ID</span>
-                <span className="truncate">{detail.propertyId}</span>
-                <span className="text-muted-foreground">Created</span>
-                <span>{new Date(detail.createdAt).toLocaleString()}</span>
-              </div>
-              {detail.result && (
-                <>
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium mb-2">Decision support</h4>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {recommendationBadge(detail.result.recommendation)}
-                    </div>
-                    {detail.result.creditScore != null && (
-                      <p className="text-sm">Credit score: {detail.result.creditScore}</p>
-                    )}
-                    {detail.result.backgroundCheck && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Background: {detail.result.backgroundCheck.summary ?? (detail.result.backgroundCheck.hasCriminal || detail.result.backgroundCheck.hasEviction ? "Adverse records" : "No adverse records")}
-                      </p>
-                    )}
-                    {detail.result.incomeVerification && (
-                      <p className="text-sm text-muted-foreground">
-                        Income: ${detail.result.incomeVerification.monthlyIncome.toLocaleString()}/mo
-                        {detail.result.incomeVerification.employerVerified && " (employer verified)"}
-                      </p>
-                    )}
-                    {detail.result.reportUrl && (
-                      <a
-                        href={detail.result.reportUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary underline mt-2 inline-block"
-                      >
-                        View full report
-                      </a>
-                    )}
-                  </div>
-                </>
+              {detail.view !== "status" && (
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <span className="text-muted-foreground">Property ID</span>
+                  <span className="truncate">{detail.propertyId}</span>
+                </div>
               )}
-              {detail.status === "invited" && (detail.result as unknown as { inviteUrl?: string })?.inviteUrl && (
-                <p className="text-sm">
-                  <a
-                    href={(detail.result as unknown as { inviteUrl: string }).inviteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline"
-                  >
-                    Invite link (send to tenant)
-                  </a>
-                </p>
-              )}
+              <ScreeningViewCard
+                key={detail.id + detail.view + (detail.view !== "status" ? detail.ownerNote ?? "" : "")}
+                view={detail}
+                allowOwnerNoteEdit={detail.view === "full"}
+                onUpdated={(next) => {
+                  setDetail(next)
+                  fetchList()
+                }}
+              />
             </div>
           )}
         </DialogContent>

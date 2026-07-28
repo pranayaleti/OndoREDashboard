@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +18,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   ArrowLeft,
   User,
   CheckCircle2,
@@ -26,11 +43,16 @@ import {
   ThumbsUp,
   ThumbsDown,
   RefreshCw,
+  Link2,
+  BadgeDollarSign,
+  Loader2,
 } from "lucide-react"
 import { featureApi } from "@/lib/api"
+import { screeningApi, type ScreeningViewResponse } from "@/lib/api/clients/screening"
 import { useToast } from "@/hooks/use-toast"
 import { ApplicationComments } from "./application-comments"
 import { ScoreBreakdownTooltip } from "./score-breakdown-tooltip"
+import { ScreeningViewCard } from "@/components/tenant-screening/ScreeningViewCard"
 
 interface ApplicationAnswer {
   questionId: string
@@ -105,7 +127,13 @@ export function ApplicationDetailView({
   const [notes, setNotes] = useState("")
   const [showApprove, setShowApprove] = useState(false)
   const [showReject, setShowReject] = useState(false)
+  const [showAttach, setShowAttach] = useState(false)
   const [acting, setActing] = useState(false)
+  const [attachCandidates, setAttachCandidates] = useState<ScreeningViewResponse[]>([])
+  const [attachLoading, setAttachLoading] = useState(false)
+  const [selectedScreeningId, setSelectedScreeningId] = useState("")
+  const [manualScreeningId, setManualScreeningId] = useState("")
+  const [linkedScreening, setLinkedScreening] = useState<ScreeningViewResponse | null>(null)
 
   useEffect(() => {
     loadApplication()
@@ -122,10 +150,71 @@ export function ApplicationDetailView({
       setApp(detail as ApplicationDetail)
       setChecks(checksData as VerificationCheck[])
       setNotes((detail as ApplicationDetail)?.ownerNotes ?? "")
+
+      const email = (detail as ApplicationDetail)?.email
+      if (email) {
+        try {
+          const matches = await screeningApi.listMatchingEmail(email)
+          const completed = matches.filter((s) => s.status === "completed")
+          setLinkedScreening(completed[0] ?? null)
+        } catch {
+          setLinkedScreening(null)
+        }
+      }
     } catch {
       toast({ title: "Failed to load application", variant: "destructive" })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const openAttachDialog = async () => {
+    if (!app) return
+    setShowAttach(true)
+    setAttachLoading(true)
+    setSelectedScreeningId("")
+    setManualScreeningId("")
+    try {
+      const matches = await screeningApi.listMatchingEmail(app.email)
+      setAttachCandidates(matches.filter((s) => s.status === "completed"))
+    } catch {
+      setAttachCandidates([])
+    } finally {
+      setAttachLoading(false)
+    }
+  }
+
+  const handleAttach = async () => {
+    const screeningId = (selectedScreeningId || manualScreeningId).trim()
+    if (!screeningId) {
+      toast({ title: "Select or enter a screening package", variant: "destructive" })
+      return
+    }
+    try {
+      setActing(true)
+      await screeningApi.attach(screeningId, { applicationId })
+      toast({ title: "Screening package attached" })
+      setShowAttach(false)
+      await loadApplication()
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to attach screening"
+      toast({ title: message, variant: "destructive" })
+    } finally {
+      setActing(false)
+    }
+  }
+
+  const handleWaiveFee = async () => {
+    try {
+      setActing(true)
+      await screeningApi.waiveFee(applicationId)
+      toast({ title: "Screening fee waived" })
+      await loadApplication()
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to waive screening fee"
+      toast({ title: message, variant: "destructive" })
+    } finally {
+      setActing(false)
     }
   }
 
@@ -231,11 +320,21 @@ export function ApplicationDetailView({
         <Button variant="ghost" onClick={onBack} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> Back to Applications
         </Button>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 justify-end">
           {["rejected", "withdrawn"].includes(app.status) && (
             <Button variant="outline" onClick={handleAllowReapply} disabled={acting}>
               <RefreshCw className="h-4 w-4 mr-1.5" /> Allow Re-apply
             </Button>
+          )}
+          {!["approved", "rejected", "withdrawn"].includes(app.status) && (
+            <>
+              <Button variant="outline" onClick={openAttachDialog} disabled={acting}>
+                <Link2 className="h-4 w-4 mr-1.5" /> Attach existing screening
+              </Button>
+              <Button variant="outline" onClick={handleWaiveFee} disabled={acting}>
+                <BadgeDollarSign className="h-4 w-4 mr-1.5" /> Waive fee
+              </Button>
+            </>
           )}
           {canDecide && (
             <>
@@ -324,6 +423,28 @@ export function ApplicationDetailView({
           </div>
         </CardContent>
       </Card>
+
+      {/* Linked screening package (role-shaped) */}
+      {linkedScreening && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Shield className="h-5 w-5 text-ondo-orange" />
+              Tenant screening
+            </CardTitle>
+            <CardDescription>
+              Role-shaped summary for this applicant&apos;s screening package.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScreeningViewCard
+              view={linkedScreening}
+              allowOwnerNoteEdit={linkedScreening.view === "full"}
+              onUpdated={setLinkedScreening}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Verification Checks */}
       {checks.length > 0 && (
@@ -451,6 +572,66 @@ export function ApplicationDetailView({
           </CardContent>
         </Card>
       )}
+
+      {/* Attach existing screening */}
+      <Dialog open={showAttach} onOpenChange={setShowAttach}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Attach existing screening</DialogTitle>
+            <DialogDescription>
+              Link a completed portable screening package to this application. Identity must match the applicant.
+            </DialogDescription>
+          </DialogHeader>
+          {attachLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {attachCandidates.length > 0 ? (
+                <div className="space-y-2">
+                  <Label>Matching packages</Label>
+                  <Select value={selectedScreeningId} onValueChange={setSelectedScreeningId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a screening package" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {attachCandidates.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.view !== "status" ? s.tenantEmail : s.id} · {s.status}
+                          {s.expiresAt ? ` · until ${new Date(s.expiresAt).toLocaleDateString()}` : ""}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No completed screenings found for this email in your list. You can still paste a screening ID if the applicant shared one.
+                </p>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="manual-screening-id">Or screening ID</Label>
+                <Input
+                  id="manual-screening-id"
+                  value={manualScreeningId}
+                  onChange={(e) => setManualScreeningId(e.target.value)}
+                  placeholder="UUID of portable screening package"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAttach(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAttach} disabled={acting || attachLoading}>
+              {acting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
+              Attach
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Approve Dialog */}
       <AlertDialog open={showApprove} onOpenChange={setShowApprove}>

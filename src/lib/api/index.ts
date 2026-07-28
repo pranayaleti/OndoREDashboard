@@ -41,6 +41,16 @@ export { vendorsApi } from "./clients/vendors";
 export { rentSchedulesApi } from "./clients/rent-schedules";
 export { reportsApi } from "./clients/reports";
 export { screeningApi } from "./clients/screening";
+export type {
+  ScreeningViewResponse,
+  ScreeningScorecardView,
+  ScreeningFullView,
+  ScreeningStatusView,
+  ScreeningCta,
+  CreditScoreBand,
+  ScreeningRecommendation,
+  ScreeningStatus,
+} from "./clients/screening";
 
 // New modules extracted from the legacy api.ts monolith
 export { tokenManager } from "./clients/token-manager";

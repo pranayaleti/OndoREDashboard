@@ -33,9 +33,23 @@ import {
   GripVertical,
   CheckCircle2,
   Save,
+  Copy,
+  Link2,
 } from "lucide-react"
 import { featureApi } from "@/lib/api"
+import { screeningApi, type ScreeningCta } from "@/lib/api/clients/screening"
 import { useToast } from "@/hooks/use-toast"
+
+const UI_BASE_URL = (
+  import.meta.env.VITE_UI_BASE_URL as string | undefined
+)?.replace(/\/$/, "") || "https://ondorealestate.com"
+
+function formatFeeCents(cents: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(cents / 100)
+}
 
 interface ScreeningTemplate {
   id: string
@@ -113,6 +127,7 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
   const [requiredChecks, setRequiredChecks] = useState<VerificationCheckType[]>([])
   const [availableOptionalChecks, setAvailableOptionalChecks] = useState<VerificationCheckType[]>([])
   const [applicantDisclosureNotes, setApplicantDisclosureNotes] = useState("")
+  const [screeningCta, setScreeningCta] = useState<ScreeningCta | null>(null)
 
   // New question form
   const [showAddQuestion, setShowAddQuestion] = useState(false)
@@ -132,22 +147,34 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
   const loadData = async () => {
     try {
       setLoading(true)
-      const [tpls, cfg, qs] = await Promise.all([
+      const [tpls, cfg, qs, cta] = await Promise.all([
         featureApi.screeningConfig.getTemplates(),
         featureApi.screeningConfig.getConfig(propertyId).catch(() => null),
         featureApi.screeningConfig.getQuestions(propertyId),
+        screeningApi.screeningCta(propertyId).catch(() => null),
       ])
       setTemplates(tpls as ScreeningTemplate[])
       const configData = cfg as { data?: ScreeningConfig } | ScreeningConfig | null
       const parsed = configData && "data" in configData ? configData.data : configData
       setSelectedTemplateId((parsed as ScreeningConfig | null)?.templateId ?? null)
-      setCriteria((parsed as ScreeningConfig | null)?.criteria ?? {})
+      const nextCriteria = (parsed as ScreeningConfig | null)?.criteria ?? {}
+      setCriteria({
+        ...nextCriteria,
+        screeningEnabled: nextCriteria.screeningEnabled === true,
+        screeningFeeCents:
+          typeof nextCriteria.screeningFeeCents === "number"
+            ? nextCriteria.screeningFeeCents
+            : 5000,
+        reuseDays:
+          typeof nextCriteria.reuseDays === "number" ? nextCriteria.reuseDays : 60,
+      })
       setRequiredChecks(normalizeChecks((parsed as ScreeningConfig | null)?.requiredChecks))
       setAvailableOptionalChecks(
         normalizeChecks((parsed as ScreeningConfig | null)?.availableOptionalChecks),
       )
       setApplicantDisclosureNotes((parsed as ScreeningConfig | null)?.applicantDisclosureNotes ?? "")
       setQuestions(qs as ScreeningQuestion[])
+      setScreeningCta(cta)
     } catch (err: unknown) {
       toast({
         title: t("screeningConfig.loadError"),
@@ -160,12 +187,22 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
   }
 
   const saveConfig = async () => {
+    const nextFeeCents =
+      typeof criteria.screeningFeeCents === "number" ? criteria.screeningFeeCents : 5000
+    const nextReuseDays =
+      typeof criteria.reuseDays === "number" ? criteria.reuseDays : 60
+    const nextEnabled = criteria.screeningEnabled === true
     try {
       setSaving(true)
       await featureApi.screeningConfig.setConfig(
         propertyId,
         selectedTemplateId,
-        criteria,
+        {
+          ...criteria,
+          screeningEnabled: nextEnabled,
+          screeningFeeCents: nextFeeCents,
+          reuseDays: nextReuseDays,
+        },
         requiredChecks,
         applicantDisclosureNotes.trim() || null,
       )
@@ -234,6 +271,32 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
   const selectedTemplate = templates.find((t) => t.id === selectedTemplateId)
   const selectedTemplateChecks = normalizeChecks(selectedTemplate?.checks ?? [])
 
+  const feeCents =
+    typeof criteria.screeningFeeCents === "number" ? criteria.screeningFeeCents : 5000
+  const reuseDays = typeof criteria.reuseDays === "number" ? criteria.reuseDays : 60
+  const screeningEnabled = criteria.screeningEnabled === true
+
+  const applyPath = screeningCta?.applyPath ?? null
+  const webApplyUrl = applyPath
+    ? applyPath.startsWith("http")
+      ? applyPath
+      : `${UI_BASE_URL}${applyPath.startsWith("/") ? "" : "/"}${applyPath}`
+    : null
+  const applyToken = applyPath?.match(/\/apply\/([^/?#]+)/)?.[1] ?? null
+  const deepLink = applyToken ? `ondore://apply/${applyToken}` : null
+
+  const copyText = async (value: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(value)
+      toast({ title: t("screeningConfig.linkCopied"), description: label })
+    } catch {
+      toast({
+        title: t("screeningConfig.linkCopyError"),
+        variant: "destructive",
+      })
+    }
+  }
+
   const getCheckLabel = (check: VerificationCheckType) => t(`screeningConfig.checkLabels.${check}`)
 
   const getQuestionTypeLabel = (questionType: ScreeningQuestion["questionType"]) =>
@@ -246,7 +309,12 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
     )
 
     setSelectedTemplateId(templateId)
-    setCriteria(template?.defaultCriteria ?? {})
+    setCriteria({
+      ...(template?.defaultCriteria ?? {}),
+      screeningEnabled,
+      screeningFeeCents: feeCents,
+      reuseDays,
+    })
     setRequiredChecks(Array.from(new Set([...normalizeChecks(template?.checks ?? []), ...optionalSelections])))
   }
 
@@ -278,6 +346,117 @@ export function ScreeningConfigWizard({ propertyId }: ScreeningConfigWizardProps
 
   return (
     <div className="space-y-6">
+      {/* Listing CTA + fee / portability */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Link2 className="h-5 w-5 text-ondo-orange" />
+            {t("screeningConfig.listingCtaTitle")}
+          </CardTitle>
+          <CardDescription>
+            {t("screeningConfig.listingCtaDescription")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg border bg-muted/60 p-3 dark:bg-card/40">
+            <div className="space-y-1 pr-4">
+              <Label>{t("screeningConfig.criteria.screeningEnabled")}</Label>
+              <p className="text-sm text-muted-foreground">
+                {t("screeningConfig.criteria.screeningEnabledHelp")}
+              </p>
+            </div>
+            <Switch
+              checked={screeningEnabled}
+              onCheckedChange={(v) => setCriteria({ ...criteria, screeningEnabled: v })}
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="screening-fee-cents">{t("screeningConfig.criteria.screeningFeeCents")}</Label>
+              <Input
+                id="screening-fee-cents"
+                type="number"
+                min={0}
+                step={100}
+                value={String(feeCents)}
+                onChange={(e) =>
+                  setCriteria({
+                    ...criteria,
+                    screeningFeeCents: Math.max(0, Number(e.target.value) || 0),
+                  })
+                }
+              />
+              <p className="text-sm text-muted-foreground">
+                {t("screeningConfig.criteria.feePreview", { fee: formatFeeCents(feeCents) })}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reuse-days">{t("screeningConfig.criteria.reuseDays")}</Label>
+              <Input
+                id="reuse-days"
+                type="number"
+                min={1}
+                max={365}
+                value={String(reuseDays)}
+                onChange={(e) =>
+                  setCriteria({
+                    ...criteria,
+                    reuseDays: Math.min(365, Math.max(1, Number(e.target.value) || 60)),
+                  })
+                }
+              />
+              <p className="text-sm text-muted-foreground">
+                {t("screeningConfig.criteria.reuseDaysHelp")}
+              </p>
+            </div>
+          </div>
+          <div className="rounded-lg border p-4 space-y-3">
+            <div>
+              <p className="text-sm font-medium">{t("screeningConfig.copyLinkTitle")}</p>
+              <p className="text-sm text-muted-foreground">
+                {webApplyUrl
+                  ? t("screeningConfig.copyLinkReady")
+                  : t("screeningConfig.copyLinkMissing")}
+              </p>
+            </div>
+            {webApplyUrl && (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyText(webApplyUrl, t("screeningConfig.webLinkLabel"))}
+                >
+                  <Copy className="h-4 w-4 mr-1.5" />
+                  {t("screeningConfig.copyWebLink")}
+                </Button>
+                {deepLink && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyText(deepLink, t("screeningConfig.deepLinkLabel"))}
+                  >
+                    <Copy className="h-4 w-4 mr-1.5" />
+                    {t("screeningConfig.copyDeepLink")}
+                  </Button>
+                )}
+              </div>
+            )}
+            {screeningCta && (
+              <p className="text-xs text-muted-foreground">
+                CTA {screeningCta.enabled ? "enabled" : "disabled"} · fee{" "}
+                {formatFeeCents(screeningCta.feeCents)} · reuse {screeningCta.reuseDays} days
+              </p>
+            )}
+          </div>
+          <Button onClick={saveConfig} disabled={saving} variant="secondary">
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? t("screeningConfig.saving") : t("screeningConfig.saveListingCta")}
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Template Selection */}
       <Card>
         <CardHeader>

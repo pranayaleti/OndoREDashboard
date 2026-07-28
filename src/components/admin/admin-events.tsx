@@ -100,7 +100,6 @@ export default function AdminEvents() {
 
   useEffect(() => {
     void loadEvents()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function openCreate() {

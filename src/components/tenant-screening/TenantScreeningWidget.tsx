@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import type { TenantScreeningApplicant, TenantScreeningSummary } from "@/lib/api"
+import type { ScreeningViewResponse } from "@/lib/api/clients/screening"
+import { ScreeningViewCard, recommendationBadge } from "./ScreeningViewCard"
 
 const statusStyles: Record<string, string> = {
   approved: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300",
@@ -18,6 +20,8 @@ const statusStyles: Record<string, string> = {
 export interface TenantScreeningWidgetProps {
   summary: TenantScreeningSummary | null
   applicants: TenantScreeningApplicant[]
+  /** Role-shaped screening packages from GET /screening (preferred when present). */
+  screeningViews?: ScreeningViewResponse[]
   loading?: boolean
   error?: string | null
   title?: string
@@ -25,11 +29,14 @@ export interface TenantScreeningWidgetProps {
   ctaHref?: string
   ctaLabel?: string
   onRefresh?: () => void
+  /** When true and views are full, enable owner-note editor inline. */
+  allowOwnerNoteEdit?: boolean
 }
 
 export function TenantScreeningWidget({
   summary,
   applicants,
+  screeningViews,
   loading = false,
   error = null,
   title = "Tenant Screening",
@@ -37,6 +44,7 @@ export function TenantScreeningWidget({
   ctaHref,
   ctaLabel = "View all reports",
   onRefresh,
+  allowOwnerNoteEdit = false,
 }: TenantScreeningWidgetProps) {
   const metrics = [
     {
@@ -58,6 +66,51 @@ export function TenantScreeningWidget({
 
   const averageScore = summary?.averageScore ?? 0
   const verificationRate = summary?.verificationRate ?? 0
+  const hasViews = Array.isArray(screeningViews) && screeningViews.length > 0
+
+  const renderRoleViews = () => {
+    if (loading && !hasViews) {
+      return (
+        <div className="space-y-4">
+          {[0, 1, 2].map((idx) => (
+            <Skeleton key={idx} className="h-24 w-full" />
+          ))}
+        </div>
+      )
+    }
+
+    if (!screeningViews?.length) {
+      return <p className="text-sm text-muted-foreground">No screening packages yet.</p>
+    }
+
+    return (
+      <div className="space-y-4">
+        {screeningViews.map((view) => (
+          <div key={view.id} className="rounded-2xl border border-border/60 p-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="font-medium">
+                  {view.view === "status" ? "Screening" : view.tenantEmail}
+                </p>
+                <p className="text-xs text-muted-foreground capitalize">
+                  {view.status.replace("_", " ")}
+                  {view.view !== "status" && view.completedAt
+                    ? ` • ${new Date(view.completedAt).toLocaleDateString()}`
+                    : ""}
+                </p>
+              </div>
+              {view.view !== "status" && recommendationBadge(view.recommendation)}
+            </div>
+            <ScreeningViewCard
+              view={view}
+              allowOwnerNoteEdit={allowOwnerNoteEdit && view.view === "full"}
+              onUpdated={() => onRefresh?.()}
+            />
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   const renderApplicants = () => {
     if (loading) {
@@ -152,6 +205,15 @@ export function TenantScreeningWidget({
               </Button>
             )}
           </div>
+        ) : hasViews || screeningViews !== undefined ? (
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                Recent screenings
+              </p>
+            </div>
+            {renderRoleViews()}
+          </div>
         ) : (
           <>
             <div className="grid gap-4 lg:grid-cols-2">
@@ -192,5 +254,3 @@ export function TenantScreeningWidget({
     </Card>
   )
 }
-
-
