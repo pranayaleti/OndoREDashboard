@@ -150,11 +150,19 @@ export function ApplicationDetailView({
     email: string | undefined,
     preferredId: string | null
   ): Promise<void> => {
-    // TODO(Task 8+): prefer screeningApi.getScreeningPackage(applicationId) once
-    // GET /applications/:id/screening-package ships on the backend. Do not probe
-    // that route yet — it guarantees a 404 on every detail load.
+    // 1) Canonical linked package (origin / verification_checks / shares)
+    try {
+      const pkg = await screeningApi.getScreeningPackage(applicationId)
+      if (pkg) {
+        setLinkedScreeningId(pkg.id)
+        setLinkedScreening(pkg)
+        return
+      }
+    } catch {
+      // fall through to legacy resolve path
+    }
 
-    // 1) Preferred attached id (local state / attach response)
+    // 2) Preferred attached id (local state / attach response)
     if (preferredId) {
       try {
         const view = await screeningApi.get(preferredId)
@@ -166,7 +174,7 @@ export function ApplicationDetailView({
       }
     }
 
-    // 2) Linked screening_id from verification checks
+    // 3) Linked screening_id from verification checks
     const checkScreeningId =
       nextChecks.map((c) => c.screeningId).find((id): id is string => !!id) ?? null
     if (checkScreeningId && checkScreeningId !== preferredId) {
@@ -180,7 +188,7 @@ export function ApplicationDetailView({
       }
     }
 
-    // 3) Last resort: initiated-by list email heuristic
+    // 4) Last resort: initiated-by list email heuristic
     if (email) {
       try {
         const matches = await screeningApi.listMatchingEmail(email)
