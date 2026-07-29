@@ -168,11 +168,30 @@ export const dashboardApi = {
     };
   },
 
+  async assistantChatStream(
+    messages: { role: string; content: string }[],
+    handlers: import("./assistant").AssistantStreamHandlers,
+    sessionId?: string,
+  ) {
+    const chatMessages = messages.map((m) => ({
+      role: m.role as "user" | "assistant" | "system",
+      content: m.content,
+    }));
+    return assistantApi.chatStream({ messages: chatMessages, session_id: sessionId }, handlers);
+  },
+
   async confirmMaintenanceDraft(
     confirmationToken: string,
     draft: PendingMaintenanceDraft["draft"],
   ) {
     return assistantApi.confirmMaintenanceDraft(confirmationToken, draft);
+  },
+
+  async confirmShowingDraft(
+    confirmationToken: string,
+    draft: import("./assistant").PendingShowingDraft["draft"],
+  ) {
+    return assistantApi.confirmShowingDraft(confirmationToken, draft);
   },
 
   async getInlineRecommendation(tenantId: string): Promise<InlineRecommendation> {

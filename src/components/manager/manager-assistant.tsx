@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Send, Loader2, User, Bot, Check, X } from "lucide-react"
 import { dashboardApi, ApiError } from "@/lib/api"
 import { validateChatInput } from "@/lib/aiGuardrails"
-import type { PendingMaintenanceDraft } from "@/lib/api/clients/assistant"
+import type { PendingMaintenanceDraft, PendingShowingDraft } from "@/lib/api/clients/assistant"
 
 type MessageRole = "user" | "assistant"
 
@@ -120,6 +120,77 @@ function MaintenanceDraftCard({
   )
 }
 
+function ShowingDraftCard({
+  pending,
+  isConfirming,
+  onConfirm,
+  onCancel,
+}: {
+  pending: PendingShowingDraft
+  isConfirming: boolean
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  const { draft } = pending
+  const fmt = (iso: string) => {
+    const d = new Date(iso)
+    return Number.isNaN(d.getTime()) ? iso : d.toLocaleString()
+  }
+  return (
+    <div
+      className="mx-6 mb-2 rounded-lg border border-blue-200 bg-blue-50/80 p-4"
+      role="region"
+      aria-label="Showing draft"
+    >
+      <p className="text-sm font-medium text-foreground mb-1">Confirm showing</p>
+      <p className="text-xs text-muted-foreground mb-3">Review the details, then confirm to book.</p>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm mb-3">
+        <dt className="text-muted-foreground">When</dt>
+        <dd className="font-medium text-foreground">
+          {fmt(draft.start)} – {fmt(draft.end)}
+        </dd>
+        {draft.attendee_name ? (
+          <>
+            <dt className="text-muted-foreground">Attendee</dt>
+            <dd className="text-foreground">{draft.attendee_name}</dd>
+          </>
+        ) : null}
+        {draft.notes ? (
+          <>
+            <dt className="text-muted-foreground">Notes</dt>
+            <dd className="text-foreground whitespace-pre-wrap">{draft.notes}</dd>
+          </>
+        ) : null}
+      </dl>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700"
+          disabled={isConfirming}
+          onClick={onConfirm}
+        >
+          {isConfirming ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              Booking…
+            </>
+          ) : (
+            <>
+              <Check className="h-3.5 w-3.5 mr-1.5" />
+              Confirm showing
+            </>
+          )}
+        </Button>
+        <Button type="button" size="sm" variant="outline" disabled={isConfirming} onClick={onCancel}>
+          <X className="h-3.5 w-3.5 mr-1.5" />
+          Cancel
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export default function ManagerAssistant() {
   const { t } = useTranslation("dashboard")
   const location = useLocation()
@@ -130,6 +201,8 @@ export default function ManagerAssistant() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [pendingDraft, setPendingDraft] = useState<PendingMaintenanceDraft | null>(null)
   const [isConfirmingDraft, setIsConfirmingDraft] = useState(false)
+  const [pendingShowing, setPendingShowing] = useState<PendingShowingDraft | null>(null)
+  const [isConfirmingShowing, setIsConfirmingShowing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initialNavMessageSent = useRef(false)
@@ -168,19 +241,40 @@ export default function ManagerAssistant() {
     setError(null)
 
     try {
-      const { reply, session_id, pending_maintenance_draft } = await dashboardApi.assistantChat(
-        guardrail.messages,
-        sessionId ?? undefined,
-      )
-      if (session_id) setSessionId(session_id)
-      setPendingDraft(pending_maintenance_draft ?? null)
-      const assistantMessage: Message = {
-        id: createId(),
-        role: "assistant",
-        content: reply,
-        createdAt: new Date(),
-      }
-      setMessages((prev) => [...prev, assistantMessage])
+      // Streaming: add an empty assistant message and fill it as tokens arrive.
+      const assistantId = createId()
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: "assistant", content: "", createdAt: new Date() },
+      ])
+
+      await new Promise<void>((resolve) => {
+        void dashboardApi.assistantChatStream(
+          guardrail.messages,
+          {
+            onDelta: (text) =>
+              setMessages((prev) =>
+                prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + text } : m)),
+              ),
+            onDone: ({ reply, session_id, pending_maintenance_draft, pending_showing_draft }) => {
+              if (session_id) setSessionId(session_id)
+              setPendingDraft(pending_maintenance_draft ?? null)
+              setPendingShowing(pending_showing_draft ?? null)
+              if (reply) {
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === assistantId ? { ...m, content: reply } : m)),
+                )
+              }
+              resolve()
+            },
+            onError: (message) => {
+              setError(message)
+              resolve()
+            },
+          },
+          sessionId ?? undefined,
+        )
+      })
     } catch (err) {
       const message =
         err instanceof ApiError
@@ -239,6 +333,51 @@ export default function ManagerAssistant() {
         id: createId(),
         role: "assistant",
         content: t("assistant.draftCancelled"),
+        createdAt: new Date(),
+      },
+    ])
+  }
+
+  const confirmPendingShowing = async () => {
+    if (!pendingShowing || isConfirmingShowing) return
+    setIsConfirmingShowing(true)
+    setError(null)
+    try {
+      const result = await dashboardApi.confirmShowingDraft(
+        pendingShowing.confirmation_token,
+        pendingShowing.draft,
+      )
+      setPendingShowing(null)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: createId(),
+          role: "assistant",
+          content: result.message ?? "Showing booked.",
+          createdAt: new Date(),
+        },
+      ])
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : err && typeof err === "object" && "message" in err
+            ? String((err as { message: string }).message)
+            : t("assistant.genericError")
+      setError(message)
+    } finally {
+      setIsConfirmingShowing(false)
+    }
+  }
+
+  const cancelPendingShowing = () => {
+    setPendingShowing(null)
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: createId(),
+        role: "assistant",
+        content: "Showing draft discarded.",
         createdAt: new Date(),
       },
     ])
@@ -330,6 +469,14 @@ export default function ManagerAssistant() {
               isConfirming={isConfirmingDraft}
               onConfirm={() => void confirmPendingDraft()}
               onCancel={cancelPendingDraft}
+            />
+          )}
+          {pendingShowing && (
+            <ShowingDraftCard
+              pending={pendingShowing}
+              isConfirming={isConfirmingShowing}
+              onConfirm={() => void confirmPendingShowing()}
+              onCancel={cancelPendingShowing}
             />
           )}
           {error && (
