@@ -1,0 +1,72 @@
+name: Claude PR Review
+
+# Automated review on every pull request. Requires repository secret ANTHROPIC_API_KEY.
+# The prompt routes to the Ondo agent fleet defined in the umbrella repo's .claude/agents/.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  review:
+    # Skip drafts; allow "@claude" comment to trigger a re-review on demand.
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this pull request for the Ondo Real Estate platform.
+
+            Priorities, in strict order. Anything in 1 or 2 is a blocking comment.
+
+            1. CROSS-TENANT DATA LEAKAGE. Ondo is multi-tenant: tenants, owners,
+               co-owners, managers. Verify all four isolation layers for every touched
+               query — route role guard, scope id derived from the verified JWT (never
+               from req.params/body/query), an explicit principal filter in the query,
+               and RLS on the table. The Express runtime uses the Supabase service-role
+               key and BYPASSES RLS, so the application-level filter is load-bearing.
+               Flag any IDOR.
+
+            2. LICENSING COMPLIANCE. The owner holds real estate and NMLS licences.
+               Flag: lending copy without NMLS identification or Reg Z disclosures;
+               "guaranteed", "you qualify", "pre-approved", "lowest rate"; automated
+               valuations described as appraisals or CMAs; and Fair Housing violations
+               in any generated listing or neighborhood copy — describing the intended
+               occupant ("great for families", "safe neighborhood", "good schools",
+               "no vouchers") instead of the property.
+
+            3. AI SURFACES. If assistantConfig.ts, any ai*Service, or ondo-ai-agent
+               changed: is tool authorization decided server-side from the session
+               rather than by the model? Is retrieved/user content treated as data and
+               not as instructions? Are disclosures appended server-side after
+               generation rather than left to the model?
+
+            4. CONTRACT PARITY. Production is Supabase Edge Functions; Express is
+               dev-only. A route added to src/ but not to supabase/functions/ ships
+               nothing. Check both runtimes and the three clients.
+
+            5. Correctness, tests, and the repo conventions in CLAUDE.md / AGENTS.md —
+               controllers throw errors.* rather than hand-rolling res.status(500);
+               Zod schemas are the source of truth.
+
+            Be specific: quote file:line and give the minimal fix. Do not restate the
+            diff. If the PR is clean on 1-4, say so in one line and keep the rest short.
+          claude_args: "--max-turns 25"
