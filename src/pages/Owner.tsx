@@ -30,7 +30,7 @@ const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard
 const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
-// Advanced modules — reachable by direct URL only; kept out of PortalSidebar
+// Advanced modules. Reachable by direct URL only; kept out of PortalSidebar
 // nav until the product decision in docs/superpowers/2026-07-08-advanced-modules-decision.md
 // picks winners. Direct-URL access lets us dogfood + demo without shipping
 // half-finished nav.

@@ -311,7 +311,7 @@ function EquipmentGridInner({ propertyId }: { propertyId: string }) {
                       <h3 className="font-semibold leading-tight">{eq.name}</h3>
                       <p className="text-xs capitalize text-muted-foreground">
                         {eq.category}
-                        {eq.manufacturer ? ` — ${eq.manufacturer}` : ""}
+                        {eq.manufacturer ? `: ${eq.manufacturer}` : ""}
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
@@ -354,7 +354,7 @@ function EquipmentGridInner({ propertyId }: { propertyId: string }) {
                     Last service{" "}
                     {eq.lastServiceDate
                       ? new Date(eq.lastServiceDate).toLocaleDateString()
-                      : "—"}
+                      : "N/A"}
                     {eq.nextServiceDate
                       ? ` · Next ${new Date(eq.nextServiceDate).toLocaleDateString()}`
                       : ""}

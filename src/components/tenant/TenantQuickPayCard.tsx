@@ -36,7 +36,7 @@ export function TenantQuickPayCard({ schedule }: TenantQuickPayCardProps) {
                 <div>
                   <p className="text-3xl font-semibold">{formatCurrency(schedule.monthlyAmount)}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {dueDate ? formatDate(dueDate, { month: "long", day: "numeric", year: "numeric" }) : "—"}
+                    {dueDate ? formatDate(dueDate, { month: "long", day: "numeric", year: "numeric" }) : "N/A"}
                   </p>
                 </div>
                 <Badge variant={schedule.autopayEnabled ? "default" : "secondary"}>
@@ -54,7 +54,7 @@ export function TenantQuickPayCard({ schedule }: TenantQuickPayCardProps) {
                   {t("rent.nextDue")}
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  {dueDate ? formatDate(dueDate, { weekday: "long", month: "short", day: "numeric" }) : "—"}
+                  {dueDate ? formatDate(dueDate, { weekday: "long", month: "short", day: "numeric" }) : "N/A"}
                 </p>
               </div>
               <div className="rounded-2xl border p-4">

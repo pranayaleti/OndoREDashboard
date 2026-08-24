@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router-dom"
 type ConnectStatus = Awaited<ReturnType<typeof featureApi.connect.getStatus>>
 
 /**
- * Owner Stripe Connect onboarding CTA — Express account + Account Link.
+ * Owner Stripe Connect onboarding CTA: Express account + Account Link.
  * Rent settles on the platform; owner share is Transferred after payment succeeds.
  */
 export function OwnerConnectPayouts() {
@@ -83,7 +83,7 @@ export function OwnerConnectPayouts() {
         return
       }
 
-      // connect=return — short poll until payoutsReady or attempts exhausted
+      // connect=return. Short poll until payoutsReady or attempts exhausted
       clearFlag()
       toast({
         title: "Connect onboarding",

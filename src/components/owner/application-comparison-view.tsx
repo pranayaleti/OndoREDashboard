@@ -121,7 +121,7 @@ export function ApplicationComparisonView({
                 {apps.map((app) => (
                   <TableCell key={app.id} className="text-center">
                     <span className={`text-lg font-bold ${scoreColor(app.recommendationScore)}`}>
-                      {app.recommendationScore ?? "—"}
+                      {app.recommendationScore ?? "N/A"}
                     </span>
                   </TableCell>
                 ))}
@@ -130,7 +130,7 @@ export function ApplicationComparisonView({
                 <TableCell className="font-medium">Annual Income</TableCell>
                 {apps.map((app) => (
                   <TableCell key={app.id} className="text-center">
-                    {app.annualIncome ? `$${app.annualIncome.toLocaleString()}` : "—"}
+                    {app.annualIncome ? `$${app.annualIncome.toLocaleString()}` : "N/A"}
                   </TableCell>
                 ))}
               </TableRow>
@@ -138,7 +138,7 @@ export function ApplicationComparisonView({
                 <TableCell className="font-medium">Employer</TableCell>
                 {apps.map((app) => (
                   <TableCell key={app.id} className="text-center text-sm">
-                    {app.employer || "—"}
+                    {app.employer || "N/A"}
                   </TableCell>
                 ))}
               </TableRow>
@@ -157,7 +157,7 @@ export function ApplicationComparisonView({
                             {val.earned}/{val.max}
                           </span>
                         ) : (
-                          "—"
+                          "N/A"
                         )}
                       </TableCell>
                     )

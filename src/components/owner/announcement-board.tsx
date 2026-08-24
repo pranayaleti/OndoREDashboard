@@ -123,7 +123,7 @@ export function AnnouncementBoard({ propertyId }: AnnouncementBoardProps) {
                     <p className="text-sm text-slate-600 dark:text-slate-400">{a.body}</p>
                     <p className="text-xs text-slate-400 mt-1">
                       {new Date(a.publishAt).toLocaleDateString()}
-                      {a.expiresAt && ` — Expires ${new Date(a.expiresAt).toLocaleDateString()}`}
+                      {a.expiresAt && `: Expires ${new Date(a.expiresAt).toLocaleDateString()}`}
                     </p>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)}>

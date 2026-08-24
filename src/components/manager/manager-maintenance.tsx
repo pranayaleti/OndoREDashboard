@@ -794,7 +794,7 @@ export default function ManagerMaintenance() {
             <DialogTitle>Suggest vendors</DialogTitle>
             <DialogDescription>
               {suggestVendorsRequest
-                ? `Vendors for ${suggestVendorsRequest.category} — ${suggestVendorsRequest.title}`
+                ? `Vendors for ${suggestVendorsRequest.category}: ${suggestVendorsRequest.title}`
                 : ""}
             </DialogDescription>
           </DialogHeader>

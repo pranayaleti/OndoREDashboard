@@ -2,7 +2,7 @@
 //
 // API-backed tenants directory. Mirrors SharedOwnersView but filters to
 // role === "tenant". The invited-users endpoint is the same source used for
-// owners (authApi.getInvitedUsers) — a single call, filtered client-side.
+// owners (authApi.getInvitedUsers). A single call, filtered client-side.
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -97,7 +97,7 @@ export function SharedTenantsView({ title, description }: SharedTenantsViewProps
           <Card key={s.label}>
             <CardContent className="pt-4 pb-3">
               <p className="text-sm text-muted-foreground">{s.label}</p>
-              <p className="text-2xl font-bold">{loading ? "—" : s.value}</p>
+              <p className="text-2xl font-bold">{loading ? "N/A" : s.value}</p>
             </CardContent>
           </Card>
         ))}

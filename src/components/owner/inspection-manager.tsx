@@ -168,7 +168,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                 <p className="font-medium text-sm">{typeLabels[insp.inspectionType] || insp.inspectionType} Inspection</p>
                 <p className="text-xs text-slate-500">
                   {new Date(insp.scheduledDate).toLocaleDateString()}
-                  {insp.overallCondition && ` — ${insp.overallCondition}`}
+                  {insp.overallCondition && `: ${insp.overallCondition}`}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                   <p className="text-sm font-medium">Checklist Items</p>
                   {detail.items.map((item: InspectionItem) => (
                     <div key={item.id} className="flex items-center justify-between text-sm p-2 bg-muted dark:bg-card rounded">
-                      <span>{item.area} — {item.itemName}</span>
+                      <span>{item.area}: {item.itemName}</span>
                       {item.condition && (
                         <Badge variant="secondary" className="text-xs capitalize">{item.condition}</Badge>
                       )}

@@ -95,7 +95,7 @@ export function SharedOwnersView({ title, description }: SharedOwnersViewProps) 
           <Card key={s.label}>
             <CardContent className="pt-4 pb-3">
               <p className="text-sm text-muted-foreground">{s.label}</p>
-              <p className="text-2xl font-bold">{loading ? "—" : s.value}</p>
+              <p className="text-2xl font-bold">{loading ? "N/A" : s.value}</p>
             </CardContent>
           </Card>
         ))}

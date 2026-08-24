@@ -14,7 +14,7 @@ function formatUSD(cents: number): string {
 }
 
 function formatDate(iso: string | null): string {
-  if (!iso) return "—"
+  if (!iso) return "N/A"
   return formatLocaleDate(iso, { month: "short", day: "numeric", year: "numeric" })
 }
 

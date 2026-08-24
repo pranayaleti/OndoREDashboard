@@ -33,12 +33,12 @@ export default function MaintenanceTickets() {
       setTickets(
         effectiveList.map((r) => ({
           id: r.id,
-          property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "—",
+          property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "N/A",
           issue: r.title,
           priority: r.priority,
           status: r.status,
-          assignedDate: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "—",
-          dueDate: "—",
+          assignedDate: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "N/A",
+          dueDate: "N/A",
         }))
       )
     } catch {
@@ -48,12 +48,12 @@ export default function MaintenanceTickets() {
         setTickets(
           fallbackList.map((r) => ({
             id: r.id,
-            property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "—",
+            property: (r.propertyTitle ?? r.propertyAddress ?? "").trim() || "N/A",
             issue: r.title,
             priority: r.priority,
             status: r.status,
-            assignedDate: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "—",
-            dueDate: "—",
+            assignedDate: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "N/A",
+            dueDate: "N/A",
           }))
         )
       } else {
@@ -160,7 +160,7 @@ export default function MaintenanceTickets() {
                           <Clock className="h-3 w-3" />
                           <span>Created: {ticket.assignedDate}</span>
                         </div>
-                        {ticket.dueDate !== "—" && (
+                        {ticket.dueDate !== "N/A" && (
                           <div className="flex items-center gap-1">
                             <CheckCircle className="h-3 w-3" />
                             <span>Due: {ticket.dueDate}</span>

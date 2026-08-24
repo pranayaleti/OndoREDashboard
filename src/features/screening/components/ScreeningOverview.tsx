@@ -37,7 +37,7 @@ export function ScreeningOverview() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Screening Requests</p>
-          <p className="text-2xl font-semibold">{isLoading ? '—' : requests.length}</p>
+          <p className="text-2xl font-semibold">{isLoading ? 'N/A' : requests.length}</p>
         </div>
         <span className="text-xs uppercase tracking-wide text-muted-foreground">
           Tenant Screening

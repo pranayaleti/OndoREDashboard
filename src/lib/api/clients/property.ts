@@ -29,17 +29,17 @@ function mapDashboardTenantRowToTenant(row: Record<string, unknown>): Tenant {
   return {
     id: String(row.id ?? ""),
     name: displayName,
-    property: "—",
-    unit: "—",
+    property: "N/A",
+    unit: "N/A",
     rent: 0,
     leaseStart: createdAt,
     leaseEnd: createdAt,
     paymentStatus: "pending",
     email: typeof row.email === "string" ? row.email : "",
     phone: typeof row.phone === "string" ? row.phone : undefined,
-    propertyType: "—",
-    propertyAddress: "—",
-    propertyStatus: "—",
+    propertyType: "N/A",
+    propertyAddress: "N/A",
+    propertyStatus: "N/A",
     tenantCreatedAt: createdAt,
     propertyCreatedAt: createdAt,
   };
@@ -158,8 +158,8 @@ export const propertyApi = {
       summary: {
         totalTenants: n,
         occupiedUnits: n > 0 ? `${n}` : "0/0",
-        occupancyRate: n > 0 ? "—" : "0%",
-        avgRent: n > 0 ? "—" : "$0",
+        occupancyRate: n > 0 ? "N/A" : "0%",
+        avgRent: n > 0 ? "N/A" : "$0",
       },
       tenants,
     };

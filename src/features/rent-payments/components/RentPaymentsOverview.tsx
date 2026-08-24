@@ -33,7 +33,7 @@ export function RentPaymentsOverview() {
           <div>
             <p className="text-muted-foreground">Recent Payments</p>
             <p className="font-medium">
-              {paymentsLoaded ? recentPayments.length : '—'}
+              {paymentsLoaded ? recentPayments.length : 'N/A'}
             </p>
             {paymentsLoaded && recentPayments.length === 0 ? (
               <p className="text-xs text-muted-foreground mt-1">

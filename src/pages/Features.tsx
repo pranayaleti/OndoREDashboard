@@ -29,7 +29,7 @@ const featureSections = [
     color: "text-emerald-400",
     title: "Screen smarter, place better",
     description:
-      "Run background checks, identity verification, and fraud signals in one flow. Integrate SmartMove, Checkr, ApplyConnect, or RentPrep — Ondo stores the metadata and surfaces statuses regardless of provider.",
+      "Run background checks, identity verification, and fraud signals in one flow. Integrate SmartMove, Checkr, ApplyConnect, or RentPrep: Ondo stores the metadata and surfaces statuses regardless of provider.",
     bullets: [
       "Configurable screening criteria per property",
       "Stored decision audit trails for compliance",
@@ -44,7 +44,7 @@ const featureSections = [
     color: "text-sky-400",
     title: "Collect rent without the friction",
     description:
-      "Stripe + Plaid-ready ACH, autopay enrollment, late-fee automation, and downloadable receipts for every tenant. Landlords see balances in real time — no more chasing payments.",
+      "Stripe + Plaid-ready ACH, autopay enrollment, late-fee automation, and downloadable receipts for every tenant. Landlords see balances in real time. No more chasing payments.",
     bullets: [
       "Autopay enrollment with one-click setup",
       "Late-fee rules configurable per lease",
@@ -74,7 +74,7 @@ const featureSections = [
     color: "text-orange-400",
     title: "Close tickets fast",
     description:
-      "Tenants submit requests with photos or video. Managers triage and assign vendors. Everyone gets status updates — no request falls through the cracks.",
+      "Tenants submit requests with photos or video. Managers triage and assign vendors. Everyone gets status updates. No request falls through the cracks.",
     bullets: [
       "Tenant self-serve intake with media attachments",
       "Priority triage and vendor assignment",
@@ -119,7 +119,7 @@ const featureSections = [
     color: "text-violet-400",
     title: "Agentic property intelligence",
     description:
-      "Ask the AI about your portfolio, list or create maintenance tickets, get at-risk tenant signals, and pull rent status — all in one conversational layer, role-scoped for managers and owners.",
+      "Ask the AI about your portfolio, list or create maintenance tickets, get at-risk tenant signals, and pull rent status. All in one conversational layer, role-scoped for managers and owners.",
     bullets: [
       "Portfolio summary and KPI queries in plain English",
       "Create and list maintenance requests by chat",
@@ -134,7 +134,7 @@ const featureSections = [
     color: "text-teal-400",
     title: "Stay informed everywhere",
     description:
-      "Web Push (VAPID) notifications keep owners and tenants in the loop on rent due dates, maintenance updates, and lease expiries — without requiring them to log in.",
+      "Web Push (VAPID) notifications keep owners and tenants in the loop on rent due dates, maintenance updates, and lease expiries. Without requiring them to log in.",
     bullets: [
       "Browser push via VAPID (no native app needed)",
       "Per-user notification preference controls",
@@ -240,7 +240,7 @@ export default function Features() {
             Everything shipped, nothing missing
           </h1>
           <p className="mt-4 text-lg text-white/70">
-            12 purpose-built modules covering every touchpoint between owners, tenants, vendors, and managers —
+            12 purpose-built modules covering every touchpoint between owners, tenants, vendors, and managers.
             all wired together in one platform.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

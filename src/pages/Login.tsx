@@ -18,7 +18,7 @@ import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
 import { OnboardingCard } from "@/components/auth/onboarding-card"
 import { companyInfo } from "@/constants/companyInfo"
 
-/** Seeded demo users (npm run seed in OndoREBackend) — shown only in dev or demo deployments. */
+/** Seeded demo users (npm run seed in OndoREBackend). Shown only in dev or demo deployments. */
 const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD ?? ""
 const ENABLE_PUBLIC_DEMO = import.meta.env.DEV || import.meta.env.VITE_ENABLE_PUBLIC_DEMO === "true"
 

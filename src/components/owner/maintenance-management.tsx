@@ -61,8 +61,8 @@ function mapApiToOwnerRequest(api: {
   tenantEmail?: string | null
   createdAt: string
 }): OwnerMaintenanceRequest {
-  const property = (api.propertyTitle ?? api.propertyAddress ?? "").trim() || "—"
-  const tenant = [api.tenantFirstName, api.tenantLastName].filter(Boolean).join(" ").trim() || (api.tenantEmail ?? "") || "—"
+  const property = (api.propertyTitle ?? api.propertyAddress ?? "").trim() || "N/A"
+  const tenant = [api.tenantFirstName, api.tenantLastName].filter(Boolean).join(" ").trim() || (api.tenantEmail ?? "") || "N/A"
   const date = api.createdAt ?? ""
   const status = api.status === "in_progress" ? "in-progress" : api.status
   return {

@@ -133,13 +133,13 @@ export default function TenantFinances() {
         {[
           {
             label: "Monthly Rent",
-            value: loading ? "Loading…" : monthlyRent != null ? formatUSD(monthlyRent) : "—",
+            value: loading ? "Loading…" : monthlyRent != null ? formatUSD(monthlyRent) : "N/A",
             icon: DollarSign,
             detail: property ? `${property.addressLine1 ?? ""}` : "No property assigned",
           },
           {
             label: "Next Due Date",
-            value: loading ? "Loading…" : nextDueDate ? formatMonthDay(nextDueDate) : "—",
+            value: loading ? "Loading…" : nextDueDate ? formatMonthDay(nextDueDate) : "N/A",
             icon: Calendar,
             detail: monthlyRent != null ? `${formatUSD(monthlyRent)} due` : "",
           },
@@ -231,7 +231,7 @@ export default function TenantFinances() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Monthly rent</p>
-                    <p className="text-xl font-semibold">{monthlyRent != null ? formatUSD(monthlyRent) : "—"}</p>
+                    <p className="text-xl font-semibold">{monthlyRent != null ? formatUSD(monthlyRent) : "N/A"}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">On-time rate</p>
@@ -316,15 +316,15 @@ export default function TenantFinances() {
                 <>
                   <div className="rounded-lg bg-muted/40 px-4 py-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Monthly rent</span>
-                    <span className="font-semibold">{monthlyRent != null ? formatUSD(monthlyRent) : "—"}</span>
+                    <span className="font-semibold">{monthlyRent != null ? formatUSD(monthlyRent) : "N/A"}</span>
                   </div>
                   <div className="rounded-lg bg-muted/40 px-4 py-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Lease start</span>
-                    <span className="font-semibold">{property.createdAt ? formatUSDate(property.createdAt) : "—"}</span>
+                    <span className="font-semibold">{property.createdAt ? formatUSDate(property.createdAt) : "N/A"}</span>
                   </div>
                   <div className="rounded-lg bg-muted/40 px-4 py-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Next payment due</span>
-                    <span className="font-semibold">{nextDueDate ? formatMonthDay(nextDueDate) : "—"}</span>
+                    <span className="font-semibold">{nextDueDate ? formatMonthDay(nextDueDate) : "N/A"}</span>
                   </div>
                 </>
               ) : (

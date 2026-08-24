@@ -8,7 +8,7 @@ export function TenantDashboardOverview() {
     <div className="space-y-4">
       <div className="rounded-lg border border-border bg-background p-4">
         <p className="text-sm text-muted-foreground">Next Rent Due</p>
-        <p className="text-2xl font-semibold">{nextDueDate ? new Date(nextDueDate).toLocaleDateString() : '—'}</p>
+        <p className="text-2xl font-semibold">{nextDueDate ? new Date(nextDueDate).toLocaleDateString() : 'N/A'}</p>
         <p className="text-sm text-muted-foreground">Receipts: {receipts.length}</p>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

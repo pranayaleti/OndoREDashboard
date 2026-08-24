@@ -137,7 +137,7 @@ export function PropertyRentScheduleSection({ propertyId, title = "Rent schedule
                           {s.status}
                         </span>
                       </td>
-                      <td className="py-2 text-muted-foreground">{s.paidAt ?? "—"}</td>
+                      <td className="py-2 text-muted-foreground">{s.paidAt ?? "N/A"}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -154,7 +154,7 @@ export function ScheduleEventDialog({
     if (openCalendlyAfterSave) {
       const extra = [showPropertyField ? values.property?.trim() : undefined, values.description?.trim()]
         .filter(Boolean)
-        .join(" — ")
+        .join(". ")
       const url = buildCalendlyPrefillBookingUrl({
         title: values.title.trim(),
         date: values.date,
@@ -185,7 +185,7 @@ export function ScheduleEventDialog({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Property viewing — Oak Street" {...field} />
+                    <Input placeholder="Property viewing: Oak Street" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

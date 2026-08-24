@@ -54,8 +54,8 @@ function occupancyLabel(property: PropertyUnitsProperty): { label: string; class
 function formatBedsBaths(property: PropertyUnitsProperty): string {
   const beds = property.bedrooms
   const baths = property.bathrooms
-  const bedLabel = beds == null ? "—" : beds === 0 ? "Studio" : `${beds} bed`
-  const bathLabel = baths == null ? "—" : `${baths} bath`
+  const bedLabel = beds == null ? "N/A" : beds === 0 ? "Studio" : `${beds} bed`
+  const bathLabel = baths == null ? "N/A" : `${baths} bath`
   const sqft =
     property.sqft != null && property.sqft > 0
       ? ` • ${property.sqft.toLocaleString()} sq ft`
@@ -113,7 +113,7 @@ export function PropertyUnits({ property }: PropertyUnitsProps) {
                 <div>
                   <p className="text-sm font-medium">{rentLabel}</p>
                   <p className="text-xs text-muted-foreground">
-                    {tenantId ? "Tenant assigned" : "Available — invite a tenant when ready"}
+                    {tenantId ? "Tenant assigned" : "Available. Invite a tenant when ready"}
                   </p>
                 </div>
                 {tenantId ? (

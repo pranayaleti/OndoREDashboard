@@ -205,7 +205,7 @@ export default function PricingPage() {
               Subscribe to {selectedPlanDetails?.name}
             </DialogTitle>
             <DialogDescription>
-              {selectedPlanDetails?.price}{selectedPlanDetails?.cadence} — Enter your payment details below
+              {selectedPlanDetails?.price}{selectedPlanDetails?.cadence}: Enter your payment details below
             </DialogDescription>
           </DialogHeader>
           {clientSecret ? (
@@ -213,7 +213,7 @@ export default function PricingPage() {
               clientSecret={clientSecret}
               onSuccess={handleSubscriptionSuccess}
               onError={(msg) => toast({ title: "Payment Failed", description: msg, variant: "destructive" })}
-              submitLabel={`Subscribe — ${selectedPlanDetails?.price}/mo`}
+              submitLabel={`Subscribe: ${selectedPlanDetails?.price}/mo`}
             />
           ) : (
             <div className="flex items-center justify-center py-12">

@@ -45,7 +45,7 @@ interface Transaction {
 }
 
 function pctChange(prev: number, cur: number): string {
-  if (prev === 0) return "—"
+  if (prev === 0) return "N/A"
   const pct = ((cur - prev) / Math.abs(prev)) * 100
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`
 }

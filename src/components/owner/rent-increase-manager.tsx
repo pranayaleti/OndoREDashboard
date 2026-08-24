@@ -142,7 +142,7 @@ export function RentIncreaseManager({ propertyId }: RentIncreaseManagerProps) {
                       </p>
                       <p className="text-xs text-slate-500">
                         Effective {new Date(ri.effectiveDate).toLocaleDateString()}
-                        {ri.reason && ` — ${ri.reason}`}
+                        {ri.reason && `: ${ri.reason}`}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

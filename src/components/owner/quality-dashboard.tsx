@@ -154,7 +154,7 @@ export function QualityDashboard() {
                 ) : insights.length === 0 ? (
                   <div className="flex flex-col items-center py-8 text-muted-foreground">
                     <CheckCircle2 className="mb-2 h-8 w-8 text-green-500" />
-                    <p className="text-sm">No improvement areas — this property is in great shape!</p>
+                    <p className="text-sm">No improvement areas. This property is in great shape!</p>
                   </div>
                 ) : (
                   <div className="space-y-4">

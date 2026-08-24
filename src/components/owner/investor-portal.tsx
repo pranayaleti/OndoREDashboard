@@ -261,7 +261,7 @@ export function InvestorPortal() {
       await loadDeals()
     } catch (e) {
       const msg = e instanceof Error && /404|not found/i.test(e.message)
-        ? "No account found for that email — investors must already have an Ondo account."
+        ? "No account found for that email. Investors must already have an Ondo account."
         : "Failed to add investor"
       toast({ title: msg, variant: "destructive" })
     } finally {
@@ -387,7 +387,7 @@ export function InvestorPortal() {
                   return (
                     <TableRow key={deal.id} className="cursor-pointer hover:bg-muted/50" onClick={() => openDeal(deal)}>
                       <TableCell className="font-medium">{deal.dealName}</TableCell>
-                      <TableCell className="text-muted-foreground">{deal.propertyName ?? "—"}</TableCell>
+                      <TableCell className="text-muted-foreground">{deal.propertyName ?? "N/A"}</TableCell>
                       <TableCell><Badge variant="outline">{DEAL_TYPE_LABEL[deal.dealType]}</Badge></TableCell>
                       <TableCell>{fmt(deal.targetRaiseCents)}</TableCell>
                       <TableCell>
@@ -413,7 +413,7 @@ export function InvestorPortal() {
       {selectedDeal && (
         <Card className="border-blue-200">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">{selectedDeal.dealName} — Deal Detail</CardTitle>
+            <CardTitle className="text-base">{selectedDeal.dealName}: Deal Detail</CardTitle>
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={() => setInvestorOpen(true)}>
                 <Plus className="h-4 w-4 mr-1" />Add Investor
@@ -452,7 +452,7 @@ export function InvestorPortal() {
                             <TableRow key={inv.id}>
                               <TableCell className="font-medium">{fmt(inv.committedCents)}</TableCell>
                               <TableCell className={inv.fundedCents >= inv.committedCents && inv.committedCents > 0 ? "text-green-600 font-semibold" : ""}>{fmt(inv.fundedCents)}</TableCell>
-                              <TableCell>{inv.ownershipPct != null ? `${(inv.ownershipPct * 100).toFixed(2)}%` : "—"}</TableCell>
+                              <TableCell>{inv.ownershipPct != null ? `${(inv.ownershipPct * 100).toFixed(2)}%` : "N/A"}</TableCell>
                               <TableCell><Badge variant="secondary">{inv.status}</Badge></TableCell>
                             </TableRow>
                           ))}
@@ -481,7 +481,7 @@ export function InvestorPortal() {
                               <TableCell>{call.callNumber}</TableCell>
                               <TableCell className="font-medium">{fmt(call.amountCents)}</TableCell>
                               <TableCell>{call.dueDate}</TableCell>
-                              <TableCell className="text-muted-foreground">{call.purpose ?? "—"}</TableCell>
+                              <TableCell className="text-muted-foreground">{call.purpose ?? "N/A"}</TableCell>
                               <TableCell><Badge variant="secondary">{call.status}</Badge></TableCell>
                             </TableRow>
                           ))}
@@ -569,7 +569,7 @@ export function InvestorPortal() {
       {/* Add Investor Dialog */}
       <Dialog open={investorOpen} onOpenChange={setInvestorOpen}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader><DialogTitle>Add Investor — {selectedDeal?.dealName}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Add Investor: {selectedDeal?.dealName}</DialogTitle></DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1">
               <Label>Investor Email *</Label>

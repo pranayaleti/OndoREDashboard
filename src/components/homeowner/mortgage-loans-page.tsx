@@ -33,7 +33,7 @@ import { useToast } from "@/hooks/use-toast"
 import { formatCurrency } from "@/lib/locale-format"
 
 function money(cents: number | null | undefined) {
-  if (cents == null) return "—"
+  if (cents == null) return "N/A"
   return formatCurrency(cents / 100, "USD", { maximumFractionDigits: 0 })
 }
 
@@ -159,14 +159,14 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div>
                     <p className="text-xs text-muted-foreground">Lender</p>
-                    <p className="font-medium">{mortgage.lenderName || "—"}</p>
+                    <p className="font-medium">{mortgage.lenderName || "N/A"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Account</p>
                     <p className="font-medium">
                       {mortgage.accountNumberMasked
                         ? `••••${mortgage.accountNumberMasked}`
-                        : "—"}
+                        : "N/A"}
                     </p>
                   </div>
                   <div>
@@ -178,7 +178,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                     <p className="font-medium">
                       {mortgage.interestRate != null
                         ? `${Number(mortgage.interestRate).toFixed(3)}%`
-                        : "—"}
+                        : "N/A"}
                     </p>
                   </div>
                   <div>
@@ -190,7 +190,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                     <p className="font-medium">
                       {mortgage.payoffDate
                         ? new Date(mortgage.payoffDate).toLocaleDateString()
-                        : "—"}
+                        : "N/A"}
                     </p>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                           Rate{" "}
                           {loan.interestRate != null
                             ? `${Number(loan.interestRate).toFixed(3)}%`
-                            : "—"}
+                            : "N/A"}
                         </span>
                         <span>Balance {money(loan.remainingBalanceCents)}</span>
                       </div>
@@ -305,7 +305,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                   <div>
                     <CardTitle>{pol.provider || "Homeowner policy"}</CardTitle>
                     <CardDescription>
-                      Policy #{pol.policyNumber || "—"}
+                      Policy #{pol.policyNumber || "N/A"}
                     </CardDescription>
                   </div>
                   <div className="flex gap-1">
@@ -346,7 +346,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Agent</p>
-                    {pol.agentName || "—"}
+                    {pol.agentName || "N/A"}
                     {pol.agentPhone ? (
                       <span className="block text-muted-foreground">{pol.agentPhone}</span>
                     ) : null}
@@ -396,7 +396,7 @@ function MortgageLoansInner({ propertyId }: { propertyId: string }) {
                       <td className="p-3">
                         {t.dueDate
                           ? new Date(t.dueDate).toLocaleDateString()
-                          : "—"}
+                          : "N/A"}
                       </td>
                       <td className="p-3">
                         <div className="flex gap-1">

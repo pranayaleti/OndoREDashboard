@@ -289,7 +289,7 @@ export function PropertyDetails({ property }: PropertyDetailsProps) {
               bathrooms: property.bathrooms,
               sqft: property.squareFeet,
               price: property.monthlyIncome,
-              // Mock detail view has no real tenant ids — occupancy only.
+              // Mock detail view has no real tenant ids. Occupancy only.
               tenantId: null,
               status: property.occupancy === "Occupied" || property.tenants > 0 ? "occupied" : "vacant",
             }}

@@ -286,7 +286,7 @@ function mapRecordToDocument(r: DocumentListRecord): Document {
     return "document"
   }
   const formatBytes = (b?: number) => {
-    if (b == null) return "—"
+    if (b == null) return "N/A"
     if (b < 1024) return `${b} B`
     if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`
     return `${(b / (1024 * 1024)).toFixed(1)} MB`
@@ -299,7 +299,7 @@ function mapRecordToDocument(r: DocumentListRecord): Document {
     category: cat,
     size: formatBytes(r.sizeBytes),
     uploadedAt: r.createdAt ?? "",
-    uploadedBy: "—",
+    uploadedBy: "N/A",
     tag: cat.charAt(0).toUpperCase() + cat.slice(1),
   }
 }

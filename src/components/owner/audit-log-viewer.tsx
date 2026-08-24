@@ -93,7 +93,7 @@ export function AuditLogViewer() {
                         {e.resourceType}
                         {e.resourceId && <span className="text-xs ml-1">({e.resourceId.slice(0, 8)})</span>}
                       </TableCell>
-                      <TableCell className="text-xs text-slate-400">{e.ipAddress || "—"}</TableCell>
+                      <TableCell className="text-xs text-slate-400">{e.ipAddress || "N/A"}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

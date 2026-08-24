@@ -136,7 +136,7 @@ export function ApplicationDetailView({
   const [selectedScreeningId, setSelectedScreeningId] = useState("")
   const [manualScreeningId, setManualScreeningId] = useState("")
   const [linkedScreening, setLinkedScreening] = useState<ScreeningViewResponse | null>(null)
-  /** Stable id from attach / package resolution — preferred over email heuristics. */
+  /** Stable id from attach / package resolution. Preferred over email heuristics. */
   const [linkedScreeningId, setLinkedScreeningId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -601,7 +601,7 @@ export function ApplicationDetailView({
                       <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
                         {ans.questionText ?? `Question ${i + 1}`}
                       </p>
-                      <p className="mt-1 font-medium">{String(ans.answer ?? "—")}</p>
+                      <p className="mt-1 font-medium">{String(ans.answer ?? "N/A")}</p>
                     </div>
                     {ans.passes !== null && ans.passes !== undefined && (
                       <Badge
@@ -784,7 +784,7 @@ function InfoField({ label, value }: { label: string; value: string | null | und
   return (
     <div>
       <p className="text-xs text-slate-500 uppercase tracking-wider mb-0.5">{label}</p>
-      <p className="font-medium text-sm">{value || "—"}</p>
+      <p className="font-medium text-sm">{value || "N/A"}</p>
     </div>
   )
 }

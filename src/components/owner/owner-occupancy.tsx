@@ -152,7 +152,7 @@ export default function OwnerOccupancy() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {properties.map((property) => {
               const isOccupied = Boolean(property.tenantId)
-              const propertyName = property.addressLine1 || `${property.type} — ${property.id.slice(-4)}`
+              const propertyName = property.addressLine1 || `${property.type}: ${property.id.slice(-4)}`
               const propertyType = property.type
                 ? property.type.charAt(0).toUpperCase() + property.type.slice(1).replace(/_/g, " ")
                 : "Property"

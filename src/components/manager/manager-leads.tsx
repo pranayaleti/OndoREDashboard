@@ -28,7 +28,7 @@ import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
 import { EmptyState } from "@/components/ui/empty-state"
 
 function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
-  if (!temperature) return <span className="text-xs text-gray-400">—</span>;
+  if (!temperature) return <span className="text-xs text-gray-400">N/A</span>;
   const styles = {
     HOT: "bg-red-100 text-red-700 border border-red-200",
     WARM: "bg-amber-100 text-amber-700 border border-amber-200",

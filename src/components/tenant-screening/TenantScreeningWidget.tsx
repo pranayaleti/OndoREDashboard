@@ -138,7 +138,7 @@ export function TenantScreeningWidget({
               <div>
                 <p className="font-medium">{applicant.applicantName}</p>
                 <p className="text-xs text-muted-foreground">
-                  {applicant.propertyName || "General application"} • {applicant.submittedAt ? new Date(applicant.submittedAt).toLocaleDateString() : "—"}
+                  {applicant.propertyName || "General application"} • {applicant.submittedAt ? new Date(applicant.submittedAt).toLocaleDateString() : "N/A"}
                 </p>
               </div>
               <Badge className={cn("capitalize", statusStyles[applicant.status] ?? statusStyles.pending)}>
@@ -150,7 +150,7 @@ export function TenantScreeningWidget({
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 <span>{applicant.verifiedIds ?? 0} verifications</span>
               </div>
-              <div className="text-muted-foreground">Score {applicant.score ?? "—"}</div>
+              <div className="text-muted-foreground">Score {applicant.score ?? "N/A"}</div>
               {applicant.fraudFlags?.length ? (
                 <div className="flex items-center gap-1 text-rose-500">
                   <AlertTriangle className="h-4 w-4" />
@@ -219,7 +219,7 @@ export function TenantScreeningWidget({
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-3xl border bg-gradient-to-br from-card via-muted to-card p-6 text-white shadow-inner">
                 <p className="text-sm text-white/70">Average applicant score</p>
-                <div className="mt-3 text-4xl font-semibold">{averageScore || "—"}</div>
+                <div className="mt-3 text-4xl font-semibold">{averageScore || "N/A"}</div>
                 <div className="mt-4">
                   <Progress value={averageScore ? Math.min(averageScore / 8, 100) : 0} className="h-2 bg-card/70" indicatorClassName="bg-card" />
                 </div>

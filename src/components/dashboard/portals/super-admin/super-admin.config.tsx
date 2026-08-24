@@ -108,7 +108,7 @@ export function createSuperAdminConfig(
     {
       id: "revenue-mtd",
       title: "Revenue (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.income.total) : "—",
+      value: financialSummary ? formatUSD(financialSummary.income.total) : "N/A",
       subtitle: "Month-to-date income",
       icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
       href: "/super-admin/finances",
@@ -116,7 +116,7 @@ export function createSuperAdminConfig(
     {
       id: "expenses-mtd",
       title: "Expenses (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.expenses.total) : "—",
+      value: financialSummary ? formatUSD(financialSummary.expenses.total) : "N/A",
       subtitle: "Month-to-date expenses",
       icon: <CreditCard className="h-4 w-4 text-muted-foreground" />,
       href: "/super-admin/finances",
@@ -124,7 +124,7 @@ export function createSuperAdminConfig(
     {
       id: "net-income-mtd",
       title: "Net Income (MTD)",
-      value: financialSummary ? formatUSD(financialSummary.netIncome) : "—",
+      value: financialSummary ? formatUSD(financialSummary.netIncome) : "N/A",
       subtitle: "Month-to-date net income",
       icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       href: "/super-admin/finances",

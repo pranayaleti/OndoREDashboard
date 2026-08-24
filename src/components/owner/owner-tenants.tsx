@@ -179,7 +179,7 @@ export default function OwnerTenants() {
                         <span className="text-white">
                           {tenant.leaseStart
                             ? formatDate(tenant.leaseStart, { month: "short", year: "numeric" })
-                            : "—"}
+                            : "N/A"}
                         </span>
                     </div>
                   </div>

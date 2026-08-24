@@ -13,7 +13,7 @@ const formatCurrency = (value?: number | null) =>
   formatCurrencyLocale(value || 0, "USD", { maximumFractionDigits: 0 })
 
 const formatDate = (value?: string | number | Date) => {
-  if (!value) return "—"
+  if (!value) return "N/A"
   const date = typeof value === "string" || typeof value === "number" ? new Date(value) : value
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
 }
@@ -153,7 +153,7 @@ export default function TenantLeaseDetails() {
         <div>
           <h1 className="text-3xl font-semibold">Lease Details</h1>
           <p className="text-muted-foreground">
-            Track your lease terms, upcoming payments, documents, and next steps—all in one place.
+            Track your lease terms, upcoming payments, documents, and next steps, all in one place.
           </p>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function TenantLeaseDetails() {
               <p className="font-medium">
                 {property
                   ? `${property.addressLine1}${property.addressLine2 ? `, ${property.addressLine2}` : ""}`
-                  : "—"}
+                  : "N/A"}
               </p>
               <p className="text-sm text-muted-foreground">
                 {property ? `${property.city}, ${property.state || property.country} ${property.zipcode || ""}` : ""}
@@ -225,19 +225,19 @@ export default function TenantLeaseDetails() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Bedrooms</p>
-                <p className="font-medium">{property?.bedrooms ?? "—"}</p>
+                <p className="font-medium">{property?.bedrooms ?? "N/A"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Bathrooms</p>
-                <p className="font-medium">{property?.bathrooms ?? "—"}</p>
+                <p className="font-medium">{property?.bathrooms ?? "N/A"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Square Feet</p>
-                <p className="font-medium">{property?.sqft ? `${property.sqft} sq ft` : "—"}</p>
+                <p className="font-medium">{property?.sqft ? `${property.sqft} sq ft` : "N/A"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Property Type</p>
-                <p className="font-medium capitalize">{property?.type || "—"}</p>
+                <p className="font-medium capitalize">{property?.type || "N/A"}</p>
               </div>
             </div>
           </div>

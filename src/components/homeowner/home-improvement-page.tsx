@@ -246,7 +246,7 @@ function HomeImprovementInner({ propertyId }: { propertyId: string }) {
                         <div className="min-w-0">
                           <h3 className="font-semibold leading-tight">{p.name}</h3>
                           <p className="text-xs capitalize text-muted-foreground">
-                            {p.category.replace("_", " ")} —{" "}
+                            {p.category.replace("_", " ")}:{" "}
                             {p.scheduledDate
                               ? new Date(p.scheduledDate).toLocaleDateString()
                               : "No date"}
@@ -284,7 +284,7 @@ function HomeImprovementInner({ propertyId }: { propertyId: string }) {
                           Est.{" "}
                           {p.estimatedCostCents != null
                             ? `$${(p.estimatedCostCents / 100).toLocaleString()}`
-                            : "—"}
+                            : "N/A"}
                           {p.estimatedRoiPercent != null
                             ? ` · ROI ~${p.estimatedRoiPercent}%`
                             : ""}

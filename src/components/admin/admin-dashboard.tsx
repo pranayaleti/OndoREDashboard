@@ -63,7 +63,7 @@ export default function AdminDashboard() {
   const completedMaintenanceCount = maintenanceRequests.filter(m => m.status === 'completed').length
   const cancelledMaintenanceCount = maintenanceRequests.filter(m => m.status === 'cancelled').length
 
-  // System health signal — derived from actual operational data instead of a
+  // System health signal. Derived from actual operational data instead of a
   // fixed 98.5% placeholder. Blends two health indicators (property approval
   // rate + maintenance completion rate) weighted 50/50. Returns 100 when
   // there is nothing to measure so an empty tenant environment doesn't look

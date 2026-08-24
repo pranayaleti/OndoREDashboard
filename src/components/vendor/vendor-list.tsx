@@ -166,7 +166,7 @@ export default function VendorList() {
             <p className="text-2xl font-bold">
               {vendors.length > 0
                 ? (vendors.reduce((sum, v) => sum + v.rating, 0) / vendors.length).toFixed(1)
-                : "—"}
+                : "N/A"}
             </p>
             <p className="text-sm text-muted-foreground">Avg Rating</p>
           </CardContent>
@@ -301,7 +301,7 @@ export default function VendorList() {
                         {vendor.hourly_rate ? (
                           <span className="text-sm">${vendor.hourly_rate}/hr</span>
                         ) : (
-                          <span className="text-xs text-gray-400">—</span>
+                          <span className="text-xs text-gray-400">N/A</span>
                         )}
                       </TableCell>
                       <TableCell>

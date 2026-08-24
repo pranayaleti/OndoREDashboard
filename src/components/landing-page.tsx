@@ -43,7 +43,7 @@ const featureHighlights = [
   },
   {
     title: "AI assistant",
-    description: "Agentic chat: portfolio and finance insights, list or create maintenance — one conversational layer, role-scoped for managers and owners.",
+    description: "Agentic chat: portfolio and finance insights, list or create maintenance. One conversational layer, role-scoped for managers and owners.",
     icon: Sparkles,
   },
 ]
@@ -414,7 +414,7 @@ export default function LandingPage() {
               <Link to="/free-trial">Start free trial</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-card/75">
-              <Link to="/contact">Talk to our team — we're your first point of contact</Link>
+              <Link to="/contact">Talk to our team. We're your first point of contact</Link>
             </Button>
           </div>
         </div>

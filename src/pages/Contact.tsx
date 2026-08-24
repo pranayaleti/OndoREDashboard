@@ -322,7 +322,7 @@ export default function ContactPage() {
                 Schedule a call
               </h2>
               <p className="text-muted-foreground text-center text-sm mb-6 max-w-lg mx-auto">
-                Book a free 30-minute slot — demos, onboarding, or general questions.
+                Book a free 30-minute slot. Demos, onboarding, or general questions.
               </p>
               <div className="mx-auto max-w-3xl min-h-[420px] rounded-lg border overflow-hidden bg-background">
                 <iframe

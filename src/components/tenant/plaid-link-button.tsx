@@ -57,7 +57,7 @@ interface PlaidLinkButtonProps {
 }
 
 /**
- * Plaid Link entry point. Lazy-loads the Plaid CDN script on first click — keeps
+ * Plaid Link entry point. Lazy-loads the Plaid CDN script on first click. Keeps
  * the bundle size unchanged. If the backend reports Plaid not configured (no
  * PLAID_CLIENT_ID/SECRET), the button hides itself silently so tenants don't
  * see a broken control.

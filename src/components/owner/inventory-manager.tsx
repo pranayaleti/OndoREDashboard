@@ -255,7 +255,7 @@ export function InventoryManager() {
       {/* Record Usage Dialog */}
       <Dialog open={usageOpen} onOpenChange={setUsageOpen}>
         <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Record Usage — {selectedItem?.name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Record Usage: {selectedItem?.name}</DialogTitle></DialogHeader>
           <div className="space-y-3 py-2">
             <p className="text-sm text-muted-foreground">Available: {selectedItem?.quantity} units</p>
             <div className="space-y-1">
@@ -277,7 +277,7 @@ export function InventoryManager() {
       {/* Restock Dialog */}
       <Dialog open={restockOpen} onOpenChange={setRestockOpen}>
         <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Restock — {selectedItem?.name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Restock: {selectedItem?.name}</DialogTitle></DialogHeader>
           <div className="space-y-3 py-2">
             <p className="text-sm text-muted-foreground">Current stock: {selectedItem?.quantity} units</p>
             <div className="space-y-1">

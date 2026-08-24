@@ -38,7 +38,7 @@ export function BulkInviteDialog({ propertyId, open, onOpenChange }: BulkInviteD
     const reader = new FileReader()
     reader.onload = (ev) => {
       const text = ev.target?.result as string
-      // Extract emails from CSV — look for email-like strings
+      // Extract emails from CSV. Look for email-like strings
       const emails = text.match(/[\w.+-]+@[\w.-]+\.\w+/g) || []
       setEmailsText((prev) => (prev ? prev + "\n" : "") + emails.join("\n"))
     }

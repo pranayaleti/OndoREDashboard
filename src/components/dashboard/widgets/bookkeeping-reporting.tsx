@@ -226,7 +226,7 @@ export function BookkeepingReportingWidget({
                     key={feature.label}
                     href={feature.href}
                     className="flex items-start gap-3 rounded-xl bg-card/60 p-4 transition-colors hover:bg-card/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60"
-                    aria-label={`${feature.label} — open`}
+                    aria-label={`${feature.label}. Open`}
                   >
                     {inner}
                   </SmartLink>
@@ -359,7 +359,7 @@ export function BookkeepingReportingWidget({
             <SmartLink
               href={taxPackageCardHref}
               className={cn(taxCardClass, "block text-left transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900")}
-              aria-label="Tax package — open"
+              aria-label="Tax package. Open"
             >
               {taxCardBody}
             </SmartLink>

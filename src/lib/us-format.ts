@@ -8,9 +8,9 @@ const US_DATE_DEFAULTS: Intl.DateTimeFormatOptions = {
 }
 
 export function formatUSDate(value?: string | number | Date, options?: Intl.DateTimeFormatOptions) {
-  if (!value) return "—"
+  if (!value) return "N/A"
   const date = value instanceof Date ? value : new Date(value)
-  if (Number.isNaN(date.getTime())) return "—"
+  if (Number.isNaN(date.getTime())) return "N/A"
   return formatDate(date, { ...US_DATE_DEFAULTS, ...options })
 }
 

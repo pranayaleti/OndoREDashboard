@@ -147,7 +147,7 @@ export function OwnerStatementsView() {
                   <div>
                     <p className="font-medium">{s.period}</p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(s.startDate).toLocaleDateString()} — {new Date(s.endDate).toLocaleDateString()}
+                      {new Date(s.startDate).toLocaleDateString()}: {new Date(s.endDate).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">

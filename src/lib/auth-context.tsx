@@ -39,7 +39,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-/** Convert API User to UserData — defined outside component to avoid recreation on render. */
+/** Convert API User to UserData. Defined outside component to avoid recreation on render. */
 function convertUser(apiUser: User): UserData {
   return {
     id: apiUser.id,
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       } catch {
-        // Session unrecoverable — stay logged out
+        // Session unrecoverable. Stay logged out
         clearAccessToken()
       } finally {
         setIsLoading(false)
@@ -112,11 +112,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const token = await refreshAccessToken()
         if (!token) {
-          // Refresh failed — session likely expired
+          // Refresh failed. Session likely expired
           handleSessionExpired()
         }
       } catch {
-        // Silent failure — the next API call will trigger session-expired if needed
+        // Silent failure. The next API call will trigger session-expired if needed
       }
     }, REFRESH_INTERVAL)
 
@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(() => {
     // Fire-and-forget: call the logout endpoint to revoke the refresh token
-    // family on the backend. We don't await — UX should feel instant.
+    // family on the backend. We don't await: UX should feel instant.
     authApi.logout().catch(() => { /* best-effort */ })
     setUser(null)
     clearAccessToken()

@@ -26,7 +26,7 @@ const pillars = [
     color: "text-emerald-400",
     title: "Acquire better tenants",
     description:
-      "Background checks, identity verification, and configurable screening criteria from your preferred provider — SmartMove, Checkr, or RentPrep.",
+      "Background checks, identity verification, and configurable screening criteria from your preferred provider: SmartMove, Checkr, or RentPrep.",
   },
   {
     icon: CreditCard,
@@ -47,7 +47,7 @@ const pillars = [
     color: "text-orange-400",
     title: "Resolve maintenance fast",
     description:
-      "Tenant intake with photos, manager triage, vendor assignment, and automated status notifications — all tracked in one place.",
+      "Tenant intake with photos, manager triage, vendor assignment, and automated status notifications. All tracked in one place.",
   },
   {
     icon: MessageSquare,
@@ -68,7 +68,7 @@ const pillars = [
 const architecture = [
   {
     layer: "Data layer",
-    description: "PostgreSQL via Supabase — row-level security enforces role boundaries at the database level.",
+    description: "PostgreSQL via Supabase. Row-level security enforces role boundaries at the database level.",
     icon: Layers,
   },
   {
@@ -83,7 +83,7 @@ const architecture = [
   },
   {
     layer: "Portal layer",
-    description: "Role-aware React dashboards — manager, owner, tenant, and maintenance each land in their own workspace automatically.",
+    description: "Role-aware React dashboards. Manager, owner, tenant, and maintenance each land in their own workspace automatically.",
     icon: Users,
   },
 ]
@@ -106,7 +106,7 @@ function ComparisonCell({ value }: { value: boolean | string }) {
 }
 
 const timeline = [
-  { day: "Day 1", action: "Invite your first owner and property — roles auto-configure." },
+  { day: "Day 1", action: "Invite your first owner and property. Roles auto-configure." },
   { day: "Day 2", action: "Add tenants via secure invite link; they apply in the portal." },
   { day: "Day 3", action: "Run background checks; lease generated from template." },
   { day: "Day 4", action: "Tenant enables autopay; rent schedule created automatically." },
@@ -129,7 +129,7 @@ export default function Product() {
             </h1>
             <p className="mt-5 text-lg text-white/70 leading-relaxed">
               One platform replaces the patchwork of spreadsheets, email threads, and disconnected tools that landlords
-              with 1–20 units rely on today. Screening, rent, leases, maintenance, comms, and accounting — unified and
+              with 1–20 units rely on today. Screening, rent, leases, maintenance, comms, and accounting. Unified and
               role-aware from day one.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -155,8 +155,8 @@ export default function Product() {
                 "Lease builder + DocuSign / HelloSign eSign",
                 "Maintenance intake, triage, vendor assign",
                 "In-app messaging + email/SMS",
-                "Accounting lite — ledger, P&L, CSV export",
-                "AI assistant — agentic, role-scoped",
+                "Accounting lite: ledger, P&L, CSV export",
+                "AI assistant: agentic, role-scoped",
                 "Push notifications (VAPID)",
                 "Owner + tenant + manager portals",
                 "Map-based property search",
@@ -178,7 +178,7 @@ export default function Product() {
             <p className="text-xs uppercase tracking-[0.3em] text-orange-400 mb-2">Six pillars</p>
             <h2 className="text-3xl font-semibold">The full property operations loop</h2>
             <p className="mt-3 text-white/70 max-w-xl mx-auto">
-              From tenant acquisition to monthly statements — every step is handled in one system.
+              From tenant acquisition to monthly statements. Every step is handled in one system.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -219,7 +219,7 @@ export function AutoReplySettings({ propertyId }: Props) {
                 {testResult.confidence >= (config?.confidenceThreshold ?? 0.7) ? (
                   <Badge className="bg-green-100 text-green-700">Would auto-send</Badge>
                 ) : (
-                  <Badge className="bg-amber-100 text-amber-700">Below threshold — would not auto-send</Badge>
+                  <Badge className="bg-amber-100 text-amber-700">Below threshold. Would not auto-send</Badge>
                 )}
               </div>
               {testResult.knowledgeUsed.length > 0 && (

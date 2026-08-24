@@ -27,12 +27,12 @@ interface CashFlowRow {
 }
 
 function fmt(cents: number | undefined): string {
-  if (cents === undefined || cents === null) return "—"
+  if (cents === undefined || cents === null) return "N/A"
   return `$${(cents / 100).toLocaleString()}`
 }
 
 function NetCell({ value }: { value: number | undefined }) {
-  if (value === undefined || value === null) return <TableCell>—</TableCell>
+  if (value === undefined || value === null) return <TableCell>N/A</TableCell>
   const positive = value >= 0
   return (
     <TableCell className={`font-semibold ${positive ? "text-green-600" : "text-red-600"}`}>

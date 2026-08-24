@@ -79,7 +79,7 @@ function toNum(v: unknown): number {
 
 function accountLabel(a: TrustAccount): string {
   const type = a.accountType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-  return a.bankName ? `${type} — ${a.bankName}${a.accountNumberLast4 ? ` ••${a.accountNumberLast4}` : ""}` : type
+  return a.bankName ? `${type}: ${a.bankName}${a.accountNumberLast4 ? ` ••${a.accountNumberLast4}` : ""}` : type
 }
 
 function accountTypeBadge(type: AccountType) {
@@ -214,8 +214,8 @@ export function TrustAccountingPanel() {
       }).length
       toast({
         title: unbalanced === 0
-          ? "Reconciliation complete — all accounts balanced"
-          : `Reconciliation complete — ${unbalanced} account(s) show a variance`,
+          ? "Reconciliation complete. All accounts balanced"
+          : `Reconciliation complete: ${unbalanced} account(s) show a variance`,
         variant: unbalanced === 0 ? undefined : "destructive",
       })
     } finally {
@@ -297,7 +297,7 @@ export function TrustAccountingPanel() {
                       const deposit = isDeposit(txn.transactionType)
                       return (
                         <TableRow key={txn.id}>
-                          <TableCell className="text-muted-foreground">{txn.postedDate ? new Date(txn.postedDate).toLocaleDateString() : "—"}</TableCell>
+                          <TableCell className="text-muted-foreground">{txn.postedDate ? new Date(txn.postedDate).toLocaleDateString() : "N/A"}</TableCell>
                           <TableCell>
                             {deposit
                               ? <span className="flex items-center gap-1 text-green-600"><ArrowUpRight className="h-3 w-3" />{txn.transactionType}</span>
@@ -333,7 +333,7 @@ export function TrustAccountingPanel() {
                   <TableBody>
                     {distributions.map((d) => (
                       <TableRow key={d.id}>
-                        <TableCell className="text-muted-foreground">{d.periodStart ?? "—"}{d.periodEnd ? ` → ${d.periodEnd}` : ""}</TableCell>
+                        <TableCell className="text-muted-foreground">{d.periodStart ?? "N/A"}{d.periodEnd ? ` → ${d.periodEnd}` : ""}</TableCell>
                         <TableCell>{fmt(d.grossIncomeCents)}</TableCell>
                         <TableCell className="font-semibold text-green-600">{fmt(d.netDistributionCents)}</TableCell>
                         <TableCell>
@@ -341,7 +341,7 @@ export function TrustAccountingPanel() {
                             ? <Badge className="bg-green-100 text-green-700 border-green-200">Paid</Badge>
                             : <Badge variant="secondary">{d.status}</Badge>}
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{d.paidAt ? new Date(d.paidAt).toLocaleDateString() : "—"}</TableCell>
+                        <TableCell className="text-muted-foreground">{d.paidAt ? new Date(d.paidAt).toLocaleDateString() : "N/A"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

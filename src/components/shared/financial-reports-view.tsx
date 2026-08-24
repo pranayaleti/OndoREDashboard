@@ -384,8 +384,8 @@ export function FinancialReportsView({
                           {rentRoll.map((r, i) => (
                             <tr key={r.propertyId + (r.unitNumber ?? "") + i} className="border-b">
                               <td className="py-2.5 px-3">{r.propertyAddress}</td>
-                              <td className="py-2.5 px-3">{r.unitNumber ?? "—"}</td>
-                              <td className="py-2.5 px-3">{r.tenantName ?? r.tenantEmail ?? "—"}</td>
+                              <td className="py-2.5 px-3">{r.unitNumber ?? "N/A"}</td>
+                              <td className="py-2.5 px-3">{r.tenantName ?? r.tenantEmail ?? "N/A"}</td>
                               <td className="text-right py-2.5 px-3 whitespace-nowrap tabular-nums">
                                 ${r.monthlyRent.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                               </td>
@@ -431,7 +431,7 @@ export function FinancialReportsView({
                               <tr key={p.propertyId} className="border-b">
                                 <td className="py-2.5 px-3">{p.propertyAddress}</td>
                                 <td className="py-2.5 px-3">{p.isOccupied ? "Occupied" : "Vacant"}</td>
-                                <td className="py-2.5 px-3">{p.tenantName ?? "—"}</td>
+                                <td className="py-2.5 px-3">{p.tenantName ?? "N/A"}</td>
                               </tr>
                             ))}
                           </tbody>

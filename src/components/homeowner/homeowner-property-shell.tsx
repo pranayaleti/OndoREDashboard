@@ -73,7 +73,7 @@ export function HomeownerPropertyShell({
             <SelectContent>
               {properties.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
-                  {p.title || p.addressLine1} — {p.city}
+                  {p.title || p.addressLine1}: {p.city}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -112,7 +112,7 @@ export function SharedPropertiesView({ title, description, ownerView = false }: 
           <Card key={s.label}>
             <CardContent className="pt-4 pb-3">
               <p className="text-sm text-muted-foreground">{s.label}</p>
-              <p className="text-2xl font-bold">{loading ? "—" : s.value}</p>
+              <p className="text-2xl font-bold">{loading ? "N/A" : s.value}</p>
             </CardContent>
           </Card>
         ))}
@@ -205,10 +205,10 @@ export function SharedPropertiesView({ title, description, ownerView = false }: 
                         </Badge>
                       </td>
                       <td className="py-3 pr-4 text-muted-foreground">
-                        {p.bedrooms ?? "—"} bd / {p.bathrooms ?? "—"} ba
+                        {p.bedrooms ?? "N/A"} bd / {p.bathrooms ?? "N/A"} ba
                       </td>
                       <td className="py-3 pr-4">
-                        {p.price != null ? `$${p.price.toLocaleString()}` : "—"}
+                        {p.price != null ? `$${p.price.toLocaleString()}` : "N/A"}
                       </td>
                       <td className="py-3 text-muted-foreground text-xs">
                         {formatUSDate(p.createdAt)}
@@ -235,7 +235,7 @@ export function SharedPropertiesView({ title, description, ownerView = false }: 
                               </Button>
                             </div>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">N/A</span>
                           )}
                         </td>
                       )}

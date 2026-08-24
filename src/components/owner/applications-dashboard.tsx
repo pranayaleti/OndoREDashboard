@@ -229,13 +229,13 @@ export function ApplicationsDashboard({ propertyId }: ApplicationsDashboardProps
                       </TableCell>
                       <TableCell className="text-center">
                         <span className={`font-semibold ${scoreColor(app.recommendationScore)}`}>
-                          {app.recommendationScore !== null ? app.recommendationScore : "—"}
+                          {app.recommendationScore !== null ? app.recommendationScore : "N/A"}
                         </span>
                       </TableCell>
                       <TableCell className="text-sm text-slate-500">
                         {app.submittedAt
                           ? new Date(app.submittedAt).toLocaleDateString()
-                          : "—"}
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button

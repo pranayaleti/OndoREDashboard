@@ -201,7 +201,7 @@ export function LeaseManagement({ propertyId }: LeaseManagementProps) {
                             <p className="text-xs text-slate-500">{lease.tenant.email}</p>
                           </div>
                         ) : (
-                          <span className="text-slate-400 text-sm">—</span>
+                          <span className="text-slate-400 text-sm">N/A</span>
                         )}
                       </TableCell>
                       <TableCell className="text-sm">

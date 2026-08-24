@@ -7,7 +7,7 @@ export function OwnerDashboardOverview() {
     <div className="space-y-4">
       <div className="rounded-lg border border-border bg-background p-4">
         <p className="text-sm text-muted-foreground">Portfolio Value</p>
-        <p className="text-2xl font-semibold">{portfolio?.formattedPortfolioValue ?? '—'}</p>
+        <p className="text-2xl font-semibold">{portfolio?.formattedPortfolioValue ?? 'N/A'}</p>
         <p className="text-sm text-muted-foreground">{portfolio?.propertiesOwned ?? 0} properties</p>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { EmptyState } from "@/components/ui/empty-state"
 import { BarChart3, Users } from "lucide-react"
 
-/** Kept for demo PDF tooling only — never render as live portfolio data. */
+/** Kept for demo PDF tooling only. Never render as live portfolio data. */
 export const mockOccupancyData = {
   period: "November 2025",
   summary: {

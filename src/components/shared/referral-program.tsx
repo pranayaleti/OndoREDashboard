@@ -112,7 +112,7 @@ const SWEEPSTAKES_URL =
     : "https://ondorealestate.com/sweepstakes";
 
 function maskEmail(email: string | null): string {
-  if (!email) return "—";
+  if (!email) return "N/A";
   const [local, domain] = email.split("@");
   if (!domain) return email;
   return `${local[0]}***@${domain}`;
@@ -228,7 +228,7 @@ export function ReferralProgram() {
       const data = await referralApi.getLeaderboard();
       setLeaderboard(data);
     } catch {
-      // Non-critical — swallow silently
+      // Non-critical. Swallow silently
     } finally {
       setLoadingLeaderboard(false);
     }
@@ -654,7 +654,7 @@ export function ReferralProgram() {
                       {item.creditEarned ? (
                         <Check className="h-4 w-4 text-green-600 mx-auto" />
                       ) : (
-                        <span className="text-muted-foreground">—</span>
+                        <span className="text-muted-foreground">N/A</span>
                       )}
                     </TableCell>
                   </TableRow>

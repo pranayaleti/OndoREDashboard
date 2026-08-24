@@ -141,7 +141,7 @@ function HomeownerDashboardInner({
           Welcome back, {first}. It&apos;s {welcomeDate}. How can we help?
         </h1>
         <p className="text-sm text-muted-foreground">
-          Ask anything about your property — search uses your data to give personalized answers.
+          Ask anything about your property. Search uses your data to give personalized answers.
         </p>
       </header>
 

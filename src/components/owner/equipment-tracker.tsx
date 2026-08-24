@@ -53,7 +53,7 @@ const conditionColors: Record<string, string> = {
 }
 
 function fmtDate(d: string | null): string {
-  if (!d) return "—"
+  if (!d) return "N/A"
   return new Date(d).toLocaleDateString()
 }
 
@@ -199,7 +199,7 @@ export function EquipmentTracker({ propertyId }: EquipmentTrackerProps) {
                     <TableCell className="text-sm">
                       {eq.replacementCostCents
                         ? `$${(eq.replacementCostCents / 100).toLocaleString()}`
-                        : "—"}
+                        : "N/A"}
                     </TableCell>
                   </TableRow>
                 ))}

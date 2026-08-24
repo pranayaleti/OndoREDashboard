@@ -207,7 +207,7 @@ export function ESGDashboard() {
                       <TableCell className="font-medium">{prop.propertyName}</TableCell>
                       <TableCell>{prop.energyKwh.toLocaleString()}</TableCell>
                       <TableCell>{prop.waterGallons.toLocaleString()}</TableCell>
-                      <TableCell className="text-yellow-600">{prop.solarKwh > 0 ? prop.solarKwh.toLocaleString() : "—"}</TableCell>
+                      <TableCell className="text-yellow-600">{prop.solarKwh > 0 ? prop.solarKwh.toLocaleString() : "N/A"}</TableCell>
                       <TableCell>{prop.recycledLbs.toLocaleString()}</TableCell>
                     </TableRow>
                   ))}

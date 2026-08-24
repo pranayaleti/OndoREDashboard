@@ -107,7 +107,7 @@ export function SurveyManager({ propertyId }: SurveyManagerProps) {
   const handleActivate = async (id: string) => {
     try {
       await featureApi.surveys.activate(id)
-      toast({ title: "Survey activated — tenants notified" })
+      toast({ title: "Survey activated. Tenants notified" })
       await load()
     } catch {
       toast({ title: "Failed to activate", variant: "destructive" })

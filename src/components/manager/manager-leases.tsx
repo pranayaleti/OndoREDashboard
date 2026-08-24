@@ -32,10 +32,10 @@ interface ExpiringLease {
 const formatCurrency = (n: number | undefined | null) =>
   typeof n === "number"
     ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
-    : "—"
+    : "N/A"
 
 const formatDate = (s: string | undefined | null) =>
-  s ? new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"
+  s ? new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "N/A"
 
 function bucketByExpiry(leases: ExpiringLease[]) {
   const buckets = { overdue: [] as ExpiringLease[], soon: [] as ExpiringLease[], later: [] as ExpiringLease[] }
@@ -120,9 +120,9 @@ export default function ManagerLeases() {
       className="flex items-center justify-between border-b border-border/40 px-4 py-3 last:border-b-0"
     >
       <div className="min-w-0 flex-1">
-        <div className="font-medium truncate">{l.tenantName ?? l.tenantId ?? "—"}</div>
+        <div className="font-medium truncate">{l.tenantName ?? l.tenantId ?? "N/A"}</div>
         <div className="text-xs text-muted-foreground truncate">
-          {l.propertyTitle ?? l.propertyId ?? "—"} · ends {formatDate(l.endDate)} ·{" "}
+          {l.propertyTitle ?? l.propertyId ?? "N/A"} · ends {formatDate(l.endDate)} ·{" "}
           {formatCurrency(l.monthlyRent ?? l.rent)}/mo
         </div>
       </div>
@@ -181,7 +181,7 @@ export default function ManagerLeases() {
           {loading ? (
             <div className="p-4 text-sm text-muted-foreground">Loading…</div>
           ) : buckets.overdue.length === 0 ? (
-            <div className="p-4 text-sm text-muted-foreground">None — nice.</div>
+            <div className="p-4 text-sm text-muted-foreground">None. Nice.</div>
           ) : (
             buckets.overdue.map(renderRow)
           )}

@@ -70,7 +70,7 @@ function ReportsList() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 dark:text-gray-400">Annual Return</span>
-                <span className="text-gray-900 dark:text-white font-bold text-2xl">—</span>
+                <span className="text-gray-900 dark:text-white font-bold text-2xl">N/A</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600 dark:text-gray-400">Annual Cash Flow</span>
@@ -274,7 +274,7 @@ function ReportsList() {
               <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">Cash on Cash Return</div>
-                  <div className="text-2xl font-bold mt-1">—</div>
+                  <div className="text-2xl font-bold mt-1">N/A</div>
                   <div className="text-xs text-gray-500 mt-1">Annual return on investment</div>
                 </div>
                 <Percent className="w-8 h-8 text-blue-500" />
@@ -397,7 +397,7 @@ function ReportsList() {
                   <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Cash on Cash Return</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">—</div>
+                  <div className="text-3xl font-bold">N/A</div>
                   <p className="text-sm text-gray-500 mt-1">Annual return</p>
                 </CardContent>
               </Card>
@@ -447,7 +447,7 @@ function ReportsList() {
                 <div className="border-t-2 border-ondo-orange pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-lg">Cash on Cash Return</span>
-                    <span className="font-bold text-2xl text-ondo-orange">—</span>
+                    <span className="font-bold text-2xl text-ondo-orange">N/A</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">($19,200 ÷ $153,600) × 100</p>
                 </div>
@@ -459,7 +459,7 @@ function ReportsList() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <div className="text-sm text-gray-600 dark:text-gray-400">Your Return</div>
-                  <div className="text-2xl font-bold mt-1">—</div>
+                  <div className="text-2xl font-bold mt-1">N/A</div>
                   <div className="text-xs text-gray-500 mt-1">Cash on cash</div>
                 </div>
                 <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">

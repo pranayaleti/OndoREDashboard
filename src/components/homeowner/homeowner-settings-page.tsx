@@ -87,7 +87,7 @@ export function HomeownerSettingsPage() {
         <CardHeader>
           <CardTitle className="text-base">Account</CardTitle>
           <CardDescription className="text-xs">
-            Signed in as {user?.email ?? "—"}
+            Signed in as {user?.email ?? "N/A"}
           </CardDescription>
         </CardHeader>
         <CardContent>

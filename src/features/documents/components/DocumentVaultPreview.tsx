@@ -69,7 +69,7 @@ export function DocumentVaultPreview() {
       <p className="text-2xl font-semibold">{documents.length}</p>
       <p className="mt-2 text-sm text-muted-foreground">
         {latestDocument
-          ? t('portfolio.documents.latest', { name: latestDocument.name ?? '—' })
+          ? t('portfolio.documents.latest', { name: latestDocument.name ?? 'N/A' })
           : t('portfolio.documents.empty')}
       </p>
       <div className="mt-4">

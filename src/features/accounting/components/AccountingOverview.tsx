@@ -34,7 +34,7 @@ export function AccountingOverview() {
     <div className="rounded-lg border border-border bg-background p-6">
       <p className="text-sm text-muted-foreground">{t('portfolio.accounting.title')}</p>
       <p className="text-2xl font-semibold">
-        {summary ? `$${summary.netIncome.toLocaleString()}` : '—'}
+        {summary ? `$${summary.netIncome.toLocaleString()}` : 'N/A'}
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
         {t('portfolio.accounting.covering', { count: summary?.propertiesIncluded ?? 0 })}

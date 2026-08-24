@@ -201,7 +201,7 @@ export default function ManagerProperties() {
               </SelectContent>
             </Select>
 
-            {/* City filter — dynamically populated */}
+            {/* City filter. Dynamically populated */}
             <Select value={cityFilter} onValueChange={setCityFilter}>
               <SelectTrigger className="w-48" id="property-city-filter">
                 <Filter className="h-4 w-4 mr-2" />

@@ -45,7 +45,7 @@ export default function AboutPage() {
           ctaHref={companyInfo.calendlyUrl}
           ctaLabel="Book a platform tour"
           title="Product vision"
-          description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing). We're building a conversational AI assistant for lease review, portfolio insights, marketing, and auto-routing maintenance — and we build outbound sales from the ground up: prospecting, lead qualification, CRM from zero, and representing Ondo RE as your first point of contact."
+          description="A single platform powering onboarding, screening, rent collection, maintenance, communication, and accounting for lean teams managing 1–20 units (and growing). We're building a conversational AI assistant for lease review, portfolio insights, marketing, and auto-routing maintenance. And we build outbound sales from the ground up: prospecting, lead qualification, CRM from zero, and representing Ondo RE as your first point of contact."
         />
       </section>
 
@@ -55,7 +55,7 @@ export default function AboutPage() {
             <p className="text-xs uppercase tracking-[0.4em] text-orange-300">mission</p>
             <h2 className="mt-4 text-3xl font-semibold">Keep small portfolios wildly efficient</h2>
             <p className="mt-4 text-white/70">
-              {companyInfo.name} started as an internal tool for boutique property operators. Paper leases, missing rent, and phone-tag maintenance made it impossible to grow. We rebuilt every workflow—screening, rent, maintenance, documents, communication, accounting—as modular features so owners and tenants finally share the same truth.
+              {companyInfo.name} started as an internal tool for boutique property operators. Paper leases, missing rent, and phone-tag maintenance made it impossible to grow. We rebuilt every workflow (screening, rent, maintenance, documents, communication, accounting) as modular features so owners and tenants finally share the same truth.
             </p>
             <p className="mt-4 text-white/70">
               Today we deliver the same polish you expect from enterprise PMS suites, but in a lightweight SaaS model that launches within days and scales with your portfolio.

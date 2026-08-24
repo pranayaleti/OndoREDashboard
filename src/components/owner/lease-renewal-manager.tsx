@@ -53,14 +53,14 @@ const statusColors: Record<string, string> = {
 }
 
 function daysUntil(dateStr: string | null): string {
-  if (!dateStr) return "—"
+  if (!dateStr) return "N/A"
   const diff = Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000)
   if (diff < 0) return "Expired"
   return `${diff}d`
 }
 
 function pctChange(current: number, proposed: number): string {
-  if (!current) return "—"
+  if (!current) return "N/A"
   const pct = ((proposed - current) / current) * 100
   return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`
 }
@@ -167,9 +167,9 @@ export function LeaseRenewalManager({ propertyId }: LeaseRenewalManagerProps) {
                 <TableRow key={r.id}>
                   <TableCell className="font-mono text-xs">{r.tenantId.slice(0, 8)}…</TableCell>
                   <TableCell className="text-xs">
-                    {r.proposedStart ? new Date(r.proposedStart).toLocaleDateString() : "—"}
+                    {r.proposedStart ? new Date(r.proposedStart).toLocaleDateString() : "N/A"}
                     {" – "}
-                    {r.proposedEnd ? new Date(r.proposedEnd).toLocaleDateString() : "—"}
+                    {r.proposedEnd ? new Date(r.proposedEnd).toLocaleDateString() : "N/A"}
                   </TableCell>
                   <TableCell>${(r.currentRent / 100).toLocaleString()}</TableCell>
                   <TableCell>${(r.proposedRent / 100).toLocaleString()}</TableCell>

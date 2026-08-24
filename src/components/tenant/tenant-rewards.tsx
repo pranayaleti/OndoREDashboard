@@ -1,11 +1,11 @@
-// Tenant Rewards portal — points balance, tier progression, and redemption.
+// Tenant Rewards portal. Points balance, tier progression, and redemption.
 //
 // Ported from OndoREui/components/tenant/rewards-card.tsx and rewired to
 // Dashboard's featureApi.rewards. This is the first tenant experience surface
 // wired into the Dashboard (previously only visible on the marketing site).
 //
 // Backend routes: GET /tenant/rewards, GET /tenant/rewards/history, POST
-// /tenant/rewards/redeem — all covered by rewardService.
+// /tenant/rewards/redeem. All covered by rewardService.
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

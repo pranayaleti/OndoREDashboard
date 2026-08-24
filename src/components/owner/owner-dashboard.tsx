@@ -383,7 +383,7 @@ export default function OwnerDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
-          {/* Financial Overview — full width */}
+          {/* Financial Overview. Full width */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             <Card className="lg:col-span-2">
               <CardHeader>
@@ -447,11 +447,11 @@ export default function OwnerDashboard() {
             </Card>
           </div>
 
-          {/* Property Occupancy — full width with clickable rows */}
+          {/* Property Occupancy. Full width with clickable rows */}
           <Card>
             <CardHeader>
               <CardTitle>Property Occupancy</CardTitle>
-              <CardDescription>Current occupancy status — click a property to view details</CardDescription>
+              <CardDescription>Current occupancy status. Click a property to view details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Overall Occupancy Bar */}
@@ -471,14 +471,14 @@ export default function OwnerDashboard() {
                 </p>
               </div>
 
-              {/* Individual Properties — clickable rows in a scrollable grid */}
+              {/* Individual Properties. Clickable rows in a scrollable grid */}
               {properties.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">No properties found</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                   {properties.map((property) => {
                     const isOccupied = Boolean(property.tenantId)
-                    const propertyName = property.addressLine1 || `${property.type} — ${property.id.slice(-4)}`
+                    const propertyName = property.addressLine1 || `${property.type}: ${property.id.slice(-4)}`
                     const propertyType = property.type
                       ? property.type.charAt(0).toUpperCase() + property.type.slice(1).replace(/_/g, " ")
                       : "Property"

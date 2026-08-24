@@ -184,7 +184,7 @@ export default function RiskAnalytics() {
   }))
 
   const trendValues = analytics.trend.map((t) => t.avgScore)
-  const activeModel = Object.keys(analytics.modelVersions)[0] ?? "—"
+  const activeModel = Object.keys(analytics.modelVersions)[0] ?? "N/A"
 
   return (
     <div className="space-y-6">
@@ -223,7 +223,7 @@ export default function RiskAnalytics() {
             <p className="text-xs text-gray-400 mt-0.5">
               {analytics.totalScored > 0
                 ? `${((analytics.atRiskCount / analytics.totalScored) * 100).toFixed(1)}% of portfolio`
-                : "—"}
+                : "N/A"}
             </p>
           </CardContent>
         </Card>
@@ -242,7 +242,7 @@ export default function RiskAnalytics() {
             <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-gray-100">
               {trendValues.length > 0
                 ? `${(trendValues[trendValues.length - 1] * 100).toFixed(0)}%`
-                : "—"}
+                : "N/A"}
             </p>
           </CardContent>
         </Card>
@@ -379,7 +379,7 @@ export default function RiskAnalytics() {
                 AI recommendations
               </CardTitle>
               <CardDescription>
-                System-generated intervention suggestions — approve or dismiss
+                System-generated intervention suggestions. Approve or dismiss
               </CardDescription>
             </div>
             {recommendations.length > 0 && (

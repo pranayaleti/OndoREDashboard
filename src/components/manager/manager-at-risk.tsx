@@ -158,14 +158,14 @@ function TenantCard({ t, onIntervention, onViewHistory }: TenantCardProps) {
             <Brain className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span className="min-w-0 whitespace-normal break-words">
               <strong>Suggested:</strong> {INTERVENTION_LABELS[recommendation.recommended_type]}
-              {" — "}
+              {". "}
               <span className="opacity-80">{recommendation.reasoning}</span>
             </span>
           </div>
         )}
 
         <CardDescription className="mt-1.5 text-xs">
-          Scored {t.scoredAt ? formatUSDate(t.scoredAt) : "—"}
+          Scored {t.scoredAt ? formatUSDate(t.scoredAt) : "N/A"}
         </CardDescription>
       </CardHeader>
 
@@ -536,7 +536,7 @@ export default function ManagerAtRisk() {
       {/* Tab: Analytics */}
       {activeTab === "analytics" && <RiskAnalytics />}
 
-      {/* Tab: Recommendations — rendered via analytics tab for now, reuse RiskAnalytics */}
+      {/* Tab: Recommendations. Rendered via analytics tab for now, reuse RiskAnalytics */}
       {activeTab === "interventions" && <RiskAnalytics />}
 
       {/* Intervention dialog */}
@@ -546,7 +546,7 @@ export default function ManagerAtRisk() {
             <DialogTitle>Record intervention</DialogTitle>
             <DialogDescription>
               {interventionTenant
-                ? `${interventionTenant.tenantFirstName ?? ""} ${interventionTenant.tenantLastName ?? ""} — ${interventionTenant.tenantEmail ?? "No email"}`
+                ? `${interventionTenant.tenantFirstName ?? ""} ${interventionTenant.tenantLastName ?? ""}: ${interventionTenant.tenantEmail ?? "No email"}`
                 : ""}
             </DialogDescription>
           </DialogHeader>

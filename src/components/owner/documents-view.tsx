@@ -613,7 +613,7 @@ export function DocumentsView() {
                               {document.folder}
                             </span>
                           ) : (
-                            "—"
+                            "N/A"
                           )}
                         </TableCell>
                         <TableCell>

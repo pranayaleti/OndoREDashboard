@@ -107,7 +107,7 @@ export function RentPricingPanel({ propertyId }: RentPricingPanelProps) {
             <DollarSign className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pricing ? fmt(pricing.currentRent) : "—"}</div>
+            <div className="text-2xl font-bold">{pricing ? fmt(pricing.currentRent) : "N/A"}</div>
           </CardContent>
         </Card>
         <Card>
@@ -116,7 +116,7 @@ export function RentPricingPanel({ propertyId }: RentPricingPanelProps) {
             {rentUp ? <TrendingUp className="h-5 w-5 text-green-500" /> : <TrendingDown className="h-5 w-5 text-red-500" />}
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pricing ? fmt(pricing.suggestedRent) : "—"}</div>
+            <div className="text-2xl font-bold">{pricing ? fmt(pricing.suggestedRent) : "N/A"}</div>
             {pricing && (
               <p className={`text-xs ${rentUp ? "text-green-600" : "text-red-600"}`}>
                 {rentUp ? "+" : ""}{fmt(rentDiff)} ({rentUp ? "+" : ""}{((rentDiff / (pricing.currentRent || 1)) * 100).toFixed(1)}%)
