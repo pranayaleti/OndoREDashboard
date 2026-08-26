@@ -9,6 +9,7 @@ import {
   organizationsApi,
   type Organization,
   type OrganizationMember,
+  type OrgPendingInvite,
 } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 
@@ -16,6 +17,7 @@ export default function OwnerOrganization() {
   const [orgs, setOrgs] = useState<Organization[]>([])
   const [selected, setSelected] = useState<Organization | null>(null)
   const [members, setMembers] = useState<OrganizationMember[]>([])
+  const [invites, setInvites] = useState<OrgPendingInvite[]>([])
   const [loading, setLoading] = useState(true)
   const [newOrgName, setNewOrgName] = useState("")
   const [creating, setCreating] = useState(false)
@@ -31,10 +33,16 @@ export default function OwnerOrganization() {
       const next = selectId ? list.find((o) => o.id === selectId) : list[0]
       if (next) {
         setSelected(next)
-        setMembers(await organizationsApi.listMembers(next.id))
+        const [m, i] = await Promise.all([
+          organizationsApi.listMembers(next.id),
+          organizationsApi.listInvites(next.id),
+        ])
+        setMembers(m)
+        setInvites(i)
       } else {
         setSelected(null)
         setMembers([])
+        setInvites([])
       }
     } catch (err) {
       console.error("Failed to load organizations:", err)
@@ -52,10 +60,16 @@ export default function OwnerOrganization() {
   async function selectOrg(org: Organization) {
     setSelected(org)
     try {
-      setMembers(await organizationsApi.listMembers(org.id))
+      const [m, i] = await Promise.all([
+        organizationsApi.listMembers(org.id),
+        organizationsApi.listInvites(org.id),
+      ])
+      setMembers(m)
+      setInvites(i)
     } catch (err) {
-      console.error("Failed to load members:", err)
+      console.error("Failed to load organization detail:", err)
       setMembers([])
+      setInvites([])
     }
   }
 
@@ -83,20 +97,33 @@ export default function OwnerOrganization() {
     if (!selected || !inviteEmail.trim()) return
     setAddingMember(true)
     try {
-      await organizationsApi.inviteByEmail(selected.id, inviteEmail.trim())
+      const result = await organizationsApi.inviteByEmail(selected.id, inviteEmail.trim())
       setInviteEmail("")
-      toast({ title: "Member added" })
-      setMembers(await organizationsApi.listMembers(selected.id))
-    } catch (err) {
-      console.error("Failed to add member:", err)
       toast({
-        title: "Could not add member",
-        description:
-          err instanceof Error ? err.message : "No account was found for that email.",
+        title: result.status === "added" ? "Member added" : `Invitation sent to ${result.email}`,
+      })
+      await selectOrg(selected)
+    } catch (err) {
+      console.error("Failed to invite member:", err)
+      toast({
+        title: "Could not send invite",
+        description: err instanceof Error ? err.message : "Please try again.",
         variant: "destructive",
       })
     } finally {
       setAddingMember(false)
+    }
+  }
+
+  async function handleRevokeInvite(invite: OrgPendingInvite) {
+    if (!selected) return
+    try {
+      await organizationsApi.revokeInvite(selected.id, invite.id)
+      toast({ title: "Invitation revoked" })
+      setInvites(await organizationsApi.listInvites(selected.id))
+    } catch (err) {
+      console.error("Failed to revoke invite:", err)
+      toast({ title: "Could not revoke invitation", variant: "destructive" })
     }
   }
 
@@ -212,6 +239,34 @@ export default function OwnerOrganization() {
                   ))}
                 </div>
 
+                {invites.length > 0 ? (
+                  <div className="mb-6">
+                    <p className="text-sm font-medium mb-2">Pending invitations</p>
+                    <div className="flex flex-col gap-2">
+                      {invites.map((inv) => (
+                        <div
+                          key={inv.id}
+                          className="flex items-center justify-between gap-2 rounded-md border border-dashed border-border px-3 py-2"
+                        >
+                          <div className="min-w-0">
+                            <div className="text-sm truncate">{inv.email}</div>
+                            <Badge variant="outline" className="mt-1">
+                              Invited · {inv.orgRole === "org_admin" ? "Admin" : "Member"}
+                            </Badge>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRevokeInvite(inv)}
+                          >
+                            Revoke
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
                 <Label htmlFor="invite-email" className="text-sm">
                   Invite a member by email
                 </Label>
@@ -234,7 +289,8 @@ export default function OwnerOrganization() {
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  The person must already have an Ondo account. Invitations for brand-new emails are coming next.
+                  Existing Ondo accounts are added right away. New emails get an invitation to sign up
+                  and join automatically.
                 </p>
               </CardContent>
             </Card>

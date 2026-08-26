@@ -34,6 +34,19 @@ export interface CreateOrganizationInput {
 
 export type UpdateOrganizationInput = Partial<CreateOrganizationInput>;
 
+export interface OrgPendingInvite {
+  id: string;
+  email: string;
+  orgRole: string | null;
+  status: string;
+  expiresAt: string;
+  createdAt: string | null;
+}
+
+export type InviteResult =
+  | { status: "added"; member: OrganizationMember }
+  | { status: "invited"; email: string; expiresAt: string };
+
 interface Wrapped<T> {
   message: string;
   data: T;
@@ -73,11 +86,25 @@ export const organizationsApi = {
     );
     return res.data;
   },
-  /** Invite an existing platform user to the org by their email. */
-  async inviteByEmail(id: string, email: string, role: OrgRole = "member"): Promise<OrganizationMember> {
-    const res = await apiPost<Wrapped<OrganizationMember>>(
-      `/organizations/${id}/members`,
+  /**
+   * Invite by email. Existing accounts are added immediately; brand-new emails
+   * get a signup invitation that auto-joins the org on signup.
+   */
+  async inviteByEmail(id: string, email: string, role: OrgRole = "member"): Promise<InviteResult> {
+    const res = await apiPost<Wrapped<InviteResult>>(
+      `/organizations/${id}/invites`,
       { email, role },
+      getAuthHeaders(),
+    );
+    return res.data;
+  },
+  async listInvites(id: string): Promise<OrgPendingInvite[]> {
+    const res = await apiGet<Wrapped<OrgPendingInvite[]>>(`/organizations/${id}/invites`, getAuthHeaders());
+    return res.data;
+  },
+  async revokeInvite(id: string, inviteId: string): Promise<{ id: string }> {
+    const res = await apiDelete<Wrapped<{ id: string }>>(
+      `/organizations/${id}/invites/${inviteId}`,
       getAuthHeaders(),
     );
     return res.data;

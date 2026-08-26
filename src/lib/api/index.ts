@@ -40,6 +40,8 @@ export type {
   UpdateOrganizationInput,
   OrgRole,
   OrgType,
+  OrgPendingInvite,
+  InviteResult,
 } from "./clients/organizations";
 export {
   tenantScreeningApi,
