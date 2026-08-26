@@ -32,6 +32,15 @@ export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
 export { eventsApi } from "./clients/events";
 export type { EventItem, CreateEventInput, UpdateEventInput } from "./clients/events";
+export { organizationsApi } from "./clients/organizations";
+export type {
+  Organization,
+  OrganizationMember,
+  CreateOrganizationInput,
+  UpdateOrganizationInput,
+  OrgRole,
+  OrgType,
+} from "./clients/organizations";
 export {
   tenantScreeningApi,
   getTenantScreeningWidgetData,

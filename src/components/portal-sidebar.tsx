@@ -190,6 +190,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: t("owner:nav.myUploads"), href: `${basePath}/my-documents`, icon: <Upload className="h-5 w-5" />, dataTourId: "owner-documents-nav" },
         { title: t("owner:nav.sharedDocuments"), href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
+        { title: "Organization", href: `${basePath}/organization`, icon: <Building className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
