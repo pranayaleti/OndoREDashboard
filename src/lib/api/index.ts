@@ -34,6 +34,20 @@ export { csvImportApi } from "./clients/csv-import";
 export type { ImportPreview, ImportResult, MappedProperty } from "./clients/csv-import";
 export { eventsApi } from "./clients/events";
 export type { EventItem, CreateEventInput, UpdateEventInput } from "./clients/events";
+export { organizationsApi } from "./clients/organizations";
+export type {
+  Organization,
+  OrganizationMember,
+  CreateOrganizationInput,
+  UpdateOrganizationInput,
+  OrgRole,
+  OrgType,
+  MemberStatus,
+  PlatformRole,
+  OrgPendingInvite,
+  OrgPortfolioProperty,
+  InviteResult,
+} from "./clients/organizations";
 export {
   tenantScreeningApi,
   getTenantScreeningWidgetData,

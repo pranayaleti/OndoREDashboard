@@ -18,6 +18,7 @@ const OwnerReports = lazy(() => import("@/components/owner/owner-reports"))
 const OwnerTenants = lazy(() => import("@/components/owner/owner-tenants"))
 const OwnerTenantDetail = lazy(() => import("@/components/owner/owner-tenant-detail"))
 const OwnerProfile = lazy(() => import("@/components/owner/owner-profile"))
+const OwnerOrganization = lazy(() => import("@/components/owner/owner-organization"))
 const MessagesView = lazy(() => import("@/components/owner/messages-view").then((m) => ({ default: m.MessagesView })))
 const OwnerDocuments = lazy(() => import("@/components/owner/owner-documents"))
 const OwnerOccupancy = lazy(() => import("@/components/owner/owner-occupancy"))
@@ -77,6 +78,7 @@ export default function Owner() {
             <Route path="/calendar" element={<OwnerCalendar />} />
             <Route path="/notifications" element={<OwnerNotifications />} />
             <Route path="/profile" element={<OwnerProfile />} />
+            <Route path="/organization" element={<OwnerOrganization />} />
             <Route path="/referrals" element={<ReferralProgram />} />
             <Route path="/investor-portal" element={<InvestorPortal />} />
             <Route path="/trust-accounting" element={<TrustAccountingPanel />} />
