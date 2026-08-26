@@ -179,6 +179,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Home improvement", href: `${basePath}/improvements`, icon: <Hammer className="h-5 w-5" /> },
         { title: "Equipment", href: `${basePath}/equipment`, icon: <Cpu className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
+        { title: "Import", href: `${basePath}/import`, icon: <Upload className="h-5 w-5" /> },
         { title: "Occupancy", href: `${basePath}/occupancy`, icon: <Home className="h-5 w-5" /> },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
         { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" /> },

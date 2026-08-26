@@ -30,6 +30,8 @@ export { accountingApi } from "./clients/accounting";
 export { assistantApi } from "./clients/assistant";
 export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
+export { csvImportApi } from "./clients/csv-import";
+export type { ImportPreview, ImportResult, MappedProperty } from "./clients/csv-import";
 export { eventsApi } from "./clients/events";
 export type { EventItem, CreateEventInput, UpdateEventInput } from "./clients/events";
 export {

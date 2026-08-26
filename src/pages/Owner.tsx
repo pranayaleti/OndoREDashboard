@@ -12,6 +12,7 @@ const HomeownerSearchResults = lazy(() => import("@/components/homeowner/homeown
 const DocumentsPanel = lazy(() => import("@/components/homeowner/documents-panel").then((m) => ({ default: m.DocumentsPanel })))
 const OwnerSettings = lazy(() => import("@/components/owner/owner-settings"))
 const OwnerProperties = lazy(() => import("@/components/owner/owner-properties"))
+const OwnerImport = lazy(() => import("@/components/owner/owner-import"))
 const OwnerFinances = lazy(() => import("@/components/owner/owner-finances"))
 const OwnerReports = lazy(() => import("@/components/owner/owner-reports"))
 const OwnerTenants = lazy(() => import("@/components/owner/owner-tenants"))
@@ -62,6 +63,7 @@ export default function Owner() {
             <Route path="/property-management/add" element={<AddPropertyForm />} />
             <Route path="/properties/:id" element={<OwnerPropertyDetail />} />
             <Route path="/properties/*" element={<OwnerProperties />} />
+            <Route path="/import" element={<OwnerImport />} />
             <Route path="/finances/*" element={<OwnerFinances />} />
             <Route path="/reports/*" element={<OwnerReports />} />
             <Route path="/tenants/:tenantId" element={<OwnerTenantDetail />} />
