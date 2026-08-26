@@ -22,6 +22,7 @@ import {
   type PlatformRole,
 } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
 
 export default function OwnerOrganization() {
   const [orgs, setOrgs] = useState<Organization[]>([])
@@ -48,6 +49,21 @@ export default function OwnerOrganization() {
   const [logoUrl, setLogoUrl] = useState("")
   const [savingBrand, setSavingBrand] = useState(false)
   const { toast } = useToast()
+  const { user } = useAuth()
+
+  const myMembership = members.find((m) => m.userId === user?.id)
+
+  async function handleAcceptMembership() {
+    if (!selected) return
+    try {
+      await organizationsApi.acceptMembership(selected.id)
+      toast({ title: "Invitation accepted" })
+      await selectOrg(selected)
+    } catch (err) {
+      console.error("Failed to accept membership:", err)
+      toast({ title: "Could not accept invitation", variant: "destructive" })
+    }
+  }
 
   // Keep the branding editor in sync with the selected org.
   useEffect(() => {
@@ -277,6 +293,14 @@ export default function OwnerOrganization() {
                 <CardDescription>{members.length} member{members.length === 1 ? "" : "s"}</CardDescription>
               </CardHeader>
               <CardContent>
+                {myMembership?.status === "invited" ? (
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-primary/40 bg-primary/5 px-3 py-2">
+                    <span className="text-sm">You've been invited to this organization.</span>
+                    <Button size="sm" onClick={handleAcceptMembership}>
+                      Accept invitation
+                    </Button>
+                  </div>
+                ) : null}
                 <div className="flex flex-col gap-2 mb-6">
                   {members.map((m) => (
                     <div
@@ -290,9 +314,14 @@ export default function OwnerOrganization() {
                         {m.email ? (
                           <div className="text-xs text-muted-foreground truncate">{m.email}</div>
                         ) : null}
-                        <Badge variant="outline" className="mt-1">
-                          {m.role === "org_admin" ? "Admin" : "Member"}
-                        </Badge>
+                        <div className="mt-1 flex items-center gap-2">
+                          <Badge variant="outline">
+                            {m.role === "org_admin" ? "Admin" : "Member"}
+                          </Badge>
+                          {m.status === "invited" ? (
+                            <Badge variant="secondary">Pending</Badge>
+                          ) : null}
+                        </div>
                       </div>
                       {m.role !== "org_admin" ? (
                         <Button

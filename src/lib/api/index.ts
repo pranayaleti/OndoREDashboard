@@ -40,6 +40,7 @@ export type {
   UpdateOrganizationInput,
   OrgRole,
   OrgType,
+  MemberStatus,
   PlatformRole,
   OrgPendingInvite,
   OrgPortfolioProperty,

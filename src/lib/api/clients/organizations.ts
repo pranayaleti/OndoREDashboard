@@ -20,11 +20,14 @@ export interface Organization {
 
 export type PlatformRole = "owner" | "manager";
 
+export type MemberStatus = "active" | "invited";
+
 export interface OrganizationMember {
   id: string;
   organizationId: string;
   userId: string;
   role: OrgRole;
+  status: MemberStatus;
   createdAt: string;
   // Present on listMembers (joined from users); absent on addMember/invite results.
   firstName?: string | null;
@@ -98,6 +101,15 @@ export const organizationsApi = {
   },
   async listMembers(id: string): Promise<OrganizationMember[]> {
     const res = await apiGet<Wrapped<OrganizationMember[]>>(`/organizations/${id}/members`, getAuthHeaders());
+    return res.data;
+  },
+  /** The caller accepts their own pending membership, activating it. */
+  async acceptMembership(id: string): Promise<OrganizationMember> {
+    const res = await apiPost<Wrapped<OrganizationMember>>(
+      `/organizations/${id}/membership/accept`,
+      {},
+      getAuthHeaders(),
+    );
     return res.data;
   },
   async addMember(id: string, userId: string, role: OrgRole = "member"): Promise<OrganizationMember> {

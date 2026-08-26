@@ -290,6 +290,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
         items: navItems.filter((item) =>
           [
             `/owner/properties`,
+            `/owner/organization`,
             `/owner/occupancy`,
             `/owner/tenants`,
             `/owner/maintenance`,
