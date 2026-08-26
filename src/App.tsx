@@ -6,6 +6,7 @@ import { AuthProvider } from '@/lib/auth-context'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { OrgBrandingApplier } from '@/components/org-branding-applier'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Loading from '@/components/loading'
 import { SupportWidget } from '@/components/support/support-widget'
@@ -59,6 +60,7 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <AuthProvider>
+        <OrgBrandingApplier />
         <div className="min-h-screen flex flex-col">
           <a
             href="#main-content"

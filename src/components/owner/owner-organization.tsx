@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { applyBrandColor, type OrgBranding } from "@/lib/org-branding"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,7 +33,40 @@ export default function OwnerOrganization() {
   const [inviteEmail, setInviteEmail] = useState("")
   const [platformRole, setPlatformRole] = useState<PlatformRole>("owner")
   const [addingMember, setAddingMember] = useState(false)
+  const [brandColor, setBrandColor] = useState("#ea580c")
+  const [logoUrl, setLogoUrl] = useState("")
+  const [savingBrand, setSavingBrand] = useState(false)
   const { toast } = useToast()
+
+  // Keep the branding editor in sync with the selected org.
+  useEffect(() => {
+    const b = (selected?.branding as OrgBranding) ?? {}
+    setBrandColor(b.primaryColor ?? "#ea580c")
+    setLogoUrl(b.logoUrl ?? "")
+  }, [selected])
+
+  async function handleSaveBranding() {
+    if (!selected) return
+    setSavingBrand(true)
+    try {
+      const branding: OrgBranding = {
+        primaryColor: brandColor,
+        ...(logoUrl.trim() ? { logoUrl: logoUrl.trim() } : {}),
+      }
+      const updated = await organizationsApi.update(selected.id, {
+        branding: branding as Record<string, unknown>,
+      })
+      applyBrandColor(brandColor)
+      setSelected(updated)
+      setOrgs((prev) => prev.map((o) => (o.id === updated.id ? updated : o)))
+      toast({ title: "Branding saved" })
+    } catch (err) {
+      console.error("Failed to save branding:", err)
+      toast({ title: "Could not save branding", variant: "destructive" })
+    } finally {
+      setSavingBrand(false)
+    }
+  }
 
   async function loadOrgs(selectId?: string) {
     setLoading(true)
@@ -218,6 +252,7 @@ export default function OwnerOrganization() {
 
           {/* Selected org detail */}
           {selected ? (
+            <div className="flex flex-col gap-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between gap-2">
@@ -322,6 +357,84 @@ export default function OwnerOrganization() {
                 </p>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Branding</CardTitle>
+                <CardDescription>
+                  White-label the dashboard for this organization. The brand color themes the app
+                  accent for its members.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap items-end gap-4">
+                  <div>
+                    <Label htmlFor="brand-color" className="text-sm">
+                      Brand color
+                    </Label>
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        id="brand-color"
+                        type="color"
+                        value={brandColor}
+                        onChange={(e) => setBrandColor(e.target.value)}
+                        className="h-9 w-12 rounded border border-border bg-transparent p-1"
+                        aria-label="Brand color"
+                      />
+                      <Input
+                        value={brandColor}
+                        onChange={(e) => setBrandColor(e.target.value)}
+                        className="w-28 font-mono"
+                        aria-label="Brand color hex"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-[200px]">
+                    <Label htmlFor="brand-logo" className="text-sm">
+                      Logo URL (optional)
+                    </Label>
+                    <Input
+                      id="brand-logo"
+                      type="url"
+                      placeholder="https://…/logo.png"
+                      value={logoUrl}
+                      onChange={(e) => setLogoUrl(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                {logoUrl.trim() ? (
+                  <div className="mt-4">
+                    <span className="text-xs text-muted-foreground">Logo preview</span>
+                    <img
+                      src={logoUrl.trim()}
+                      alt="Organization logo preview"
+                      className="mt-1 h-10 w-auto max-w-[200px] object-contain"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none"
+                      }}
+                    />
+                  </div>
+                ) : null}
+
+                <div className="flex items-center gap-3 mt-5">
+                  <Button onClick={handleSaveBranding} disabled={savingBrand}>
+                    {savingBrand ? "Saving…" : "Save branding"}
+                  </Button>
+                  <span
+                    className="inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium"
+                    style={{ backgroundColor: brandColor, color: "#fff" }}
+                  >
+                    Accent preview
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Full white-label (custom domains, branded emails) is a later phase.
+                </p>
+              </CardContent>
+            </Card>
+            </div>
           ) : null}
         </div>
       )}
