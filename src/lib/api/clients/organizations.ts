@@ -18,12 +18,18 @@ export interface Organization {
   updatedAt: string;
 }
 
+export type PlatformRole = "owner" | "manager";
+
 export interface OrganizationMember {
   id: string;
   organizationId: string;
   userId: string;
   role: OrgRole;
   createdAt: string;
+  // Present on listMembers (joined from users); absent on addMember/invite results.
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
 }
 
 export interface CreateOrganizationInput {
@@ -90,10 +96,15 @@ export const organizationsApi = {
    * Invite by email. Existing accounts are added immediately; brand-new emails
    * get a signup invitation that auto-joins the org on signup.
    */
-  async inviteByEmail(id: string, email: string, role: OrgRole = "member"): Promise<InviteResult> {
+  async inviteByEmail(
+    id: string,
+    email: string,
+    role: OrgRole = "member",
+    platformRole: PlatformRole = "owner",
+  ): Promise<InviteResult> {
     const res = await apiPost<Wrapped<InviteResult>>(
       `/organizations/${id}/invites`,
-      { email, role },
+      { email, role, platformRole },
       getAuthHeaders(),
     );
     return res.data;

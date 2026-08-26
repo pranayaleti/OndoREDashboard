@@ -40,6 +40,7 @@ export type {
   UpdateOrganizationInput,
   OrgRole,
   OrgType,
+  PlatformRole,
   OrgPendingInvite,
   InviteResult,
 } from "./clients/organizations";

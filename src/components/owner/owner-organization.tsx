@@ -4,12 +4,20 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Building2, Plus, Trash2, UserPlus } from "lucide-react"
 import {
   organizationsApi,
   type Organization,
   type OrganizationMember,
   type OrgPendingInvite,
+  type PlatformRole,
 } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 
@@ -22,6 +30,7 @@ export default function OwnerOrganization() {
   const [newOrgName, setNewOrgName] = useState("")
   const [creating, setCreating] = useState(false)
   const [inviteEmail, setInviteEmail] = useState("")
+  const [platformRole, setPlatformRole] = useState<PlatformRole>("owner")
   const [addingMember, setAddingMember] = useState(false)
   const { toast } = useToast()
 
@@ -97,7 +106,12 @@ export default function OwnerOrganization() {
     if (!selected || !inviteEmail.trim()) return
     setAddingMember(true)
     try {
-      const result = await organizationsApi.inviteByEmail(selected.id, inviteEmail.trim())
+      const result = await organizationsApi.inviteByEmail(
+        selected.id,
+        inviteEmail.trim(),
+        "member",
+        platformRole,
+      )
       setInviteEmail("")
       toast({
         title: result.status === "added" ? "Member added" : `Invitation sent to ${result.email}`,
@@ -220,7 +234,12 @@ export default function OwnerOrganization() {
                       className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
                     >
                       <div className="min-w-0">
-                        <div className="text-sm font-mono truncate">{m.userId}</div>
+                        <div className="text-sm font-medium truncate">
+                          {[m.firstName, m.lastName].filter(Boolean).join(" ") || m.email || m.userId}
+                        </div>
+                        {m.email ? (
+                          <div className="text-xs text-muted-foreground truncate">{m.email}</div>
+                        ) : null}
                         <Badge variant="outline" className="mt-1">
                           {m.role === "org_admin" ? "Admin" : "Member"}
                         </Badge>
@@ -277,8 +296,17 @@ export default function OwnerOrganization() {
                     placeholder="teammate@example.com"
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
-                    className="sm:max-w-sm"
+                    className="sm:max-w-xs"
                   />
+                  <Select value={platformRole} onValueChange={(v) => setPlatformRole(v as PlatformRole)}>
+                    <SelectTrigger className="sm:w-40" aria-label="Account type">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="owner">Owner</SelectItem>
+                      <SelectItem value="manager">Manager</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Button
                     variant="outline"
                     onClick={handleAddMember}
@@ -290,7 +318,7 @@ export default function OwnerOrganization() {
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
                   Existing Ondo accounts are added right away. New emails get an invitation to sign up
-                  and join automatically.
+                  with the selected account type and join automatically.
                 </p>
               </CardContent>
             </Card>
