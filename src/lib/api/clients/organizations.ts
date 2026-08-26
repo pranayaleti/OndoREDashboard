@@ -73,6 +73,15 @@ export const organizationsApi = {
     );
     return res.data;
   },
+  /** Invite an existing platform user to the org by their email. */
+  async inviteByEmail(id: string, email: string, role: OrgRole = "member"): Promise<OrganizationMember> {
+    const res = await apiPost<Wrapped<OrganizationMember>>(
+      `/organizations/${id}/members`,
+      { email, role },
+      getAuthHeaders(),
+    );
+    return res.data;
+  },
   async removeMember(id: string, userId: string): Promise<{ userId: string }> {
     const res = await apiDelete<Wrapped<{ userId: string }>>(
       `/organizations/${id}/members/${userId}`,

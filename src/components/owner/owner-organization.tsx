@@ -19,7 +19,7 @@ export default function OwnerOrganization() {
   const [loading, setLoading] = useState(true)
   const [newOrgName, setNewOrgName] = useState("")
   const [creating, setCreating] = useState(false)
-  const [newMemberId, setNewMemberId] = useState("")
+  const [inviteEmail, setInviteEmail] = useState("")
   const [addingMember, setAddingMember] = useState(false)
   const { toast } = useToast()
 
@@ -80,18 +80,19 @@ export default function OwnerOrganization() {
   }
 
   async function handleAddMember() {
-    if (!selected || !newMemberId.trim()) return
+    if (!selected || !inviteEmail.trim()) return
     setAddingMember(true)
     try {
-      await organizationsApi.addMember(selected.id, newMemberId.trim())
-      setNewMemberId("")
+      await organizationsApi.inviteByEmail(selected.id, inviteEmail.trim())
+      setInviteEmail("")
       toast({ title: "Member added" })
       setMembers(await organizationsApi.listMembers(selected.id))
     } catch (err) {
       console.error("Failed to add member:", err)
       toast({
         title: "Could not add member",
-        description: err instanceof Error ? err.message : "Check the user ID and try again.",
+        description:
+          err instanceof Error ? err.message : "No account was found for that email.",
         variant: "destructive",
       })
     } finally {
@@ -211,28 +212,29 @@ export default function OwnerOrganization() {
                   ))}
                 </div>
 
-                <Label htmlFor="add-member" className="text-sm">
-                  Add a member by user ID
+                <Label htmlFor="invite-email" className="text-sm">
+                  Invite a member by email
                 </Label>
                 <div className="flex flex-col sm:flex-row gap-3 mt-2">
                   <Input
-                    id="add-member"
-                    placeholder="user UUID"
-                    value={newMemberId}
-                    onChange={(e) => setNewMemberId(e.target.value)}
-                    className="sm:max-w-sm font-mono"
+                    id="invite-email"
+                    type="email"
+                    placeholder="teammate@example.com"
+                    value={inviteEmail}
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    className="sm:max-w-sm"
                   />
                   <Button
                     variant="outline"
                     onClick={handleAddMember}
-                    disabled={addingMember || !newMemberId.trim()}
+                    disabled={addingMember || !inviteEmail.trim()}
                   >
                     <UserPlus className="h-4 w-4 mr-2" />
-                    {addingMember ? "Adding…" : "Add"}
+                    {addingMember ? "Inviting…" : "Invite"}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Invite-by-email is coming next; for now, add by user ID.
+                  The person must already have an Ondo account. Invitations for brand-new emails are coming next.
                 </p>
               </CardContent>
             </Card>
