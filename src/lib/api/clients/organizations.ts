@@ -49,6 +49,17 @@ export interface OrgPendingInvite {
   createdAt: string | null;
 }
 
+export interface OrgPortfolioProperty {
+  id: string;
+  title: string;
+  addressLine1: string;
+  city: string;
+  state: string | null;
+  price: number | null;
+  status: string;
+  ownerId: string;
+}
+
 export type InviteResult =
   | { status: "added"; member: OrganizationMember }
   | { status: "invited"; email: string; expiresAt: string };
@@ -78,6 +89,11 @@ export const organizationsApi = {
       patch,
       getAuthHeaders(),
     );
+    return res.data;
+  },
+  /** Aggregated properties across the org's members (org_admin only). */
+  async portfolio(id: string): Promise<OrgPortfolioProperty[]> {
+    const res = await apiGet<Wrapped<OrgPortfolioProperty[]>>(`/organizations/${id}/portfolio`, getAuthHeaders());
     return res.data;
   },
   async listMembers(id: string): Promise<OrganizationMember[]> {

@@ -42,6 +42,7 @@ export type {
   OrgType,
   PlatformRole,
   OrgPendingInvite,
+  OrgPortfolioProperty,
   InviteResult,
 } from "./clients/organizations";
 export {

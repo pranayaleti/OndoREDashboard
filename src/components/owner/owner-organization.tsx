@@ -18,6 +18,7 @@ import {
   type Organization,
   type OrganizationMember,
   type OrgPendingInvite,
+  type OrgPortfolioProperty,
   type PlatformRole,
 } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
@@ -27,7 +28,17 @@ export default function OwnerOrganization() {
   const [selected, setSelected] = useState<Organization | null>(null)
   const [members, setMembers] = useState<OrganizationMember[]>([])
   const [invites, setInvites] = useState<OrgPendingInvite[]>([])
+  const [portfolio, setPortfolio] = useState<OrgPortfolioProperty[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Best-effort org portfolio (org_admin only; non-admins get 403 and see nothing).
+  async function loadPortfolio(orgId: string) {
+    try {
+      setPortfolio(await organizationsApi.portfolio(orgId))
+    } catch {
+      setPortfolio([])
+    }
+  }
   const [newOrgName, setNewOrgName] = useState("")
   const [creating, setCreating] = useState(false)
   const [inviteEmail, setInviteEmail] = useState("")
@@ -82,10 +93,12 @@ export default function OwnerOrganization() {
         ])
         setMembers(m)
         setInvites(i)
+        void loadPortfolio(next.id)
       } else {
         setSelected(null)
         setMembers([])
         setInvites([])
+        setPortfolio([])
       }
     } catch (err) {
       console.error("Failed to load organizations:", err)
@@ -109,10 +122,12 @@ export default function OwnerOrganization() {
       ])
       setMembers(m)
       setInvites(i)
+      void loadPortfolio(org.id)
     } catch (err) {
       console.error("Failed to load organization detail:", err)
       setMembers([])
       setInvites([])
+      setPortfolio([])
     }
   }
 
@@ -357,6 +372,46 @@ export default function OwnerOrganization() {
                 </p>
               </CardContent>
             </Card>
+
+            {portfolio.length > 0 ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Portfolio</CardTitle>
+                  <CardDescription>
+                    {portfolio.length} propert{portfolio.length === 1 ? "y" : "ies"} across this organization&apos;s members.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="text-left text-muted-foreground border-b">
+                          <th className="py-2 pr-4">Property</th>
+                          <th className="py-2 pr-4">Location</th>
+                          <th className="py-2 pr-4">Status</th>
+                          <th className="py-2">Rent</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {portfolio.slice(0, 12).map((p) => (
+                          <tr key={p.id} className="border-b last:border-0">
+                            <td className="py-2 pr-4">{p.title || p.addressLine1}</td>
+                            <td className="py-2 pr-4">{[p.city, p.state].filter(Boolean).join(", ")}</td>
+                            <td className="py-2 pr-4">
+                              <Badge variant="outline">{p.status}</Badge>
+                            </td>
+                            <td className="py-2">{p.price != null ? `$${p.price.toLocaleString()}` : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {portfolio.length > 12 ? (
+                      <p className="text-xs text-muted-foreground mt-2">…and {portfolio.length - 12} more.</p>
+                    ) : null}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
 
             <Card>
               <CardHeader>
