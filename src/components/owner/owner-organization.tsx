@@ -126,7 +126,6 @@ export default function OwnerOrganization() {
 
   useEffect(() => {
     void loadOrgs()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function selectOrg(org: Organization) {
