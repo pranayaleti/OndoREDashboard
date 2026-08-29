@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useSearchParams } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -24,10 +24,12 @@ import { PropertyImageCarousel } from "@/components/ui/property-image-carousel"
 import { formatUSDate } from "@/lib/us-format"
 import { CardGridSkeleton } from "@/components/ui/list-skeletons"
 
+let propertiesListCache: Property[] | null = null
+
 export default function ManagerPropertyReview() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [properties, setProperties] = useState<Property[]>([])
-  const [loading, setLoading] = useState(true)
+  const [properties, setProperties] = useState<Property[]>(() => propertiesListCache ?? [])
+  const [loading, setLoading] = useState(propertiesListCache === null)
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [reviewComment, setReviewComment] = useState("")
@@ -75,15 +77,16 @@ export default function ManagerPropertyReview() {
   }, [])
 
   const fetchProperties = async () => {
-    setLoading(true)
+    if (propertiesListCache === null) {
+      setLoading(true)
+    }
     try {
-      // Get all properties and filter by status
       const res = await propertyApi.getProperties()
       const allProperties = res.properties
-
+      propertiesListCache = allProperties
       setProperties(allProperties)
     } catch (error) {
-      console.error("Error fetching properties:", error)
+      console.error("Error fetching properties", error)
       toast({
         title: "Error",
         description: "Failed to load properties",
@@ -106,7 +109,11 @@ export default function ManagerPropertyReview() {
       })
 
       // Remove the property from the list
-      setProperties(prev => prev.filter(p => p.id !== propertyId))
+      setProperties(prev => {
+        const next = prev.filter(p => p.id !== propertyId)
+        propertiesListCache = next
+        return next
+      })
       setSelectedProperty(null)
       setReviewComment("")
       setIsDialogOpen(false)
@@ -317,6 +324,11 @@ export default function ManagerPropertyReview() {
                   >
                       <Eye className="h-4 w-4 mr-1" />
                       Review
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to={`/dashboard/properties/${property.id}`}>
+                        Inspections & plans
+                      </Link>
                     </Button>
                   </div>
                 </div>

@@ -2,9 +2,10 @@ import { Suspense, lazy } from "react"
 import { Routes, Route, Navigate } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
+import ManagerProperties from "@/components/manager/manager-property-review"
 
 const ManagerDashboard = lazy(() => import("@/components/dashboard/portals/manager/ManagerDashboard.new"))
-const ManagerProperties = lazy(() => import("@/components/manager/manager-property-review"))
+const ManagerPropertyOps = lazy(() => import("@/components/manager/manager-property-ops"))
 const ManagerTenants = lazy(() => import("@/components/manager/manager-tenants"))
 const ManagerOwners = lazy(() => import("@/components/manager/manager-owners"))
 const ManagerMaintenance = lazy(() => import("@/components/manager/manager-maintenance"))
@@ -33,6 +34,7 @@ export default function Manager() {
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/content" element={<ManagerContentStudio />} />
+            <Route path="/properties/:id" element={<ManagerPropertyOps />} />
             <Route path="/properties/*" element={<ManagerProperties />} />
             <Route path="/leads" element={<ManagerLeads />} />
             <Route path="/screening" element={<ScreeningListPage title="Tenant screening" />} />

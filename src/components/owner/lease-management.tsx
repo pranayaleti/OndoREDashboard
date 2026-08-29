@@ -49,6 +49,7 @@ interface Lease {
 
 interface LeaseManagementProps {
   propertyId: string
+  highlightLeaseId?: string
 }
 
 const statusStyles: Record<string, string> = {
@@ -61,7 +62,7 @@ const statusStyles: Record<string, string> = {
   expired: "bg-muted text-slate-500",
 }
 
-export function LeaseManagement({ propertyId }: LeaseManagementProps) {
+export function LeaseManagement({ propertyId, highlightLeaseId }: LeaseManagementProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [leases, setLeases] = useState<Lease[]>([])
@@ -171,6 +172,11 @@ export function LeaseManagement({ propertyId }: LeaseManagementProps) {
           </div>
         </CardHeader>
         <CardContent>
+          {highlightLeaseId && leases.some((l) => l.id === highlightLeaseId && l.status === "draft") && (
+            <p className="text-sm text-muted-foreground mb-3">
+              Draft lease is ready. Use Send to request signatures.
+            </p>
+          )}
           {leases.length === 0 ? (
             <div className="text-center py-12 text-slate-500">
               <FileText className="h-12 w-12 mx-auto mb-3 opacity-20" />
@@ -191,7 +197,10 @@ export function LeaseManagement({ propertyId }: LeaseManagementProps) {
                 </TableHeader>
                 <TableBody>
                   {leases.map((lease) => (
-                    <TableRow key={lease.id}>
+                    <TableRow
+                      key={lease.id}
+                      className={highlightLeaseId === lease.id ? "bg-orange-50 dark:bg-orange-950/30" : undefined}
+                    >
                       <TableCell>
                         {lease.tenant ? (
                           <div>

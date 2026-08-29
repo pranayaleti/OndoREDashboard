@@ -25,18 +25,38 @@ export default defineConfig({
   // Local dev: serve at root (localhost:3001, localhost:3001/login). Production/subpath: set VITE_BASE_PATH e.g. /ondorealestateui/
   base: process.env.VITE_BASE_PATH ?? '/',
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    holdUntilCrawlEnd: true,
+    include: [
+      'react',
+      'react/jsx-dev-runtime',
+      'react-dom',
+      'react-dom/client',
+      'react-router',
+      'react-router-dom',
+    ],
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
       "@ondo/types": path.resolve(__dirname, "src/lib/api/types/ondo-types.ts"),
+      react: path.resolve(__dirname, "node_modules/react"),
+      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      "react-router": path.resolve(__dirname, "node_modules/react-router"),
+      "react-router-dom": path.resolve(__dirname, "node_modules/react-router-dom"),
     },
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "react-router", "react-router-dom"],
   },
   server: {
     port: 3001,
     host: true,
+    warmup: {
+      clientFiles: [
+        "./src/pages/Owner.tsx",
+        "./src/pages/Manager.tsx",
+        "./src/pages/Tenant.tsx",
+        "./src/components/portal-sidebar.tsx",
+      ],
+    },
   },
   build: {
     outDir: 'dist',
@@ -65,7 +85,9 @@ export default defineConfig({
           if (
             id.includes('/react/') ||
             id.includes('/react-dom/') ||
-            id.includes('/react-router-dom/')
+            id.includes('/react-router/') ||
+            id.includes('/react-router-dom/') ||
+            id.includes('/@remix-run/router/')
           ) {
             return 'react-vendor'
           }

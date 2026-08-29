@@ -6,7 +6,7 @@ vi.mock("@/lib/i18n", () => ({
   default: mockI18n,
 }));
 
-import { formatDate, formatDateTime, formatNumber, formatCurrency } from "./locale-format";
+import { formatDate, formatDateTime, formatNumber, formatCurrency, formatOptionalNumber, toDisplayDate } from "./locale-format";
 
 describe("locale-format", () => {
   beforeEach(() => {
@@ -51,5 +51,25 @@ describe("locale-format", () => {
     mockI18n.language = "xx";
     const s = formatDate(new Date(Date.UTC(2024, 0, 2)));
     expect(s).toMatch(/2024/);
+  });
+
+  it("formats YYYY-MM-DD as a local calendar date, not a UTC instant", () => {
+    expect(formatDate("2026-09-05")).toBe("09/05/2026");
+    expect(toDisplayDate("2026-09-05").getFullYear()).toBe(2026);
+    expect(toDisplayDate("2026-09-05").getMonth()).toBe(8);
+    expect(toDisplayDate("2026-09-05").getDate()).toBe(5);
+  });
+
+  it("leaves full timestamps as Date instants", () => {
+    const d = toDisplayDate("2026-09-05T15:30:00.000Z");
+    expect(d.toISOString()).toBe("2026-09-05T15:30:00.000Z");
+  });
+
+  it("hides null and undefined counts instead of calling toLocaleString", () => {
+    expect(formatOptionalNumber(null)).toBeNull();
+    expect(formatOptionalNumber(undefined)).toBeNull();
+    expect(formatOptionalNumber(Number.NaN)).toBeNull();
+    expect(formatOptionalNumber(1200)).toBe("1,200");
+    expect(formatOptionalNumber(0)).toBe("0");
   });
 });

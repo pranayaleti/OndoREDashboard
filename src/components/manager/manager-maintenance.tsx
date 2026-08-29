@@ -491,7 +491,9 @@ export default function ManagerMaintenance() {
                           <User className="h-4 w-4 mr-1" />
                           {request.tenantFirstName && request.tenantLastName
                             ? `${request.tenantFirstName} ${request.tenantLastName}`
-                            : `Tenant ${request.tenantId?.slice(-8)}`
+                            : request.tenantId
+                              ? `Tenant ${request.tenantId.slice(-8)}`
+                              : "Vacant unit"
                           }
                         </span>
                         <span className="flex items-center">

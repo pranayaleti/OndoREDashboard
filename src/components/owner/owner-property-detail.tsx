@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useSearchParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
@@ -24,6 +24,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { propertyApi, type Property } from "@/lib/api"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
+import { formatOptionalNumber } from "@/lib/locale-format"
 import { PropertyRentScheduleSection } from "@/components/shared/property-rent-schedule-section"
 import { ScreeningConfigWizard } from "@/components/owner/screening-config-wizard"
 import { ApplicationsDashboard } from "@/components/owner/applications-dashboard"
@@ -39,9 +40,37 @@ import { RentIncreaseManager } from "@/components/owner/rent-increase-manager"
 import { LateFeeConfig } from "@/components/owner/late-fee-config"
 import { PropertyUnits } from "@/components/owner/property-units"
 
+const PROPERTY_TABS = [
+  "details",
+  "units",
+  "screening",
+  "applications",
+  "leases",
+  "co-owners",
+  "rent-schedule",
+  "location",
+  "amenities",
+  "expenses",
+  "inspections",
+  "floor-plans",
+  "operations",
+  "analytics",
+  "contact",
+] as const
+
+type PropertyTab = (typeof PROPERTY_TABS)[number]
+
+function isPropertyTab(value: string): value is PropertyTab {
+  return (PROPERTY_TABS as readonly string[]).includes(value)
+}
+
 export default function OwnerPropertyDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tabParam = searchParams.get("tab") ?? "details"
+  const activeTab: PropertyTab = isPropertyTab(tabParam) ? tabParam : "details"
+  const highlightLeaseId = searchParams.get("leaseId") ?? undefined
   
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,6 +145,7 @@ export default function OwnerPropertyDetail() {
   }
 
   const hasImages = property.photos && property.photos.length > 0
+  const sqftLabel = formatOptionalNumber(property.sqft)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -204,7 +234,16 @@ export default function OwnerPropertyDetail() {
         </div>
       )}
 
-      <Tabs defaultValue="details" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          const next = new URLSearchParams(searchParams)
+          next.set("tab", value)
+          if (value !== "leases") next.delete("leaseId")
+          setSearchParams(next, { replace: true })
+        }}
+        className="w-full"
+      >
         <TabsList className="flex flex-wrap mb-8 bg-muted/50 dark:bg-card/50 p-1 h-auto gap-1">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="units">Units</TabsTrigger>
@@ -262,7 +301,7 @@ export default function OwnerPropertyDetail() {
           {property?.id && <ApplicationsDashboard propertyId={property.id} />}
         </TabsContent>
         <TabsContent value="leases" className="space-y-6">
-          {property?.id && <LeaseManagement propertyId={property.id} />}
+          {property?.id && <LeaseManagement propertyId={property.id} highlightLeaseId={highlightLeaseId} />}
         </TabsContent>
         <TabsContent value="co-owners" className="space-y-6">
           {property?.id && <CoOwnerManagement propertyId={property.id} />}
@@ -271,7 +310,17 @@ export default function OwnerPropertyDetail() {
           {property?.id && <ExpenseTracker propertyId={property.id} />}
         </TabsContent>
         <TabsContent value="inspections" className="space-y-6">
-          {property?.id && <InspectionManager propertyId={property.id} />}
+          {property?.id && (
+            <InspectionManager
+              propertyId={property.id}
+              propertySnapshot={{
+                title: property.title,
+                bedrooms: property.bedrooms,
+                bathrooms: property.bathrooms,
+                sqft: property.sqft,
+              }}
+            />
+          )}
         </TabsContent>
         <TabsContent value="floor-plans" className="space-y-6">
           {property?.id && <PropertyFloorPlans propertyId={property.id} />}
@@ -333,22 +382,22 @@ export default function OwnerPropertyDetail() {
                 )}
                 <div className="flex flex-col gap-3 pt-1">
                   <div className="flex justify-between w-full">
-                    {property.bedrooms !== undefined && (
+                    {property.bedrooms != null && (
                       <div className="flex flex-col items-center flex-1">
                         <span className="text-slate-500 text-xs uppercase tracking-wider mb-1">Beds</span>
                         <span className="font-semibold text-lg text-slate-900 dark:text-white">{property.bedrooms}</span>
                       </div>
                     )}
-                    {property.bathrooms !== undefined && (
+                    {property.bathrooms != null && (
                       <div className="flex flex-col items-center flex-1 border-l border-green-500/20">
                         <span className="text-slate-500 text-xs uppercase tracking-wider mb-1">Baths</span>
                         <span className="font-semibold text-lg text-slate-900 dark:text-white">{property.bathrooms}</span>
                       </div>
                     )}
-                    {property.sqft !== undefined && (
+                    {sqftLabel != null && (
                       <div className="flex flex-col items-center flex-1 border-l border-green-500/20">
                         <span className="text-slate-500 text-xs uppercase tracking-wider mb-1">Sq Ft</span>
-                        <span className="font-semibold text-lg text-slate-900 dark:text-white">{property.sqft.toLocaleString()}</span>
+                        <span className="font-semibold text-lg text-slate-900 dark:text-white">{sqftLabel}</span>
                       </div>
                     )}
                   </div>
@@ -363,7 +412,7 @@ export default function OwnerPropertyDetail() {
                 Rating & Media
               </h4>
               <div className="space-y-3 text-sm">
-                {property.rating !== undefined && (
+                {property.rating != null && (
                   <div className="flex justify-between items-center pb-2 border-b border-purple-500/10">
                     <span className="text-slate-600 dark:text-slate-400">Rating:</span>
                     <div className="flex items-center bg-yellow-500/10 px-2 py-0.5 rounded text-yellow-700 dark:text-yellow-400 font-medium">
@@ -372,7 +421,7 @@ export default function OwnerPropertyDetail() {
                     </div>
                   </div>
                 )}
-                {property.reviewCount !== undefined && (
+                {property.reviewCount != null && (
                   <div className="flex justify-between items-center pb-2 border-b border-purple-500/10">
                     <span className="text-slate-600 dark:text-slate-400">Reviews:</span>
                     <span className="font-medium text-slate-900 dark:text-white">{property.reviewCount}</span>

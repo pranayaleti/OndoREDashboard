@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -51,6 +52,8 @@ import {
 import { featureApi } from "@/lib/api"
 import { screeningApi, type ScreeningViewResponse } from "@/lib/api/clients/screening"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
+import { getDashboardPath } from "@/lib/auth-utils"
 import { ApplicationComments } from "./application-comments"
 import { ScoreBreakdownTooltip } from "./score-breakdown-tooltip"
 import { ScreeningViewCard } from "@/components/tenant-screening/ScreeningViewCard"
@@ -124,6 +127,8 @@ export function ApplicationDetailView({
   onBack,
 }: ApplicationDetailViewProps) {
   const { toast } = useToast()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [app, setApp] = useState<ApplicationDetail | null>(null)
   const [checks, setChecks] = useState<VerificationCheck[]>([])
@@ -356,13 +361,26 @@ export function ApplicationDetailView({
     try {
       setActing(true)
       const rent = leaseRent ? Number(leaseRent) : undefined
-      await featureApi.applications.createLease(applicationId, {
+      const raw = await featureApi.applications.createLease(applicationId, {
         leaseStart: leaseStart || undefined,
         leaseEnd: leaseEnd || undefined,
         monthlyRent: Number.isFinite(rent) ? rent : undefined,
       })
+      const envelope = raw && typeof raw === "object" ? (raw as { data?: unknown }) : null
+      const row =
+        envelope?.data && typeof envelope.data === "object"
+          ? (envelope.data as { id?: unknown; propertyId?: unknown })
+          : (raw as { id?: unknown; propertyId?: unknown } | null)
+      const leaseId = typeof row?.id === "string" ? row.id : null
+      const propertyId =
+        (typeof row?.propertyId === "string" && row.propertyId) || app?.propertyId
       toast({ title: "Draft lease created" })
       setShowCreateLease(false)
+      if (propertyId && user) {
+        const params = new URLSearchParams({ tab: "leases" })
+        if (leaseId) params.set("leaseId", leaseId)
+        navigate(`${getDashboardPath(user.role)}/properties/${propertyId}?${params.toString()}`)
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to create lease"
       toast({ title: message, variant: "destructive" })

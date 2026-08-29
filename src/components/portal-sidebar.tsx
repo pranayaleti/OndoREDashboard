@@ -56,10 +56,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/auth-context"
 import { getDashboardPath, type UserRole } from "@/lib/auth-utils"
-import { cn } from "@/lib/utils"
+import { cn, isUuidPathSegment, pathHasResourceId } from "@/lib/utils"
+import i18n from "@/lib/i18n"
 import { Logo } from "@/components/logo"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/theme-provider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -71,7 +72,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useNotifications } from "@/hooks/use-notifications"
 import { Menu } from "lucide-react"
-import { useTranslation } from "react-i18next"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { PortalOnboardingTour } from "@/components/portal-onboarding-tour"
@@ -95,6 +95,21 @@ interface NavSection {
 }
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string
+
+/** Bind to the i18n singleton so PortalSidebar never depends on I18nContext. */
+function useI18nT(): TranslateFn {
+  const [, setRevision] = useState(0)
+  useEffect(() => {
+    const bump = () => setRevision((n) => n + 1)
+    i18n.on("loaded", bump)
+    i18n.on("languageChanged", bump)
+    return () => {
+      i18n.off("loaded", bump)
+      i18n.off("languageChanged", bump)
+    }
+  }, [])
+  return (key, options) => String(i18n.t(key, options))
+}
 
 // Define navigation items for each role
 const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
@@ -409,7 +424,9 @@ function SidebarLayout({
   const canAccessNotifications = true
   const { unreadCount } = useNotifications(canAccessNotifications)
   const pathSegments = location.pathname.split("/").filter(Boolean)
-  const crumbSegments = pathSegments[0] ? pathSegments.slice(1) : []
+  const crumbSegments = (pathSegments[0] ? pathSegments.slice(1) : []).filter(
+    (segment) => !isUuidPathSegment(segment),
+  )
   const breadcrumbItems = crumbSegments.map((segment, index) => ({
     label: humanizeSegment(segment),
     href:
@@ -731,6 +748,12 @@ function SidebarLayout({
                       </p>
                       <h1 className="truncate text-sm font-semibold text-foreground md:text-base">Dashboard</h1>
                     </div>
+                  ) : pathHasResourceId(location.pathname) ? (
+                    <div className="min-w-0">
+                      <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                        {getPortalTitle(user.role)}
+                      </p>
+                    </div>
                   ) : (
                     <Breadcrumb items={breadcrumbItems} className="overflow-hidden" />
                   )}
@@ -753,11 +776,11 @@ function SidebarLayout({
 
 export function PortalSidebar({ children }: PortalSidebarProps) {
   const { user, logout } = useAuth()
-  const { t } = useTranslation(["common", "owner", "tenant"])
+  const t = useI18nT()
   const location = useLocation()
   const isDesktop = useMediaQuery("(min-width: 1024px)")
   const sidebarKey = isDesktop ? "desktop" : "mobile"
-  
+
   if (!user) {
     return <>{children}</>
   }

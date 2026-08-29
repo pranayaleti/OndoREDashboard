@@ -145,8 +145,8 @@ export default function OwnerProfile() {
         const activeTenants = propertiesWithTenants.length
 
         // Calculate total monthly rent (portfolio value)
-        const totalMonthlyRent = propertiesWithTenants.reduce((sum: number, property: { price?: number }) => {
-          return sum + (property.price || 0)
+        const totalMonthlyRent = propertiesWithTenants.reduce((sum, property) => {
+          return sum + (property.price ?? 0)
         }, 0)
         
         // Format portfolio value

@@ -37,7 +37,7 @@ export interface DownloadDocumentResponse {
 }
 
 export interface CreateDocumentUploadUrlRequest {
-  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure";
+  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure" | "floor_plan";
   name: string;
   fileName: string;
   contentType: string;
@@ -54,7 +54,7 @@ export interface CreateDocumentUploadUrlResponse {
 
 export interface ConfirmDocumentUploadRequest {
   documentId: string;
-  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure";
+  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure" | "floor_plan";
   name: string;
   storagePath: string;
   mimeType: string;
@@ -129,7 +129,9 @@ export const documentsApi = {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to upload document");
+      throw new Error(
+        `File storage rejected the upload (${response.status}). Check that storage is configured.`,
+      );
     }
   },
 

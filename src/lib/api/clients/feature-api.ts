@@ -1789,7 +1789,6 @@ export const featureApi = {
         leaseEnd?: string;
         monthlyRent?: number;
         securityDeposit?: number;
-        tenantId?: string;
       } = {},
     ): Promise<unknown> {
       const headers = getAuthHeaders();
@@ -1971,6 +1970,30 @@ export const featureApi = {
         undefined,
         headers,
       );
+    },
+    generateLayout(id: string, source?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/inspections/${id}/layout`, source ? { source } : {}, headers);
+    },
+    convertIssuesToWorkOrders(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/inspections/${id}/work-orders`, undefined, headers);
+    },
+    sign(id: string, party: 'owner' | 'tenant', name: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/inspections/${id}/sign`, { party, name }, headers);
+    },
+    createReport(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/inspections/${id}/report`, undefined, headers);
+    },
+    getReport(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/inspections/${id}/report`, undefined, headers);
+    },
+    updateItem(itemId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/inspection-items/${itemId}`, data, headers);
     },
   },
 

@@ -20,8 +20,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { ClipboardCheck, Plus, Eye } from "lucide-react"
-import { featureApi } from "@/lib/api"
+import { featureApi, propertyApi } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
+import { getDashboardPath } from "@/lib/auth-utils"
+import { InspectionWalkthrough, type PropertySnapshot, type WalkthroughInspection } from "@/components/owner/inspection-walkthrough"
+import { formatDate } from "@/lib/locale-format"
+import { pickCurrentLease } from "@/lib/inspection-walkthrough-ui"
 
 interface Inspection {
   id: string
@@ -35,14 +40,7 @@ interface Inspection {
 
 interface InspectionManagerProps {
   propertyId: string
-}
-
-interface InspectionItem {
-  id: string
-  area: string
-  itemName: string
-  condition?: string
-  notes?: string
+  propertySnapshot?: PropertySnapshot
 }
 
 interface InspectionDetail {
@@ -52,7 +50,11 @@ interface InspectionDetail {
   scheduledDate: string
   overallCondition?: string | null
   notes?: string | null
-  items?: InspectionItem[]
+  ownerSignatureName?: string | null
+  ownerSignedAt?: string | null
+  tenantSignatureName?: string | null
+  tenantSignedAt?: string | null
+  items?: WalkthroughInspection["items"]
 }
 
 const typeLabels: Record<string, string> = {
@@ -66,8 +68,6 @@ const typeLabels: Record<string, string> = {
   custom: "Custom",
 }
 
-const ISSUE_CONDITIONS = new Set(["poor", "damaged", "missing"])
-
 const statusColors: Record<string, string> = {
   scheduled: "bg-blue-100 text-blue-700",
   in_progress: "bg-amber-100 text-amber-700",
@@ -75,25 +75,60 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-muted text-slate-500",
 }
 
-export function InspectionManager({ propertyId }: InspectionManagerProps) {
+export function InspectionManager({ propertyId, propertySnapshot }: InspectionManagerProps) {
   const { toast } = useToast()
+  const { user } = useAuth()
+  const maintenanceHref = `${getDashboardPath(user?.role ?? "owner")}/maintenance`
   const [loading, setLoading] = useState(true)
   const [inspections, setInspections] = useState<Inspection[]>([])
   const [createOpen, setCreateOpen] = useState(false)
   const [detailId, setDetailId] = useState<string | null>(null)
   const [detail, setDetail] = useState<InspectionDetail | null>(null)
+  const [snapshot, setSnapshot] = useState<PropertySnapshot>(propertySnapshot ?? {})
 
   // Create form
   const [inspType, setInspType] = useState("periodic")
   const [schedDate, setSchedDate] = useState("")
   const [notes, setNotes] = useState("")
   const [saving, setSaving] = useState(false)
-  const [itemArea, setItemArea] = useState("")
-  const [itemName, setItemName] = useState("")
-  const [itemCondition, setItemCondition] = useState("good")
-  const [convertingId, setConvertingId] = useState<string | null>(null)
 
   useEffect(() => { load() }, [propertyId])
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadSnapshot() {
+      let next: PropertySnapshot = { ...(propertySnapshot ?? {}) }
+      if (!propertySnapshot) {
+        try {
+          const res = await propertyApi.getProperty(propertyId)
+          next = {
+            title: res.property.title,
+            bedrooms: res.property.bedrooms,
+            bathrooms: res.property.bathrooms,
+            sqft: res.property.sqft,
+          }
+        } catch {
+          /* property summary is optional for the walkthrough */
+        }
+      }
+      try {
+        const leases = await featureApi.leases.listForProperty(propertyId) as Array<{
+          status?: string
+          leaseStart?: string
+          leaseEnd?: string
+        }>
+        const lease = pickCurrentLease(leases)
+        if (lease?.leaseStart && lease.leaseEnd) {
+          next = { ...next, leaseStart: lease.leaseStart, leaseEnd: lease.leaseEnd }
+        }
+      } catch {
+        /* lease dates are optional on the start card */
+      }
+      if (!cancelled) setSnapshot(next)
+    }
+    void loadSnapshot()
+    return () => { cancelled = true }
+  }, [propertyId, propertySnapshot])
 
   const load = async () => {
     try {
@@ -139,49 +174,6 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
     }
   }
 
-  const completeInspection = async (id: string, condition: string) => {
-    try {
-      await featureApi.inspections.update(id, {
-        status: "completed",
-        overallCondition: condition,
-        completedDate: new Date().toISOString().slice(0, 10),
-      })
-      toast({ title: "Inspection completed" })
-      setDetailId(null)
-      await load()
-    } catch {
-      toast({ title: "Failed to update", variant: "destructive" })
-    }
-  }
-
-  const addItem = async () => {
-    if (!detailId || !itemArea.trim() || !itemName.trim()) return
-    try {
-      await featureApi.inspections.addItems(detailId, [
-        { area: itemArea.trim(), itemName: itemName.trim(), condition: itemCondition },
-      ])
-      toast({ title: "Checklist item added" })
-      setItemArea("")
-      setItemName("")
-      await loadDetail(detailId)
-    } catch {
-      toast({ title: "Failed to add item", variant: "destructive" })
-    }
-  }
-
-  const convertItem = async (itemId: string) => {
-    if (!detailId) return
-    try {
-      setConvertingId(itemId)
-      await featureApi.inspections.convertItemToMaintenance(detailId, itemId)
-      toast({ title: "Maintenance request opened" })
-    } catch {
-      toast({ title: "Failed to open maintenance", variant: "destructive" })
-    } finally {
-      setConvertingId(null)
-    }
-  }
-
   if (loading) {
     return <div className="space-y-3"><Skeleton className="h-24 w-full" /><Skeleton className="h-24 w-full" /></div>
   }
@@ -206,7 +198,7 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
               <div>
                 <p className="font-medium text-sm">{typeLabels[insp.inspectionType] || insp.inspectionType} Inspection</p>
                 <p className="text-xs text-slate-500">
-                  {new Date(insp.scheduledDate).toLocaleDateString()}
+                  {formatDate(insp.scheduledDate)}
                   {insp.overallCondition && `: ${insp.overallCondition}`}
                 </p>
               </div>
@@ -214,8 +206,13 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                 <Badge className={statusColors[insp.status] || statusColors.scheduled}>
                   {insp.status.replace("_", " ")}
                 </Badge>
-                <Button variant="ghost" size="icon" onClick={() => loadDetail(insp.id)}>
-                  <Eye className="h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => loadDetail(insp.id)}
+                  aria-label="View inspection"
+                >
+                  <Eye className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             </div>
@@ -267,78 +264,28 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
 
       {/* Detail Dialog */}
       <Dialog open={!!detailId} onOpenChange={() => setDetailId(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Inspection Details</DialogTitle>
+            <DialogTitle>
+              {typeLabels[detail?.inspectionType ?? ""] || "Inspection"} walkthrough
+            </DialogTitle>
+            <DialogDescription>
+              Capture each item, then finish, sign, and open work orders.
+            </DialogDescription>
           </DialogHeader>
           {detail && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-slate-500">Type:</span> {typeLabels[detail.inspectionType]}</div>
-                <div><span className="text-slate-500">Status:</span> {detail.status}</div>
-                <div><span className="text-slate-500">Scheduled:</span> {new Date(detail.scheduledDate).toLocaleDateString()}</div>
-                {detail.overallCondition && <div><span className="text-slate-500">Condition:</span> {detail.overallCondition}</div>}
-              </div>
-              {detail.notes && <p className="text-sm bg-muted dark:bg-card p-3 rounded">{detail.notes}</p>}
-
-              {detail.items && detail.items.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Checklist Items</p>
-                  {detail.items.map((item: InspectionItem) => (
-                    <div key={item.id} className="flex items-center justify-between gap-2 text-sm p-2 bg-muted dark:bg-card rounded">
-                      <span>{item.area}: {item.itemName}</span>
-                      <div className="flex items-center gap-2">
-                        {item.condition && (
-                          <Badge variant="secondary" className="text-xs capitalize">{item.condition}</Badge>
-                        )}
-                        {ISSUE_CONDITIONS.has(item.condition ?? "") && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={convertingId === item.id}
-                            onClick={() => convertItem(item.id)}
-                          >
-                            {convertingId === item.id ? "Opening..." : "Open ticket"}
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="space-y-2 border-t pt-3">
-                <p className="text-sm font-medium">Add checklist item</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <Input placeholder="Area" value={itemArea} onChange={(e) => setItemArea(e.target.value)} />
-                  <Input placeholder="Item" value={itemName} onChange={(e) => setItemName(e.target.value)} />
-                </div>
-                <Select value={itemCondition} onValueChange={setItemCondition}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="excellent">Excellent</SelectItem>
-                    <SelectItem value="good">Good</SelectItem>
-                    <SelectItem value="fair">Fair</SelectItem>
-                    <SelectItem value="poor">Poor</SelectItem>
-                    <SelectItem value="damaged">Damaged</SelectItem>
-                    <SelectItem value="missing">Missing</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button size="sm" variant="outline" onClick={addItem} disabled={!itemArea.trim() || !itemName.trim()}>
-                  Add item
-                </Button>
-              </div>
-
-              {detail.status !== "completed" && detail.status !== "cancelled" && (
-                <div className="flex gap-2">
-                  {["excellent", "good", "fair", "poor"].map((cond) => (
-                    <Button key={cond} variant="outline" size="sm" className="capitalize" onClick={() => completeInspection(detail.id, cond)}>
-                      {cond}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
+            <InspectionWalkthrough
+              key={`${detail.id}-${detail.items?.length ?? 0}`}
+              inspection={detail as WalkthroughInspection}
+              propertyId={propertyId}
+              property={snapshot}
+              maintenanceHref={maintenanceHref}
+              onReload={async () => {
+                await loadDetail(detail.id)
+                await load()
+              }}
+              onClose={() => setDetailId(null)}
+            />
           )}
         </DialogContent>
       </Dialog>

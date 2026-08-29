@@ -1,5 +1,5 @@
 import { DEFAULT_US_COUNTRY, DEFAULT_US_COUNTRY_CODE, US_PHONE_REGEX, US_ZIP_REGEX } from "@/constants"
-import { formatCurrency, formatDate } from "@/lib/locale-format"
+import { formatCurrency, formatDate, toDisplayDate } from "@/lib/locale-format"
 
 const US_DATE_DEFAULTS: Intl.DateTimeFormatOptions = {
   month: "2-digit",
@@ -9,7 +9,7 @@ const US_DATE_DEFAULTS: Intl.DateTimeFormatOptions = {
 
 export function formatUSDate(value?: string | number | Date, options?: Intl.DateTimeFormatOptions) {
   if (!value) return "N/A"
-  const date = value instanceof Date ? value : new Date(value)
+  const date = toDisplayDate(value)
   if (Number.isNaN(date.getTime())) return "N/A"
   return formatDate(date, { ...US_DATE_DEFAULTS, ...options })
 }

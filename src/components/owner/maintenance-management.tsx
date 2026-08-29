@@ -59,10 +59,13 @@ function mapApiToOwnerRequest(api: {
   tenantFirstName?: string | null
   tenantLastName?: string | null
   tenantEmail?: string | null
+  tenantId?: string | null
   createdAt: string
 }): OwnerMaintenanceRequest {
   const property = (api.propertyTitle ?? api.propertyAddress ?? "").trim() || "N/A"
-  const tenant = [api.tenantFirstName, api.tenantLastName].filter(Boolean).join(" ").trim() || (api.tenantEmail ?? "") || "N/A"
+  const named =
+    [api.tenantFirstName, api.tenantLastName].filter(Boolean).join(" ").trim() || (api.tenantEmail ?? "")
+  const tenant = named || (api.tenantId ? "Tenant" : "Vacant unit")
   const date = api.createdAt ?? ""
   const status = api.status === "in_progress" ? "in-progress" : api.status
   return {
@@ -129,6 +132,7 @@ export function OwnerMaintenanceManagement() {
         tenantFirstName: r.tenantFirstName ?? null,
         tenantLastName: r.tenantLastName ?? null,
         tenantEmail: r.tenantEmail ?? null,
+        tenantId: r.tenantId ?? null,
         createdAt: r.createdAt ?? "",
       })))
     } catch (err: unknown) {
