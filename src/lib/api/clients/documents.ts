@@ -37,7 +37,7 @@ export interface DownloadDocumentResponse {
 }
 
 export interface CreateDocumentUploadUrlRequest {
-  type: "lease" | "property" | "maintenance" | "financial";
+  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure";
   name: string;
   fileName: string;
   contentType: string;
@@ -54,7 +54,7 @@ export interface CreateDocumentUploadUrlResponse {
 
 export interface ConfirmDocumentUploadRequest {
   documentId: string;
-  type: "lease" | "property" | "maintenance" | "financial";
+  type: "lease" | "property" | "maintenance" | "financial" | "addendum" | "disclosure";
   name: string;
   storagePath: string;
   mimeType: string;

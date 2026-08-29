@@ -102,6 +102,8 @@ export function AddDocumentDialog({ onAddDocument }: AddDocumentDialogProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="lease">Lease</SelectItem>
+                  <SelectItem value="addendum">Addendum</SelectItem>
+                  <SelectItem value="disclosure">Disclosure</SelectItem>
                   <SelectItem value="insurance">Insurance</SelectItem>
                   <SelectItem value="tax">Tax</SelectItem>
                   <SelectItem value="maintenance">Maintenance</SelectItem>

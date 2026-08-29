@@ -4,6 +4,7 @@ import { leaseManagementApi } from '../api';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { FileSignature, Loader2 } from 'lucide-react';
+import { LeaseTemplatePicker } from '@/components/shared/lease-template-picker';
 
 export function LeaseManagementOverview() {
   const { toast } = useToast();
@@ -37,6 +38,7 @@ export function LeaseManagementOverview() {
   };
 
   return (
+    <div className="space-y-4">
     <div className="rounded-lg border border-border bg-background p-6 space-y-4">
       <div className="flex items-center justify-between">
         <div>
@@ -80,6 +82,8 @@ export function LeaseManagementOverview() {
           ))}
         </div>
       )}
+    </div>
+    <LeaseTemplatePicker />
     </div>
   );
 }

@@ -28,6 +28,7 @@ const OwnerMaintenanceManagement = lazy(() => import("@/components/owner/mainten
 const OwnerCalendar = lazy(() => import("@/components/owner/owner-calendar"))
 const OwnerNotifications = lazy(() => import("@/components/owner/owner-notifications"))
 const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
@@ -58,6 +59,7 @@ export default function Owner() {
             <Route path="/my-documents" element={<DocumentsPanel />} />
             <Route path="/settings" element={<OwnerSettings />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
+            <Route path="/content" element={<ManagerContentStudio />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             {/* Property creation routes - both old and new URLs */}
             <Route path="/properties/add" element={<AddPropertyForm />} />

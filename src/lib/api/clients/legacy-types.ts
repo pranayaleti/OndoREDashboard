@@ -201,7 +201,7 @@ export interface Property {
   specialties?: string[];
   services?: string[];
   valueRanges?: string[];
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'occupied';
   createdAt: string;
   updatedAt: string;
   photos?: PropertyPhoto[];

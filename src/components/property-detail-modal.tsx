@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { type Property } from "@/lib/api"
 import { formatUSDate, formatUSD, formatUSPhone } from "@/lib/us-format"
 import { PropertyRentScheduleSection } from "@/components/shared/property-rent-schedule-section"
+import { ShowingAvailabilityEditor } from "@/components/leads/showing-availability-editor"
 
 interface PropertyDetailModalProps {
   property: Property | null
@@ -152,9 +153,10 @@ export function PropertyDetailModal({
             )}
           </div>
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid grid-cols-5 mb-6">
+            <TabsList className={`grid mb-6 ${showActions ? "grid-cols-6" : "grid-cols-5"}`}>
               <TabsTrigger value="details">Property Details</TabsTrigger>
               <TabsTrigger value="rent-schedule">Rent schedule</TabsTrigger>
+              {showActions ? <TabsTrigger value="showings">Showings</TabsTrigger> : null}
               <TabsTrigger value="location">Location</TabsTrigger>
               <TabsTrigger value="amenities">Amenities</TabsTrigger>
               <TabsTrigger value="contact">Contact</TabsTrigger>
@@ -162,6 +164,11 @@ export function PropertyDetailModal({
             <TabsContent value="rent-schedule" className="space-y-4">
               <PropertyRentScheduleSection propertyId={property.id} />
             </TabsContent>
+            {showActions ? (
+              <TabsContent value="showings" className="space-y-4">
+                <ShowingAvailabilityEditor propertyId={property.id} propertyStatus={property.status} />
+              </TabsContent>
+            ) : null}
             <TabsContent value="details" className="space-y-6">
               {/* Property Overview Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

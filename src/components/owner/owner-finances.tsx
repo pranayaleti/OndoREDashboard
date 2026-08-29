@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/auth-context"
 import { DEMO_OWNER_FINANCIAL_SUMMARY, isOwnerDemoUser } from "@/lib/seed-data"
 import { OwnerConnectPayouts } from "@/components/owner/owner-connect-payouts"
+import { OwnerStatementsView } from "@/components/owner/owner-statements-view"
 
 function formatDateRange(start: string, end: string): string {
   return `${start} to ${end}`
@@ -34,10 +35,10 @@ function getDefaultDateRange(): { startDate: string; endDate: string } {
 
 const API_BASE_URL = getApiBaseUrl()
 
-type OwnerFinanceTab = "overview" | "income" | "expenses"
+type OwnerFinanceTab = "overview" | "income" | "expenses" | "statements"
 
 function parseOwnerFinanceTab(param: string | null): OwnerFinanceTab {
-  if (param === "income" || param === "expenses" || param === "overview") return param
+  if (param === "income" || param === "expenses" || param === "overview" || param === "statements") return param
   return "overview"
 }
 
@@ -249,10 +250,11 @@ export default function OwnerFinances() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setOwnerFinanceTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="income">Income Analysis</TabsTrigger>
           <TabsTrigger value="expenses">Expense Breakdown</TabsTrigger>
+          <TabsTrigger value="statements">Statements</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -369,6 +371,10 @@ export default function OwnerFinances() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="statements" className="space-y-6">
+          <OwnerStatementsView />
         </TabsContent>
       </Tabs>
     </div>

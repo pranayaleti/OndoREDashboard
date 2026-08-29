@@ -46,6 +46,7 @@ import {
   Link2,
   BadgeDollarSign,
   Loader2,
+  FilePlus2,
 } from "lucide-react"
 import { featureApi } from "@/lib/api"
 import { screeningApi, type ScreeningViewResponse } from "@/lib/api/clients/screening"
@@ -75,6 +76,7 @@ interface VerificationCheck {
 interface ApplicationDetail {
   id: string
   propertyId: string
+  applicantId: string | null
   firstName: string
   lastName: string
   email: string
@@ -138,6 +140,10 @@ export function ApplicationDetailView({
   const [linkedScreening, setLinkedScreening] = useState<ScreeningViewResponse | null>(null)
   /** Stable id from attach / package resolution. Preferred over email heuristics. */
   const [linkedScreeningId, setLinkedScreeningId] = useState<string | null>(null)
+  const [showCreateLease, setShowCreateLease] = useState(false)
+  const [leaseStart, setLeaseStart] = useState("")
+  const [leaseEnd, setLeaseEnd] = useState("")
+  const [leaseRent, setLeaseRent] = useState("")
 
   useEffect(() => {
     setLinkedScreeningId(null)
@@ -336,6 +342,35 @@ export function ApplicationDetailView({
     }
   }
 
+  const openCreateLease = () => {
+    const start = app?.desiredMoveIn?.slice(0, 10) || new Date().toISOString().slice(0, 10)
+    const endDate = new Date(`${start}T00:00:00Z`)
+    endDate.setUTCFullYear(endDate.getUTCFullYear() + 1)
+    setLeaseStart(start)
+    setLeaseEnd(endDate.toISOString().slice(0, 10))
+    setLeaseRent("")
+    setShowCreateLease(true)
+  }
+
+  const handleCreateLease = async () => {
+    try {
+      setActing(true)
+      const rent = leaseRent ? Number(leaseRent) : undefined
+      await featureApi.applications.createLease(applicationId, {
+        leaseStart: leaseStart || undefined,
+        leaseEnd: leaseEnd || undefined,
+        monthlyRent: Number.isFinite(rent) ? rent : undefined,
+      })
+      toast({ title: "Draft lease created" })
+      setShowCreateLease(false)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to create lease"
+      toast({ title: message, variant: "destructive" })
+    } finally {
+      setActing(false)
+    }
+  }
+
   const handleReject = async () => {
     try {
       setActing(true)
@@ -399,6 +434,11 @@ export function ApplicationDetailView({
           {["rejected", "withdrawn"].includes(app.status) && (
             <Button variant="outline" onClick={handleAllowReapply} disabled={acting}>
               <RefreshCw className="h-4 w-4 mr-1.5" /> Allow Re-apply
+            </Button>
+          )}
+          {app.status === "approved" && (
+            <Button variant="outline" onClick={openCreateLease} disabled={acting}>
+              <FilePlus2 className="h-4 w-4 mr-1.5" /> Create lease
             </Button>
           )}
           {!["approved", "rejected", "withdrawn"].includes(app.status) && (
@@ -730,6 +770,47 @@ export function ApplicationDetailView({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showCreateLease} onOpenChange={setShowCreateLease}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create draft lease</DialogTitle>
+            <DialogDescription>
+              {app.applicantId
+                ? "Creates a draft lease from this approval. Recurring rent is generated when the lease is signed."
+                : "This applicant does not have a tenant account yet. Invite them first, then create the lease."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label htmlFor="lease-start">Start</Label>
+              <Input id="lease-start" type="date" value={leaseStart} onChange={(e) => setLeaseStart(e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="lease-end">End</Label>
+              <Input id="lease-end" type="date" value={leaseEnd} onChange={(e) => setLeaseEnd(e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="lease-rent">Monthly rent (optional if listing has a price)</Label>
+              <Input
+                id="lease-rent"
+                type="number"
+                min="0"
+                value={leaseRent}
+                onChange={(e) => setLeaseRent(e.target.value)}
+                placeholder="Uses listing price if blank"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateLease(false)}>Cancel</Button>
+            <Button onClick={handleCreateLease} disabled={acting || !app.applicantId}>
+              {acting ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : null}
+              Create draft
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Approve Dialog */}
       <AlertDialog open={showApprove} onOpenChange={setShowApprove}>

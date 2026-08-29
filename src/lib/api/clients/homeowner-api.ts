@@ -114,6 +114,8 @@ export interface HomeownerSearchResult {
 export type PropertyDocumentType =
   | "insurance"
   | "lease"
+  | "addendum"
+  | "disclosure"
   | "mortgage"
   | "tax"
   | "warranty"

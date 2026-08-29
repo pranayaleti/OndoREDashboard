@@ -42,6 +42,7 @@ interface InspectionItem {
   area: string
   itemName: string
   condition?: string
+  notes?: string
 }
 
 interface InspectionDetail {
@@ -57,9 +58,15 @@ interface InspectionDetail {
 const typeLabels: Record<string, string> = {
   move_in: "Move-In",
   move_out: "Move-Out",
-  periodic: "Periodic",
+  periodic: "Routine",
   emergency: "Emergency",
+  annual: "Annual",
+  pre_lease: "Pre-Lease",
+  post_maintenance: "Post-Maintenance",
+  custom: "Custom",
 }
+
+const ISSUE_CONDITIONS = new Set(["poor", "damaged", "missing"])
 
 const statusColors: Record<string, string> = {
   scheduled: "bg-blue-100 text-blue-700",
@@ -81,6 +88,10 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
   const [schedDate, setSchedDate] = useState("")
   const [notes, setNotes] = useState("")
   const [saving, setSaving] = useState(false)
+  const [itemArea, setItemArea] = useState("")
+  const [itemName, setItemName] = useState("")
+  const [itemCondition, setItemCondition] = useState("good")
+  const [convertingId, setConvertingId] = useState<string | null>(null)
 
   useEffect(() => { load() }, [propertyId])
 
@@ -143,6 +154,34 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
     }
   }
 
+  const addItem = async () => {
+    if (!detailId || !itemArea.trim() || !itemName.trim()) return
+    try {
+      await featureApi.inspections.addItems(detailId, [
+        { area: itemArea.trim(), itemName: itemName.trim(), condition: itemCondition },
+      ])
+      toast({ title: "Checklist item added" })
+      setItemArea("")
+      setItemName("")
+      await loadDetail(detailId)
+    } catch {
+      toast({ title: "Failed to add item", variant: "destructive" })
+    }
+  }
+
+  const convertItem = async (itemId: string) => {
+    if (!detailId) return
+    try {
+      setConvertingId(itemId)
+      await featureApi.inspections.convertItemToMaintenance(detailId, itemId)
+      toast({ title: "Maintenance request opened" })
+    } catch {
+      toast({ title: "Failed to open maintenance", variant: "destructive" })
+    } finally {
+      setConvertingId(null)
+    }
+  }
+
   if (loading) {
     return <div className="space-y-3"><Skeleton className="h-24 w-full" /><Skeleton className="h-24 w-full" /></div>
   }
@@ -199,8 +238,12 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                 <SelectContent>
                   <SelectItem value="move_in">Move-In</SelectItem>
                   <SelectItem value="move_out">Move-Out</SelectItem>
-                  <SelectItem value="periodic">Periodic</SelectItem>
+                  <SelectItem value="periodic">Routine</SelectItem>
+                  <SelectItem value="annual">Annual</SelectItem>
+                  <SelectItem value="pre_lease">Pre-Lease</SelectItem>
+                  <SelectItem value="post_maintenance">Post-Maintenance</SelectItem>
                   <SelectItem value="emergency">Emergency</SelectItem>
+                  <SelectItem value="custom">Custom</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -242,15 +285,49 @@ export function InspectionManager({ propertyId }: InspectionManagerProps) {
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Checklist Items</p>
                   {detail.items.map((item: InspectionItem) => (
-                    <div key={item.id} className="flex items-center justify-between text-sm p-2 bg-muted dark:bg-card rounded">
+                    <div key={item.id} className="flex items-center justify-between gap-2 text-sm p-2 bg-muted dark:bg-card rounded">
                       <span>{item.area}: {item.itemName}</span>
-                      {item.condition && (
-                        <Badge variant="secondary" className="text-xs capitalize">{item.condition}</Badge>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {item.condition && (
+                          <Badge variant="secondary" className="text-xs capitalize">{item.condition}</Badge>
+                        )}
+                        {ISSUE_CONDITIONS.has(item.condition ?? "") && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={convertingId === item.id}
+                            onClick={() => convertItem(item.id)}
+                          >
+                            {convertingId === item.id ? "Opening..." : "Open ticket"}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
+
+              <div className="space-y-2 border-t pt-3">
+                <p className="text-sm font-medium">Add checklist item</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input placeholder="Area" value={itemArea} onChange={(e) => setItemArea(e.target.value)} />
+                  <Input placeholder="Item" value={itemName} onChange={(e) => setItemName(e.target.value)} />
+                </div>
+                <Select value={itemCondition} onValueChange={setItemCondition}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="excellent">Excellent</SelectItem>
+                    <SelectItem value="good">Good</SelectItem>
+                    <SelectItem value="fair">Fair</SelectItem>
+                    <SelectItem value="poor">Poor</SelectItem>
+                    <SelectItem value="damaged">Damaged</SelectItem>
+                    <SelectItem value="missing">Missing</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button size="sm" variant="outline" onClick={addItem} disabled={!itemArea.trim() || !itemName.trim()}>
+                  Add item
+                </Button>
+              </div>
 
               {detail.status !== "completed" && detail.status !== "cancelled" && (
                 <div className="flex gap-2">

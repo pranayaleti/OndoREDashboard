@@ -275,7 +275,16 @@ const DEFAULT_FOLDERS: DocumentFolder[] = [
   },
 ]
 
-const DEFAULT_CATEGORIES = ["lease", "insurance", "tax", "maintenance", "inspection", "financial"]
+const DEFAULT_CATEGORIES = [
+  "lease",
+  "addendum",
+  "disclosure",
+  "insurance",
+  "tax",
+  "maintenance",
+  "inspection",
+  "financial",
+]
 
 function mapRecordToDocument(r: DocumentListRecord): Document {
   const typeFromMime = (mime?: string): "pdf" | "image" | "spreadsheet" | "document" => {

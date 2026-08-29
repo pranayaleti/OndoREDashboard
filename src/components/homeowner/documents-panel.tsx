@@ -28,6 +28,8 @@ import {
 const DOC_TYPE_OPTIONS: { value: PropertyDocumentType; label: string }[] = [
   { value: "insurance", label: "Insurance" },
   { value: "lease", label: "Lease" },
+  { value: "addendum", label: "Addendum" },
+  { value: "disclosure", label: "Disclosure" },
   { value: "mortgage", label: "Mortgage" },
   { value: "tax", label: "Tax" },
   { value: "warranty", label: "Warranty" },

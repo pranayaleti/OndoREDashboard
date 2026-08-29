@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { propertyApi, type Property } from "@/lib/api"
+import { propertyApi, documentsApi, featureApi, type Property, type DocumentListRecord } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { formatCurrency as formatCurrencyLocale } from "@/lib/locale-format"
+import { groupLeasePacketDocuments, parseWatchForDescription, disclosureRulesFromUnknown } from "@/lib/lease-packet"
 
 const formatCurrency = (value?: number | null) =>
   formatCurrencyLocale(value || 0, "USD", { maximumFractionDigits: 0 })
@@ -28,6 +29,11 @@ export default function TenantLeaseDetails() {
   const { toast } = useToast()
   const [property, setProperty] = useState<Property | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [documents, setDocuments] = useState<DocumentListRecord[]>([])
+  const [documentsError, setDocumentsError] = useState<string | null>(null)
+  const [documentsLoading, setDocumentsLoading] = useState(true)
+  const [watchForRules, setWatchForRules] = useState<Array<{ id: string; title: string; description: string }>>([])
+  const [watchForError, setWatchForError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchLease = async () => {
@@ -51,6 +57,39 @@ export default function TenantLeaseDetails() {
 
     fetchLease()
   }, [toast])
+
+  useEffect(() => {
+    const loadDocuments = async () => {
+      setDocumentsLoading(true)
+      setDocumentsError(null)
+      try {
+        const { data } = await documentsApi.list()
+        setDocuments(data)
+      } catch {
+        setDocuments([])
+        setDocumentsError("We could not load your lease documents. Try again in a moment.")
+      } finally {
+        setDocumentsLoading(false)
+      }
+    }
+    void loadDocuments()
+  }, [])
+
+  useEffect(() => {
+    const stateCode = (property?.state || "UT").trim().toUpperCase()
+    const state = /^[A-Z]{2}$/.test(stateCode) ? stateCode : "UT"
+    const loadRules = async () => {
+      setWatchForError(null)
+      try {
+        const rows = await featureApi.compliance.getRules(state)
+        setWatchForRules(disclosureRulesFromUnknown(rows))
+      } catch {
+        setWatchForRules([])
+        setWatchForError("Watch-for notes are unavailable right now. This is not legal advice.")
+      }
+    }
+    void loadRules()
+  }, [property?.state])
 
   const leaseMeta = useMemo(() => {
     if (!property) return null
@@ -116,26 +155,20 @@ export default function TenantLeaseDetails() {
     },
   ]
 
-  const documents = [
-    {
-      title: "Master Lease Agreement",
-      type: "PDF",
-      updatedAt: leaseMeta?.leaseStart,
-      size: "2.1 MB",
-    },
-    {
-      title: "Move-in Condition Report",
-      type: "PDF",
-      updatedAt: leaseMeta ? addMonths(leaseMeta.leaseStart, 0) : undefined,
-      size: "860 KB",
-    },
-    {
-      title: "Insurance Certificate",
-      type: "PDF",
-      updatedAt: leaseMeta ? addMonths(leaseMeta.leaseStart, 0) : undefined,
-      size: "430 KB",
-    },
-  ]
+  const packet = useMemo(() => groupLeasePacketDocuments(documents), [documents])
+
+  const handleOpenDocument = async (id: string) => {
+    try {
+      const url = await documentsApi.getDownloadUrl(id)
+      if (url) window.open(url, "_blank", "noopener,noreferrer")
+    } catch {
+      toast({
+        title: "Unable to open document",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -368,25 +401,123 @@ export default function TenantLeaseDetails() {
       <Card>
         <CardHeader>
           <CardTitle>Lease Documents</CardTitle>
-          <CardDescription>Signed agreements, addendums, and insurance records.</CardDescription>
+          <CardDescription>
+            Signed agreements plus attached addendums and disclosures. Educational watch-for notes
+            are not legal advice.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          {documents.map((doc) => (
-            <div key={doc.title} className="rounded-lg border p-4">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" />
-                <p className="font-medium">{doc.title}</p>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Updated {formatDate(doc.updatedAt)} · {doc.size}
-              </p>
-              <Badge variant="outline" className="mt-4">
-                {doc.type}
-              </Badge>
-            </div>
-          ))}
+        <CardContent className="space-y-6">
+          {documentsLoading ? (
+            <p className="text-sm text-muted-foreground">Loading documents…</p>
+          ) : documentsError ? (
+            <p className="text-sm text-destructive" role="alert">{documentsError}</p>
+          ) : documents.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No documents are on file yet. When your manager shares the lease packet, it will
+              appear here.
+            </p>
+          ) : (
+            <>
+              <DocumentGroup
+                heading="Lease and other files"
+                docs={packet.other}
+                onOpen={handleOpenDocument}
+              />
+              <DocumentGroup
+                heading="Addendums"
+                docs={packet.addendums}
+                empty="No addendums attached to this packet."
+                onOpen={handleOpenDocument}
+              />
+              <DocumentGroup
+                heading="Disclosures"
+                docs={packet.disclosures}
+                empty="No disclosures attached to this packet."
+                onOpen={handleOpenDocument}
+              />
+            </>
+          )}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>What to watch for</CardTitle>
+          <CardDescription>
+            Disclosure topics for {(property?.state || "UT").toUpperCase()} from Ondo&apos;s
+            compliance rules. Not legal advice — have a licensed attorney review your packet.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {watchForError ? (
+            <p className="text-sm text-destructive" role="alert">{watchForError}</p>
+          ) : watchForRules.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No watch-for notes are published for this state yet.
+            </p>
+          ) : (
+            watchForRules.map((rule) => (
+              <div key={rule.id} className="rounded-lg border p-4">
+                <p className="font-medium">{rule.title}</p>
+                <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                  {parseWatchForDescription(rule.description).map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function DocumentGroup({
+  heading,
+  docs,
+  empty,
+  onOpen,
+}: {
+  heading: string
+  docs: DocumentListRecord[]
+  empty?: string
+  onOpen: (id: string) => void
+}) {
+  if (docs.length === 0 && empty) {
+    return (
+      <div>
+        <p className="text-sm font-medium">{heading}</p>
+        <p className="text-sm text-muted-foreground mt-1">{empty}</p>
+      </div>
+    )
+  }
+  if (docs.length === 0) return null
+  return (
+    <div>
+      <p className="text-sm font-medium mb-3">{heading}</p>
+      <div className="grid gap-4 md:grid-cols-3">
+        {docs.map((doc) => (
+          <button
+            key={doc.id}
+            type="button"
+            className="rounded-lg border p-4 text-left hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring"
+            onClick={() => onOpen(doc.id)}
+          >
+            <div className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              <p className="font-medium">{doc.name}</p>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              Updated {formatDate(doc.createdAt)}
+              {doc.sizeBytes != null ? ` · ${doc.sizeBytes} bytes` : ""}
+            </p>
+            <Badge variant="outline" className="mt-4 capitalize">
+              {doc.docType ?? "document"}
+            </Badge>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

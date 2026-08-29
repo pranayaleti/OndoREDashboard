@@ -38,6 +38,7 @@ import {
   HelpCircle,
   AlertTriangle,
   Sparkles,
+  Clapperboard,
   Target,
   Briefcase,
   KeyRound,
@@ -104,6 +105,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
+        { title: "Content studio", href: `${basePath}/content`, icon: <Clapperboard className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
         { title: "Admins", href: `${basePath}/admins`, icon: <Shield className="h-5 w-5" /> },
@@ -128,6 +130,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
+        { title: "Content studio", href: `${basePath}/content`, icon: <Clapperboard className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Managers", href: `${basePath}/managers`, icon: <Users className="h-5 w-5" /> },
         { title: "Owners", href: `${basePath}/owners`, icon: <Briefcase className="h-5 w-5" /> },
@@ -150,6 +153,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
       return [
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" /> },
+        { title: "Content studio", href: `${basePath}/content`, icon: <Clapperboard className="h-5 w-5" /> },
         { title: "At-risk", href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" /> },
         { title: "Properties", href: `${basePath}/properties`, icon: <Building className="h-5 w-5" /> },
         { title: "Leads", href: `${basePath}/leads`, icon: <Target className="h-5 w-5" /> },
@@ -174,6 +178,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard className="h-5 w-5" /> },
         { title: "Portfolio", href: `${basePath}/portfolio`, icon: <LayoutGrid className="h-5 w-5" /> },
         { title: "Assistant", href: `${basePath}/assistant`, icon: <Sparkles className="h-5 w-5" />, dataTourId: "owner-assistant-nav" },
+        { title: "Content studio", href: `${basePath}/content`, icon: <Clapperboard className="h-5 w-5" /> },
         { title: t("owner:nav.actionItems"), href: `${basePath}/at-risk`, icon: <AlertTriangle className="h-5 w-5" />, description: t("owner:sidebar.actionItemsHint"), dataTourId: "owner-action-items-nav" },
         { title: "Mortgage", href: `${basePath}/mortgage`, icon: <Landmark className="h-5 w-5" /> },
         { title: "Home improvement", href: `${basePath}/improvements`, icon: <Hammer className="h-5 w-5" /> },
@@ -275,7 +280,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
         id: "home",
         label: t("common:sidebar.sections.home"),
         items: navItems.filter((item) =>
-          [`/owner`, `/owner/portfolio`, `/owner/assistant`, `/owner/at-risk`].includes(item.href)
+          [`/owner`, `/owner/portfolio`, `/owner/assistant`, `/owner/content`, `/owner/at-risk`].includes(item.href)
         ),
       },
       {

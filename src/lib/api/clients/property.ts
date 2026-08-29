@@ -200,4 +200,87 @@ export const propertyApi = {
       headers,
     );
   },
+
+  async getShowingAvailability(propertyId: string): Promise<ListingAvailabilityRules | null> {
+    const headers = getAuthHeaders();
+    const res = await apiGet<{ data: ListingAvailabilityRules | null }>(
+      `/properties/${propertyId}/showing-availability`,
+      headers,
+    );
+    return res.data;
+  },
+
+  async putShowingAvailability(
+    propertyId: string,
+    body: Omit<ListingAvailabilityRules, "propertyId" | "updatedAt">,
+  ): Promise<ListingAvailabilityRules> {
+    const headers = getAuthHeaders();
+    const res = await apiPut<{ data: ListingAvailabilityRules }>(
+      `/properties/${propertyId}/showing-availability`,
+      body,
+      headers,
+    );
+    return res.data;
+  },
+
+  async listShowingSlots(propertyId: string, includeBooked = false): Promise<ListingAvailabilitySlot[]> {
+    const headers = getAuthHeaders();
+    const qs = includeBooked ? "?includeBooked=1" : "";
+    const res = await apiGet<{ data: ListingAvailabilitySlot[] }>(
+      `/properties/${propertyId}/showing-slots${qs}`,
+      headers,
+    );
+    return res.data;
+  },
+
+  async generateShowingSlots(
+    propertyId: string,
+    body: { startDate: string; count: number },
+  ): Promise<ListingAvailabilitySlot[]> {
+    const headers = getAuthHeaders();
+    const res = await apiPost<{ data: { created: ListingAvailabilitySlot[] } }>(
+      `/properties/${propertyId}/showing-slots/generate`,
+      body,
+      headers,
+    );
+    return res.data.created;
+  },
+
+  async deleteShowingSlot(propertyId: string, slotId: string): Promise<void> {
+    const headers = getAuthHeaders();
+    await apiDelete(`/properties/${propertyId}/showing-slots/${slotId}`, headers);
+  },
+
+  async expirePastShowingSlots(propertyId: string): Promise<number> {
+    const headers = getAuthHeaders();
+    const res = await apiPost<{ data: { deleted: number } }>(
+      `/properties/${propertyId}/showing-slots/expire-past`,
+      {},
+      headers,
+    );
+    return res.data.deleted;
+  },
+};
+
+export type ListingAvailabilityRules = {
+  propertyId: string;
+  timezone: string;
+  daysOfWeek: number[];
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+  bufferMinutes: number;
+  leadTimeHours: number;
+  blackoutDates: string[];
+  tourType: "in_person" | "virtual";
+  updatedAt: string;
+};
+
+export type ListingAvailabilitySlot = {
+  id: string;
+  propertyId: string;
+  startsAt: string;
+  endsAt: string;
+  isBooked: boolean;
+  createdAt: string;
 };

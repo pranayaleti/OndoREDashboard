@@ -16,6 +16,7 @@ import {
   Star,
   Globe,
   FileText,
+  Clapperboard,
   Clock,
   Tag,
   UserCheck,
@@ -31,6 +32,7 @@ import { CoOwnerManagement } from "@/components/owner/co-owner-management"
 import { ApplicationAnalytics } from "@/components/owner/application-analytics"
 import { ExpenseTracker } from "@/components/owner/expense-tracker"
 import { InspectionManager } from "@/components/owner/inspection-manager"
+import { PropertyFloorPlans } from "@/components/owner/property-floor-plans"
 import { AnnouncementBoard } from "@/components/owner/announcement-board"
 import { SurveyManager } from "@/components/owner/survey-manager"
 import { RentIncreaseManager } from "@/components/owner/rent-increase-manager"
@@ -137,6 +139,14 @@ export default function OwnerPropertyDetail() {
           } className="text-sm px-3 py-1">
             {property.status ? property.status.charAt(0).toUpperCase() + property.status.slice(1) : "Unknown"}
           </Badge>
+          <Button
+            variant="outline"
+            onClick={() =>
+              navigate(`/owner/content?listingId=${encodeURIComponent(property.id)}&type=listing_video_script`)
+            }
+          >
+            <Clapperboard className="h-4 w-4 mr-2" /> Content studio
+          </Button>
           <Button variant="outline" onClick={() => navigate("/owner/properties")}>
             <ChevronLeft className="h-4 w-4 mr-2" /> Back
           </Button>
@@ -207,6 +217,7 @@ export default function OwnerPropertyDetail() {
           <TabsTrigger value="amenities">Amenities</TabsTrigger>
           <TabsTrigger value="expenses">Expenses</TabsTrigger>
           <TabsTrigger value="inspections">Inspections</TabsTrigger>
+          <TabsTrigger value="floor-plans">Floor plans</TabsTrigger>
           <TabsTrigger value="operations">Operations</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
@@ -261,6 +272,9 @@ export default function OwnerPropertyDetail() {
         </TabsContent>
         <TabsContent value="inspections" className="space-y-6">
           {property?.id && <InspectionManager propertyId={property.id} />}
+        </TabsContent>
+        <TabsContent value="floor-plans" className="space-y-6">
+          {property?.id && <PropertyFloorPlans propertyId={property.id} />}
         </TabsContent>
         <TabsContent value="operations" className="space-y-6">
           {property?.id && (

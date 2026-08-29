@@ -9,32 +9,7 @@ import {
   FileText, Loader2, ChevronRight, Mail,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { apiGet, apiPost } from "@/lib/api/http"
-
-interface Statement {
-  id: string
-  period: string
-  startDate: string
-  endDate: string
-  totalIncome: number
-  totalExpenses: number
-  netIncome: number
-  status: string
-  createdAt: string
-}
-
-interface LineItem {
-  id: string
-  description: string
-  category: string
-  amount: number
-  date: string
-}
-
-interface StatementDetail {
-  statement: Statement
-  lineItems: LineItem[]
-}
+import { ownerStatementsApi, type OwnerStatement } from "@/lib/api/clients/owner-statements"
 
 function fmt(cents: number): string {
   const dollars = cents / 100
@@ -43,12 +18,16 @@ function fmt(cents: number): string {
     : `$${dollars.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
+function netCents(s: OwnerStatement & { netCents?: number }): number {
+  return s.netIncomeCents ?? s.netCents ?? 0
+}
+
 export function OwnerStatementsView() {
   const { toast } = useToast()
-  const [statements, setStatements] = useState<Statement[]>([])
+  const [statements, setStatements] = useState<OwnerStatement[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [detail, setDetail] = useState<StatementDetail | null>(null)
+  const [detail, setDetail] = useState<OwnerStatement | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [showGenerate, setShowGenerate] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -60,8 +39,8 @@ export function OwnerStatementsView() {
   const load = async () => {
     try {
       setLoading(true)
-      const data = await apiGet<{ statements: Statement[] }>("/owner/statements")
-      setStatements(data.statements ?? [])
+      const data = await ownerStatementsApi.getStatements(12)
+      setStatements(data)
     } catch {
       toast({ title: "Failed to load statements", variant: "destructive" })
     } finally {
@@ -73,7 +52,7 @@ export function OwnerStatementsView() {
     setSelectedId(id)
     setDetailLoading(true)
     try {
-      const data = await apiGet<StatementDetail>(`/owner/statements/${id}`)
+      const data = await ownerStatementsApi.getStatement(id)
       setDetail(data)
     } catch {
       setDetail(null)
@@ -87,11 +66,11 @@ export function OwnerStatementsView() {
     if (!dateRange.startDate || !dateRange.endDate) return
     setGenerating(true)
     try {
-      await apiPost("/owner/statements/generate", dateRange)
+      await ownerStatementsApi.generate(dateRange.startDate, dateRange.endDate)
       toast({ title: "Statement generated" })
       setShowGenerate(false)
       setDateRange({ startDate: "", endDate: "" })
-      load()
+      await load()
     } catch {
       toast({ title: "Failed to generate statement", variant: "destructive" })
     } finally {
@@ -102,7 +81,7 @@ export function OwnerStatementsView() {
   const emailStatement = async (id: string) => {
     setEmailing(true)
     try {
-      await apiPost(`/owner-statements/${id}/email`, {})
+      await ownerStatementsApi.emailStatement(id)
       toast({ title: "Statement emailed successfully" })
     } catch {
       toast({ title: "Failed to email statement", variant: "destructive" })
@@ -145,16 +124,18 @@ export function OwnerStatementsView() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">{s.period}</p>
+                    <p className="font-medium">
+                      {new Date(s.periodStart).toLocaleDateString()} – {new Date(s.periodEnd).toLocaleDateString()}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(s.startDate).toLocaleDateString()}: {new Date(s.endDate).toLocaleDateString()}
+                      {s.generatedAt ? new Date(s.generatedAt).toLocaleDateString() : "Generated"}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`font-semibold ${s.netIncome >= 0 ? "text-green-600" : "text-red-600"}`}>
-                      {fmt(s.netIncome)}
+                    <p className={`font-semibold ${netCents(s) >= 0 ? "text-green-600" : "text-red-600"}`}>
+                      {fmt(netCents(s))}
                     </p>
-                    <Badge variant="outline" className="text-[10px]">{s.status}</Badge>
+                    <Badge variant="outline" className="text-[10px]">{s.status || "ready"}</Badge>
                   </div>
                 </div>
               </button>
@@ -167,7 +148,9 @@ export function OwnerStatementsView() {
           {selectedId && detail ? (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg">{detail.statement.period}</CardTitle>
+                <CardTitle className="text-lg">
+                  {new Date(detail.periodStart).toLocaleDateString()} – {new Date(detail.periodEnd).toLocaleDateString()}
+                </CardTitle>
                 <Button size="sm" onClick={() => emailStatement(selectedId!)} disabled={emailing}>
                   {emailing ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Mail className="mr-1 h-3 w-3" />}
                   Email
@@ -181,34 +164,34 @@ export function OwnerStatementsView() {
                     <div className="grid grid-cols-3 gap-4 text-center">
                       <div>
                         <p className="text-xs text-muted-foreground">Income</p>
-                        <p className="text-lg font-bold text-green-600">{fmt(detail.statement.totalIncome)}</p>
+                        <p className="text-lg font-bold text-green-600">{fmt(detail.totalIncomeCents)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Expenses</p>
-                        <p className="text-lg font-bold text-red-600">{fmt(detail.statement.totalExpenses)}</p>
+                        <p className="text-lg font-bold text-red-600">{fmt(detail.totalExpenseCents)}</p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Net</p>
-                        <p className={`text-lg font-bold ${detail.statement.netIncome >= 0 ? "text-green-600" : "text-red-600"}`}>
-                          {fmt(detail.statement.netIncome)}
+                        <p className={`text-lg font-bold ${netCents(detail) >= 0 ? "text-green-600" : "text-red-600"}`}>
+                          {fmt(netCents(detail))}
                         </p>
                       </div>
                     </div>
 
                     <div className="rounded-lg border">
                       <div className="grid grid-cols-4 gap-2 border-b bg-muted/50 px-3 py-2 text-xs font-medium text-muted-foreground">
-                        <span>Date</span><span>Description</span><span>Category</span><span className="text-right">Amount</span>
+                        <span>Date</span><span>Description</span><span>Type</span><span className="text-right">Amount</span>
                       </div>
-                      {detail.lineItems.length === 0 ? (
+                      {(detail.lineItems ?? []).length === 0 ? (
                         <p className="px-3 py-4 text-center text-sm text-muted-foreground">No line items</p>
                       ) : (
-                        detail.lineItems.map((item) => (
-                          <div key={item.id} className="grid grid-cols-4 gap-2 border-b px-3 py-2 text-sm last:border-b-0">
+                        (detail.lineItems ?? []).map((item, index) => (
+                          <div key={`${item.date}-${index}`} className="grid grid-cols-4 gap-2 border-b px-3 py-2 text-sm last:border-b-0">
                             <span className="text-muted-foreground">{new Date(item.date).toLocaleDateString()}</span>
                             <span>{item.description}</span>
-                            <Badge variant="outline" className="w-fit text-[10px]">{item.category}</Badge>
-                            <span className={`text-right font-medium ${item.amount >= 0 ? "text-green-600" : "text-red-600"}`}>
-                              {fmt(item.amount)}
+                            <Badge variant="outline" className="w-fit text-[10px]">{item.type}</Badge>
+                            <span className={`text-right font-medium ${item.type === "income" ? "text-green-600" : "text-red-600"}`}>
+                              {fmt(item.amountCents)}
                             </span>
                           </div>
                         ))

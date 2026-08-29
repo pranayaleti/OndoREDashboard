@@ -1782,6 +1782,19 @@ export const featureApi = {
       return apiRequest<unknown>('GET', `/applications/${applicationId}/checks`, undefined, headers)
         .then((r) => unwrapDataArray(r));
     },
+    createLease(
+      applicationId: string,
+      data: {
+        leaseStart?: string;
+        leaseEnd?: string;
+        monthlyRent?: number;
+        securityDeposit?: number;
+        tenantId?: string;
+      } = {},
+    ): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/applications/${applicationId}/create-lease`, data, headers);
+    },
   },
 
   // ── Leases ─────────────────────────────────────────────────────────────────
@@ -1949,6 +1962,35 @@ export const featureApi = {
     compare(moveInId: string, moveOutId: string): Promise<unknown> {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('GET', `/inspections/${moveInId}/compare/${moveOutId}`, undefined, headers);
+    },
+    convertItemToMaintenance(inspectionId: string, itemId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>(
+        'POST',
+        `/inspections/${inspectionId}/items/${itemId}/maintenance`,
+        undefined,
+        headers,
+      );
+    },
+  },
+
+  floorPlans: {
+    list(propertyId: string): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/properties/${propertyId}/floor-plans`, undefined, headers)
+        .then((r) => unwrapDataArray(r));
+    },
+    create(propertyId: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/properties/${propertyId}/floor-plans`, data, headers);
+    },
+    update(id: string, data: Record<string, unknown>): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/floor-plans/${id}`, data, headers);
+    },
+    remove(id: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('DELETE', `/floor-plans/${id}`, undefined, headers);
     },
   },
 

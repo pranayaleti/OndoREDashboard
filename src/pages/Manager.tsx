@@ -18,6 +18,7 @@ const ManagerMessages = lazy(() => import("@/components/manager/manager-messages
 const ManagerCalendar = lazy(() => import("@/components/manager/manager-calendar"))
 const ManagerNotifications = lazy(() => import("@/components/manager/manager-notifications"))
 const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
@@ -31,6 +32,7 @@ export default function Manager() {
             <Route path="/" element={<ManagerDashboard />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
+            <Route path="/content" element={<ManagerContentStudio />} />
             <Route path="/properties/*" element={<ManagerProperties />} />
             <Route path="/leads" element={<ManagerLeads />} />
             <Route path="/screening" element={<ScreeningListPage title="Tenant screening" />} />

@@ -7,16 +7,34 @@ interface Props {
   leadId: string;
   propertyId: string;
   leadEmail: string;
+  occupancy?: "vacant" | "occupied" | "hidden" | "unknown";
+  leadKind?: "property" | "website";
   onSuccess: (visit: SiteVisit) => void;
   onCancel: () => void;
 }
 
-export function SiteVisitProposer({ leadId, propertyId, leadEmail, onSuccess, onCancel }: Props) {
+export function SiteVisitProposer({
+  leadId,
+  propertyId,
+  leadEmail,
+  occupancy = "unknown",
+  leadKind = "property",
+  onSuccess,
+  onCancel,
+}: Props) {
   const [slots, setSlots] = useState<string[]>([""]);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  if (occupancy === "vacant") {
+    return (
+      <div className="mt-3 p-3 border rounded-lg bg-muted text-sm text-gray-600">
+        This listing is vacant. Prospects pick a time from the public showing calendar.
+      </div>
+    );
+  }
 
   const addSlot = () => { if (slots.length < 3) setSlots((s) => [...s, ""]); };
   const removeSlot = (i: number) => setSlots((s) => s.filter((_, j) => j !== i));
@@ -28,7 +46,14 @@ export function SiteVisitProposer({ leadId, propertyId, leadEmail, onSuccess, on
     setLoading(true);
     setError(null);
     try {
-      const result = await featureApi.leads.proposeSiteVisit({ leadId, propertyId, proposedSlots: validSlots, notes: notes || undefined });
+      const isoSlots = validSlots.map((s) => new Date(s).toISOString());
+      const result = await featureApi.leads.proposeSiteVisit({
+        kind: leadKind,
+        leadId,
+        propertyId,
+        proposedSlots: isoSlots,
+        notes: notes || undefined,
+      });
       setSuccess(true);
       onSuccess({ id: result.id, leadId, propertyId, status: "proposed", proposedSlots: validSlots, scheduledAt: null, slotIndex: null, notes: notes || null, createdAt: new Date().toISOString() });
     } catch {

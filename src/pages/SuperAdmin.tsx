@@ -17,6 +17,7 @@ import SuperAdminMessages from "@/components/super-admin/super-admin-messages"
 import SuperAdminCalendar from "@/components/super-admin/super-admin-calendar"
 import SuperAdminNotifications from "@/components/super-admin/super-admin-notifications"
 import ManagerAssistant from "@/components/manager/manager-assistant"
+import ManagerContentStudio from "@/components/manager/manager-content-studio"
 import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-list-page"
 import { ReferralProgram } from "@/components/shared/referral-program"
 
@@ -31,6 +32,7 @@ export default function SuperAdmin() {
             <Route path="/" element={<SuperAdminDashboard />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
+            <Route path="/content" element={<ManagerContentStudio />} />
             <Route path="/managers/*" element={<SuperAdminManagers />} />
             <Route path="/admins/*" element={<SuperAdminAdmins />} />
             <Route path="/owners/*" element={<SuperAdminOwners />} />

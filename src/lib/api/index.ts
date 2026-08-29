@@ -28,6 +28,15 @@ export { maintenanceApi } from "./clients/maintenance";
 export { leadApi } from "./clients/lead";
 export { accountingApi } from "./clients/accounting";
 export { assistantApi } from "./clients/assistant";
+export { contentApi, CONTENT_TYPES } from "./clients/content";
+export type {
+  ContentType,
+  GenerateContentRequest,
+  GenerateContentResult,
+  ContentPayload,
+  MarketAudience,
+  RestrictedMatch as ContentRestrictedMatch,
+} from "./clients/content";
 export { dashboardApi } from "./clients/dashboard";
 export { notificationsApi } from "./clients/notifications";
 export { csvImportApi } from "./clients/csv-import";
@@ -53,6 +62,12 @@ export {
   getTenantScreeningWidgetData,
 } from "./clients/tenant-screening";
 export { documentsApi } from "./clients/documents";
+export { leaseTemplatesApi } from "./clients/lease-templates";
+export type {
+  LeaseTemplateRecord,
+  LeaseTemplateKind,
+  LeaseTemplateStatus,
+} from "./clients/lease-templates";
 export { vendorsApi } from "./clients/vendors";
 export { rentSchedulesApi } from "./clients/rent-schedules";
 export { reportsApi } from "./clients/reports";
@@ -148,7 +163,20 @@ export type {
 export { ApiError } from "@ondo/types";
 
 // Export types from domain clients
-export type { Lead, LeadListResponse, SubmitLeadRequest } from "./clients/lead";
+export type {
+  Lead,
+  LeadListResponse,
+  SubmitLeadRequest,
+  InboxLead,
+  DuplicateHint,
+  LeadWorkEvent,
+  InboxListResponse,
+  LeadKind,
+  InboxFilter,
+  LeadInboxStatus,
+  ActivityType,
+} from "./clients/lead";
+export { isUnclaimedLead, isQueueConvert } from "./clients/lead";
 export type {
   MaintenanceListResponse,
 } from "./clients/maintenance";

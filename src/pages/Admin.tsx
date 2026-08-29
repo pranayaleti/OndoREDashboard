@@ -19,6 +19,7 @@ const AdminCalendar = lazy(() => import("@/components/admin/admin-calendar"))
 const AdminEvents = lazy(() => import("@/components/admin/admin-events"))
 const AdminNotifications = lazy(() => import("@/components/admin/admin-notifications"))
 const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
+const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const ScreeningListPageWithOwnerFilter = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPageWithOwnerFilter })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
@@ -32,6 +33,7 @@ export default function Admin() {
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/at-risk" element={<ManagerAtRisk />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
+            <Route path="/content" element={<ManagerContentStudio />} />
             <Route path="/managers/*" element={<AdminManagers />} />
             <Route path="/owners/*" element={<AdminOwners />} />
             <Route path="/tenants/*" element={<AdminTenants />} />
