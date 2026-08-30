@@ -21,6 +21,7 @@ const AdminNotifications = lazy(() => import("@/components/admin/admin-notificat
 const ManagerAssistant = lazy(() => import("@/components/manager/manager-assistant"))
 const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const ScreeningListPageWithOwnerFilter = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPageWithOwnerFilter })))
+const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
@@ -42,6 +43,7 @@ export default function Admin() {
             <Route path="/tenants/*" element={<AdminTenants />} />
             <Route path="/maintenance/*" element={<AdminMaintenance />} />
             <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
+            <Route path="/leasing" element={<LeasingPipelinePage />} />
             <Route path="/properties/*" element={<AdminProperties />} />
             <Route path="/finances/*" element={<AdminFinances />} />
             <Route path="/payments" element={<DashboardPaymentHistory title="Rent collected" emptyMessage="No payments yet." />} />

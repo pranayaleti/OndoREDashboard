@@ -72,10 +72,56 @@ export interface SearchHit {
   propertyId: string | null;
 }
 
+export type PipelineStage =
+  | "lead"
+  | "follow_up"
+  | "qualified"
+  | "application"
+  | "screening"
+  | "decision"
+  | "lease"
+  | "move_in"
+  | "occupied";
+
+export type PipelineCardKind = "lead" | "website_lead" | "application" | "lease";
+
+export interface PipelineCard {
+  id: string;
+  kind: PipelineCardKind;
+  stage: PipelineStage | "parked";
+  title: string;
+  subtitle: string;
+  status: string;
+  propertyId: string | null;
+  propertyTitle: string | null;
+  updatedAt: string;
+}
+
+export interface PipelineColumn {
+  id: PipelineStage;
+  label: string;
+  count: number;
+  cards: PipelineCard[];
+}
+
+export interface LeasingPipeline {
+  generatedAt: string;
+  stages: PipelineColumn[];
+  parked: { count: number; cards: PipelineCard[] };
+}
+
 export const operationsApi = {
   async getActionCenter(): Promise<ActionCenter> {
     const res = await apiGet<{ message: string; data: ActionCenter }>(
       "/dashboard/action-center",
+      getAuthHeaders(),
+    );
+    return res.data;
+  },
+
+  async getLeasingPipeline(): Promise<LeasingPipeline> {
+    const res = await apiGet<{ message: string; data: LeasingPipeline }>(
+      "/dashboard/leasing-pipeline",
       getAuthHeaders(),
     );
     return res.data;

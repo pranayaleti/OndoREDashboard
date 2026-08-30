@@ -22,6 +22,7 @@ import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { OperationsActionCenter } from "@/components/operations/operations-action-center"
+import { LeasingPipelineStrip } from "@/components/leasing/leasing-pipeline-strip"
 
 /**
  * Owner Portal Configuration
@@ -318,6 +319,13 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
       gridCols: 2,
       priority: -10,
       component: <OperationsActionCenter />,
+    },
+    {
+      id: "leasing-pipeline",
+      title: "Leasing track",
+      gridCols: 2,
+      priority: -9,
+      component: <LeasingPipelineStrip />,
     },
     {
       id: "tenant-screening",

@@ -49,9 +49,8 @@ function hrefFor(kind: ActionKind, role: UserRole): string {
     case "upcoming_move_outs":
       return role === "owner" ? `${base}/occupancy` : `${base}/tenants`
     case "pending_applications":
-      return `${base}/screening`
     case "new_leads":
-      return role === "manager" ? `${base}/leads` : `${base}/properties`
+      return `${base}/leasing`
     case "overdue_tasks":
       return `${base}/tasks`
     case "vacancy":

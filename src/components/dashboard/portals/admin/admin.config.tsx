@@ -24,6 +24,7 @@ import { Link } from "react-router-dom"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { OperationsActionCenter } from "@/components/operations/operations-action-center"
+import { LeasingPipelineStrip } from "@/components/leasing/leasing-pipeline-strip"
 
 /**
  * Admin Portal Configuration
@@ -355,6 +356,13 @@ export function createAdminConfig(
       gridCols: 2,
       priority: -10,
       component: <OperationsActionCenter />,
+    },
+    {
+      id: "leasing-pipeline",
+      title: "Leasing track",
+      gridCols: 2,
+      priority: -9,
+      component: <LeasingPipelineStrip />,
     },
     {
       id: "tenant-screening",

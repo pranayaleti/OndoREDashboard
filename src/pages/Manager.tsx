@@ -10,6 +10,7 @@ const ManagerTenants = lazy(() => import("@/components/manager/manager-tenants")
 const ManagerOwners = lazy(() => import("@/components/manager/manager-owners"))
 const ManagerMaintenance = lazy(() => import("@/components/manager/manager-maintenance"))
 const ManagerLeads = lazy(() => import("@/components/manager/manager-leads"))
+const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
 const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
 const ManagerFinances = lazy(() => import("@/components/manager/manager-finances"))
 const ManagerReports = lazy(() => import("@/components/manager/manager-reports"))
@@ -39,6 +40,7 @@ export default function Manager() {
             <Route path="/properties/:id" element={<ManagerPropertyOps />} />
             <Route path="/properties/*" element={<ManagerProperties />} />
             <Route path="/leads" element={<ManagerLeads />} />
+            <Route path="/leasing" element={<LeasingPipelinePage />} />
             <Route path="/screening" element={<ScreeningListPage title="Tenant screening" />} />
             <Route path="/owners/*" element={<ManagerOwners />} />
             <Route path="/tenants/*" element={<ManagerTenants />} />

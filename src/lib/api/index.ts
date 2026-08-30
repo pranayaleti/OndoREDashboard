@@ -46,6 +46,11 @@ export type {
   ActionSeverity,
   SearchHit,
   SearchEntityType,
+  LeasingPipeline,
+  PipelineCard,
+  PipelineColumn,
+  PipelineStage,
+  PipelineCardKind,
 } from "./clients/operations";
 export { notificationsApi } from "./clients/notifications";
 export { csvImportApi } from "./clients/csv-import";

@@ -24,6 +24,7 @@ import { ReferralProgram } from "@/components/shared/referral-program"
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
 const ManagerWorkflows = lazy(() => import("@/components/manager/manager-workflows"))
+const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 
 export default function SuperAdmin() {
@@ -42,6 +43,7 @@ export default function SuperAdmin() {
             <Route path="/tenants/*" element={<SuperAdminTenants />} />
             <Route path="/maintenance/*" element={<SuperAdminMaintenance />} />
             <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
+            <Route path="/leasing" element={<LeasingPipelinePage />} />
             <Route path="/properties/*" element={<SuperAdminProperties />} />
             <Route path="/finances/*" element={<SuperAdminFinances />} />
             <Route path="/payments" element={<DashboardPaymentHistory title="Rent collected" emptyMessage="No payments yet." />} />
