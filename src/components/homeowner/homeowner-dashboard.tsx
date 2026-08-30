@@ -12,6 +12,7 @@ import { useAuth } from "@/lib/auth-context"
 import { getDashboardPath } from "@/lib/auth-utils"
 import { Search, Sparkles, FileText } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/locale-format"
+import { formatDistanceToNow } from "date-fns"
 
 function fmtMoney(cents: number) {
   return formatCurrency(cents / 100, "USD", {
@@ -143,6 +144,13 @@ function HomeownerDashboardInner({
         <p className="text-sm text-muted-foreground">
           Ask anything about your property. Search uses your data to give personalized answers.
         </p>
+        {user?.lastLoginAt ? (
+          <p className="text-xs text-muted-foreground" data-testid="owner-last-login">
+            Last login {formatDistanceToNow(new Date(user.lastLoginAt), { addSuffix: true })}
+            {user.lastLoginDevice ? ` · ${user.lastLoginDevice}` : ""}
+            {user.lastLoginBrowser ? ` · ${user.lastLoginBrowser}` : ""}
+          </p>
+        ) : null}
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

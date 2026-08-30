@@ -11,6 +11,7 @@ import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
 import { ModernPropertyCard } from "./modern-property-card"
 import { PropertyDetailModal } from "@/components/property-detail-modal"
 import { useWelcomeToast } from "@/hooks/use-welcome-toast"
+import { formatDistanceToNow } from "date-fns"
 
 // Extended property interface for dashboard
 interface DashboardProperty extends Property {
@@ -236,6 +237,13 @@ export default function OwnerDashboard() {
         <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 md:mt-2">
           Your investment portfolio overview
         </p>
+        {user?.lastLoginAt ? (
+          <p className="text-xs text-muted-foreground mt-1" data-testid="owner-last-login">
+            Last login {formatDistanceToNow(new Date(user.lastLoginAt), { addSuffix: true })}
+            {user.lastLoginDevice ? ` · ${user.lastLoginDevice}` : ""}
+            {user.lastLoginBrowser ? ` · ${user.lastLoginBrowser}` : ""}
+          </p>
+        ) : null}
       </div>
 
       {/* Portfolio Summary */}

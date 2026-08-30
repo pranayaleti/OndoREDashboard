@@ -18,6 +18,10 @@ export interface User {
   address?: string;
   profilePicture?: string;
   preferredLocale?: string;
+  lastLoginAt?: string | null;
+  lastLoginIp?: string | null;
+  lastLoginDevice?: string | null;
+  lastLoginBrowser?: string | null;
 }
 
 export interface LoginRequest {

@@ -21,6 +21,10 @@ export interface UserData {
   address?: string
   profilePicture?: string
   preferredLocale?: string
+  lastLoginAt?: string | null
+  lastLoginIp?: string | null
+  lastLoginDevice?: string | null
+  lastLoginBrowser?: string | null
 }
 
 interface AuthContextType {
@@ -51,6 +55,10 @@ function convertUser(apiUser: User): UserData {
     address: apiUser.address,
     profilePicture: apiUser.profilePicture,
     preferredLocale: apiUser.preferredLocale,
+    lastLoginAt: apiUser.lastLoginAt ?? null,
+    lastLoginIp: apiUser.lastLoginIp ?? null,
+    lastLoginDevice: apiUser.lastLoginDevice ?? null,
+    lastLoginBrowser: apiUser.lastLoginBrowser ?? null,
   }
 }
 

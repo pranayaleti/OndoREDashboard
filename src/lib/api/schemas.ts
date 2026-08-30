@@ -46,6 +46,10 @@ export const UserSchema = z.object({
   address: z.string().nullish().transform((v) => v ?? undefined),
   profilePicture: z.string().nullish().transform((v) => v ?? undefined),
   preferredLocale: z.string().nullish().transform((v) => v ?? undefined),
+  lastLoginAt: z.string().nullish(),
+  lastLoginIp: z.string().nullish(),
+  lastLoginDevice: z.string().nullish(),
+  lastLoginBrowser: z.string().nullish(),
 });
 
 /** Accepts accessToken or legacy "token" and expiresIn as number or string. */
