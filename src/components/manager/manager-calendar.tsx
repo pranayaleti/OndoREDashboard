@@ -9,9 +9,13 @@ import { format } from "date-fns"
 import {
   MANAGER_CALENDAR_SCHEDULE_TYPES,
 } from "@/lib/calendar-schedule-presets"
-import { seedEventToVM, storedToVM, uniqueEventDates, type CalendarEventVM } from "@/lib/calendar-events"
+import { seedEventToVM, storedToVM, uniqueEventDates, propertyCalendarHref, type CalendarEventVM } from "@/lib/calendar-events"
 import { usePersistedCalendarEvents } from "@/hooks/use-persisted-calendar-events"
+import { useApiCalendarEvents } from "@/hooks/use-api-calendar-events"
 import { ScheduleEventDialog } from "@/components/shared/schedule-event-dialog"
+import { useAuth } from "@/lib/auth-context"
+import { getDashboardPath } from "@/lib/auth-utils"
+import { Link } from "react-router-dom"
 
 const STORAGE_KEY = "ondo-dashboard:calendar-events:manager"
 
@@ -43,13 +47,16 @@ const seedEvents = [
 ]
 
 export default function ManagerCalendar() {
+  const { user } = useAuth()
+  const dashboardBase = getDashboardPath(user?.role ?? "manager")
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [scheduleOpen, setScheduleOpen] = useState(false)
   const { userEvents, addEvent } = usePersistedCalendarEvents(STORAGE_KEY)
+  const apiEvents = useApiCalendarEvents()
 
   const allEvents = useMemo((): CalendarEventVM[] => {
-    return [...seedEvents.map(seedEventToVM), ...userEvents.map(storedToVM)]
-  }, [userEvents])
+    return [...seedEvents.map(seedEventToVM), ...apiEvents, ...userEvents.map(storedToVM)]
+  }, [apiEvents, userEvents])
 
   const datesWithEvents = useMemo(() => uniqueEventDates(allEvents), [allEvents])
 
@@ -139,10 +146,22 @@ export default function ManagerCalendar() {
             <CardContent>
               {selectedDateEvents.length > 0 ? (
                 <div className="space-y-3">
-                  {selectedDateEvents.map((event) => (
+                  {selectedDateEvents.map((event) => {
+                    const href = propertyCalendarHref(
+                      dashboardBase,
+                      event.propertyId,
+                      event.type === "inspection" ? "inspections" : undefined,
+                    )
+                    return (
                     <div key={String(event.id)} className="p-3 border rounded-lg">
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium">{event.title}</h4>
+                        {href ? (
+                          <Link to={href} className="font-medium hover:underline">
+                            {event.title}
+                          </Link>
+                        ) : (
+                          <h4 className="font-medium">{event.title}</h4>
+                        )}
                         <Badge className={getEventTypeColor(event.type)}>{event.type}</Badge>
                       </div>
                       <div className="flex items-center text-sm text-gray-500 mb-2">
@@ -161,7 +180,8 @@ export default function ManagerCalendar() {
                         </div>
                       )}
                     </div>
-                  ))}
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8">

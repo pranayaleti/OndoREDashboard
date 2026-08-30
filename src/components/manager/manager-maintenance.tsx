@@ -158,6 +158,14 @@ export default function ManagerMaintenance() {
 
   const getStatusLabel = (request: MaintenanceRequest) => getBoardStatus(request).replace("_", " ")
 
+  const SLA_MS = 72 * 60 * 60 * 1000
+  const isPastSla = (request: MaintenanceRequest) => {
+    if (request.status === "completed" || request.status === "cancelled") return false
+    const created = new Date(request.createdAt).getTime()
+    if (Number.isNaN(created)) return false
+    return Date.now() - created > SLA_MS
+  }
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "emergency":
@@ -507,6 +515,9 @@ export default function ManagerMaintenance() {
                     <Badge className={getPriorityColor(request.priority)}>
                       {request.priority} priority
                     </Badge>
+                    {isPastSla(request) ? (
+                      <Badge variant="destructive">Past SLA</Badge>
+                    ) : null}
                     <Badge variant="outline">
                       {getStatusLabel(request)}
                     </Badge>
@@ -768,6 +779,9 @@ export default function ManagerMaintenance() {
                           </div>
                           <div className="flex flex-wrap gap-2">
                             <Badge className={getPriorityColor(request.priority)}>{request.priority}</Badge>
+                            {isPastSla(request) ? (
+                              <Badge variant="destructive">Past SLA</Badge>
+                            ) : null}
                             <Badge variant="outline">{request.assignedTo || "Unassigned"}</Badge>
                           </div>
                           <div className="text-xs text-muted-foreground">

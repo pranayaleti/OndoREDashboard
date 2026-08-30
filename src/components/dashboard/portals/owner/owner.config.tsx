@@ -21,6 +21,7 @@ import { formatUSDate } from "@/lib/us-format"
 import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
+import { OperationsActionCenter } from "@/components/operations/operations-action-center"
 
 /**
  * Owner Portal Configuration
@@ -311,6 +312,13 @@ export function createOwnerConfig(properties: Property[]): PortalConfig {
   ]
 
   const widgets: DashboardWidget[] = [
+    {
+      id: "operations-action-center",
+      title: "Needs attention",
+      gridCols: 2,
+      priority: -10,
+      component: <OperationsActionCenter />,
+    },
     {
       id: "tenant-screening",
       title: "Tenant Screening",

@@ -6,8 +6,6 @@ import {
   DollarSign,
   Calendar,
   Building,
-  TrendingUp,
-  CheckCircle,
   Clock,
   AlertCircle,
 } from "lucide-react"
@@ -23,6 +21,7 @@ import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/Te
 import { AssistantStarterCard } from "@/components/assistant-starter-card"
 import { TenantQuickPayCard } from "@/components/tenant/TenantQuickPayCard"
 import { TenantMaintenanceTimelineCard } from "@/components/tenant/TenantMaintenanceTimelineCard"
+import { TenantNeedsAttention } from "@/components/tenant/tenant-needs-attention"
 
 /**
  * Tenant Portal Configuration
@@ -108,19 +107,6 @@ export function createTenantConfig(
 
   const daysAtProperty = getDaysAtProperty()
 
-  // Mock payment statistics (from tenant-payments.tsx mock data)
-  const paymentStats = {
-    totalPaidThisYear: 9250, // Sum of last 5 payments
-    totalPayments: 5,
-    onTimePayments: 4,
-    onTimeRate: 80, // 4 out of 5
-    averagePayment: 1850,
-    lastPaymentDate: "2024-01-01"
-  }
-
-  // Mock data counts (matching actual component data)
-  const unreadMessagesCount = 2
-  const documentsCount = 8
   const nextPaymentSchedule = rentSchedule[0] ?? null
   const latestMaintenanceRequest = [...maintenanceRequests].sort((a, b) =>
     new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -164,8 +150,14 @@ export function createTenantConfig(
     {
       id: "next-rent-due",
       title: "Next Rent Due",
-      value: `$${assignedProperty?.price?.toLocaleString() || '0'}`,
-      subtitle: nextRentDue ? `Due ${formatRentDueDate(nextRentDue)}` : 'N/A',
+      value: nextPaymentSchedule?.monthlyAmount
+        ? `$${nextPaymentSchedule.monthlyAmount.toLocaleString()}`
+        : `$${assignedProperty?.price?.toLocaleString() || "0"}`,
+      subtitle: nextPaymentSchedule?.nextChargeDate
+        ? `Due ${formatDate(new Date(nextPaymentSchedule.nextChargeDate), { month: "long", day: "numeric", year: "numeric" })}`
+        : nextRentDue
+          ? `Due ${formatRentDueDate(nextRentDue)}`
+          : "N/A",
       icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
       href: "/tenant/payments",
     },
@@ -207,22 +199,6 @@ export function createTenantConfig(
       href: assignedProperty ? "/tenant/lease-details" : undefined,
     },
     {
-      id: "total-paid",
-      title: "Total Paid (YTD)",
-      value: `$${paymentStats.totalPaidThisYear.toLocaleString()}`,
-      subtitle: `${paymentStats.totalPayments} payments`,
-      icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
-      href: "/tenant/payments",
-    },
-    {
-      id: "payment-history",
-      title: "Payment History",
-      value: `${paymentStats.onTimeRate}%`,
-      subtitle: `${paymentStats.onTimePayments}/${paymentStats.totalPayments} on-time`,
-      icon: <CheckCircle className="h-4 w-4 text-muted-foreground" />,
-      href: "/tenant/payments",
-    },
-    {
       id: "lease-progress",
       title: "Lease Progress",
       value: `${Math.round(leaseProgress)}%`,
@@ -259,14 +235,14 @@ export function createTenantConfig(
     {
       id: "documents",
       title: "Documents",
-      description: `${documentsCount} Documents`,
+      description: "Lease files and notices",
       icon: <FileText className="h-8 w-8 text-purple-500" />,
       href: "/tenant/documents",
     },
     {
       id: "messages",
       title: "Messages",
-      description: unreadMessagesCount > 0 ? `${unreadMessagesCount} New` : "View Messages",
+      description: "Message your manager",
       icon: <MessageSquare className="h-8 w-8 text-orange-500" />,
       href: "/tenant/messages",
     },
@@ -274,7 +250,6 @@ export function createTenantConfig(
 
   // Generate activity feed (reserved for future ActivityFeed integration)
   const _activities: ActivityItem[] = [
-    // Maintenance activities
     ...maintenanceRequests.slice(0, 2).map((m, idx) => ({
       id: `maint-${idx}`,
       type: "maintenance" as const,
@@ -283,24 +258,6 @@ export function createTenantConfig(
       status: m.status === 'completed' ? 'success' as const : 'warning' as const,
       href: `/tenant/maintenance`,
     })),
-    // Payment activity
-    {
-      id: "payment-1",
-      type: "payment" as const,
-      message: "Rent payment processed successfully",
-      time: "2 days ago",
-      status: "success" as const,
-      href: "/tenant/payments",
-    },
-    // Message activity
-    ...(unreadMessagesCount > 0 ? [{
-      id: "message-1",
-      type: "message" as const,
-      message: `You have ${unreadMessagesCount} new message${unreadMessagesCount > 1 ? 's' : ''}`,
-      time: "1 day ago",
-      status: "info" as const,
-      href: "/tenant/messages",
-    }] : []),
   ]
   void _activities
 
@@ -351,33 +308,23 @@ export function createTenantConfig(
               {/* Payment Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment Summary</CardTitle>
-                  <CardDescription>Your payment statistics</CardDescription>
+                  <CardTitle>Rent</CardTitle>
+                  <CardDescription>Charges and receipts live on your payments page — not guessed on this dashboard.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Paid (YTD)</p>
-                      <p className="text-xl font-semibold">${paymentStats.totalPaidThisYear.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">On-Time Rate</p>
-                      <p className="text-xl font-semibold">{paymentStats.onTimeRate}%</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Payments</p>
-                      <p className="text-lg font-semibold">{paymentStats.totalPayments}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Average Payment</p>
-                      <p className="text-lg font-semibold">${paymentStats.averagePayment.toLocaleString()}</p>
-                    </div>
-                  </div>
+                  {nextPaymentSchedule?.nextChargeDate ? (
+                    <p className="text-sm">
+                      Next charge {formatDate(new Date(nextPaymentSchedule.nextChargeDate), { month: "long", day: "numeric", year: "numeric" })}
+                      {nextPaymentSchedule.monthlyAmount
+                        ? ` · $${nextPaymentSchedule.monthlyAmount.toLocaleString()}`
+                        : ""}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No upcoming charge is on file yet.</p>
+                  )}
                   <Link to="/tenant/payments">
                     <Button variant="outline" className="w-full">
-                      View Payment History
+                      View payment history
                     </Button>
                   </Link>
                 </CardContent>
@@ -568,6 +515,21 @@ export function createTenantConfig(
   ]
 
   const widgets: DashboardWidget[] = [
+    {
+      id: "tenant-needs-attention",
+      title: "Needs your attention",
+      gridCols: 2,
+      priority: -10,
+      component: (
+        <TenantNeedsAttention
+          nextChargeDate={nextPaymentSchedule?.nextChargeDate}
+          monthlyAmount={nextPaymentSchedule?.monthlyAmount}
+          openMaintenanceCount={maintenanceRequests.filter(
+            (r) => r.status === "pending" || r.status === "in_progress",
+          ).length}
+        />
+      ),
+    },
     {
       id: "tenant-assistant",
       title: "Assistant",

@@ -33,6 +33,7 @@ const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard
 const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
+const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
 // Advanced modules. Reachable by direct URL only; kept out of PortalSidebar
 // nav until the product decision in docs/superpowers/2026-07-08-advanced-modules-decision.md
 // picks winners. Direct-URL access lets us dogfood + demo without shipping
@@ -78,6 +79,7 @@ export default function Owner() {
             <Route path="/payments" element={<DashboardPaymentHistory title="Rent payments" emptyMessage="No rent payments received yet." />} />
             <Route path="/screening" element={<ScreeningListPage title="Tenant screening" />} />
             <Route path="/calendar" element={<OwnerCalendar />} />
+            <Route path="/tasks" element={<ManagerTasks />} />
             <Route path="/notifications" element={<OwnerNotifications />} />
             <Route path="/profile" element={<OwnerProfile />} />
             <Route path="/organization" element={<OwnerOrganization />} />

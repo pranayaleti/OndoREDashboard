@@ -22,6 +22,9 @@ import { ScreeningListPageWithOwnerFilter } from "@/components/shared/screening-
 import { ReferralProgram } from "@/components/shared/referral-program"
 
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
+const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
+const ManagerWorkflows = lazy(() => import("@/components/manager/manager-workflows"))
+const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 
 export default function SuperAdmin() {
   return (
@@ -41,10 +44,13 @@ export default function SuperAdmin() {
             <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
             <Route path="/properties/*" element={<SuperAdminProperties />} />
             <Route path="/finances/*" element={<SuperAdminFinances />} />
+            <Route path="/payments" element={<DashboardPaymentHistory title="Rent collected" emptyMessage="No payments yet." />} />
             <Route path="/reports/*" element={<SuperAdminReports />} />
             <Route path="/messages/*" element={<SuperAdminMessages />} />
             <Route path="/documents" element={<SuperAdminDocuments />} />
             <Route path="/calendar" element={<SuperAdminCalendar />} />
+            <Route path="/tasks" element={<ManagerTasks />} />
+            <Route path="/automations" element={<ManagerWorkflows />} />
             <Route path="/notifications" element={<SuperAdminNotifications />} />
             <Route path="/profile" element={<SuperAdminProfile />} />
             <Route path="/referrals" element={<ReferralProgram />} />

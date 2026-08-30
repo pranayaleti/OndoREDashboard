@@ -77,7 +77,7 @@ DoorLoop branding, logos, reminder-card chrome, voice notes, vision photo-sortin
 
 ## Partial improvements
 
-- Property beds/baths/sqft **and lease dates** shown at inspection start.
+- Property beds/baths/sqft, inspection type badge, **lease dates** (`leaseStart`/`leaseEnd` or `startDate`/`endDate`), and **Open lease** on the start card and checklist.
 - Item notes and `photo_urls` existed on the API; they are now in the walkthrough.
 - Extra inspection photos (beyond the first) are appended to the work-order description.
 - “Open ticket” remains as “Ticket opened” links after convert; each finding also has **Open work order**.
@@ -92,7 +92,11 @@ Closed after comparing `reference-04` through `reference-13` and the audit:
 |---|---|
 | Checklist overview (“where to check, what to capture”) was skipped | New **checklist** phase after layout generate; room cards with capture hints; Start walkthrough |
 | Upload PDF/image was a fake generate | File picker → documents `floor_plan` upload → floor-plan row (optional room names) → `POST /layout` `uploaded` |
-| Lease dates unused | Inspection manager + mobile walkthrough load the current lease |
+| Lease dates unused | Inspection manager + mobile walkthrough load the current lease (`leaseStart`/`leaseEnd` or `startDate`/`endDate`) |
+| Start card lacked type / Confirm lease | Type badge (Move-In, Routine, …) + **Open lease** (closes the dialog and goes to the leases tab). Move-In / pre-lease also get **Open applications**. Scheduled inspections appear on the owner/manager calendar; **On calendar** links there. |
+| Findings had no vendor step | After a ticket is opened, assign an existing vendor (no billing). Owner and manager assignment is scoped to their properties. |
+| Dialog too small on phone | Full-viewport walkthrough on small screens; `sm:max-w-3xl` on desktop |
+| PDF printed photo URLs only | Express PDF embeds jpeg/png when fetch succeeds (4s / 2MB cap) |
 | Condition tiles were text-only | Smile / wrench / trash / search icons (Lucide + Ionicons) |
 | All-rooms list had no room icons | Door / sofa / kitchen / bath / bed icons by room name |
 | Legal copy only in PDF | Same disclaimer on the in-app signature step |
@@ -118,7 +122,7 @@ Intentionally still not cloned: Confirm lease / Move in, reminder Keep/Turn-off 
 
 **Reference (analysis):** `OndoREDashboard/reference-analysis/screenshots/reference-01-…` through `reference-13-…`
 
-**Current app after implementation:** Manager walkthrough verified live: layout choice, AI generate → room checklist with capture hints, item condition tiles with icons, all-rooms summary with room icons. Owner portal currently errors in `PortalSidebar` (`useContext` null) — unrelated to this walkthrough.
+**Current app after implementation:** Owner walkthrough verified live on 101 Oak Street: full-viewport dialog on a narrow screen, type label in the title, start/checklist card with Open lease. JPEG/PNG embed in the Express PDF is covered by unit tests.
 
 ---
 
@@ -129,11 +133,12 @@ Intentionally still not cloned: Confirm lease / Move in, reminder Keep/Turn-off 
 | Backend `tsc` | Pass |
 | Backend `inspectionLayout` unit tests | Pass (7) |
 | Backend inspection integration | Pass (3) after applying migration locally + remotely |
-| Dashboard walkthrough helper tests | Pass (11) |
+| Dashboard walkthrough helper tests | Pass (15) |
 | Dashboard eslint (touched files) + `tsc` | Pass |
-| Mobile eslint (inspection files) + Jest `useInspections` + `inspectionWalkUi` | Pass (9) |
-| Responsive | Walkthrough uses stacked layout, `sm:grid-cols-2`, dialog `max-w-2xl` / 90vh scroll; native screens are phone-first |
-| Live dashboard | Manager property inspections: layout choice (beds + start prompt + Upload PDF/image + AI recommended), AI generate → room checklist with capture hints, item tiles with condition icons, all-rooms chef-hat icon + Edit/Finish. Lease dates appear when the property has a current lease. Owner `/owner` hit a pre-existing PortalSidebar `useContext` crash unrelated to this walkthrough. |
+| Mobile eslint (inspection files) + Jest `useInspections` + `inspectionWalkUi` | Pass |
+| Backend `inspectionReport` photo helpers | Pass (4) |
+| Responsive | Walkthrough uses stacked layout, `sm:grid-cols-2`; dialog is full-viewport on small screens (`100dvh`, `max-w-none`) and `sm:max-w-3xl` / 90vh on desktop; native screens are phone-first |
+| Live dashboard | Owner 101 Oak Street inspections: walkthrough dialog fills a narrow viewport; title is “Routine walkthrough”; start/checklist card shows type badge + Open lease. Lease dates appear when the property has a current lease. |
 
 **Migration:** Applied with `supabase db push` (remote) and `supabase migration up --local`.
 
@@ -143,11 +148,11 @@ Intentionally still not cloned: Confirm lease / Move in, reminder Keep/Turn-off 
 
 | Difference | Why |
 |---|---|
-| No DoorLoop branding / reminder Keep-Turn-off cards | Existing calendar + notifications; not cloning chrome |
+| No DoorLoop branding / reminder Keep-Turn-off cards | Existing calendar + notifications; scheduled inspections now show on that calendar instead of cloning reminder chrome |
 | No Save & Create Bill | Accounting is a separate product surface |
-| Vendor picker stays on maintenance | Equivalent; tickets open there |
+| Vendor picker is assign-only on findings | Uses the existing vendor directory; tickets still open in maintenance |
 | No speech SDK / Claude vision photo sort | Notes + explicit photo attach for v1 |
 | Edge `POST /report` does not render PDF | pdfkit is Node-only; Express generates the file; Edge returns JSON + signed URL if a path already exists |
-| Photo URLs printed in the PDF, not embedded images | Avoids fetching arbitrary bytes into pdfkit in v1 |
+| JPEG/PNG embed in the PDF; other types still print the URL | Fetch is capped (4s / 2MB) and http(s) only; WebP is not embedded |
 | Tenant self-inspection unchanged | Different product (OndoREui) |
 | Condition API still `excellent\|good\|fair\|poor\|damaged\|missing` | UI maps Repair→poor, Replace→damaged |

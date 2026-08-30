@@ -26,6 +26,7 @@ import type { ActivityItem } from "../../base/types"
 import { BookkeepingReportingWidget } from "../../widgets/bookkeeping-reporting"
 import { TenantScreeningWidgetContainer } from "@/components/tenant-screening/TenantScreeningWidgetContainer"
 import { HomeCareRemindersCard } from "@/components/HomeCareRemindersCard"
+import { OperationsActionCenter } from "@/components/operations/operations-action-center"
 import { DEMO_MANAGER_FINANCIAL_SUMMARY, isDemoPortfolio, isManagerDemoUser } from "@/lib/seed-data"
 import { ManagerOnboardingChecklist } from "@/components/manager/manager-onboarding-checklist"
 
@@ -325,6 +326,13 @@ export function createManagerConfig(
   ]
 
   const widgets: DashboardWidget[] = [
+    {
+      id: "operations-action-center",
+      title: "Needs attention",
+      gridCols: 2,
+      priority: -10,
+      component: <OperationsActionCenter />,
+    },
     {
       id: "home-care-reminders",
       title: "Home care reminders",

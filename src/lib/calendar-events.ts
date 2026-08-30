@@ -20,6 +20,7 @@ export interface CalendarEventVM {
   time: string
   type: string
   property?: string
+  propertyId?: string | null
   description?: string
 }
 
@@ -80,4 +81,40 @@ export function uniqueEventDates(events: CalendarEventVM[]): Date[] {
     byKey.set(e.date.toDateString(), e.date)
   }
   return [...byKey.values()]
+}
+
+/** Map GET /calendar rows into the calendar view model. */
+export function apiCalendarEventToVM(event: {
+  id: string
+  title: string
+  eventType: string
+  startDate: string
+  propertyId?: string | null
+  relatedType?: string | null
+  metadata?: Record<string, unknown> | null
+}): CalendarEventVM {
+  const dateKey = event.startDate.slice(0, 10)
+  const propertyTitle =
+    typeof event.metadata?.propertyTitle === "string" ? event.metadata.propertyTitle : undefined
+  return {
+    id: event.id,
+    title: event.title,
+    date: dateKeyToLocalDate(dateKey),
+    time: "All day",
+    type: event.eventType,
+    property: propertyTitle,
+    propertyId: event.propertyId ?? null,
+    description: event.eventType === "inspection" ? "Scheduled inspection" : undefined,
+  }
+}
+
+export function propertyCalendarHref(
+  dashboardBase: string,
+  propertyId: string | null | undefined,
+  tab?: string,
+): string | null {
+  if (!propertyId) return null
+  const base = dashboardBase.replace(/\/$/, "")
+  const path = `${base}/properties/${propertyId}`
+  return tab ? `${path}?tab=${encodeURIComponent(tab)}` : path
 }

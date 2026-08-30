@@ -23,6 +23,9 @@ const ManagerContentStudio = lazy(() => import("@/components/manager/manager-con
 const ScreeningListPageWithOwnerFilter = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPageWithOwnerFilter })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
+const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
+const ManagerWorkflows = lazy(() => import("@/components/manager/manager-workflows"))
+const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 
 export default function Admin() {
   return (
@@ -41,10 +44,13 @@ export default function Admin() {
             <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
             <Route path="/properties/*" element={<AdminProperties />} />
             <Route path="/finances/*" element={<AdminFinances />} />
+            <Route path="/payments" element={<DashboardPaymentHistory title="Rent collected" emptyMessage="No payments yet." />} />
             <Route path="/reports/*" element={<AdminReports />} />
             <Route path="/messages/*" element={<AdminMessages />} />
             <Route path="/documents" element={<AdminDocuments />} />
             <Route path="/calendar" element={<AdminCalendar />} />
+            <Route path="/tasks" element={<ManagerTasks />} />
+            <Route path="/automations" element={<ManagerWorkflows />} />
             <Route path="/events" element={<AdminEvents />} />
             <Route path="/notifications" element={<AdminNotifications />} />
             <Route path="/settings" element={<AdminSettings />} />

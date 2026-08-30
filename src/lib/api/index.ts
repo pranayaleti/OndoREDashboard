@@ -38,6 +38,15 @@ export type {
   RestrictedMatch as ContentRestrictedMatch,
 } from "./clients/content";
 export { dashboardApi } from "./clients/dashboard";
+export { operationsApi } from "./clients/operations";
+export type {
+  ActionCenter,
+  ActionItem,
+  ActionKind,
+  ActionSeverity,
+  SearchHit,
+  SearchEntityType,
+} from "./clients/operations";
 export { notificationsApi } from "./clients/notifications";
 export { csvImportApi } from "./clients/csv-import";
 export type { ImportPreview, ImportResult, MappedProperty } from "./clients/csv-import";

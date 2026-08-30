@@ -14,35 +14,7 @@ import {
   CheckCircle2, Circle, Clock, AlertTriangle, Plus, Loader2, ChevronDown, ChevronRight, CalendarDays,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { apiGet, apiPost, apiPut } from "@/lib/api/http"
-
-interface ChecklistItem {
-  id: string
-  label: string
-  isDone: boolean
-}
-
-interface Task {
-  id: string
-  title: string
-  description: string
-  taskType: string
-  status: string
-  priority: string
-  propertyId: string | null
-  assignedTo: string | null
-  dueDate: string | null
-  completedAt: string | null
-  checklistItems?: ChecklistItem[]
-  createdAt: string
-}
-
-interface TaskStats {
-  byStatus: Record<string, number>
-  byType: Record<string, number>
-  overdueCount: number
-  total: number
-}
+import { tasksApi, type Task, type TaskStats, type ChecklistItem } from "@/lib/api"
 
 const STATUS_ICON: Record<string, React.ReactNode> = {
   pending: <Circle className="h-4 w-4 text-gray-400" />,
@@ -73,11 +45,11 @@ export default function ManagerTasks() {
   const load = async () => {
     try {
       setLoading(true)
-      const [taskData, statsData] = await Promise.all([
-        apiGet<{ tasks: Task[] }>("/tasks"),
-        apiGet<TaskStats>("/tasks/stats"),
+      const [taskList, statsData] = await Promise.all([
+        tasksApi.listTasks(),
+        tasksApi.getStats(),
       ])
-      setTasks(taskData.tasks ?? [])
+      setTasks(taskList)
       setStats(statsData)
     } catch {
       toast({ title: "Failed to load tasks", variant: "destructive" })
@@ -96,7 +68,12 @@ export default function ManagerTasks() {
     if (!newTask.title.trim()) return
     setSaving(true)
     try {
-      await apiPost("/tasks", newTask)
+      await tasksApi.createTask({
+        title: newTask.title,
+        description: newTask.description,
+        taskType: newTask.taskType,
+        priority: newTask.priority,
+      })
       toast({ title: "Task created" })
       setShowNewDialog(false)
       setNewTask({ title: "", description: "", taskType: "general", priority: "medium" })
@@ -110,7 +87,7 @@ export default function ManagerTasks() {
 
   const toggleChecklist = async (taskId: string, itemId: string, isDone: boolean) => {
     try {
-      await apiPut(`/tasks/${taskId}/checklist/${itemId}`, { isDone: !isDone })
+      await tasksApi.toggleChecklistItem(itemId)
       setTasks((prev) =>
         prev.map((t) =>
           t.id === taskId

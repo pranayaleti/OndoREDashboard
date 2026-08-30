@@ -26,7 +26,7 @@ import { useAuth } from "@/lib/auth-context"
 import { getDashboardPath } from "@/lib/auth-utils"
 import { InspectionWalkthrough, type PropertySnapshot, type WalkthroughInspection } from "@/components/owner/inspection-walkthrough"
 import { formatDate } from "@/lib/locale-format"
-import { pickCurrentLease } from "@/lib/inspection-walkthrough-ui"
+import { inspectionTypeLabel, leaseDateRange, pickCurrentLease } from "@/lib/inspection-walkthrough-ui"
 
 interface Inspection {
   id: string
@@ -55,17 +55,6 @@ interface InspectionDetail {
   tenantSignatureName?: string | null
   tenantSignedAt?: string | null
   items?: WalkthroughInspection["items"]
-}
-
-const typeLabels: Record<string, string> = {
-  move_in: "Move-In",
-  move_out: "Move-Out",
-  periodic: "Routine",
-  emergency: "Emergency",
-  annual: "Annual",
-  pre_lease: "Pre-Lease",
-  post_maintenance: "Post-Maintenance",
-  custom: "Custom",
 }
 
 const statusColors: Record<string, string> = {
@@ -116,19 +105,28 @@ export function InspectionManager({ propertyId, propertySnapshot }: InspectionMa
           status?: string
           leaseStart?: string
           leaseEnd?: string
+          startDate?: string
+          endDate?: string
         }>
-        const lease = pickCurrentLease(leases)
-        if (lease?.leaseStart && lease.leaseEnd) {
-          next = { ...next, leaseStart: lease.leaseStart, leaseEnd: lease.leaseEnd }
+        const range = leaseDateRange(pickCurrentLease(leases))
+        if (range) {
+          next = { ...next, leaseStart: range.start, leaseEnd: range.end }
         }
       } catch {
         /* lease dates are optional on the start card */
+      }
+      const base = getDashboardPath(user?.role ?? "owner")
+      next = {
+        ...next,
+        leaseHref: `${base}/properties/${propertyId}?tab=leases`,
+        applicationsHref: `${base}/properties/${propertyId}?tab=applications`,
+        calendarHref: `${base}/calendar`,
       }
       if (!cancelled) setSnapshot(next)
     }
     void loadSnapshot()
     return () => { cancelled = true }
-  }, [propertyId, propertySnapshot])
+  }, [propertyId, propertySnapshot, user?.role])
 
   const load = async () => {
     try {
@@ -196,7 +194,7 @@ export function InspectionManager({ propertyId, propertySnapshot }: InspectionMa
           {inspections.map((insp) => (
             <div key={insp.id} className="flex items-center justify-between p-3 bg-muted dark:bg-card rounded-lg border">
               <div>
-                <p className="font-medium text-sm">{typeLabels[insp.inspectionType] || insp.inspectionType} Inspection</p>
+                <p className="font-medium text-sm">{inspectionTypeLabel(insp.inspectionType)} Inspection</p>
                 <p className="text-xs text-slate-500">
                   {formatDate(insp.scheduledDate)}
                   {insp.overallCondition && `: ${insp.overallCondition}`}
@@ -263,30 +261,35 @@ export function InspectionManager({ propertyId, propertySnapshot }: InspectionMa
       </Dialog>
 
       {/* Detail Dialog */}
-      <Dialog open={!!detailId} onOpenChange={() => setDetailId(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {typeLabels[detail?.inspectionType ?? ""] || "Inspection"} walkthrough
-            </DialogTitle>
-            <DialogDescription>
-              Capture each item, then finish, sign, and open work orders.
-            </DialogDescription>
-          </DialogHeader>
-          {detail && (
-            <InspectionWalkthrough
-              key={`${detail.id}-${detail.items?.length ?? 0}`}
-              inspection={detail as WalkthroughInspection}
-              propertyId={propertyId}
-              property={snapshot}
-              maintenanceHref={maintenanceHref}
-              onReload={async () => {
-                await loadDetail(detail.id)
-                await load()
-              }}
-              onClose={() => setDetailId(null)}
-            />
-          )}
+      <Dialog open={!!detailId} onOpenChange={(open) => { if (!open) setDetailId(null) }}>
+        <DialogContent
+          className="flex h-[100dvh] max-h-[100dvh] max-w-none flex-col overflow-hidden rounded-none data-[state=closed]:animate-none data-[state=open]:animate-none sm:h-auto sm:max-h-[90vh] sm:max-w-3xl sm:rounded-lg"
+          overlayClassName="data-[state=closed]:animate-none data-[state=open]:animate-none"
+        >
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {detail ? `${inspectionTypeLabel(detail.inspectionType)} walkthrough` : "Inspection walkthrough"}
+              </DialogTitle>
+              <DialogDescription>
+                Capture each item, then finish, sign, and open work orders.
+              </DialogDescription>
+            </DialogHeader>
+            {detail && (
+              <InspectionWalkthrough
+                key={`${detail.id}-${detail.items?.length ?? 0}`}
+                inspection={detail as WalkthroughInspection}
+                propertyId={propertyId}
+                property={snapshot}
+                maintenanceHref={maintenanceHref}
+                onReload={async () => {
+                  await loadDetail(detail.id)
+                  await load()
+                }}
+                onClose={() => setDetailId(null)}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

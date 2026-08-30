@@ -21,7 +21,15 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { documentsApi, featureApi } from "@/lib/api"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { documentsApi, featureApi, vendorsApi } from "@/lib/api"
+import type { Vendor } from "@/lib/api/clients/vendors"
 import { storageUploadErrorMessage } from "@/lib/storage-upload-error"
 import { useToast } from "@/hooks/use-toast"
 import { formatDate } from "@/lib/locale-format"
@@ -32,10 +40,12 @@ import {
   groupByArea,
   INSPECTION_LEGAL_DISCLAIMER,
   initialWalkthroughPhase,
+  inspectionTypeLabel,
   isAllowedLayoutMime,
   LAYOUT_ACCEPT,
   resolveLayoutMime,
   roomKind,
+  showApplicationsCta,
   type RoomKind,
   type WalkthroughPhase,
 } from "@/lib/inspection-walkthrough-ui"
@@ -72,6 +82,9 @@ export interface PropertySnapshot {
   unitNumber?: string | null
   leaseStart?: string | null
   leaseEnd?: string | null
+  leaseHref?: string | null
+  applicationsHref?: string | null
+  calendarHref?: string | null
 }
 
 const WALK_CONDITIONS = [
@@ -114,6 +127,54 @@ function RoomIcon({ area, className }: { area: string; className?: string }) {
   return <Icon className={className} aria-hidden />
 }
 
+function InspectionStartCard({
+  inspectionType,
+  title,
+  unitLine,
+  leaseLine,
+  leaseHref,
+  applicationsHref,
+  calendarHref,
+  onClose,
+}: {
+  inspectionType: string
+  title?: string
+  unitLine: string
+  leaseLine: string | null
+  leaseHref?: string | null
+  applicationsHref?: string | null
+  calendarHref?: string | null
+  onClose: () => void
+}) {
+  return (
+    <div className="rounded-lg border bg-muted/40 p-4 text-sm space-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="font-medium">{title || "This unit"}</p>
+        <Badge variant="secondary">{inspectionTypeLabel(inspectionType)}</Badge>
+      </div>
+      {unitLine ? <p className="text-muted-foreground">Rooms: {unitLine}</p> : null}
+      {leaseLine ? <p className="text-muted-foreground">{leaseLine}</p> : null}
+      <div className="flex flex-wrap gap-2">
+        {leaseHref ? (
+          <Button variant="outline" size="sm" asChild>
+            <Link to={leaseHref} onClick={onClose}>Open lease</Link>
+          </Button>
+        ) : null}
+        {showApplicationsCta(inspectionType) && applicationsHref ? (
+          <Button variant="outline" size="sm" asChild>
+            <Link to={applicationsHref} onClick={onClose}>Open applications</Link>
+          </Button>
+        ) : null}
+        {calendarHref ? (
+          <Button variant="ghost" size="sm" asChild>
+            <Link to={calendarHref} onClick={onClose}>On calendar</Link>
+          </Button>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 interface InspectionWalkthroughProps {
   inspection: WalkthroughInspection
   propertyId: string
@@ -129,6 +190,7 @@ export function InspectionWalkthrough({
   property,
   maintenanceHref,
   onReload,
+  onClose,
 }: InspectionWalkthroughProps) {
   const { toast } = useToast()
   const items = inspection.items ?? []
@@ -152,6 +214,10 @@ export function InspectionWalkthrough({
   const [layoutFile, setLayoutFile] = useState<File | null>(null)
   const [layoutRoomNames, setLayoutRoomNames] = useState("")
   const [convertingItemId, setConvertingItemId] = useState<string | null>(null)
+  const [vendors, setVendors] = useState<Vendor[]>([])
+  const [vendorPick, setVendorPick] = useState<Record<string, string>>({})
+  const [assignedName, setAssignedName] = useState<Record<string, string>>({})
+  const [assigningTicket, setAssigningTicket] = useState<string | null>(null)
   const photoRef = useRef<HTMLInputElement>(null)
   const layoutRef = useRef<HTMLInputElement>(null)
 
@@ -191,6 +257,28 @@ export function InspectionWalkthrough({
   const unitLabel = [property.title, property.unitNumber ? `Unit ${property.unitNumber}` : null]
     .filter(Boolean)
     .join(", ") || "this property"
+
+  const startCardProps = {
+    inspectionType: inspection.inspectionType,
+    title: property.title,
+    unitLine,
+    leaseLine,
+    leaseHref: property.leaseHref,
+    applicationsHref: property.applicationsHref,
+    calendarHref: property.calendarHref,
+    onClose,
+  }
+
+  useEffect(() => {
+    if (effectivePhase !== "report") return
+    let cancelled = false
+    void vendorsApi.list({ status: "active" }).then((res) => {
+      if (!cancelled) setVendors(Array.isArray(res.data) ? res.data : [])
+    }).catch(() => {
+      if (!cancelled) setVendors([])
+    })
+    return () => { cancelled = true }
+  }, [effectivePhase])
 
   const persistItem = async (patch: { condition?: string; notes?: string; photoUrls?: string[] }) => {
     if (!item) return
@@ -395,14 +483,26 @@ export function InspectionWalkthrough({
     }
   }
 
+  const assignVendorToFinding = async (ticketId: string) => {
+    const vendorId = vendorPick[ticketId]
+    if (!vendorId) return
+    try {
+      setAssigningTicket(ticketId)
+      await vendorsApi.assign({ vendorId, maintenanceRequestId: ticketId })
+      const vendor = vendors.find((row) => row.id === vendorId)
+      setAssignedName((prev) => ({ ...prev, [ticketId]: vendor?.name || "Vendor assigned" }))
+      toast({ title: "Vendor assigned" })
+    } catch {
+      toast({ title: "Could not assign vendor", variant: "destructive" })
+    } finally {
+      setAssigningTicket(null)
+    }
+  }
+
   if (effectivePhase === "layout") {
     return (
       <div className="space-y-4">
-        <div className="rounded-lg border bg-muted/40 p-4 text-sm space-y-1">
-          <p className="font-medium">{property.title || "This unit"}</p>
-          {unitLine ? <p className="text-muted-foreground">Rooms: {unitLine}</p> : null}
-          {leaseLine ? <p className="text-muted-foreground">{leaseLine}</p> : null}
-        </div>
+        <InspectionStartCard {...startCardProps} />
         <div className="rounded-lg bg-muted p-3 text-sm">
           Let’s start the inspection for {unitLabel}.
         </div>
@@ -471,6 +571,7 @@ export function InspectionWalkthrough({
     const rooms = groupByArea(items)
     return (
       <div className="space-y-4">
+        <InspectionStartCard {...startCardProps} />
         <div>
           <p className="font-semibold">Where to check, what to capture</p>
           <p className="text-xs text-muted-foreground">Review the checklist, then walk the unit item by item.</p>
@@ -716,22 +817,59 @@ export function InspectionWalkthrough({
         <div className="space-y-2">
           <p className="text-sm font-medium">Things to fix</p>
           {issues.map((issue) => (
-            <div key={issue.id} className="flex items-center justify-between gap-2 text-sm rounded border p-2">
-              <span>{issue.area}: {issue.itemName}</span>
+            <div key={issue.id} className="rounded border p-2 space-y-2">
+              <div className="flex items-center justify-between gap-2 text-sm">
+                <span>{issue.area}: {issue.itemName}</span>
+                {issue.maintenanceRequestId ? (
+                  <Button size="sm" variant="secondary" asChild>
+                    <Link to={maintenanceHref}>Ticket opened</Link>
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={saving || convertingItemId === issue.id}
+                    onClick={() => void openOneWorkOrder(issue.id)}
+                  >
+                    Open work order
+                  </Button>
+                )}
+              </div>
               {issue.maintenanceRequestId ? (
-                <Button size="sm" variant="secondary" asChild>
-                  <Link to={maintenanceHref}>Ticket opened</Link>
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={saving || convertingItemId === issue.id}
-                  onClick={() => void openOneWorkOrder(issue.id)}
-                >
-                  Open work order
-                </Button>
-              )}
+                assignedName[issue.maintenanceRequestId] ? (
+                  <p className="text-xs text-muted-foreground">Vendor: {assignedName[issue.maintenanceRequestId]}</p>
+                ) : vendors.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Select
+                      value={vendorPick[issue.maintenanceRequestId] || undefined}
+                      onValueChange={(value) =>
+                        setVendorPick((prev) => ({ ...prev, [issue.maintenanceRequestId as string]: value }))
+                      }
+                    >
+                      <SelectTrigger className="h-8 w-[min(100%,16rem)] text-xs" aria-label={`Vendor for ${issue.itemName}`}>
+                        <SelectValue placeholder="Assign vendor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vendors.map((vendor) => (
+                          <SelectItem key={vendor.id} value={vendor.id}>
+                            {vendor.name}{vendor.company ? ` · ${vendor.company}` : ""}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={!vendorPick[issue.maintenanceRequestId] || assigningTicket === issue.maintenanceRequestId}
+                      onClick={() => void assignVendorToFinding(issue.maintenanceRequestId as string)}
+                    >
+                      Assign
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">Open the ticket to assign a vendor from maintenance.</p>
+                )
+              ) : null}
             </div>
           ))}
           {unsignedIssues.length > 0 && (

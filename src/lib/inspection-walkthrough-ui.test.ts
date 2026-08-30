@@ -4,7 +4,10 @@ import {
   floorPlanRoomsFromNames,
   groupByArea,
   initialWalkthroughPhase,
+  inspectionTypeLabel,
   isAllowedLayoutMime,
+  leaseDateRange,
+  showApplicationsCta,
   pickCurrentLease,
   resolveLayoutMime,
   roomKind,
@@ -90,6 +93,42 @@ describe("initialWalkthroughPhase", () => {
 describe("pickCurrentLease", () => {
   it("prefers active over draft", () => {
     expect(pickCurrentLease([{ status: "draft" }, { status: "active" }])?.status).toBe("active")
+  })
+})
+
+describe("leaseDateRange", () => {
+  it("reads leaseStart/leaseEnd", () => {
+    expect(leaseDateRange({ leaseStart: "2026-08-01", leaseEnd: "2027-07-31" })).toEqual({
+      start: "2026-08-01",
+      end: "2027-07-31",
+    })
+  })
+
+  it("falls back to startDate/endDate from older clients", () => {
+    expect(leaseDateRange({ startDate: "2026-01-01", endDate: "2026-12-31" })).toEqual({
+      start: "2026-01-01",
+      end: "2026-12-31",
+    })
+  })
+
+  it("returns null when a side is missing", () => {
+    expect(leaseDateRange({ leaseStart: "2026-08-01" })).toBeNull()
+    expect(leaseDateRange(undefined)).toBeNull()
+  })
+})
+
+describe("inspectionTypeLabel", () => {
+  it("labels move-in inspections", () => {
+    expect(inspectionTypeLabel("move_in")).toBe("Move-In")
+    expect(inspectionTypeLabel("periodic")).toBe("Routine")
+  })
+})
+
+describe("showApplicationsCta", () => {
+  it("is for move-in and pre-lease only", () => {
+    expect(showApplicationsCta("move_in")).toBe(true)
+    expect(showApplicationsCta("pre_lease")).toBe(true)
+    expect(showApplicationsCta("periodic")).toBe(false)
   })
 })
 

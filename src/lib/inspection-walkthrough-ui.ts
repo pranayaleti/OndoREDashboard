@@ -108,3 +108,36 @@ export function pickCurrentLease<T extends { status?: string }>(leases: T[]): T 
   }
   return leases[0]
 }
+
+const INSPECTION_TYPE_LABELS: Record<string, string> = {
+  move_in: "Move-In",
+  move_out: "Move-Out",
+  periodic: "Routine",
+  emergency: "Emergency",
+  annual: "Annual",
+  pre_lease: "Pre-Lease",
+  post_maintenance: "Post-Maintenance",
+  custom: "Custom",
+}
+
+export function inspectionTypeLabel(type: string): string {
+  return INSPECTION_TYPE_LABELS[type] ?? type.replace(/_/g, " ")
+}
+
+/** Move-In / pre-lease walkthroughs surface applications instead of a leasing “Move in” CTA. */
+export function showApplicationsCta(inspectionType: string): boolean {
+  return inspectionType === "move_in" || inspectionType === "pre_lease"
+}
+
+/** API leases use leaseStart/leaseEnd; some clients still send startDate/endDate. */
+export function leaseDateRange(lease: {
+  leaseStart?: string | null
+  leaseEnd?: string | null
+  startDate?: string | null
+  endDate?: string | null
+} | null | undefined): { start: string; end: string } | null {
+  const start = lease?.leaseStart || lease?.startDate || null
+  const end = lease?.leaseEnd || lease?.endDate || null
+  if (!start || !end) return null
+  return { start, end }
+}

@@ -50,6 +50,8 @@ import {
   Upload,
   Gift,
   ChevronDown,
+  ListTodo,
+  Zap,
   Info,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -77,6 +79,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PortalOnboardingTour } from "@/components/portal-onboarding-tour"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
+import { GlobalSearch } from "@/components/operations/global-search"
 
 interface NavItem {
   title: string
@@ -135,6 +138,8 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
+        { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
+        { title: "Automations", href: `${basePath}/automations`, icon: <Zap className="h-5 w-5" /> },
         { title: "Events", href: `${basePath}/events`, icon: <CalendarDays className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
@@ -158,6 +163,9 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Reports", href: `${basePath}/reports`, icon: <BarChart3 className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
+        { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
+        { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
+        { title: "Automations", href: `${basePath}/automations`, icon: <Zap className="h-5 w-5" /> },
         { title: "Events", href: `${basePath}/events`, icon: <CalendarDays className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
@@ -183,6 +191,8 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Documents", href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
+        { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
+        { title: "Automations", href: `${basePath}/automations`, icon: <Zap className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
@@ -213,6 +223,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: t("owner:nav.sharedDocuments"), href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Organization", href: `${basePath}/organization`, icon: <Building className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
+        { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
         { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
@@ -318,6 +329,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
             `/owner/messages`,
             `/handoff`,
             `/owner/calendar`,
+            `/owner/tasks`,
           ].includes(item.href)
         ),
       },
@@ -760,6 +772,7 @@ function SidebarLayout({
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <GlobalSearch />
                 <ModeToggle />
               </div>
             </div>
