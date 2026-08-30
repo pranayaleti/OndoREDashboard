@@ -22,6 +22,7 @@ import {
   type LeadInboxStatus,
   type InboxFilter,
   isUnclaimedLead,
+  formatInquiryTypeLabel,
 } from "@/lib/api"
 import { formatUSDate, formatUSPhone } from "@/lib/us-format"
 import { useAuth } from "@/lib/auth-context"
@@ -268,7 +269,7 @@ export default function ManagerLeads() {
                         <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{lead.name}</h3>
                         <Badge variant="outline">{lead.kind === "property" ? "Property" : "Website"}</Badge>
                         {lead.inquiryType ? (
-                          <Badge variant="outline">{lead.inquiryType.replace("_", " ")}</Badge>
+                          <Badge variant="outline">{formatInquiryTypeLabel(lead.inquiryType)}</Badge>
                         ) : null}
                         {lead.overdueTaskCount > 0 ? (
                           <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">

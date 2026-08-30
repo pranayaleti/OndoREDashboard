@@ -18,7 +18,12 @@ export type InquiryType =
   | "agent"
   | "current_client"
   | "vendor"
-  | "other";
+  | "other"
+  | "tenant_looking_to_rent"
+  | "agent_referrals"
+  | "owner_rental_services"
+  | "vendor_maintenance"
+  | "current_resident";
 export type ActivityType = "note" | "call" | "email" | "task";
 
 export interface LeadScore {
@@ -151,10 +156,31 @@ export function isUnclaimedLead(lead: InboxLead): boolean {
   return lead.managerId === null && lead.claimedAt === null;
 }
 
+function isLeasingInquiry(inquiryType: string | null): boolean {
+  return inquiryType === "renter" || inquiryType === "tenant_looking_to_rent";
+}
+
+function isOwnerServicesInquiry(inquiryType: string | null): boolean {
+  return inquiryType === "owner" || inquiryType === "owner_rental_services";
+}
+
 export function isQueueConvert(lead: InboxLead): boolean {
   if (lead.kind === "property") return false;
-  if (lead.inquiryType === "renter" || lead.inquiryType === "owner") return false;
+  if (isLeasingInquiry(lead.inquiryType) || isOwnerServicesInquiry(lead.inquiryType)) return false;
   return true;
+}
+
+const INQUIRY_TYPE_LABELS: Partial<Record<InquiryType, string>> = {
+  tenant_looking_to_rent: "Tenant looking to rent",
+  agent_referrals: "Agent referrals",
+  owner_rental_services: "Owner rental services",
+  vendor_maintenance: "Vendor maintenance",
+  current_resident: "Current resident",
+  current_client: "Current client",
+};
+
+export function formatInquiryTypeLabel(inquiryType: string): string {
+  return INQUIRY_TYPE_LABELS[inquiryType as InquiryType] ?? inquiryType.replace(/_/g, " ");
 }
 
 export const leadApi = {

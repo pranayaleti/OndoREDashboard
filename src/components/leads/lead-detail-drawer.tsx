@@ -313,7 +313,9 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: Props) {
         {!unclaimed ? (
           <section>
             <h3 className="text-sm font-medium text-gray-500 mb-2">Convert</h3>
-            {lead.kind === "website" && lead.inquiryType === "renter" && !lead.propertyId ? (
+            {lead.kind === "website" &&
+            (lead.inquiryType === "renter" || lead.inquiryType === "tenant_looking_to_rent") &&
+            !lead.propertyId ? (
               <Input
                 className="mb-2"
                 placeholder="Property ID"

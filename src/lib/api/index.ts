@@ -190,7 +190,7 @@ export type {
   LeadInboxStatus,
   ActivityType,
 } from "./clients/lead";
-export { isUnclaimedLead, isQueueConvert } from "./clients/lead";
+export { isUnclaimedLead, isQueueConvert, formatInquiryTypeLabel } from "./clients/lead";
 export type {
   MaintenanceListResponse,
 } from "./clients/maintenance";
