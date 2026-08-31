@@ -25,6 +25,7 @@ const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
 const ManagerWorkflows = lazy(() => import("@/components/manager/manager-workflows"))
 const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
+const RentalApplicationsPage = lazy(() => import("@/components/rental/rental-applications-page"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 
 export default function SuperAdmin() {
@@ -43,6 +44,7 @@ export default function SuperAdmin() {
             <Route path="/tenants/*" element={<SuperAdminTenants />} />
             <Route path="/maintenance/*" element={<SuperAdminMaintenance />} />
             <Route path="/screening" element={<ScreeningListPageWithOwnerFilter title="Tenant screening" />} />
+            <Route path="/applications" element={<RentalApplicationsPage />} />
             <Route path="/leasing" element={<LeasingPipelinePage />} />
             <Route path="/properties/*" element={<SuperAdminProperties />} />
             <Route path="/finances/*" element={<SuperAdminFinances />} />

@@ -31,6 +31,7 @@ const ManagerAssistant = lazy(() => import("@/components/manager/manager-assista
 const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-page").then((m) => ({ default: m.ScreeningListPage })))
+const RentalApplicationsPage = lazy(() => import("@/components/rental/rental-applications-page"))
 const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
@@ -79,6 +80,7 @@ export default function Owner() {
             <Route path="/documents/*" element={<OwnerDocuments />} />
             <Route path="/payments" element={<DashboardPaymentHistory title="Rent payments" emptyMessage="No rent payments received yet." />} />
             <Route path="/screening" element={<ScreeningListPage title="Tenant screening" />} />
+            <Route path="/applications" element={<RentalApplicationsPage />} />
             <Route path="/leasing" element={<LeasingPipelinePage />} />
             <Route path="/calendar" element={<OwnerCalendar />} />
             <Route path="/tasks" element={<ManagerTasks />} />

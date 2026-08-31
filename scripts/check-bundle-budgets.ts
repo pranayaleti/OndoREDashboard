@@ -28,8 +28,9 @@ const BUDGETS: Budget[] = [
     chunkPrefix: "portal-sidebar-",
     // Current Phase 1/2 build: ~58 KB raw / ~15 KB gzip. Keep headroom for
     // i18n copy and route additions but fail fast if it drifts toward 100 KB.
-    maxRawKb: 75,
-    maxGzipKb: 20,
+    // Applications nav added 2026-08; current build ~75 KB raw / ~21 KB gzip.
+    maxRawKb: 80,
+    maxGzipKb: 22,
   },
 ];
 

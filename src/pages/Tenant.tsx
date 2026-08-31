@@ -20,6 +20,7 @@ const EquipmentGridPage = lazy(() => import("@/components/homeowner/equipment-gr
 const HomeownerSearchResults = lazy(() => import("@/components/homeowner/homeowner-search-results").then((m) => ({ default: m.HomeownerSearchResults })))
 const DocumentsPanel = lazy(() => import("@/components/homeowner/documents-panel").then((m) => ({ default: m.DocumentsPanel })))
 const TenantSettings = lazy(() => import("@/components/tenant/tenant-settings"))
+const TenantApplicationsPage = lazy(() => import("@/components/tenant/tenant-applications"))
 const TenantRewards = lazy(() => import("@/components/tenant/tenant-rewards"))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 
@@ -32,6 +33,7 @@ export default function Tenant() {
             <Route path="/" element={<TenantDashboard />} />
             <Route path="/assistant" element={<ManagerAssistant />} />
             <Route path="/lease-details" element={<TenantLeaseDetails />} />
+            <Route path="/applications" element={<TenantApplicationsPage />} />
             <Route path="/maintenance/*" element={<TenantMaintenance />} />
             <Route path="/payments" element={<TenantPayments />} />
             <Route path="/finances" element={<TenantFinances />} />

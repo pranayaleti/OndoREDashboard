@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { propertyApi, type Property } from "@/lib/api"
 import { ApplicationsDashboard } from "@/components/owner/applications-dashboard"
+import { RentalRequirementsEditor } from "@/components/rental/rental-requirements-editor"
+import { RentalApplicationsInbox } from "@/components/rental/rental-applications-inbox"
 import { LeaseManagement } from "@/components/owner/lease-management"
 import { InspectionManager } from "@/components/owner/inspection-manager"
 import { PropertyFloorPlans } from "@/components/owner/property-floor-plans"
@@ -125,6 +127,8 @@ export default function ManagerPropertyOps() {
           <TabsTrigger value="floor-plans">Floor plans</TabsTrigger>
         </TabsList>
         <TabsContent value="applications" className="space-y-6">
+          <RentalRequirementsEditor propertyId={property.id} />
+          <RentalApplicationsInbox propertyId={property.id} />
           <ApplicationsDashboard propertyId={property.id} />
         </TabsContent>
         <TabsContent value="leases" className="space-y-6">

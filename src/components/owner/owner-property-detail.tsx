@@ -28,6 +28,8 @@ import { formatOptionalNumber } from "@/lib/locale-format"
 import { PropertyRentScheduleSection } from "@/components/shared/property-rent-schedule-section"
 import { ScreeningConfigWizard } from "@/components/owner/screening-config-wizard"
 import { ApplicationsDashboard } from "@/components/owner/applications-dashboard"
+import { RentalRequirementsEditor } from "@/components/rental/rental-requirements-editor"
+import { RentalApplicationsInbox } from "@/components/rental/rental-applications-inbox"
 import { LeaseManagement } from "@/components/owner/lease-management"
 import { CoOwnerManagement } from "@/components/owner/co-owner-management"
 import { ApplicationAnalytics } from "@/components/owner/application-analytics"
@@ -296,8 +298,10 @@ export default function OwnerPropertyDetail() {
         </TabsContent>
         <TabsContent value="screening" className="space-y-6">
           {property?.id && <ScreeningConfigWizard propertyId={property.id} />}
+          {property?.id && <RentalRequirementsEditor propertyId={property.id} />}
         </TabsContent>
         <TabsContent value="applications" className="space-y-6">
+          {property?.id && <RentalApplicationsInbox propertyId={property.id} />}
           {property?.id && <ApplicationsDashboard propertyId={property.id} />}
         </TabsContent>
         <TabsContent value="leases" className="space-y-6">

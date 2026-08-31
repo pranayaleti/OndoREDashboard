@@ -1796,6 +1796,92 @@ export const featureApi = {
     },
   },
 
+  rental: {
+    getProfile(propertyId: string): Promise<unknown> {
+      return apiRequest<unknown>('GET', `/rental/properties/${propertyId}/profile`);
+    },
+    getRequirements(propertyId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/rental/properties/${propertyId}/requirements`, undefined, headers);
+    },
+    saveRequirements(
+      propertyId: string,
+      body: { published?: boolean; config: Record<string, unknown> },
+    ): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('PUT', `/rental/properties/${propertyId}/requirements`, body, headers);
+    },
+    listInbox(params?: {
+      propertyId?: string;
+      status?: string;
+      applicant?: string;
+      assignedReviewerId?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    }): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      const query = buildQueryString(params);
+      return apiRequest<unknown>('GET', `/rental/applications/inbox${query}`, undefined, headers).then((r) =>
+        unwrapDataArray(r),
+      );
+    },
+    listPortfolio(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/rental/portfolio`, undefined, headers).then((r) => unwrapDataArray(r));
+    },
+    listMine(): Promise<unknown[]> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/rental/applications/my`, undefined, headers).then((r) => unwrapDataArray(r));
+    },
+    get(applicationId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('GET', `/rental/applications/${applicationId}`, undefined, headers);
+    },
+    changeStatus(applicationId: string, status: string, notes?: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/rental/applications/${applicationId}/status`, { status, notes }, headers);
+    },
+    addNote(applicationId: string, notes: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/rental/applications/${applicationId}/notes`, { notes }, headers);
+    },
+    requestInfo(applicationId: string, message: string, documentTypes?: string[]): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>(
+        'POST',
+        `/rental/applications/${applicationId}/request-info`,
+        { message, documentTypes },
+        headers,
+      );
+    },
+    assign(applicationId: string, reviewerId: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>('POST', `/rental/applications/${applicationId}/assign`, { reviewerId }, headers);
+    },
+    reviewDocument(
+      applicationId: string,
+      documentId: string,
+      body: { status: 'approved' | 'rejected' | 'pending_review'; reviewNotes?: string; expiresAt?: string },
+    ): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>(
+        'POST',
+        `/rental/applications/${applicationId}/documents/${documentId}/review`,
+        body,
+        headers,
+      );
+    },
+    requestDocumentReplacement(applicationId: string, documentId: string, message: string): Promise<unknown> {
+      const headers = getAuthHeaders();
+      return apiRequest<unknown>(
+        'POST',
+        `/rental/applications/${applicationId}/documents/${documentId}/replace`,
+        { message },
+        headers,
+      );
+    },
+  },
+
   // ── Leases ─────────────────────────────────────────────────────────────────
 
   leases: {
