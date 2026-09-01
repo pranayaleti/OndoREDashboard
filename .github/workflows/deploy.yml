@@ -1,7 +1,12 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
+  # Deploy only after "Dashboard CI" passes on main. This previously ran on every push
+  # to main with no dependency on CI, so a commit failing unit tests or the bundle
+  # budgets still shipped to the app that owners and tenants use for money.
+  workflow_run:
+    workflows: ["Dashboard CI"]
+    types: [completed]
     branches: [ "main" ]
   workflow_dispatch:
 
@@ -16,15 +21,26 @@ concurrency:
 
 jobs:
   deploy:
+    # workflow_run fires on completion whatever the outcome, so gate on success.
+    # workflow_dispatch stays open as a deliberate manual escape hatch.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    outputs:
+      entry: ${{ steps.built.outputs.entry }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # workflow_run defaults to the default branch; pin to the exact commit CI
+          # validated so we never ship something CI did not actually test.
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,6 +57,17 @@ jobs:
           VITE_API_BASE_URL: https://lpklmquhxgbpavjngbby.supabase.co/functions/v1/api
           VITE_BASE_PATH: /
       
+      - name: Record built entry asset
+        id: built
+        run: |
+          ENTRY=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' dist/index.html | head -1)
+          if [ -z "$ENTRY" ]; then
+            echo "::error::Could not find the hashed entry chunk in dist/index.html"
+            exit 1
+          fi
+          echo "entry=$ENTRY" >> "$GITHUB_OUTPUT"
+          echo "This build's entry chunk: $ENTRY"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
@@ -52,3 +79,41 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # A deploy that reports success but never reaches the edge is now a red build.
+  # Vite fingerprints the entry chunk, so "is production serving THIS build?" is an
+  # exact string comparison rather than a guess.
+  verify-production:
+    needs: deploy
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Verify production is serving this build
+        env:
+          EXPECTED_ENTRY: ${{ needs.deploy.outputs.entry }}
+        run: |
+          SITE="https://app.ondorealestate.com"
+
+          if [ -z "$EXPECTED_ENTRY" ]; then
+            echo "::error::Build did not report an entry chunk; cannot verify the deploy."
+            exit 1
+          fi
+          echo "Expecting production to reference ${EXPECTED_ENTRY}."
+
+          for attempt in $(seq 1 20); do
+            CB=$(date +%s%N)
+            BODY=$(curl -fsS --max-time 30 "$SITE/?cb=$CB" || true)
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$SITE/?cb=$CB")
+            if printf '%s' "$BODY" | grep -q "$EXPECTED_ENTRY"; then
+              echo "attempt ${attempt}/20: homepage=${STATUS} entry matched — production is serving this build."
+              exit 0
+            fi
+            LIVE=$(printf '%s' "$BODY" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
+            echo "attempt ${attempt}/20: homepage=${STATUS} live_entry=${LIVE:-none} expected=${EXPECTED_ENTRY}"
+            sleep 15
+          done
+
+          echo "::error::Production never converged on this build (expected ${EXPECTED_ENTRY}). The deploy reported success but app.ondorealestate.com is not serving it."
+          exit 1

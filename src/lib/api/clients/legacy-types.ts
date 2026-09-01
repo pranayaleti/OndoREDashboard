@@ -261,6 +261,14 @@ export interface PublicProperty {
   status: string;
   createdAt: string;
   updatedAt: string;
+  petPolicy?: {
+    petsAllowed: boolean;
+    allowedSpecies: string[];
+    maxPets: number | null;
+    maxWeightLbs: number | null;
+    monthlyPetRentCents: number | null;
+    petDepositCents: number | null;
+  } | null;
 }
 
 export interface CreatePropertyRequest {
