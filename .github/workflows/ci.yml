@@ -19,11 +19,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
+          # CI uses Node 24 (GitHub Actions). .nvmrc 20.19.0 is the local floor matching engines >=20.19.0.
           node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Dependency audit
+        # Remaining findings are moderate (react-router v7 major) and low (tsx esbuild).
+        run: npm audit --audit-level=high
 
       - name: TypeScript check
         run: npx tsc --noEmit
