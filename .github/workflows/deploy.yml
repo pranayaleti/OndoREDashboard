@@ -80,11 +80,100 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  # Same zone as www (CF_API_TOKEN / CF_ZONE_ID). Hostname purge for the app
+  # host only — never purge_everything. Missing secrets: warn and continue so
+  # forks still deploy; present but failed API call: fail.
+  purge-cloudflare:
+    needs: deploy
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Purge Cloudflare cache (app host)
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          set +x
+          TOKEN="${CF_API_TOKEN:-${CLOUDFLARE_API_TOKEN:-}}"
+          ZONE="${CF_ZONE_ID:-${CLOUDFLARE_ZONE_ID:-}}"
+          if [ -z "$TOKEN" ] || [ -z "$ZONE" ]; then
+            echo "::warning::Cloudflare cache purge skipped: set repository secrets CF_API_TOKEN and CF_ZONE_ID (aliases CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID). Forks without secrets still succeed."
+            exit 0
+          fi
+          export TOKEN ZONE
+          HTTP=$(curl -sS -o /tmp/cf-zone.json -w "%{http_code}" \
+            -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE}" \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Content-Type: application/json")
+          export CF_ZONE_HTTP="$HTTP"
+          python3 - <<'PY'
+          import json, os, sys, urllib.request, urllib.error
+
+          token = os.environ["TOKEN"]
+          zone = os.environ["ZONE"]
+          expected = "ondorealestate.com"
+          http = os.environ.get("CF_ZONE_HTTP", "")
+
+          def fail(msg: str) -> None:
+              print(f"::error::{msg}", file=sys.stderr)
+              sys.exit(1)
+
+          try:
+              with open("/tmp/cf-zone.json", encoding="utf-8") as f:
+                  zone_body = json.load(f)
+          except (OSError, json.JSONDecodeError) as exc:
+              fail(f"Cloudflare zone lookup: could not parse API response ({exc}).")
+
+          if http == "403":
+              print("::warning::Token cannot GET the zone; skipping name check and continuing with hostname purge.")
+          elif http != "200" or not zone_body.get("success"):
+              fail("Cloudflare zone lookup failed. Token needs Zone Read on the ondorealestate.com zone.")
+          else:
+              name = (zone_body.get("result") or {}).get("name")
+              if name != expected:
+                  fail(f"Refusing purge: zone is {name!r}, expected {expected!r}.")
+              print(f"Zone ok: {name}")
+
+          payload = json.dumps({"hosts": ["app.ondorealestate.com"]}).encode()
+          req = urllib.request.Request(
+              f"https://api.cloudflare.com/client/v4/zones/{zone}/purge_cache",
+              data=payload,
+              method="POST",
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json",
+              },
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=20) as resp:
+                  purge_http = resp.status
+                  data = json.loads(resp.read())
+          except urllib.error.HTTPError as exc:
+              purge_http = exc.code
+              raw = exc.read().decode()
+              try:
+                  data = json.loads(raw)
+              except json.JSONDecodeError:
+                  fail(f"Cloudflare cache purge HTTP {purge_http}: {raw[:240]}")
+          except urllib.error.URLError as exc:
+              fail(f"Cloudflare cache purge network error: {exc}")
+
+          print(json.dumps({k: data.get(k) for k in ("success", "errors", "messages")}, indent=2))
+          if purge_http != 200 or not data.get("success"):
+              fail("Cloudflare cache purge failed. Token needs Zone Cache Purge. Payload is hostname purge for app.ondorealestate.com (not purge_everything).")
+          print("Cloudflare cache purged by hostname for app.ondorealestate.com.")
+          PY
+
   # A deploy that reports success but never reaches the edge is now a red build.
   # Vite fingerprints the entry chunk, so "is production serving THIS build?" is an
-  # exact string comparison rather than a guess.
+  # exact string comparison rather than a guess. Runs after hostname purge so the
+  # smoke is not comparing against a stale Fastly/Cloudflare HTML document.
   verify-production:
-    needs: deploy
+    needs: [deploy, purge-cloudflare]
     if: success()
     runs-on: ubuntu-latest
     permissions:

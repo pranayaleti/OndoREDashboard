@@ -6,6 +6,9 @@
   },
   "private": true,
   "type": "module",
+  "overrides": {
+    "browserslist": "^4.28.8"
+  },
   "scripts": {
     "dev": "vite",
     "dev:prod-like": "vite --port 3101",

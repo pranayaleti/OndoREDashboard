@@ -27,7 +27,8 @@ jobs:
         run: npm ci
 
       - name: Dependency audit
-        # Remaining findings are moderate (react-router v7 major) and low (tsx esbuild).
+        # High: browserslist pinned via package.json overrides (>=4.28.8). Remaining
+        # findings are moderate (react-router v7 major) and low (tsx esbuild).
         run: npm audit --audit-level=high
 
       - name: TypeScript check
