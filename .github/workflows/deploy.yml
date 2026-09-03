@@ -67,6 +67,7 @@ jobs:
           fi
           echo "entry=$ENTRY" >> "$GITHUB_OUTPUT"
           echo "This build's entry chunk: $ENTRY"
+          touch dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -89,8 +90,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      purged: ${{ steps.purge.outputs.purged }}
     steps:
       - name: Purge Cloudflare cache (app host)
+        id: purge
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
@@ -101,6 +105,7 @@ jobs:
           TOKEN="${CF_API_TOKEN:-${CLOUDFLARE_API_TOKEN:-}}"
           ZONE="${CF_ZONE_ID:-${CLOUDFLARE_ZONE_ID:-}}"
           if [ -z "$TOKEN" ] || [ -z "$ZONE" ]; then
+            echo "purged=skipped" >> "$GITHUB_OUTPUT"
             echo "::warning::Cloudflare cache purge skipped: set repository secrets CF_API_TOKEN and CF_ZONE_ID (aliases CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID). Forks without secrets still succeed."
             exit 0
           fi
@@ -117,10 +122,38 @@ jobs:
           zone = os.environ["ZONE"]
           expected = "ondorealestate.com"
           http = os.environ.get("CF_ZONE_HTTP", "")
+          github_output = os.environ["GITHUB_OUTPUT"]
 
           def fail(msg: str) -> None:
               print(f"::error::{msg}", file=sys.stderr)
               sys.exit(1)
+
+          def purge(payload: dict, label: str) -> None:
+              req = urllib.request.Request(
+                  f"https://api.cloudflare.com/client/v4/zones/{zone}/purge_cache",
+                  data=json.dumps(payload).encode(),
+                  method="POST",
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Content-Type": "application/json",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as resp:
+                      purge_http = resp.status
+                      data = json.loads(resp.read())
+              except urllib.error.HTTPError as exc:
+                  purge_http = exc.code
+                  raw = exc.read().decode()
+                  try:
+                      data = json.loads(raw)
+                  except json.JSONDecodeError:
+                      fail(f"Cloudflare cache purge HTTP {purge_http}: {raw[:240]}")
+              except urllib.error.URLError as exc:
+                  fail(f"Cloudflare cache purge network error: {exc}")
+              print(label, json.dumps({k: data.get(k) for k in ("success", "errors", "messages")}, indent=2))
+              if purge_http != 200 or not data.get("success"):
+                  fail(f"Cloudflare cache purge failed ({label}). Token needs Zone Cache Purge. Never purge_everything.")
 
           try:
               with open("/tmp/cf-zone.json", encoding="utf-8") as f:
@@ -138,40 +171,23 @@ jobs:
                   fail(f"Refusing purge: zone is {name!r}, expected {expected!r}.")
               print(f"Zone ok: {name}")
 
-          payload = json.dumps({"hosts": ["app.ondorealestate.com"]}).encode()
-          req = urllib.request.Request(
-              f"https://api.cloudflare.com/client/v4/zones/{zone}/purge_cache",
-              data=payload,
-              method="POST",
-              headers={
-                  "Authorization": f"Bearer {token}",
-                  "Content-Type": "application/json",
-              },
-          )
-          try:
-              with urllib.request.urlopen(req, timeout=20) as resp:
-                  purge_http = resp.status
-                  data = json.loads(resp.read())
-          except urllib.error.HTTPError as exc:
-              purge_http = exc.code
-              raw = exc.read().decode()
-              try:
-                  data = json.loads(raw)
-              except json.JSONDecodeError:
-                  fail(f"Cloudflare cache purge HTTP {purge_http}: {raw[:240]}")
-          except urllib.error.URLError as exc:
-              fail(f"Cloudflare cache purge network error: {exc}")
-
-          print(json.dumps({k: data.get(k) for k in ("success", "errors", "messages")}, indent=2))
-          if purge_http != 200 or not data.get("success"):
-              fail("Cloudflare cache purge failed. Token needs Zone Cache Purge. Payload is hostname purge for app.ondorealestate.com (not purge_everything).")
-          print("Cloudflare cache purged by hostname for app.ondorealestate.com.")
+          # Cloudflare allows only one of hosts/files/tags/prefixes per request.
+          purge({"hosts": ["app.ondorealestate.com"]}, "hosts")
+          purge({"files": [
+              "https://app.ondorealestate.com/",
+              "https://app.ondorealestate.com/index.html",
+          ]}, "files")
+          with open(github_output, "a", encoding="utf-8") as fh:
+              fh.write("purged=yes\n")
+          print("Cloudflare cache purged for app.ondorealestate.com (hosts and HTML URLs).")
           PY
 
   # A deploy that reports success but never reaches the edge is now a red build.
   # Vite fingerprints the entry chunk, so "is production serving THIS build?" is an
   # exact string comparison rather than a guess. Runs after hostname purge so the
   # smoke is not comparing against a stale Fastly/Cloudflare HTML document.
+  # GitHub Pages Fastly uses max-age=600; 40×15s covers that TTL when CF secrets
+  # are missing and hostname purge is skipped.
   verify-production:
     needs: [deploy, purge-cloudflare]
     if: success()
@@ -182,27 +198,44 @@ jobs:
       - name: Verify production is serving this build
         env:
           EXPECTED_ENTRY: ${{ needs.deploy.outputs.entry }}
+          PURGED: ${{ needs.purge-cloudflare.outputs.purged }}
         run: |
+          set -euo pipefail
           SITE="https://app.ondorealestate.com"
+          PAGES_IP="185.199.108.153"
+          ATTEMPTS=40
 
           if [ -z "$EXPECTED_ENTRY" ]; then
             echo "::error::Build did not report an entry chunk; cannot verify the deploy."
             exit 1
           fi
-          echo "Expecting production to reference ${EXPECTED_ENTRY}."
+          echo "Expecting production to reference ${EXPECTED_ENTRY} (cloudflare_purge=${PURGED:-unknown})."
 
-          for attempt in $(seq 1 20); do
+          ORIGIN_MATCH=0
+          for attempt in $(seq 1 "$ATTEMPTS"); do
             CB=$(date +%s%N)
-            BODY=$(curl -fsS --max-time 30 "$SITE/?cb=$CB" || true)
-            STATUS=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$SITE/?cb=$CB")
-            if printf '%s' "$BODY" | grep -q "$EXPECTED_ENTRY"; then
-              echo "attempt ${attempt}/20: homepage=${STATUS} entry matched — production is serving this build."
+            STATUS=$(curl -sS -o /tmp/app-home.html -w '%{http_code}' --max-time 30 "$SITE/?cb=$CB" || true)
+            if grep -q "$EXPECTED_ENTRY" /tmp/app-home.html 2>/dev/null; then
+              echo "attempt ${attempt}/${ATTEMPTS}: homepage=${STATUS} entry matched — production is serving this build."
               exit 0
             fi
-            LIVE=$(printf '%s' "$BODY" | grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' | head -1)
-            echo "attempt ${attempt}/20: homepage=${STATUS} live_entry=${LIVE:-none} expected=${EXPECTED_ENTRY}"
+            LIVE=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' /tmp/app-home.html 2>/dev/null | head -1 || true)
+            echo "attempt ${attempt}/${ATTEMPTS}: homepage=${STATUS} live_entry=${LIVE:-none} expected=${EXPECTED_ENTRY}"
+
+            ORIGIN_STATUS=$(curl -sk --resolve "app.ondorealestate.com:443:${PAGES_IP}" -o /tmp/app-origin.html -w '%{http_code}' --max-time 20 "$SITE/" || true)
+            ORIGIN_LIVE=$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' /tmp/app-origin.html 2>/dev/null | head -1 || true)
+            echo "attempt ${attempt}/${ATTEMPTS}: pages-origin=${ORIGIN_STATUS} origin_entry=${ORIGIN_LIVE:-none}"
+            if grep -q "$EXPECTED_ENTRY" /tmp/app-origin.html 2>/dev/null; then
+              ORIGIN_MATCH=1
+              echo "::warning::GitHub Pages origin has ${EXPECTED_ENTRY} but app.ondorealestate.com does not. Cloudflare is serving stale HTML."
+            fi
             sleep 15
           done
 
           echo "::error::Production never converged on this build (expected ${EXPECTED_ENTRY}). The deploy reported success but app.ondorealestate.com is not serving it."
+          if [ "$ORIGIN_MATCH" = "1" ]; then
+            echo "::error::GitHub Pages origin already has this entry; Cloudflare is not serving Pages. Set CF_API_TOKEN and CF_ZONE_ID on OndoREDashboard."
+          elif [ "${PURGED:-}" = "skipped" ]; then
+            echo "::error::Cloudflare cache purge was skipped. Set CF_API_TOKEN and CF_ZONE_ID on OndoREDashboard so app.ondorealestate.com is not left serving stale HTML."
+          fi
           exit 1
