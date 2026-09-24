@@ -38,7 +38,8 @@ export const companyInfo = {
     twitter: "https://twitter.com/ondorealestate",
     instagram: "https://instagram.com/ondorealestate",
     youtube: "https://youtube.com/@ondorealestate",
-    linktree: "https://linktr.ee/ondorealestate",
+    // Link-in-bio hub on our own domain; replaced linktr.ee/ondorealestate.
+    links: "https://www.ondorealestate.com/links/",
   },
 
   foundingDate: "2020", // Year only for schema markup

@@ -8,7 +8,7 @@ export const SITE_SOCIALS = [
   companyInfo.urls.instagram,
   companyInfo.urls.linkedin,
   companyInfo.urls.youtube,
-  companyInfo.urls.linktree,
+  companyInfo.urls.links,
 ].filter(Boolean) // Remove any undefined/null values
 
 // Address components
