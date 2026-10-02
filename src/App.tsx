@@ -32,6 +32,7 @@ const Owner = lazy(() => import('@/pages/Owner'))
 const Tenant = lazy(() => import('@/pages/Tenant'))
 const Maintenance = lazy(() => import('@/pages/Maintenance'))
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'))
+const Referrals = lazy(() => import('@/pages/Referrals'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
 const Terms = lazy(() => import('@/pages/Terms'))
 const Handoff = lazy(() => import('@/pages/Handoff'))
@@ -93,6 +94,8 @@ function App() {
                 <Route path="/verify" element={<Verify />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
+                {/* Shared link target: sends each user to their own portal's referral page. */}
+                <Route path="/referrals" element={<Referrals />} />
                 
                 {/* Protected Routes - Role-Specific Portals */}
                 <Route path="/super-admin/*" element={

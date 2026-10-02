@@ -74,6 +74,15 @@ export function getDashboardPath(role: UserRole): string {
 }
 
 /**
+ * Where a role's referral program lives. Every portal except maintenance has a
+ * /referrals page; maintenance users land on their dashboard instead.
+ */
+export function getReferralsPath(role: UserRole): string {
+  const dashboard = getDashboardPath(role)
+  return role === "maintenance" ? dashboard : `${dashboard}/referrals`
+}
+
+/**
  * Check if a role can access a route
  */
 export function canAccessRoute(userRole: UserRole, allowedRoles: UserRole[]): boolean {
