@@ -27,6 +27,7 @@ import {
   apiPost,
   apiGet,
   apiPut,
+  apiPatch,
   getAuthHeaders,
 } from "../http";
 import {
@@ -133,7 +134,7 @@ export const authApi = {
     request: UpdateUserStatusRequest,
   ): Promise<UpdateUserStatusResponse> {
     const headers = getAuthHeaders();
-    return apiPut<UpdateUserStatusResponse>(
+    return apiPatch<UpdateUserStatusResponse>(
       `/auth/users/${userId}/status`,
       request,
       headers,

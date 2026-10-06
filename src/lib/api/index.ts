@@ -205,9 +205,6 @@ export type {
   DashboardStats,
   DashboardPaymentItem,
   PropertyMetrics,
-  TenantAnalytics,
-  FinancialMetrics,
-  RiskMetrics,
 } from "./clients/dashboard";
 export type {
   Notification,

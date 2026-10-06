@@ -31,7 +31,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   message: string;
-  token: string;
+  accessToken: string;
   user: User;
 }
 

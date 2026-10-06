@@ -170,6 +170,14 @@ export async function apiPut<T>(
   return apiRequest<T>("PUT", endpoint, body, headers);
 }
 
+export async function apiPatch<T>(
+  endpoint: string,
+  body?: unknown,
+  headers?: Record<string, string>
+): Promise<T> {
+  return apiRequest<T>("PATCH", endpoint, body, headers);
+}
+
 export async function apiDelete<T>(
   endpoint: string,
   headers?: Record<string, string>
