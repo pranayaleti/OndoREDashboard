@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Legacy types from the monolithic api.ts that have not yet been migrated to @ondo/types.
  * These are re-exported from lib/api/index.ts for backwards compatibility.
  *
@@ -32,6 +32,9 @@ export interface LoginRequest {
 export interface LoginResponse {
   message: string;
   accessToken: string;
+  expiresIn: number;
+  tokenType: 'Bearer';
+  csrfToken: string;
   user: User;
 }
 
@@ -100,6 +103,8 @@ export interface PortfolioStats {
   activeTenants: number;
   portfolioValue: number;
   formattedPortfolioValue: string;
+  pendingMaintenance: number;
+  occupancyRate: number;
 }
 
 export interface ManagerPortfolioStats {
@@ -109,6 +114,7 @@ export interface ManagerPortfolioStats {
   monthlyRevenue: number;
   formattedMonthlyRevenue: string;
   occupancyRate: number;
+  pendingMaintenance: number;
 }
 
 export interface InvitedUser {
