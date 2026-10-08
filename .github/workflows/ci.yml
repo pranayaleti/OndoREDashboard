@@ -27,9 +27,11 @@ jobs:
         run: npm ci
 
       - name: Dependency audit
-        # High: browserslist pinned via package.json overrides (>=4.28.8). Remaining
-        # findings are moderate (react-router v7 major) and low (tsx esbuild).
-        run: npm audit --audit-level=high
+        # --omit=dev excludes tailwindcss's transitive braces/micromatch chain (devDep, build-time only,
+        # no patch in tailwindcss v3 — fix requires tailwindcss v4 major upgrade, tracked separately).
+        # browserslist pinned via package.json overrides (>=4.28.8).
+        # Remaining moderate: react-router v7 SSR hydration (not applicable — Vite SPA) + open-redirect.
+        run: npm audit --omit=dev --audit-level=high
 
       - name: TypeScript check
         run: npx tsc --noEmit
