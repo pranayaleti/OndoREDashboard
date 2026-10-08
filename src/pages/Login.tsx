@@ -13,10 +13,10 @@ import { useValidatedForm } from "@/hooks/useValidatedForm"
 import type { FormValidationSchema } from "@/utils/validation.utils"
 import { sanitize, validators } from "@/utils/validation.utils"
 import { REGEX_PATTERNS } from "@/constants/regex.constants"
-import { OnboardingLayout } from "@/components/auth/onboarding-layout"
 import { OnboardingChecklist } from "@/components/auth/onboarding-checklist"
 import { OnboardingCard } from "@/components/auth/onboarding-card"
 import { companyInfo } from "@/constants/companyInfo"
+import { cn } from "@/lib/utils"
 
 /** Seeded demo users (npm run seed in OndoREBackend). Shown only in dev or demo deployments. */
 const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD ?? ""
@@ -289,241 +289,294 @@ export default function LoginPage() {
   }
 
   return (
-    <OnboardingLayout
-      title={t('login.title')}
-      subtitle={t('login.subtitle')}
-      compact
-      hero={<OnboardingChecklist title={selectedRoleConfig.label} items={selectedRoleConfig.steps} />}
-      sidebar={
-        <div className="grid gap-4">
-          <OnboardingCard
-            eyebrow={t('login.security')}
-            title={t('login.securityTitle')}
-            description={t('login.securityDesc')}
-            icon={<ShieldCheck className="h-6 w-6" />}
-          />
-          <OnboardingCard
-            eyebrow={t('login.fastAccess')}
-            title={t('login.needCredentials')}
-            description={t('login.credentialsDesc')}
-            icon={<KeyRound className="h-6 w-6" />}
-          />
-        </div>
-      }
-    >
-      <div className="space-y-4">
-        <section className="rounded-2xl border border-white/10 bg-card/60 p-4">
-          <p className="text-xs uppercase tracking-[0.3em] text-orange-300">{t('login.stepOne')}</p>
-          <h2 className="mt-2 text-xl font-semibold text-white">{t('login.roleSelectorLabel')}</h2>
-          <p className="mt-2 text-sm text-white/70">{t('login.roleSelectorIntro')}</p>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {roleOptions.map((option) => (
-              <button
-                key={option.role}
-                type="button"
-                aria-pressed={selectedRole === option.role}
-                data-role={option.role}
-                className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${
-                  selectedRole === option.role
-                    ? "border-orange-400/70 bg-orange-500/15 text-white"
-                    : "border-white/10 bg-card/80 text-white/75 hover:border-white/20 hover:text-white"
-                }`}
-                onClick={() => handleRoleSelect(option.role)}
-              >
-                <span className={`rounded-xl p-2 ${selectedRole === option.role ? "bg-orange-500/15 text-orange-200" : "bg-card/60 text-white/70"}`}>
-                  {option.icon}
-                </span>
-                <span>{option.label}</span>
-              </button>
-            ))}
-          </div>
-          <p className="mt-4 text-sm text-white/70">{selectedRoleHint}</p>
-        </section>
+    <div className="relative h-screen overflow-hidden bg-background text-white">
+      {/* Decorative blobs */}
+      <div className="pointer-events-none absolute inset-0 bg-background" />
+      <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-orange-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-1/3 h-80 w-80 rounded-full bg-red-500/10 blur-3xl" />
 
-        <section ref={credentialStepRef} className="rounded-2xl border border-white/10 bg-background/55 p-4">
-          <div className="mb-5 flex items-start gap-3">
-            <span className="rounded-2xl bg-orange-500/10 p-3 text-orange-300">
-              {selectedRoleConfig.icon}
-            </span>
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-orange-300">{t('login.stepTwo')}</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">{selectedRoleConfig.label}</h2>
-              <p className="mt-2 text-sm text-white/70">{selectedRoleHint}</p>
+      <div className="relative grid h-full lg:grid-cols-[1fr_1.2fr]">
+        {/* ── LEFT PANEL ── */}
+        <div className="hidden lg:flex flex-col justify-center overflow-y-auto border-r border-white/8 px-10 py-10">
+          <div className="max-w-sm">
+            <h1 className="text-3xl font-semibold leading-tight">{t('login.title')}</h1>
+            <p className="mt-2 text-sm text-white/65">{t('login.subtitle')}</p>
+
+            <div className="mt-7">
+              <OnboardingChecklist title={selectedRoleConfig.label} items={selectedRoleConfig.steps} />
             </div>
-          </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('login.emailLabel')}</Label>
-              <Input
-                ref={emailInputRef}
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                autoCapitalize="none"
-                spellCheck={false}
-                placeholder={t('login.emailPlaceholder')}
-                value={values.email}
-                maxLength={120}
-                onChange={handleChange("email")}
-                onBlur={handleBlur("email")}
-                onInputCapture={() => {
-                  if (!emailInputRef.current || !passwordInputRef.current) return
-                  setValues({
-                    email: emailInputRef.current.value,
-                    password: passwordInputRef.current.value,
-                  })
-                }}
-                aria-invalid={!!emailErrorMessage}
-                aria-describedby={emailErrorMessage ? "email-error" : undefined}
-                className="rounded-xl border-white/15 bg-card text-white"
+            <div className="mt-4 grid gap-3">
+              <OnboardingCard
+                eyebrow={t('login.security')}
+                title={t('login.securityTitle')}
+                description={t('login.securityDesc')}
+                icon={<ShieldCheck className="h-5 w-5" />}
               />
-              {emailErrorMessage && (
-                <p id="email-error" role="alert" className="text-xs text-red-400">{emailErrorMessage}</p>
-              )}
+              <OnboardingCard
+                eyebrow={t('login.fastAccess')}
+                title={t('login.needCredentials')}
+                description={t('login.credentialsDesc')}
+                icon={<KeyRound className="h-5 w-5" />}
+              />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('login.passwordLabel')}</Label>
-              <div className="relative">
-                <Input
-                  ref={passwordInputRef}
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  value={values.password}
-                  maxLength={128}
-                  onChange={handleChange("password")}
-                  onBlur={handleBlur("password")}
-                  onInputCapture={() => {
-                    if (!emailInputRef.current || !passwordInputRef.current) return
-                    setValues({
-                      email: emailInputRef.current.value,
-                      password: passwordInputRef.current.value,
-                    })
-                  }}
-                  aria-invalid={!!passwordErrorMessage}
-                  aria-describedby={passwordErrorMessage ? "password-error" : undefined}
-                  className="rounded-xl border-white/15 bg-card pr-11 text-white"
-                />
-                <button
-                  type="button"
-                  aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
-                  title={showPassword ? t('login.hidePassword') : t('login.showPassword')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-card/60 p-2 text-white/75 transition hover:bg-card/75 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOffIcon aria-hidden="true" className="h-4 w-4" /> : <EyeIcon aria-hidden="true" className="h-4 w-4" />}
-                </button>
-              </div>
-              {passwordErrorMessage && (
-                <p id="password-error" role="alert" className="text-xs text-red-400">{passwordErrorMessage}</p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-card/50 px-3 py-3">
-              <label htmlFor="remember-me" className="flex items-center gap-3 text-sm text-white/80">
-                <Checkbox
-                  id="remember-me"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked === true)}
-                  aria-label="Remember me for 30 days"
-                />
-                <span>Remember me for 30 days</span>
-              </label>
-              <span className="text-xs text-white/50">Optional</span>
-            </div>
-
-            <Button
-              id="login-submit"
-              type="submit"
-              data-testid="login-submit"
-              data-role={selectedRole}
-              disabled={isSubmitDisabled}
-              className="w-full rounded-2xl bg-orange-500 py-4 text-lg font-semibold text-black hover:bg-orange-400"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="h-5 w-5 animate-spin" /> {t('login.signingIn')}
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  {t('login.continue')} <ArrowRight className="h-5 w-5" />
-                </span>
-              )}
-            </Button>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Button
-                asChild
-                variant="outline"
-                className="h-11 rounded-xl border-white/15 bg-card/60 text-white hover:bg-card/75 hover:text-white"
-              >
-                <Link to="/register">{t('login.ownerSignup')}</Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="h-11 rounded-xl border-white/15 bg-card/60 text-white hover:bg-card/75 hover:text-white"
-              >
-                <Link to="/contact">{t('login.contactSupport')}</Link>
-              </Button>
-            </div>
-          </form>
-        </section>
-
-        <div className="text-sm text-white/60">
-          <p>
-            {t('login.forgotPassword')}{" "}
-            <Link to="/forgot-password" className="text-orange-300 hover:text-orange-200">
-              {t('login.resetHere')}
-            </Link>
-          </p>
+          </div>
         </div>
 
-        {ENABLE_PUBLIC_DEMO && DEMO_PASSWORD && (
-          <div className="rounded-2xl border border-white/15 bg-card/60 p-4 text-sm text-white/80">
-            <button
-              type="button"
-              className="flex w-full items-center justify-between text-left font-semibold text-white"
-              onClick={() => setShowTestAccounts((prev) => !prev)}
-            >
-              <span>{t('login.testingDemo')}</span>
-              <span>{showTestAccounts ? t('login.hide') : t('login.show')}</span>
-            </button>
-            {showTestAccounts && (
-              <div className="mt-3 space-y-3">
-                <p className="text-xs text-white/65">{t('login.demoHelperDesc')}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {demoAccounts.map((account) => (
-                    <CredentialButton
-                      key={account.role}
-                      role={account.role}
-                      label={account.label}
-                      email={account.email}
-                      hint={roleOptions.find((option) => option.role === account.role)?.hint ?? ""}
-                      badgeLabel={t('login.demoAutofillLabel')}
-                      selected={lastDemoRole === account.role}
-                      onFill={() => handleFillCredentials(account.role, account.email, DEMO_PASSWORD)}
-                    />
-                  ))}
+        {/* ── RIGHT PANEL ── */}
+        <div className="flex flex-col justify-center overflow-y-auto px-6 py-8 lg:px-10">
+          <div className="mx-auto w-full max-w-md">
+
+            {/* Mobile-only header */}
+            <div className="mb-6 text-center lg:hidden">
+              <h1 className="text-2xl font-semibold">{t('login.title')}</h1>
+              <p className="mt-1 text-sm text-white/65">{t('login.subtitle')}</p>
+            </div>
+
+            {/* ── STEPPER ── */}
+            <div>
+
+              {/* Step 1 */}
+              <div className="flex gap-4">
+                {/* Spine */}
+                <div className="flex flex-col items-center">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-orange-400 bg-orange-500/15 text-sm font-semibold text-orange-200">
+                    1
+                  </div>
+                  <div className="mt-1 w-px flex-1 bg-white/12" />
                 </div>
-                {lastDemoRole && (
-                  <p aria-live="polite" className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-200">
-                    {t('login.demoReadyMessage', {
-                      role: demoAccounts.find((account) => account.role === lastDemoRole)?.label ?? selectedRoleConfig.label,
-                    })}
-                  </p>
-                )}
+
+                {/* Content */}
+                <div className="min-w-0 flex-1 pb-5">
+                  <p className="text-[10px] uppercase tracking-[0.28em] text-orange-300">{t('login.stepOne')}</p>
+                  <h2 className="mt-0.5 text-base font-semibold text-white">{t('login.roleSelectorLabel')}</h2>
+                  <p className="mt-1 text-xs text-white/55">{t('login.roleSelectorIntro')}</p>
+
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {roleOptions.map((option) => (
+                      <button
+                        key={option.role}
+                        type="button"
+                        aria-pressed={selectedRole === option.role}
+                        data-role={option.role}
+                        className={cn(
+                          "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400",
+                          selectedRole === option.role
+                            ? "border-orange-400/70 bg-orange-500/15 text-white"
+                            : "border-white/10 bg-white/5 text-white/70 hover:border-white/20 hover:text-white"
+                        )}
+                        onClick={() => handleRoleSelect(option.role)}
+                      >
+                        <span className={cn(
+                          "rounded-lg p-1.5",
+                          selectedRole === option.role ? "bg-orange-500/15 text-orange-200" : "bg-white/5 text-white/50"
+                        )}>
+                          {option.icon}
+                        </span>
+                        <span>{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-white/50">{selectedRoleHint}</p>
+                </div>
               </div>
-            )}
+
+              {/* Step 2 */}
+              <div className="flex gap-4">
+                {/* Spine */}
+                <div className="flex flex-col items-center">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-orange-400 bg-orange-500/15 text-sm font-semibold text-orange-200">
+                    2
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div ref={credentialStepRef} className="min-w-0 flex-1">
+                  <div className="mb-3 flex items-center gap-2.5">
+                    <span className="rounded-xl bg-orange-500/10 p-2 text-orange-300">
+                      {selectedRoleConfig.icon}
+                    </span>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.28em] text-orange-300">{t('login.stepTwo')}</p>
+                      <h2 className="text-base font-semibold text-white">{selectedRoleConfig.label}</h2>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleLogin} className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="email" className="text-sm">{t('login.emailLabel')}</Label>
+                      <Input
+                        ref={emailInputRef}
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        placeholder={t('login.emailPlaceholder')}
+                        value={values.email}
+                        maxLength={120}
+                        onChange={handleChange("email")}
+                        onBlur={handleBlur("email")}
+                        onInputCapture={() => {
+                          if (!emailInputRef.current || !passwordInputRef.current) return
+                          setValues({
+                            email: emailInputRef.current.value,
+                            password: passwordInputRef.current.value,
+                          })
+                        }}
+                        aria-invalid={!!emailErrorMessage}
+                        aria-describedby={emailErrorMessage ? "email-error" : undefined}
+                        className="h-10 rounded-xl border-white/15 bg-white/5 text-white"
+                      />
+                      {emailErrorMessage && (
+                        <p id="email-error" role="alert" className="text-xs text-red-400">{emailErrorMessage}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="password" className="text-sm">{t('login.passwordLabel')}</Label>
+                      <div className="relative">
+                        <Input
+                          ref={passwordInputRef}
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          autoComplete="current-password"
+                          value={values.password}
+                          maxLength={128}
+                          onChange={handleChange("password")}
+                          onBlur={handleBlur("password")}
+                          onInputCapture={() => {
+                            if (!emailInputRef.current || !passwordInputRef.current) return
+                            setValues({
+                              email: emailInputRef.current.value,
+                              password: passwordInputRef.current.value,
+                            })
+                          }}
+                          aria-invalid={!!passwordErrorMessage}
+                          aria-describedby={passwordErrorMessage ? "password-error" : undefined}
+                          className="h-10 rounded-xl border-white/15 bg-white/5 pr-11 text-white"
+                        />
+                        <button
+                          type="button"
+                          aria-label={showPassword ? t('login.hidePassword') : t('login.showPassword')}
+                          title={showPassword ? t('login.hidePassword') : t('login.showPassword')}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/5 p-1.5 text-white/60 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOffIcon aria-hidden="true" className="h-4 w-4" /> : <EyeIcon aria-hidden="true" className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      {passwordErrorMessage && (
+                        <p id="password-error" role="alert" className="text-xs text-red-400">{passwordErrorMessage}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
+                      <label htmlFor="remember-me" className="flex items-center gap-2.5 text-sm text-white/75">
+                        <Checkbox
+                          id="remember-me"
+                          checked={rememberMe}
+                          onCheckedChange={(checked) => setRememberMe(checked === true)}
+                          aria-label="Remember me for 30 days"
+                        />
+                        <span>Remember me for 30 days</span>
+                      </label>
+                      <span className="text-xs text-white/40">Optional</span>
+                    </div>
+
+                    <Button
+                      id="login-submit"
+                      type="submit"
+                      data-testid="login-submit"
+                      data-role={selectedRole}
+                      disabled={isSubmitDisabled}
+                      className="w-full rounded-xl bg-orange-500 py-2.5 text-base font-semibold text-black hover:bg-orange-400"
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" /> {t('login.signingIn')}
+                        </span>
+                      ) : (
+                        <span className="flex items-center justify-center gap-2">
+                          {t('login.continue')} <ArrowRight className="h-4 w-4" />
+                        </span>
+                      )}
+                    </Button>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="h-9 rounded-xl border-white/15 bg-white/5 text-sm text-white hover:bg-white/10 hover:text-white"
+                      >
+                        <Link to="/register">{t('login.ownerSignup')}</Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="h-9 rounded-xl border-white/15 bg-white/5 text-sm text-white hover:bg-white/10 hover:text-white"
+                      >
+                        <Link to="/contact">{t('login.contactSupport')}</Link>
+                      </Button>
+                    </div>
+                  </form>
+
+                  <p className="mt-3 text-xs text-white/45">
+                    {t('login.forgotPassword')}{" "}
+                    <Link to="/forgot-password" className="text-orange-300 hover:text-orange-200">
+                      {t('login.resetHere')}
+                    </Link>
+                  </p>
+
+                  {ENABLE_PUBLIC_DEMO && DEMO_PASSWORD && (
+                    <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white/75">
+                      <button
+                        type="button"
+                        className="flex w-full items-center justify-between text-left font-semibold text-white"
+                        onClick={() => setShowTestAccounts((prev) => !prev)}
+                      >
+                        <span>{t('login.testingDemo')}</span>
+                        <span className="text-xs font-normal text-white/50">{showTestAccounts ? t('login.hide') : t('login.show')}</span>
+                      </button>
+                      {showTestAccounts && (
+                        <div className="mt-3 space-y-2">
+                          <p className="text-xs text-white/55">{t('login.demoHelperDesc')}</p>
+                          <div className="grid gap-2 sm:grid-cols-2">
+                            {demoAccounts.map((account) => (
+                              <CredentialButton
+                                key={account.role}
+                                role={account.role}
+                                label={account.label}
+                                email={account.email}
+                                hint={roleOptions.find((option) => option.role === account.role)?.hint ?? ""}
+                                badgeLabel={t('login.demoAutofillLabel')}
+                                selected={lastDemoRole === account.role}
+                                onFill={() => handleFillCredentials(account.role, account.email, DEMO_PASSWORD)}
+                              />
+                            ))}
+                          </div>
+                          {lastDemoRole && (
+                            <p aria-live="polite" className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-2.5 text-xs text-emerald-200">
+                              {t('login.demoReadyMessage', {
+                                role: demoAccounts.find((account) => account.role === lastDemoRole)?.label ?? selectedRoleConfig.label,
+                              })}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
           </div>
-        )}
+        </div>
       </div>
-    </OnboardingLayout>
+    </div>
   )
 }
 
