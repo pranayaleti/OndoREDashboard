@@ -117,7 +117,9 @@ export default function OwnerProfile() {
     propertiesOwned: 0,
     activeTenants: 0,
     portfolioValue: 0,
-    formattedPortfolioValue: "$0K"
+    formattedPortfolioValue: "$0K",
+    pendingMaintenance: 0,
+    occupancyRate: 0
   })
   const [isLoadingStats, setIsLoadingStats] = useState(false)
 
@@ -158,7 +160,9 @@ export default function OwnerProfile() {
           propertiesOwned,
           activeTenants,
           portfolioValue: totalMonthlyRent,
-          formattedPortfolioValue
+          formattedPortfolioValue,
+          pendingMaintenance: 0,
+          occupancyRate: propertiesOwned > 0 ? Math.round((activeTenants / propertiesOwned) * 100) : 0
         }
 
         setPortfolioStats(stats)
@@ -169,7 +173,9 @@ export default function OwnerProfile() {
           propertiesOwned: 0,
           activeTenants: 0,
           portfolioValue: 0,
-          formattedPortfolioValue: "$0/month"
+          formattedPortfolioValue: "$0/month",
+          pendingMaintenance: 0,
+          occupancyRate: 0
         })
       } finally {
         setIsLoadingStats(false)

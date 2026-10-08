@@ -46,8 +46,6 @@ import { getAccessToken } from "./token-manager";
 export interface LoginResponseWithTokens extends LoginResponse {
   accessToken: string;
   expiresIn: number;
-  tokenType?: string;
-  csrfToken?: string;
 }
 
 export const authApi = {

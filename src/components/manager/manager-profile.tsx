@@ -202,7 +202,8 @@ export default function ManagerProfile() {
           activeTenants: 0,
           monthlyRevenue: 0,
           formattedMonthlyRevenue: "$0K",
-          occupancyRate: 0
+          occupancyRate: 0,
+          pendingMaintenance: 0
         })
       } finally {
         setIsLoadingStats(false)
