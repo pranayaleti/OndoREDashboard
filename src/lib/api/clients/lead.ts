@@ -4,6 +4,7 @@
 
 import { apiGet, apiPost, apiPut, apiRequest, getAuthHeaders } from "../http";
 import type { Lead } from "../clients/legacy-types";
+import type { LeadOrigin } from "@/lib/lead-origin";
 
 export type { Lead } from "../clients/legacy-types";
 
@@ -63,6 +64,8 @@ export interface InboxLead {
   propertyCity: string | null;
   /** Present when the list is fetched with `include=score`. */
   score?: LeadScore | null;
+  /** Website leads: where they came from (UTMs saved with the lead). Absent from older API deploys. */
+  origin?: LeadOrigin | null;
 }
 
 export interface LeadWorkEvent {

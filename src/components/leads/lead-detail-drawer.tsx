@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { featureApi, leadApi, isUnclaimedLead, isQueueConvert, type InboxLead, type LeadWorkEvent, type ActivityType, type DuplicateHint } from "@/lib/api";
+import { LeadOriginText } from "./lead-origin-text";
 import { propertyApi } from "@/lib/api/clients/property";
 import type { LeadScore, SiteVisit } from "@/lib/api/clients/lead";
 import { SiteVisitProposer } from "./site-visit-proposer";
@@ -192,6 +193,11 @@ export function LeadDetailDrawer({ lead, onClose, onChanged }: Props) {
           </p>
           {lead.propertyTitle ? <p className="text-sm text-gray-500">{lead.propertyTitle}</p> : null}
           <p className="text-sm text-gray-500">Last activity: {formatUSDate(lead.lastActivityAt)}</p>
+          {lead.origin ? (
+            <p className="text-sm text-gray-500">
+              <LeadOriginText origin={lead.origin} />
+            </p>
+          ) : null}
           {lead.overdueTaskCount > 0 ? (
             <p className="text-sm text-orange-700">{lead.overdueTaskCount} overdue task{lead.overdueTaskCount === 1 ? "" : "s"}</p>
           ) : null}

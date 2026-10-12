@@ -29,6 +29,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 import { useDebounce } from "@/hooks/useDebounce"
 import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
+import { LeadOriginText } from "../leads/lead-origin-text"
 import { EmptyState } from "@/components/ui/empty-state"
 
 function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
@@ -330,7 +331,11 @@ export default function ManagerLeads() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
                       <span>Last activity: {formatUSDate(lead.lastActivityAt)}</span>
                       <span className="hidden sm:inline">•</span>
-                      <span>Source: {lead.source ?? "—"}</span>
+                      {lead.origin ? (
+                        <LeadOriginText origin={lead.origin} />
+                      ) : (
+                        <span>Source: {lead.source ?? "—"}</span>
+                      )}
                     </div>
 
                     <div className="flex gap-2 w-full sm:w-auto" onClick={(e) => e.stopPropagation()}>
