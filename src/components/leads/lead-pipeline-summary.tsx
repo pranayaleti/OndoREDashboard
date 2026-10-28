@@ -21,12 +21,21 @@ function StatTile({ label, value, hint, valueClass }: StatTileProps) {
   )
 }
 
+interface LeadPipelineSummaryProps {
+  leads: InboxLead[]
+  /** Currently active source filter (normalized source value, e.g. "direct"). */
+  activeSource?: string | null
+  /** When set, source chips become toggle buttons that filter the board/list. */
+  onSourceToggle?: (source: string) => void
+}
+
 /**
  * Headline numbers for the lead pipeline, derived from the leads currently in
  * view (so the active filters apply to it too), plus the top lead sources.
+ * The source chips double as filters when `onSourceToggle` is provided.
  */
-export function LeadPipelineSummary({ leads }: { leads: InboxLead[] }) {
-  const summary = useMemo(() => summarizeLeads(leads), [leads])
+export function LeadPipelineSummary({ leads, activeSource, onSourceToggle }: LeadPipelineSummaryProps) {
+  const summary = useMemo(() => summarizeLeads(leads, new Date(), 5), [leads])
 
   return (
     <Card className="mb-6">
@@ -60,12 +69,43 @@ export function LeadPipelineSummary({ leads }: { leads: InboxLead[] }) {
         {summary.topSources.length > 0 ? (
           <div className="mt-4 flex flex-wrap items-center gap-1.5 border-t pt-3">
             <span className="text-xs text-gray-500 dark:text-gray-400 mr-1">Top sources:</span>
-            {summary.topSources.map((s) => (
-              <Badge key={s.source} variant="outline" className="text-xs font-normal">
-                {s.label}
-                <span className="ml-1 text-gray-500 dark:text-gray-400">{s.count}</span>
-              </Badge>
-            ))}
+            {summary.topSources.map((s) => {
+              const active = activeSource === s.source
+              const chip = (
+                <Badge
+                  variant={active ? "default" : "outline"}
+                  className={cn("text-xs font-normal", active && "bg-orange-500 hover:bg-orange-600 text-white")}
+                >
+                  {s.label}
+                  <span className={cn("ml-1", active ? "text-orange-100" : "text-gray-500 dark:text-gray-400")}>
+                    {s.count}
+                  </span>
+                </Badge>
+              )
+              return onSourceToggle ? (
+                <button
+                  key={s.source}
+                  type="button"
+                  onClick={() => onSourceToggle(s.source)}
+                  aria-pressed={active}
+                  aria-label={`${active ? "Clear filter" : "Filter leads"} by source ${s.label}`}
+                  className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {chip}
+                </button>
+              ) : (
+                <span key={s.source}>{chip}</span>
+              )
+            })}
+            {activeSource && onSourceToggle ? (
+              <button
+                type="button"
+                onClick={() => onSourceToggle(activeSource)}
+                className="text-xs text-gray-500 dark:text-gray-400 underline underline-offset-2 ml-1"
+              >
+                Clear
+              </button>
+            ) : null}
           </div>
         ) : null}
       </CardContent>

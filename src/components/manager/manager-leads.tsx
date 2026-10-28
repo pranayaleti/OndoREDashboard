@@ -80,6 +80,7 @@ export default function ManagerLeads() {
   const debouncedSearch = useDebounce(searchTerm.trim(), 300)
   const [statusFilter, setStatusFilter] = useState("all")
   const [inboxFilter, setInboxFilter] = useState<InboxFilter>("all")
+  const [sourceFilter, setSourceFilter] = useState<string | null>(null)
   const [selectedLead, setSelectedLead] = useState<InboxLead | null>(null)
   const [view, setView] = useState<LeadsView>(initialView)
   const { toast } = useToast()
@@ -209,7 +210,10 @@ export default function ManagerLeads() {
     }
   }
 
-  const filteredLeads = leads
+  // The API has no source param, so source filtering stays client-side.
+  const filteredLeads = sourceFilter
+    ? leads.filter((l) => (l.source ?? "direct") === sourceFilter)
+    : leads
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -292,7 +296,13 @@ export default function ManagerLeads() {
         </CardContent>
       </Card>
 
-      {!loading && filteredLeads.length > 0 ? <LeadPipelineSummary leads={filteredLeads} /> : null}
+      {!loading && leads.length > 0 ? (
+        <LeadPipelineSummary
+          leads={leads}
+          activeSource={sourceFilter}
+          onSourceToggle={(source) => setSourceFilter((prev) => (prev === source ? null : source))}
+        />
+      ) : null}
 
       {loading ? (
         <Card>
@@ -443,7 +453,7 @@ export default function ManagerLeads() {
               icon={<Users className="h-16 w-16" />}
               title="No leads found"
               description={
-                searchTerm || statusFilter !== "all" || inboxFilter !== "all"
+                searchTerm || statusFilter !== "all" || inboxFilter !== "all" || sourceFilter
                   ? "Try adjusting your filters"
                   : "Assigned and unclaimed leads will appear here"
               }

@@ -54,6 +54,16 @@ describe("groupLeadsByStage", () => {
     expect(grouped.get("contacted")).toEqual([])
   })
 
+  it("orders each column by most recent activity first", () => {
+    const leads = [
+      makeLead({ id: "older", lastActivityAt: "2026-10-01T00:00:00Z" }),
+      makeLead({ id: "newest", lastActivityAt: "2026-10-27T00:00:00Z" }),
+      makeLead({ id: "middle", lastActivityAt: "2026-10-15T00:00:00Z" }),
+    ]
+    const grouped = groupLeadsByStage(leads)
+    expect(grouped.get("new")!.map((l) => l.id)).toEqual(["newest", "middle", "older"])
+  })
+
   it("puts a lead with an unknown status into closed instead of dropping it", () => {
     const grouped = groupLeadsByStage([
       makeLead({ id: "x", status: "archived" as InboxLead["status"] }),

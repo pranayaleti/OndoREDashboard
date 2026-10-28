@@ -72,13 +72,17 @@ export function getStageBadgeClass(status: string): string {
   return getLeadStage(status).badgeClass
 }
 
-/** Group leads into board columns, keeping the stage order. */
+/** Group leads into board columns, keeping the stage order. Within a column,
+ * the most recently active lead comes first. */
 export function groupLeadsByStage(leads: InboxLead[]): Map<LeadInboxStatus, InboxLead[]> {
   const grouped = new Map<LeadInboxStatus, InboxLead[]>(LEAD_STAGES.map((s) => [s.value, []]))
   for (const lead of leads) {
     const bucket = grouped.get(lead.status as LeadInboxStatus)
     if (bucket) bucket.push(lead)
     else grouped.get("closed")!.push(lead)
+  }
+  for (const bucket of grouped.values()) {
+    bucket.sort((a, b) => Date.parse(b.lastActivityAt) - Date.parse(a.lastActivityAt))
   }
   return grouped
 }
