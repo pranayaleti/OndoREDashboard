@@ -13,6 +13,8 @@ import {
   Search,
   Filter,
   Radio,
+  LayoutGrid,
+  List,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -30,6 +32,8 @@ import { useRealtimeTable } from "@/hooks/useRealtimeTable"
 import { useDebounce } from "@/hooks/useDebounce"
 import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
 import { LeadOriginText } from "../leads/lead-origin-text"
+import { LeadPipelineBoard } from "../leads/lead-pipeline-board"
+import { LEAD_STAGES, getStageBadgeClass } from "@/lib/lead-stages"
 import { EmptyState } from "@/components/ui/empty-state"
 
 function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
@@ -54,20 +58,15 @@ function inboxRowVisible(row: Record<string, unknown> | undefined, userId: strin
   return managerId === null && claimedAt === null
 }
 
-function getStatusColor(status: string) {
-  switch (status) {
-    case "new":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-    case "contacted":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-    case "qualified":
-      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-    case "converted":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-    case "closed":
-      return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
-    default:
-      return "bg-muted text-gray-800 dark:bg-card dark:text-gray-200"
+type LeadsView = "board" | "list"
+
+const VIEW_STORAGE_KEY = "ondo.leads.view"
+
+function initialView(): LeadsView {
+  try {
+    return localStorage.getItem(VIEW_STORAGE_KEY) === "list" ? "list" : "board"
+  } catch {
+    return "board"
   }
 }
 
@@ -80,7 +79,17 @@ export default function ManagerLeads() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [inboxFilter, setInboxFilter] = useState<InboxFilter>("all")
   const [selectedLead, setSelectedLead] = useState<InboxLead | null>(null)
+  const [view, setView] = useState<LeadsView>(initialView)
   const { toast } = useToast()
+
+  const switchView = (next: LeadsView) => {
+    setView(next)
+    try {
+      localStorage.setItem(VIEW_STORAGE_KEY, next)
+    } catch {
+      // per-viewer convenience only
+    }
+  }
 
   const fetchLeads = useCallback(async () => {
     try {
@@ -150,11 +159,16 @@ export default function ManagerLeads() {
   })
 
   const handleLeadStatusUpdate = async (lead: InboxLead, newStatus: LeadInboxStatus) => {
+    // Optimistic move so a board drag lands instantly; refetch reconciles.
+    setLeads((prev) =>
+      prev.map((l) => (l.kind === lead.kind && l.id === lead.id ? { ...l, status: newStatus } : l)),
+    )
     try {
       await leadApi.updateInboxStatus(lead.kind, lead.id, newStatus)
+      const label = LEAD_STAGES.find((s) => s.value === newStatus)?.label ?? newStatus
       toast({
-        title: "Success",
-        description: "Lead status updated successfully.",
+        title: "Lead moved",
+        description: `${lead.name} is now ${label}.`,
         duration: 3000,
       })
       void fetchLeads()
@@ -165,6 +179,7 @@ export default function ManagerLeads() {
         description: "Failed to update lead status.",
         variant: "destructive",
       })
+      void fetchLeads()
     }
   }
 
@@ -193,9 +208,33 @@ export default function ManagerLeads() {
           <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Leads</h1>
           <p className="text-gray-600 dark:text-gray-400">Your assigned leads and the unclaimed inbox</p>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400 mt-1">
-          <Radio className="h-3 w-3 animate-pulse" />
-          <span>Live</span>
+        <div className="flex items-center gap-3 mt-1">
+          <div className="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+            <Radio className="h-3 w-3 animate-pulse" />
+            <span>Live</span>
+          </div>
+          <div className="flex rounded-md border overflow-hidden" role="group" aria-label="Leads view">
+            <Button
+              size="sm"
+              variant={view === "board" ? "default" : "ghost"}
+              className="rounded-none h-8"
+              onClick={() => switchView("board")}
+              aria-pressed={view === "board"}
+            >
+              <LayoutGrid className="h-4 w-4 mr-1.5" aria-hidden="true" />
+              Board
+            </Button>
+            <Button
+              size="sm"
+              variant={view === "list" ? "default" : "ghost"}
+              className="rounded-none h-8"
+              onClick={() => switchView("list")}
+              aria-pressed={view === "list"}
+            >
+              <List className="h-4 w-4 mr-1.5" aria-hidden="true" />
+              List
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -231,11 +270,11 @@ export default function ManagerLeads() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="new">New</SelectItem>
-                  <SelectItem value="contacted">Contacted</SelectItem>
-                  <SelectItem value="qualified">Qualified</SelectItem>
-                  <SelectItem value="converted">Converted</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
+                  {LEAD_STAGES.map((stage) => (
+                    <SelectItem key={stage.value} value={stage.value}>
+                      {stage.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -252,6 +291,14 @@ export default function ManagerLeads() {
             </div>
           </CardContent>
         </Card>
+      ) : filteredLeads.length > 0 && view === "board" ? (
+        <LeadPipelineBoard
+          leads={filteredLeads}
+          userId={user?.id}
+          onMove={(lead, status) => void handleLeadStatusUpdate(lead, status)}
+          onSelect={setSelectedLead}
+          onClaim={(lead) => void handleClaim(lead)}
+        />
       ) : filteredLeads.length > 0 ? (
         <div className="space-y-4">
           {filteredLeads.map((lead) => {
@@ -295,7 +342,7 @@ export default function ManagerLeads() {
                         ) : null}
                       </div>
                     </div>
-                    <Badge className={getStatusColor(lead.status)}>
+                    <Badge className={getStageBadgeClass(lead.status)}>
                       {unclaimed ? "Unclaimed" : lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
                     </Badge>
                   </div>
@@ -354,11 +401,11 @@ export default function ManagerLeads() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="new">New</SelectItem>
-                            <SelectItem value="contacted">Contacted</SelectItem>
-                            <SelectItem value="qualified">Qualified</SelectItem>
-                            <SelectItem value="converted">Converted</SelectItem>
-                            <SelectItem value="closed">Closed</SelectItem>
+                            {LEAD_STAGES.map((stage) => (
+                              <SelectItem key={stage.value} value={stage.value}>
+                                {stage.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}

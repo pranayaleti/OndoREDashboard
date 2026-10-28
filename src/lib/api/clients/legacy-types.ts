@@ -428,7 +428,7 @@ export interface Lead {
   monthlyBudget?: string;
   occupants?: number;
   hasPets?: boolean;
-  status: 'new' | 'contacted' | 'qualified' | 'converted' | 'closed';
+  status: 'new' | 'prospective' | 'contacted' | 'qualified' | 'converted' | 'closed';
   source: string;
   createdAt: string;
   updatedAt: string;

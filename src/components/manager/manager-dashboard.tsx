@@ -1110,6 +1110,7 @@ export default function ManagerDashboard() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="new">New</SelectItem>
+                              <SelectItem value="prospective">Prospective</SelectItem>
                               <SelectItem value="contacted">Contacted</SelectItem>
                               <SelectItem value="qualified">Qualified</SelectItem>
                               <SelectItem value="converted">Converted</SelectItem>

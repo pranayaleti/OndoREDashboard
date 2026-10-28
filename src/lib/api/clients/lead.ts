@@ -2,7 +2,7 @@
  * Lead API client — inbox CRM + existing score / site-visit helpers.
  */
 
-import { apiGet, apiPost, apiPut, apiRequest, getAuthHeaders } from "../http";
+import { apiGet, apiPost, apiPut, apiRequest, getAuthHeaders, apiPatch } from "../http";
 import type { Lead } from "../clients/legacy-types";
 import type { LeadOrigin } from "@/lib/lead-origin";
 
@@ -10,7 +10,7 @@ export type { Lead } from "../clients/legacy-types";
 
 export type LeadKind = "property" | "website";
 export type InboxFilter = "all" | "mine" | "unclaimed";
-export type LeadInboxStatus = "new" | "contacted" | "qualified" | "converted" | "closed";
+export type LeadInboxStatus = "new" | "prospective" | "contacted" | "qualified" | "converted" | "closed";
 export type InquiryType =
   | "owner"
   | "renter"
@@ -233,7 +233,10 @@ export const leadApi = {
 
   async updateLeadStatus(id: string, status: string): Promise<Lead> {
     const headers = getAuthHeaders();
-    return apiPut<Lead>(`/leads/${id}/status`, { status }, headers);
+    // Both backends register this as PATCH only; a PUT answered 404 and the dropdown never saved.
+    // Property leads only (the Edge route is the kind=property alias); the body is `{ message, lead }`.
+    const res = await apiPatch<{ message: string; lead: InboxLead }>(`/leads/${id}/status`, { status }, headers);
+    return inboxToLegacyLead(res.lead);
   },
 
   async updateInboxStatus(kind: LeadKind, id: string, status: LeadInboxStatus): Promise<InboxLead> {

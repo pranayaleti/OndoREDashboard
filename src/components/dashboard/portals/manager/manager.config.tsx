@@ -54,7 +54,7 @@ export function createManagerConfig(
     rejectedProperties: properties.filter(p => p.status === "rejected").length,
     totalOwners: invitedUsers.filter(u => u.role === 'owner').length,
     totalTenants: invitedUsers.filter(u => u.role === 'tenant').length,
-    activeLeads: leads.filter(l => l.status === 'new' || l.status === 'contacted' || l.status === 'qualified').length,
+    activeLeads: leads.filter(l => l.status === 'new' || l.status === 'prospective' || l.status === 'contacted' || l.status === 'qualified').length,
   }
 
   // Generate activity feed (reserved for future ActivityFeed integration)
