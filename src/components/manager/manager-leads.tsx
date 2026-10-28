@@ -33,7 +33,9 @@ import { useDebounce } from "@/hooks/useDebounce"
 import { LeadDetailDrawer } from "../leads/lead-detail-drawer"
 import { LeadOriginText } from "../leads/lead-origin-text"
 import { LeadPipelineBoard } from "../leads/lead-pipeline-board"
+import { LeadPipelineSummary } from "../leads/lead-pipeline-summary"
 import { LEAD_STAGES, getStageBadgeClass } from "@/lib/lead-stages"
+import { daysSince, isStaleLead } from "@/lib/lead-insights"
 import { EmptyState } from "@/components/ui/empty-state"
 
 function TemperatureBadge({ temperature }: { temperature?: "HOT" | "WARM" | "COLD" }) {
@@ -159,6 +161,7 @@ export default function ManagerLeads() {
   })
 
   const handleLeadStatusUpdate = async (lead: InboxLead, newStatus: LeadInboxStatus) => {
+    const previousStatus = lead.status
     // Optimistic move so a board drag lands instantly; refetch reconciles.
     setLeads((prev) =>
       prev.map((l) => (l.kind === lead.kind && l.id === lead.id ? { ...l, status: newStatus } : l)),
@@ -169,7 +172,14 @@ export default function ManagerLeads() {
       toast({
         title: "Lead moved",
         description: `${lead.name} is now ${label}.`,
-        duration: 3000,
+        duration: 5000,
+        action:
+          previousStatus !== newStatus
+            ? {
+                label: "Undo",
+                onClick: () => void handleLeadStatusUpdate({ ...lead, status: newStatus }, previousStatus),
+              }
+            : undefined,
       })
       void fetchLeads()
     } catch (error) {
@@ -282,6 +292,8 @@ export default function ManagerLeads() {
         </CardContent>
       </Card>
 
+      {!loading && filteredLeads.length > 0 ? <LeadPipelineSummary leads={filteredLeads} /> : null}
+
       {loading ? (
         <Card>
           <CardContent className="py-12">
@@ -322,6 +334,14 @@ export default function ManagerLeads() {
                         {lead.overdueTaskCount > 0 ? (
                           <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
                             {lead.overdueTaskCount} overdue
+                          </Badge>
+                        ) : null}
+                        {isStaleLead(lead) ? (
+                          <Badge
+                            className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100"
+                            title={`No activity for ${daysSince(lead.lastActivityAt)} days`}
+                          >
+                            Stale {daysSince(lead.lastActivityAt)}d
                           </Badge>
                         ) : null}
                         <TemperatureBadge temperature={score?.temperature} />

@@ -10,6 +10,7 @@ import {
   formatInquiryTypeLabel,
 } from "@/lib/api"
 import { LEAD_STAGES, groupLeadsByStage, canMoveLead } from "@/lib/lead-stages"
+import { daysSince, isStaleLead } from "@/lib/lead-insights"
 import { LeadOriginText } from "./lead-origin-text"
 import { formatUSDate } from "@/lib/us-format"
 import { cn } from "@/lib/utils"
@@ -152,6 +153,14 @@ export function LeadPipelineBoard({ leads, userId, onMove, onSelect, onClaim }: 
                         {lead.overdueTaskCount > 0 ? (
                           <Badge className="text-[10px] px-1.5 py-0 bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">
                             {lead.overdueTaskCount} overdue
+                          </Badge>
+                        ) : null}
+                        {isStaleLead(lead) ? (
+                          <Badge
+                            className="text-[10px] px-1.5 py-0 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100"
+                            title={`No activity for ${daysSince(lead.lastActivityAt)} days`}
+                          >
+                            Stale {daysSince(lead.lastActivityAt)}d
                           </Badge>
                         ) : null}
                       </div>

@@ -38,6 +38,8 @@ type ToastInput = {
    * Pass Infinity to keep the toast until dismissed.
    */
   duration?: number;
+  /** Single action button (Sonner renders it inside the toast), e.g. Undo. */
+  action?: { label: string; onClick: () => void };
 };
 
 function renderToHostString(value: React.ReactNode): string {
@@ -61,6 +63,7 @@ function toast(input: ToastInput | string) {
     ...(opts.id !== undefined ? { id: opts.id } : {}),
     description,
     ...(duration !== undefined ? { duration } : {}),
+    ...(opts.action ? { action: opts.action } : {}),
   };
 
   let id: string | number;
