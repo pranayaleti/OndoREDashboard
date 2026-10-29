@@ -12,6 +12,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "../OndoREBackend", "run", "dev"],
       "port": 3030
+    },
+    {
+      "name": "ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "../OndoREui", "run", "dev", "--", "-p", "3005"],
+      "port": 3005
     }
   ]
 }
