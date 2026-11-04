@@ -39,6 +39,7 @@ const Handoff = lazy(() => import('@/pages/Handoff'))
 const FreeTrial = lazy(() => import('@/pages/FreeTrial'))
 const Features = lazy(() => import('@/pages/Features'))
 const Product = lazy(() => import('@/pages/Product'))
+const Demo = lazy(() => import('@/pages/Demo'))
 
 const HIDE_CHROME_PREFIXES = [
   '/login',
@@ -86,6 +87,7 @@ function App() {
                 <Route path="/free-trial" element={<FreeTrial />} />
                 <Route path="/features" element={<Features />} />
                 <Route path="/product" element={<Product />} />
+                <Route path="/demo" element={<Demo />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/signup/:token" element={<Signup />} />

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { Building2, CreditCard, FileSignature, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -184,9 +185,17 @@ export default function Register() {
       title="Owner & operator sign up"
       subtitle="Tell us about your portfolio and the workflows you need. We’ll provision a workspace, configure roles, and help you invite tenants."
       hero={
-        <div className="grid gap-4 md:grid-cols-2">
-          <OnboardingChecklist title="Owners" items={checklists.owners} />
-          <OnboardingChecklist title="Tenants" items={checklists.tenants} />
+        <div className="space-y-4">
+          <Link
+            to="/demo?role=owner"
+            className="inline-flex items-center rounded-full border border-orange-400/40 px-4 py-2 text-sm font-medium text-orange-300 hover:bg-orange-500/10"
+          >
+            Not sure yet? Watch a 30-second demo
+          </Link>
+          <div className="grid gap-4 md:grid-cols-2">
+            <OnboardingChecklist title="Owners" items={checklists.owners} />
+            <OnboardingChecklist title="Tenants" items={checklists.tenants} />
+          </div>
         </div>
       }
       sidebar={

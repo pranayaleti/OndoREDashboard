@@ -13,7 +13,7 @@ import { join } from "node:path"
 const DIST = process.env.DIST_DIR || "dist"
 
 export const ROUTES = [
-  "about", "pricing", "contact", "faq", "free-trial", "features", "product",
+  "about", "pricing", "contact", "faq", "free-trial", "features", "product", "demo",
   "login", "register", "forgot-password", "reset-password", "verify", "privacy", "terms", "referrals",
   "super-admin", "admin", "dashboard", "owner", "tenant", "maintenance",
 ]

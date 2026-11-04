@@ -24,6 +24,7 @@ const managerNavItems = [
 
 const marketingNavItems = [
   { labelKey: "nav.product", path: "/product" },
+  { labelKey: "nav.demo", path: "/demo" },
   { labelKey: "nav.features", path: "/features" },
   { labelKey: "nav.pricing", path: "/pricing" },
   { labelKey: "nav.about", path: "/about" },

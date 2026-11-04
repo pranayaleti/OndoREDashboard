@@ -375,7 +375,17 @@ export default function Signup() {
     <OnboardingLayout
       title={`Complete your ${invitation.role} workspace`}
       subtitle={flow.subtitle}
-      hero={<OnboardingChecklist title={flow.title} items={flow.steps} />}
+      hero={
+        <div className="space-y-4">
+          <Link
+            to={`/demo?role=${invitation.role === "tenant" ? "tenant" : "owner"}`}
+            className="inline-flex items-center rounded-full border border-orange-400/40 px-4 py-2 text-sm font-medium text-orange-300 hover:bg-orange-500/10"
+          >
+            See a quick demo first
+          </Link>
+          <OnboardingChecklist title={flow.title} items={flow.steps} />
+        </div>
+      }
       sidebar={
         <OnboardingCard
           eyebrow="Next steps"
