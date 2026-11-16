@@ -73,6 +73,12 @@ export default defineConfig({
     // Preserve unchanged files for faster incremental builds
     emptyOutDir: false,
     rollupOptions: {
+      onwarn(warning, warn) {
+        // Components carry Next.js-style "use client" directives that Vite ignores. Rollup warns
+        // once per file and then fails to map the location, which buries real warnings.
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE' || warning.code === 'SOURCEMAP_ERROR') return
+        warn(warning)
+      },
       output: {
         // Deterministic chunk names for better caching
         // Hash only changes when content changes, so unchanged files are preserved

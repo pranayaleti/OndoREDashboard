@@ -6,20 +6,42 @@ import { useToast } from '@/hooks/use-toast';
 import { FileSignature, Loader2 } from 'lucide-react';
 import { LeaseTemplatePicker } from '@/components/shared/lease-template-picker';
 
+/**
+ * `leases.lease_end` is a Postgres date ("YYYY-MM-DD"). `new Date()` reads that as
+ * UTC midnight, which is the previous evening in US time zones; read it as a local day.
+ */
+function parseLeaseDate(value: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : new Date(value);
+}
+
 export function LeaseManagementOverview() {
   const { toast } = useToast();
   const [leases, setLeases] = useState<LeaseDocument[]>([]);
+  const [leasesLoaded, setLeasesLoaded] = useState(false);
   const [signingId, setSigningId] = useState<string | null>(null);
 
   useEffect(() => {
-    leaseManagementApi.listLeases().then(setLeases).catch(() => setLeases([]));
+    // Leave the counts at N/A when the list fails: zero would read as "no leases".
+    leaseManagementApi
+      .listLeases()
+      .then((rows) => {
+        setLeases(rows);
+        setLeasesLoaded(true);
+      })
+      .catch(() => setLeases([]));
   }, []);
 
-  const expiringSoon = leases.filter((lease) => {
+  const activeLeases = leases.filter((lease) => lease.status === 'active' || lease.status === 'executed');
+
+  const expiringSoon = activeLeases.filter((lease) => {
     if (!lease.expirationDate) return false;
-    const expires = new Date(lease.expirationDate).getTime();
+    // The lease runs through its last day, so measure to the end of that local day.
+    const lastDay = parseLeaseDate(lease.expirationDate);
+    const termEnds = new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate() + 1).getTime();
+    const remaining = termEnds - Date.now();
     const thirtyDays = 1000 * 60 * 60 * 24 * 30;
-    return expires - Date.now() < thirtyDays;
+    return remaining > 0 && remaining <= thirtyDays;
   }).length;
 
   const handleSendForSignature = async (lease: LeaseDocument) => {
@@ -43,11 +65,11 @@ export function LeaseManagementOverview() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground">Active Leases</p>
-          <p className="text-2xl font-semibold">{leases.length}</p>
+          <p className="text-2xl font-semibold">{leasesLoaded ? activeLeases.length : 'N/A'}</p>
         </div>
         <div className="text-right">
           <p className="text-sm text-muted-foreground">Expiring &lt; 30 days</p>
-          <p className="text-lg font-medium text-amber-600">{expiringSoon}</p>
+          <p className="text-lg font-medium text-amber-600">{leasesLoaded ? expiringSoon : 'N/A'}</p>
         </div>
       </div>
 
@@ -59,7 +81,7 @@ export function LeaseManagementOverview() {
                 <span className="font-medium capitalize">{lease.status.replace('_', ' ')}</span>
                 {lease.expirationDate && (
                   <span className="ml-2 text-muted-foreground">
-                    · expires {new Date(lease.expirationDate).toLocaleDateString()}
+                    · expires {parseLeaseDate(lease.expirationDate).toLocaleDateString()}
                   </span>
                 )}
               </div>

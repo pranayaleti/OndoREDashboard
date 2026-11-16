@@ -74,9 +74,11 @@ export interface ProfilePictureUploadUrlRequest {
   fileName?: string;
 }
 export interface ProfilePictureUploadUrlResponse {
-  uploadUrl: string;
+  /** Signed PUT URL for the file (named presignedUrl by both backends). */
+  presignedUrl: string;
   publicUrl?: string;
   key?: string;
+  expiresIn?: number;
 }
 
 export type GetPortfolioStatsResponse =

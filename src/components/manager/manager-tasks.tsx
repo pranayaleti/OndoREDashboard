@@ -85,16 +85,18 @@ export default function ManagerTasks() {
     }
   }
 
-  const toggleChecklist = async (taskId: string, itemId: string, isDone: boolean) => {
+  const toggleChecklist = async (taskId: string, itemId: string) => {
     try {
-      await tasksApi.toggleChecklistItem(itemId)
+      // The server flips is_done on every call; show the state it saved, not the
+      // inverse of what was on screen when the click happened (double clicks).
+      const saved = await tasksApi.toggleChecklistItem(itemId)
       setTasks((prev) =>
         prev.map((t) =>
           t.id === taskId
             ? {
                 ...t,
                 checklistItems: t.checklistItems?.map((c) =>
-                  c.id === itemId ? { ...c, isDone: !isDone } : c
+                  c.id === itemId ? { ...c, isDone: saved.isDone } : c
                 ),
               }
             : t
@@ -194,7 +196,7 @@ export default function ManagerTasks() {
                           <li key={item.id} className="flex items-center gap-2">
                             <Checkbox
                               checked={item.isDone}
-                              onCheckedChange={() => toggleChecklist(task.id, item.id, item.isDone)}
+                              onCheckedChange={() => toggleChecklist(task.id, item.id)}
                             />
                             <span className={item.isDone ? "text-sm line-through text-muted-foreground" : "text-sm"}>
                               {item.label}

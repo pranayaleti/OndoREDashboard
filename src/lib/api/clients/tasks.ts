@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut, apiDelete } from "../http";
+import { apiGet, apiPost, apiPut, apiDelete, apiPatch } from "../http";
 
 export interface Task {
   id: string;
@@ -64,7 +64,8 @@ export const tasksApi = {
     return res.data;
   },
   async toggleChecklistItem(itemId: string): Promise<ChecklistItem> {
-    const res = await apiPost<{ data: ChecklistItem }>(`/tasks/checklist-items/${itemId}/toggle`, {});
+    // The backend registers this as PATCH; a POST answered 404 and the checkbox never saved.
+    const res = await apiPatch<{ data: ChecklistItem }>(`/tasks/checklist-items/${itemId}/toggle`, {});
     return res.data;
   },
   async addChecklistItem(taskId: string, label: string): Promise<ChecklistItem> {

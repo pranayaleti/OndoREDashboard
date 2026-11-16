@@ -8,13 +8,41 @@ import { Separator } from "@/components/ui/separator"
 import { Loader2, Save, Mail, Smartphone, MessageSquare } from "lucide-react"
 import { ReferralShareWidget } from "@/components/shared/referral-share-widget"
 import { useToast } from "@/hooks/use-toast"
-import { apiGet, apiPut } from "@/lib/api/http"
+import {
+  notificationsApi,
+  type NotificationPreferences,
+  type NotificationPreferencesUpdate,
+} from "@/lib/api/clients/notifications"
 
-interface ChannelToggles {
-  email: boolean
-  push: boolean
-  sms: boolean
-}
+// Each toggle is one boolean column of `notification_preferences` (flat camelCase on the wire).
+// Channels are global on/off switches; categories are not per-channel in the schema.
+type ChannelKey = "emailEnabled" | "pushEnabled" | "smsEnabled"
+type CategoryKey =
+  | "maintenanceUpdates"
+  | "paymentReminders"
+  | "leaseAlerts"
+  | "newListings"
+  | "documentUploads"
+  | "vendorUpdates"
+  | "financialReports"
+  | "communityUpdates"
+
+const CHANNELS: { key: ChannelKey; label: string; icon: React.ReactNode }[] = [
+  { key: "emailEnabled", label: "Email", icon: <Mail className="h-4 w-4" /> },
+  { key: "pushEnabled", label: "Push", icon: <Smartphone className="h-4 w-4" /> },
+  { key: "smsEnabled", label: "SMS", icon: <MessageSquare className="h-4 w-4" /> },
+]
+
+const CATEGORIES: { key: CategoryKey; label: string }[] = [
+  { key: "maintenanceUpdates", label: "Maintenance Updates" },
+  { key: "paymentReminders", label: "Payment Reminders" },
+  { key: "leaseAlerts", label: "Lease Alerts" },
+  { key: "newListings", label: "New Listings" },
+  { key: "documentUploads", label: "Document Uploads" },
+  { key: "vendorUpdates", label: "Vendor Updates" },
+  { key: "financialReports", label: "Financial Reports" },
+  { key: "communityUpdates", label: "Community Updates" },
+]
 
 interface QuietHours {
   enabled: boolean
@@ -22,40 +50,75 @@ interface QuietHours {
   end: string
 }
 
-interface NotificationPreferences {
-  categories: Record<string, ChannelToggles>
+export type PreferenceToggles = Record<ChannelKey | CategoryKey, boolean>
+
+export interface PreferencesForm {
+  toggles: PreferenceToggles
   quietHours: QuietHours
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  maintenance_updates: "Maintenance Updates",
-  payment_reminders: "Payment Reminders",
-  lease_alerts: "Lease Alerts",
-  new_listings: "New Listings",
-  document_uploads: "Document Uploads",
-  vendor_updates: "Vendor Updates",
-  financial_reports: "Financial Reports",
-  community_updates: "Community Updates",
-}
+const DEFAULT_QUIET_START = "22:00"
+const DEFAULT_QUIET_END = "07:00"
 
-const CHANNEL_ICONS: Record<string, React.ReactNode> = {
-  email: <Mail className="h-4 w-4" />,
-  push: <Smartphone className="h-4 w-4" />,
-  sms: <MessageSquare className="h-4 w-4" />,
-}
-
-function defaultPrefs(): NotificationPreferences {
-  const categories: Record<string, ChannelToggles> = {}
-  for (const key of Object.keys(CATEGORY_LABELS)) {
-    categories[key] = { email: true, push: true, sms: false }
+// Mirrors PREFERENCE_DEFAULTS in the Edge notifications route (used until the first load lands).
+function defaultForm(): PreferencesForm {
+  return {
+    toggles: {
+      emailEnabled: true,
+      pushEnabled: true,
+      smsEnabled: false,
+      maintenanceUpdates: true,
+      paymentReminders: true,
+      leaseAlerts: true,
+      newListings: true,
+      documentUploads: true,
+      vendorUpdates: true,
+      financialReports: true,
+      communityUpdates: true,
+    },
+    quietHours: { enabled: false, start: DEFAULT_QUIET_START, end: DEFAULT_QUIET_END },
   }
-  return { categories, quietHours: { enabled: false, start: "22:00", end: "07:00" } }
+}
+
+/** Postgres `time` comes back as "HH:MM:SS"; <input type="time"> wants "HH:MM". */
+function toInputTime(value: string | null | undefined): string | null {
+  return typeof value === "string" && value.length >= 5 ? value.slice(0, 5) : null
+}
+
+/** GET /notifications/preferences → form state. Missing fields keep the server defaults. */
+export function preferencesToForm(prefs: Partial<NotificationPreferences>): PreferencesForm {
+  const form = defaultForm()
+  for (const key of Object.keys(form.toggles) as (keyof PreferenceToggles)[]) {
+    const value = prefs[key]
+    if (typeof value === "boolean") form.toggles[key] = value
+  }
+  const start = toInputTime(prefs.quietHoursStart)
+  const end = toInputTime(prefs.quietHoursEnd)
+  // No `quiet_hours_enabled` column: quiet hours are on when both ends are set.
+  form.quietHours = {
+    enabled: start !== null && end !== null,
+    start: start ?? DEFAULT_QUIET_START,
+    end: end ?? DEFAULT_QUIET_END,
+  }
+  return form
+}
+
+/** Form state → PUT /notifications/preferences body. Disabled quiet hours clear both columns. */
+export function formToPreferencesUpdate(form: PreferencesForm): NotificationPreferencesUpdate {
+  return {
+    ...form.toggles,
+    quietHoursStart: form.quietHours.enabled ? form.quietHours.start : null,
+    quietHoursEnd: form.quietHours.enabled ? form.quietHours.end : null,
+  }
 }
 
 export function NotificationPreferencesPanel() {
   const { toast } = useToast()
-  const [prefs, setPrefs] = useState<NotificationPreferences>(defaultPrefs())
+  const [form, setForm] = useState<PreferencesForm>(defaultForm())
   const [loading, setLoading] = useState(true)
+  // Without the saved values the form would show defaults, and saving them would
+  // overwrite the user's real choices, so a failed load offers a retry instead.
+  const [loadFailed, setLoadFailed] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => { load() }, [])
@@ -63,49 +126,58 @@ export function NotificationPreferencesPanel() {
   const load = async () => {
     try {
       setLoading(true)
-      const data = await apiGet<NotificationPreferences>("/notifications/preferences")
-      setPrefs({ ...defaultPrefs(), ...data })
-    } catch {
-      toast({ title: "Failed to load preferences", variant: "destructive" })
+      setLoadFailed(false)
+      const data = await notificationsApi.getPreferences()
+      setForm(preferencesToForm(data))
+    } catch (error) {
+      setLoadFailed(true)
+      toast({
+        title: "Failed to load preferences",
+        description: error instanceof Error ? error.message : undefined,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
   }
 
   const save = async () => {
+    if (form.quietHours.enabled && (!form.quietHours.start || !form.quietHours.end)) {
+      toast({ title: "Set both a start and end time for quiet hours", variant: "destructive" })
+      return
+    }
     setSaving(true)
     try {
-      await apiPut("/notifications/preferences", prefs)
+      const saved = await notificationsApi.updatePreferences(formToPreferencesUpdate(form))
+      setForm(preferencesToForm(saved))
       toast({ title: "Preferences saved" })
-    } catch {
-      toast({ title: "Failed to save preferences", variant: "destructive" })
+    } catch (error) {
+      toast({
+        title: "Failed to save preferences",
+        description: error instanceof Error ? error.message : String(error),
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
   }
 
-  const toggleCategory = (category: string, channel: keyof ChannelToggles) => {
-    setPrefs((prev) => ({
+  const toggle = (key: keyof PreferenceToggles) => {
+    setForm((prev) => ({
       ...prev,
-      categories: {
-        ...prev.categories,
-        [category]: {
-          ...prev.categories[category],
-          [channel]: !prev.categories[category]?.[channel],
-        },
-      },
+      toggles: { ...prev.toggles, [key]: !prev.toggles[key] },
     }))
   }
 
   const toggleQuietHours = () => {
-    setPrefs((prev) => ({
+    setForm((prev) => ({
       ...prev,
       quietHours: { ...prev.quietHours, enabled: !prev.quietHours.enabled },
     }))
   }
 
   const setQuietTime = (field: "start" | "end", value: string) => {
-    setPrefs((prev) => ({
+    setForm((prev) => ({
       ...prev,
       quietHours: { ...prev.quietHours, [field]: value },
     }))
@@ -116,6 +188,20 @@ export function NotificationPreferencesPanel() {
       <div className="flex items-center justify-center py-24">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
+    )
+  }
+
+  if (loadFailed) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Notification Preferences</CardTitle>
+          <CardDescription>Your saved preferences could not be loaded.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" onClick={load}>Retry</Button>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -132,33 +218,36 @@ export function NotificationPreferencesPanel() {
         </Button>
       </div>
 
-      {/* Channel header legend */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Channels</CardTitle>
+          <CardDescription>Turn each delivery channel on or off.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-1">
+          {CHANNELS.map(({ key, label, icon }) => (
+            <div key={key} className="flex items-center justify-between py-2">
+              <Label htmlFor={`pref-${key}`} className="flex items-center gap-2 text-sm font-medium">
+                {icon} {label}
+              </Label>
+              <Switch id={`pref-${key}`} checked={form.toggles[key]} onCheckedChange={() => toggle(key)} />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Categories</CardTitle>
-          <CardDescription>Toggle channels for each notification category.</CardDescription>
+          <CardDescription>Choose which kinds of notifications you receive.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-1">
-          {/* Header row */}
-          <div className="grid grid-cols-4 gap-4 pb-2 text-xs font-medium text-muted-foreground">
-            <span>Category</span>
-            <span className="flex items-center gap-1 justify-center">{CHANNEL_ICONS.email} Email</span>
-            <span className="flex items-center gap-1 justify-center">{CHANNEL_ICONS.push} Push</span>
-            <span className="flex items-center gap-1 justify-center">{CHANNEL_ICONS.sms} SMS</span>
-          </div>
-          <Separator />
-
-          {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-            <div key={key} className="grid grid-cols-4 items-center gap-4 py-2">
-              <span className="text-sm font-medium">{label}</span>
-              {(["email", "push", "sms"] as const).map((ch) => (
-                <div key={ch} className="flex justify-center">
-                  <Switch
-                    checked={prefs.categories[key]?.[ch] ?? false}
-                    onCheckedChange={() => toggleCategory(key, ch)}
-                  />
-                </div>
-              ))}
+          {CATEGORIES.map(({ key, label }, index) => (
+            <div key={key}>
+              {index > 0 && <Separator />}
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor={`pref-${key}`} className="text-sm font-medium">{label}</Label>
+                <Switch id={`pref-${key}`} checked={form.toggles[key]} onCheckedChange={() => toggle(key)} />
+              </div>
             </div>
           ))}
         </CardContent>
@@ -172,19 +261,33 @@ export function NotificationPreferencesPanel() {
               <CardTitle className="text-base">Quiet Hours</CardTitle>
               <CardDescription>Suppress push and SMS during these hours.</CardDescription>
             </div>
-            <Switch checked={prefs.quietHours.enabled} onCheckedChange={toggleQuietHours} />
+            <Switch
+              aria-label="Quiet hours"
+              checked={form.quietHours.enabled}
+              onCheckedChange={toggleQuietHours}
+            />
           </div>
         </CardHeader>
-        {prefs.quietHours.enabled && (
+        {form.quietHours.enabled && (
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Start</Label>
-                <Input type="time" value={prefs.quietHours.start} onChange={(e) => setQuietTime("start", e.target.value)} />
+                <Label htmlFor="quiet-hours-start">Start</Label>
+                <Input
+                  id="quiet-hours-start"
+                  type="time"
+                  value={form.quietHours.start}
+                  onChange={(e) => setQuietTime("start", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <Label>End</Label>
-                <Input type="time" value={prefs.quietHours.end} onChange={(e) => setQuietTime("end", e.target.value)} />
+                <Label htmlFor="quiet-hours-end">End</Label>
+                <Input
+                  id="quiet-hours-end"
+                  type="time"
+                  value={form.quietHours.end}
+                  onChange={(e) => setQuietTime("end", e.target.value)}
+                />
               </div>
             </div>
           </CardContent>

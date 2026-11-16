@@ -5,5 +5,5 @@ export const tenantDashboardApi = {
   getRentSchedule: featureApi.rentPayments.getSchedule,
   listReceipts: featureApi.rentPayments.listReceipts,
   listMaintenanceTickets: featureApi.maintenance.getTenantMaintenanceRequests,
-  listLeases: featureApi.leaseManagement.listLeases,
+  listLeases: featureApi.leaseManagement.listMyLeases,
 };

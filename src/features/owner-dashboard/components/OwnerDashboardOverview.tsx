@@ -21,7 +21,9 @@ export function OwnerDashboardOverview() {
         </div>
         <div className="rounded-lg border border-border bg-background p-4">
           <p className="text-xs uppercase text-muted-foreground">Active Leases</p>
-          <p className="text-xl font-semibold">{leases.length}</p>
+          <p className="text-xl font-semibold">
+            {leases.filter((lease) => lease.status === 'active' || lease.status === 'executed').length}
+          </p>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import i18n from '@/lib/i18n'
 import {
   setAccessToken,
   clearAccessToken,
+  endSession,
   refreshAccessToken,
 } from "@/lib/api/clients/token-manager"
 import { normalizeRole, getDashboardPath, type UserRole } from "@/lib/auth-utils"
@@ -83,7 +84,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const restoreSession = async () => {
       try {
         // Try to get a fresh access token using the HttpOnly refresh cookie.
-        // If the cookie is absent / expired this returns null.
+        // If the cookie is absent / expired this returns null. A visitor who
+        // never signed in has no session, so no request is made at all.
         const token = await refreshAccessToken()
         if (token) {
           const apiUser = await authApi.getMe()
@@ -116,10 +118,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) return // Only refresh when logged in
 
     const REFRESH_INTERVAL = 12 * 60 * 1000 // 12 minutes
+    // Cleared when the user logs out; a refresh still in flight then must not
+    // report the session as expired.
+    let active = true
     const interval = setInterval(async () => {
       try {
         const token = await refreshAccessToken()
-        if (!token) {
+        if (!token && active) {
           // Refresh failed. Session likely expired
           handleSessionExpired()
         }
@@ -128,7 +133,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }, REFRESH_INTERVAL)
 
-    return () => clearInterval(interval)
+    return () => {
+      active = false
+      clearInterval(interval)
+    }
   }, [user, handleSessionExpired])
 
   const logout = useCallback(() => {
@@ -136,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // family on the backend. We don't await: UX should feel instant.
     authApi.logout().catch(() => { /* best-effort */ })
     setUser(null)
-    clearAccessToken()
+    endSession()
     navigate("/")
   }, [navigate])
 

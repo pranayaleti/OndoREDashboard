@@ -8,6 +8,7 @@ export function useLeaseManagementFeature() {
     generateFromTemplate: leaseManagementApi.generateFromTemplate,
     uploadLease: leaseManagementApi.uploadLease,
     listLeases: leaseManagementApi.listLeases,
+    listMyLeases: leaseManagementApi.listMyLeases,
     sendForSignature: leaseManagementApi.sendForSignature,
   }), []);
 }

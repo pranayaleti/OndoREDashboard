@@ -67,7 +67,6 @@ export const companyInfo = {
     facebook: "ondorealestate",
     instagram: "ondorealestate",
     youtube: "@ondorealestate",
-    linktree: "ondorealestate",
   },
 
   // Location display strings

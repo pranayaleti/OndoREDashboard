@@ -100,7 +100,7 @@ export type {
 // New modules extracted from the legacy api.ts monolith
 export { tokenManager } from "./clients/token-manager";
 export { handoffApi } from "./clients/handoff";
-export { featureApi } from "./clients/feature-api";
+export { featureApi, isEdgeUnavailableError, EDGE_UNAVAILABLE_CODE } from "./clients/feature-api";
 export { homeownerApi } from "./clients/homeowner-api";
 export { workflowsApi } from "./clients/workflows";
 export { tasksApi } from "./clients/tasks";
@@ -209,6 +209,7 @@ export type {
 export type {
   Notification,
   NotificationPreferences,
+  NotificationPreferencesUpdate,
 } from "./clients/notifications";
 export type {
   TenantScreening,

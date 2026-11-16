@@ -2,15 +2,6 @@
 import { companyInfo } from "@/constants/companyInfo"
 import { formatTime } from "@/lib/locale-format"
 
-// Social media links array
-export const SITE_SOCIALS = [
-  companyInfo.urls.facebook,
-  companyInfo.urls.instagram,
-  companyInfo.urls.linkedin,
-  companyInfo.urls.youtube,
-  companyInfo.urls.links,
-].filter(Boolean) // Remove any undefined/null values
-
 // Address components
 export const SITE_ADDRESS = `${companyInfo.address.streetAddress}, ${companyInfo.address.addressLocality}, ${companyInfo.address.addressRegion} ${companyInfo.address.postalCode}`
 export const SITE_ADDRESS_STREET = companyInfo.address.streetAddress

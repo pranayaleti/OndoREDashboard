@@ -4,6 +4,7 @@ import { rentPaymentsApi } from '../api';
 export function useRentPaymentsFeature() {
   return useMemo(() => ({
     getSchedule: rentPaymentsApi.getSchedule,
+    getPortfolioSchedules: rentPaymentsApi.getPortfolioSchedules,
     updateSchedule: rentPaymentsApi.updateSchedule,
     toggleAutopay: rentPaymentsApi.toggleAutopay,
     createPayment: rentPaymentsApi.createPayment,

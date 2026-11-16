@@ -186,20 +186,6 @@ function statementRowToUi(row: Record<string, unknown>): LandlordStatement {
   };
 }
 
-function documentRowToLease(row: Record<string, unknown>): LeaseDocument {
-  const created = String(row.createdAt ?? new Date().toISOString());
-  return {
-    id: String(row.id),
-    propertyId: String(row.propertyId ?? ''),
-    tenantId: '',
-    ownerId: String(row.ownerId ?? ''),
-    status: row.docType === 'lease' ? 'active' : 'draft',
-    createdAt: created,
-    updatedAt: created,
-    storageKey: row.storagePath != null ? String(row.storagePath) : undefined,
-  };
-}
-
 function documentRowToRecord(row: Record<string, unknown>): DocumentRecord {
   const created = String(row.createdAt ?? new Date().toISOString());
   return {
@@ -215,6 +201,245 @@ function documentRowToRecord(row: Record<string, unknown>): DocumentRecord {
     uploadedBy: String(row.ownerId ?? ''),
     uploadedAt: created,
   };
+}
+
+// ─── Edge (production) adapters ──────────────────────────────────────────────
+// Production is the Supabase Edge Function (OndoREBackend/supabase/functions/api).
+// The helpers below map its route shapes onto the UI types declared further down.
+
+/** `code` on the rejection returned by {@link edgeUnavailable}; callers branch on it. */
+export const EDGE_UNAVAILABLE_CODE = 'NOT_IMPLEMENTED';
+
+/**
+ * The Edge API has no route for this capability (confirmed by grep across
+ * supabase/functions). Reject with a typed 501 instead of letting the call 404
+ * so callers can hide the control rather than surface a red error.
+ */
+function edgeUnavailable<T>(capability: string): Promise<T> {
+  return Promise.reject(
+    new OntoApiError(`${capability} is not available yet.`, 501, EDGE_UNAVAILABLE_CODE),
+  );
+}
+
+/** True when `err` is the rejection produced by {@link edgeUnavailable}. */
+export function isEdgeUnavailableError(err: unknown): boolean {
+  return err instanceof OntoApiError && err.code === EDGE_UNAVAILABLE_CODE;
+}
+
+/** Property ids visible to the caller (GET /properties is role-scoped on the Edge). */
+async function listScopedPropertyIds(headers: Record<string, string>): Promise<string[]> {
+  const raw = await apiRequest<unknown>('GET', '/properties?page=1&limit=100', undefined, headers);
+  return unwrapDataArray(raw)
+    .map((row) => (row.id != null ? String(row.id) : ''))
+    .filter((id) => id.length > 0);
+}
+
+/** Per-property requests in flight at once (an admin's GET /properties can list 100). */
+const PER_PROPERTY_CONCURRENCY = 4;
+
+/** 403/404: the property is listed but this route scopes it out (e.g. a co-owned listing). */
+function isPropertyScopeError(err: unknown): boolean {
+  return err instanceof OntoApiError && (err.status === 403 || err.status === 404);
+}
+
+/**
+ * Run a per-property list call and flatten the `{ data: [] }` rows. A property
+ * the route scopes out (403/404) is skipped so it does not blank the widget;
+ * any other failure is rethrown rather than silently under-counting, as is the
+ * first error when every call fails.
+ */
+async function fetchPerProperty(
+  propertyIds: string[],
+  load: (propertyId: string) => Promise<unknown>,
+): Promise<Record<string, unknown>[]> {
+  const results: PromiseSettledResult<unknown>[] = new Array(propertyIds.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < propertyIds.length) {
+      const index = next++;
+      results[index] = await load(propertyIds[index]!).then(
+        (value): PromiseFulfilledResult<unknown> => ({ status: 'fulfilled', value }),
+        (reason: unknown): PromiseRejectedResult => ({ status: 'rejected', reason }),
+      );
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(PER_PROPERTY_CONCURRENCY, propertyIds.length) }, worker),
+  );
+
+  const rejected = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
+  const unexpected = rejected.find((r) => !isPropertyScopeError(r.reason));
+  if (unexpected) throw unexpected.reason;
+  if (rejected.length > 0 && rejected.length === results.length) throw rejected[0]!.reason;
+  return results.flatMap((r) => (r.status === 'fulfilled' ? unwrapDataArray(r.value) : []));
+}
+
+/** `rent_schedule_status` values with nothing left to collect. */
+const SETTLED_RENT_STATUSES = new Set(['paid', 'waived']);
+
+/**
+ * Collapse per-month `rent_schedules` rows into one RentSchedule per tenancy
+ * (tenant + property). Tenancies with nothing left to pay are dropped.
+ */
+function groupRentScheduleRows(rows: Record<string, unknown>[]): RentSchedule[] {
+  const groups = new Map<string, Record<string, unknown>[]>();
+  rows.forEach((row) => {
+    const key = `${String(row.tenantId ?? '')}|${String(row.propertyId ?? '')}`;
+    groups.set(key, [...(groups.get(key) ?? []), row]);
+  });
+  const schedules: RentSchedule[] = [];
+  groups.forEach((group) => {
+    const unpaid = group
+      .filter((r) => !SETTLED_RENT_STATUSES.has(String(r.status ?? '')) && r.dueDate != null)
+      .sort((a, b) => String(a.dueDate).localeCompare(String(b.dueDate)));
+    const next = unpaid[0];
+    if (!next) return;
+    const lateFeeCents = Number(next.lateFeeCents ?? 0);
+    schedules.push({
+      ...rentScheduleRowToUi(next),
+      lateFee: lateFeeCents > 0 ? lateFeeCents / 100 : undefined,
+      nextChargeDate: String(next.dueDate),
+      upcomingDueDates: unpaid.map((r) => String(r.dueDate)),
+    });
+  });
+  return schedules;
+}
+
+/** `leases.status` (Edge) → UI LeaseStatus. */
+function mapLeaseStatus(status: string): LeaseStatus {
+  switch (status) {
+    case 'pending_signature':
+    case 'partially_signed':
+      return 'pending_signature';
+    case 'signed':
+      return 'executed';
+    case 'active':
+      return 'active';
+    case 'expired':
+    case 'terminated':
+      return 'expired';
+    default:
+      return 'draft';
+  }
+}
+
+/** Map a `leases` row (GET /leases/*, /properties/:id/leases) → LeaseDocument. */
+function leaseRowToDocument(row: Record<string, unknown>): LeaseDocument {
+  const created = String(row.createdAt ?? new Date().toISOString());
+  return {
+    id: String(row.id ?? ''),
+    propertyId: String(row.propertyId ?? ''),
+    tenantId: String(row.tenantId ?? ''),
+    ownerId: String(row.ownerId ?? ''),
+    status: mapLeaseStatus(String(row.status ?? 'draft')),
+    effectiveDate: row.leaseStart != null ? String(row.leaseStart) : undefined,
+    expirationDate: row.leaseEnd != null ? String(row.leaseEnd) : undefined,
+    downloadUrl: row.pdfUrl != null ? String(row.pdfUrl) : undefined,
+    createdAt: created,
+    updatedAt: String(row.updatedAt ?? created),
+  };
+}
+
+/** Map the lease row returned by POST /leases/:id/send-for-signature → ESignRequest. */
+function leaseRowToESignRequest(row: Record<string, unknown>, leaseId: string): ESignRequest {
+  const provider = String(row.esignProvider ?? 'mock');
+  return {
+    id: row.esignExternalId != null ? String(row.esignExternalId) : leaseId,
+    documentId: leaseId,
+    provider: provider === 'docusign' || provider === 'hellosign' ? provider : 'mock',
+    status: 'sent',
+    signerEmails: [],
+    sentAt: row.updatedAt != null ? String(row.updatedAt) : new Date().toISOString(),
+  };
+}
+
+/** Same token syntax the Edge lease-templates route uses (`{{ field }}`). */
+const LEASE_MERGE_TOKEN = /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g;
+
+function extractLeaseMergeFields(body: string): string[] {
+  const out: string[] = [];
+  for (const match of body.matchAll(LEASE_MERGE_TOKEN)) {
+    const field = match[1]!;
+    if (!out.includes(field)) out.push(field);
+  }
+  return out;
+}
+
+function mergeFieldLabel(key: string): string {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/^\w/, (c) => c.toUpperCase());
+}
+
+/** Map a GET /lease-templates row → LeaseTemplate (fields derived from merge tokens). */
+function leaseTemplateRowToUi(row: Record<string, unknown>): LeaseTemplate {
+  const body = typeof row.body === 'string' ? row.body : '';
+  const mergeFields = Array.isArray(row.mergeFields)
+    ? (row.mergeFields as unknown[]).map(String)
+    : extractLeaseMergeFields(body);
+  return {
+    id: String(row.id ?? ''),
+    name: String(row.name ?? ''),
+    jurisdiction: row.state != null && row.state !== '' ? String(row.state) : 'Generic',
+    description: row.description != null ? String(row.description) : undefined,
+    fields: mergeFields.map((key) => ({ key, label: mergeFieldLabel(key), type: 'text', required: true })),
+    isDefault: false,
+  };
+}
+
+/** Thread filters the Edge GET /communication/threads route does not accept; applied client-side. */
+interface ThreadListFilters {
+  propertyId?: string;
+  priority?: string;
+  status?: string;
+  category?: string;
+  from?: string;
+  to?: string;
+  sort?: string;
+  order?: string;
+}
+
+function threadActivityAt(thread: MessageThread): number {
+  return new Date(thread.lastMessageAt ?? thread.createdAt).getTime() || 0;
+}
+
+function applyThreadFilters(threads: MessageThread[], filters?: ThreadListFilters): MessageThread[] {
+  if (!filters) return threads;
+  let out = threads.filter((t) => {
+    if (filters.propertyId && t.propertyId !== filters.propertyId) return false;
+    if (filters.status && t.status !== filters.status) return false;
+    if (filters.priority && t.priority !== filters.priority) return false;
+    if (filters.category && t.category !== filters.category) return false;
+    const activity = threadActivityAt(t);
+    if (filters.from && activity < new Date(filters.from).getTime()) return false;
+    if (filters.to && activity > new Date(filters.to).getTime()) return false;
+    return true;
+  });
+  if (filters.sort) {
+    const key = filters.sort as keyof MessageThread;
+    const dir = filters.order === 'asc' ? 1 : -1;
+    out = [...out].sort((a, b) => {
+      const av = key === 'lastMessageAt' ? threadActivityAt(a) : String(a[key] ?? '');
+      const bv = key === 'lastMessageAt' ? threadActivityAt(b) : String(b[key] ?? '');
+      return av < bv ? -dir : av > bv ? dir : 0;
+    });
+  }
+  return out;
+}
+
+/** UI channel ↔ `notification_preferences` boolean column (PUT /notifications/preferences). */
+const PREFERENCE_CHANNEL_KEYS: Record<CommunicationChannel, string> = {
+  email: 'emailEnabled',
+  sms: 'smsEnabled',
+  in_app: 'pushEnabled',
+};
+
+function preferencesResponseToUi(raw: Record<string, unknown>): NotificationPreference[] {
+  return (Object.keys(PREFERENCE_CHANNEL_KEYS) as CommunicationChannel[]).map((channel) => ({
+    channel,
+    enabled: Boolean(raw[PREFERENCE_CHANNEL_KEYS[channel]]),
+  }));
 }
 
 function extractMaintenanceRequests(raw: unknown): MaintenanceRequest[] {
@@ -858,33 +1083,40 @@ export const featureApi = {
       const raw = await apiRequest<unknown>('GET', endpoint, undefined, headers);
       return unwrapDataArray(raw).map(rentScheduleRowToUi);
     },
-    updateSchedule(scheduleId: string, partial: Partial<RentSchedule>): Promise<RentSchedule> {
+    /**
+     * Owner/manager view: one schedule per active tenancy across every property
+     * the caller can see (GET /properties → GET /rent-schedules/property/:id).
+     */
+    async getPortfolioSchedules(): Promise<RentSchedule[]> {
       const headers = getAuthHeaders();
-      return apiRequest<RentSchedule>('PATCH', `/rent/schedules/${scheduleId}`, partial, headers);
-    },
-    toggleAutopay(payload: AutoPayToggleRequest): Promise<RentSchedule> {
-      const headers = getAuthHeaders();
-      return apiRequest<RentSchedule>(
-        'POST',
-        `/rent/schedules/${payload.scheduleId}/autopay`,
-        payload,
-        headers,
+      const propertyIds = await listScopedPropertyIds(headers);
+      const rows = await fetchPerProperty(propertyIds, (id) =>
+        apiRequest<unknown>(
+          'GET',
+          `/rent-schedules/property/${encodeURIComponent(id)}`,
+          undefined,
+          headers,
+        ),
       );
+      return groupRentScheduleRows(rows);
+    },
+    updateSchedule(_scheduleId: string, _partial: Partial<RentSchedule>): Promise<RentSchedule> {
+      // Edge rent-schedules only supports create/generate and PUT /:id/paid.
+      return edgeUnavailable('Editing a rent schedule');
+    },
+    toggleAutopay(_payload: AutoPayToggleRequest): Promise<RentSchedule> {
+      // No autopay route or column on the Edge API.
+      return edgeUnavailable('Auto-pay');
     },
     createPayment(
-      scheduleId: string,
-      amount: number,
-      method: RentPaymentMethod = 'ach',
+      _scheduleId: string,
+      _amount: number,
+      _method: RentPaymentMethod = 'ach',
     ): Promise<RentPayment> {
-      // Ledger write via rent-schedules API. Card/ACH collection uses
-      // featureApi.stripe.createPaymentIntent + Elements (tenant Payments UI).
-      const headers = getAuthHeaders();
-      return apiRequest<RentPayment>(
-        'POST',
-        `/rent/schedules/${scheduleId}/payments`,
-        { amount, method },
-        headers,
-      );
+      // Edge has no "record a payment against a schedule" route; PUT
+      // /rent-schedules/:id/paid needs an existing paymentId. Card/ACH
+      // collection uses featureApi.stripe.createPaymentIntent + Elements.
+      return edgeUnavailable('Recording a rent payment');
     },
     async listPayments(params?: {
       propertyId?: string;
@@ -921,60 +1153,110 @@ export const featureApi = {
   },
 
   leaseManagement: {
-    listTemplates(): Promise<LeaseTemplate[]> {
+    async listTemplates(): Promise<LeaseTemplate[]> {
       const headers = getAuthHeaders();
-      return apiRequest<LeaseTemplate[]>('GET', '/leases/templates', undefined, headers);
+      const raw = await apiRequest<unknown>('GET', '/lease-templates', undefined, headers);
+      return unwrapDataArray(raw).map(leaseTemplateRowToUi);
     },
-    createTemplate(payload: LeaseTemplate): Promise<LeaseTemplate> {
+    async createTemplate(payload: LeaseTemplate): Promise<LeaseTemplate> {
+      // Staff-only on the Edge. The body carries one `{{key}}` merge token per
+      // field so the template round-trips back into the same `fields` list.
       const headers = getAuthHeaders();
-      return apiRequest<LeaseTemplate>('POST', '/leases/templates', payload, headers);
+      const state = /^[A-Z]{2}$/.test(payload.jurisdiction) ? payload.jurisdiction : null;
+      const body = payload.fields.length > 0
+        ? payload.fields.map((field) => `${field.label}: {{${field.key}}}`).join('\n')
+        : payload.description || payload.name;
+      const raw = await apiRequest<{ data?: Record<string, unknown> }>(
+        'POST',
+        '/lease-templates',
+        { name: payload.name, body, state, description: payload.description ?? null },
+        headers,
+      );
+      return leaseTemplateRowToUi(raw.data ?? {});
     },
-    generateFromTemplate(
+    async generateFromTemplate(
       templateId: string,
       context: Record<string, unknown>,
     ): Promise<LeaseDocument> {
+      // Edge renders merge fields but does not persist a document; the rendered
+      // text is returned as a data: URL so the caller can preview/download it.
       const headers = getAuthHeaders();
-      return apiRequest<LeaseDocument>(
+      const data: Record<string, string | number | null> = {};
+      Object.entries(context).forEach(([key, value]) => {
+        if (value === undefined) return;
+        data[key] = typeof value === 'number' || value === null ? value : String(value);
+      });
+      const raw = await apiRequest<{ data?: { text?: string } }>(
         'POST',
-        `/leases/templates/${templateId}/generate`,
-        context,
+        `/lease-templates/${encodeURIComponent(templateId)}/render`,
+        { data },
         headers,
       );
+      const now = new Date().toISOString();
+      return {
+        id: '',
+        propertyId: context.propertyId != null ? String(context.propertyId) : '',
+        tenantId: context.tenantId != null ? String(context.tenantId) : '',
+        ownerId: context.ownerId != null ? String(context.ownerId) : '',
+        templateId,
+        status: 'draft',
+        downloadUrl: `data:text/plain;charset=utf-8,${encodeURIComponent(raw.data?.text ?? '')}`,
+        createdAt: now,
+        updatedAt: now,
+      };
     },
-    uploadLease(metadata: Partial<LeaseDocument>): Promise<LeaseDocument> {
-      const headers = getAuthHeaders();
-      return apiRequest<LeaseDocument>('POST', '/leases/documents', metadata, headers);
+    uploadLease(_metadata: Partial<LeaseDocument>): Promise<LeaseDocument> {
+      // Metadata-only upload has no Edge route; files go through
+      // documentsApi.createUploadUrl → uploadToSignedUrl → confirmUpload.
+      return edgeUnavailable('Lease upload');
     },
     async listLeases(params?: {
       propertyId?: string;
       tenantId?: string;
       status?: LeaseStatus;
     }): Promise<LeaseDocument[]> {
+      // Owner/manager/staff: GET /properties/:id/leases for each visible property.
       const headers = getAuthHeaders();
-      const raw = await apiRequest<unknown>(
+      const propertyIds = params?.propertyId
+        ? [params.propertyId]
+        : await listScopedPropertyIds(headers);
+      const rows = await fetchPerProperty(propertyIds, (id) =>
+        apiRequest<unknown>(
+          'GET',
+          `/properties/${encodeURIComponent(id)}/leases`,
+          undefined,
+          headers,
+        ),
+      );
+      let leases = rows.map(leaseRowToDocument);
+      if (params?.tenantId) leases = leases.filter((l) => l.tenantId === params.tenantId);
+      if (params?.status) leases = leases.filter((l) => l.status === params.status);
+      return leases;
+    },
+    async listMyLeases(): Promise<LeaseDocument[]> {
+      // Tenant: GET /leases/my returns the caller's current lease (or null).
+      const headers = getAuthHeaders();
+      const raw = await apiRequest<{ data?: Record<string, unknown> | null }>(
         'GET',
-        `/documents${buildQueryString({
-          propertyId: params?.propertyId,
-          tenantId: params?.tenantId,
-        })}`,
+        '/leases/my',
         undefined,
         headers,
       );
-      const rows = unwrapDataArray(raw).filter((r) => String(r.docType ?? '') === 'lease');
-      return rows.map(documentRowToLease);
+      return raw.data ? [leaseRowToDocument(raw.data)] : [];
     },
-    sendForSignature(
+    async sendForSignature(
       documentId: string,
-      provider: ESignRequest['provider'] = 'mock',
+      _provider: ESignRequest['provider'] = 'mock',
     ): Promise<ESignRequest> {
-      // ROADMAP: Plug in DocuSign/HelloSign keys (Q2 2026 - lease management).
+      // Edge runs the mock e-sign flow (parties sign in-app via POST /leases/:id/sign).
       const headers = getAuthHeaders();
-      return apiRequest<ESignRequest>(
+      const raw = await apiRequest<{ data?: Record<string, unknown> }>(
         'POST',
-        `/leases/documents/${documentId}/esign`,
-        { provider },
+        `/leases/${encodeURIComponent(documentId)}/send-for-signature`,
+        undefined,
         headers,
       );
+      return leaseRowToESignRequest(raw.data ?? {}, documentId);
     },
   },
 
@@ -1038,41 +1320,24 @@ export const featureApi = {
   },
 
   communication: {
-    listThreads(filters?: {
-      propertyId?: string;
-      priority?: string;
-      status?: string;
-      category?: string;
-      from?: string;
-      to?: string;
-      sort?: string;
-      order?: string;
-    }): Promise<MessageThread[]> {
+    async listThreads(filters?: ThreadListFilters): Promise<MessageThread[]> {
+      // GET /communication/threads takes no query params on the Edge; filter here.
       const headers = getAuthHeaders();
-      const params = filters
-        ? '?' +
-          new URLSearchParams(
-            Object.fromEntries(
-              Object.entries(filters).filter(([, v]) => v !== undefined)
-            ) as Record<string, string>
-          ).toString()
-        : '';
-      return apiRequest<{ data: MessageThread[] }>(
+      const r = await apiRequest<{ data?: MessageThread[] }>(
         'GET',
-        `/communication/threads${params}`,
+        '/communication/threads',
         undefined,
         headers
-      ).then((r) => r.data || []);
+      );
+      return applyThreadFilters(r.data || [], filters);
     },
 
-    getThread(threadId: string): Promise<MessageThread> {
-      const headers = getAuthHeaders();
-      return apiRequest<{ data: MessageThread }>(
-        'GET',
-        `/communication/threads/${threadId}`,
-        undefined,
-        headers
-      ).then((r) => r.data);
+    async getThread(threadId: string): Promise<MessageThread> {
+      // No GET /communication/threads/:id on the Edge; the list is participant-scoped.
+      const threads = await featureApi.communication.listThreads();
+      const thread = threads.find((t) => t.id === threadId);
+      if (!thread) throw new OntoApiError('Thread not found', 404, 'NOT_FOUND');
+      return thread;
     },
 
     createThread(payload: {
@@ -1144,51 +1409,41 @@ export const featureApi = {
       );
     },
 
-    addParticipant(threadId: string, userId: string): Promise<void> {
-      const headers = getAuthHeaders();
-      return apiRequest<void>(
-        'POST',
-        `/communication/threads/${threadId}/participants`,
-        { userId },
-        headers
-      );
+    addParticipant(_threadId: string, _userId: string): Promise<void> {
+      // Edge only adds participants at thread creation (POST /threads participantIds).
+      return edgeUnavailable('Adding a participant');
     },
 
     listTemplates(): Promise<MessageTemplate[]> {
-      const headers = getAuthHeaders();
-      return apiRequest<{ data: MessageTemplate[] }>(
-        'GET',
-        '/communication/templates',
-        undefined,
-        headers
-      ).then((r) => r.data || []);
+      // Message templates are Express-only; the Edge has no templates table route.
+      return edgeUnavailable('Message templates');
     },
 
-    createTemplate(payload: {
+    createTemplate(_payload: {
       title: string;
       body: string;
       quickReplies: string[];
       isPublic: boolean;
     }): Promise<MessageTemplate> {
-      const headers = getAuthHeaders();
-      return apiRequest<{ data: MessageTemplate }>(
-        'POST',
-        '/communication/templates',
-        payload,
-        headers
-      ).then((r) => r.data);
+      return edgeUnavailable('Message templates');
     },
 
-    updatePreferences(
+    async updatePreferences(
       preferences: NotificationPreference[]
     ): Promise<NotificationPreference[]> {
+      // Per-channel toggles live on PUT /notifications/preferences (emailEnabled, …).
       const headers = getAuthHeaders();
-      return apiRequest<NotificationPreference[]>(
+      const update: Record<string, boolean> = {};
+      preferences.forEach((pref) => {
+        update[PREFERENCE_CHANNEL_KEYS[pref.channel]] = pref.enabled;
+      });
+      const raw = await apiRequest<Record<string, unknown>>(
         'PUT',
-        '/communication/preferences',
-        preferences,
+        '/notifications/preferences',
+        update,
         headers
       );
+      return preferencesResponseToUi(raw);
     },
   },
 

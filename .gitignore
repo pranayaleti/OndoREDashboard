@@ -33,3 +33,7 @@ next-env.d.ts
 
 # mcp
 mcp.json
+# coverage and lint caches
+/coverage/
+.eslintcache
+/logs/

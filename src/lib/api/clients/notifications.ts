@@ -15,15 +15,47 @@ export interface Notification {
   createdAt: string;
 }
 
+/**
+ * GET/PUT /notifications/preferences response: one flat row of `notification_preferences`
+ * columns in camelCase, plus legacy aliases the Edge handler still echoes.
+ * Quiet hours are Postgres `time` values ("HH:MM:SS") or null when unset.
+ */
 export interface NotificationPreferences {
   userId: string;
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  maintenanceAlerts: boolean;
+  emailEnabled: boolean;
+  pushEnabled: boolean;
+  smsEnabled: boolean;
+  maintenanceUpdates: boolean;
   paymentReminders: boolean;
-  tenantNotifications: boolean;
-  reportNotifications: boolean;
+  leaseAlerts: boolean;
+  newListings: boolean;
+  documentUploads: boolean;
+  vendorUpdates: boolean;
+  financialReports: boolean;
+  communityUpdates: boolean;
+  dailyAiSummary: boolean;
+  quietHoursStart: string | null;
+  quietHoursEnd: string | null;
+  /** Legacy aliases (emailEnabled, pushEnabled, maintenanceUpdates, leaseAlerts, documentUploads). */
+  emailNotifications?: boolean;
+  pushNotifications?: boolean;
+  maintenanceAlerts?: boolean;
+  tenantNotifications?: boolean;
+  reportNotifications?: boolean;
 }
+
+/** PUT body: any subset of the column fields. The server rejects a body with none (400). */
+export type NotificationPreferencesUpdate = Partial<
+  Omit<
+    NotificationPreferences,
+    | "userId"
+    | "emailNotifications"
+    | "pushNotifications"
+    | "maintenanceAlerts"
+    | "tenantNotifications"
+    | "reportNotifications"
+  >
+>;
 
 /** Backend returns { message, data }; list items may have isRead (camelCase). */
 interface GetNotificationsApiResponse {
@@ -83,7 +115,7 @@ export const notificationsApi = {
   },
 
   async updatePreferences(
-    preferences: Partial<NotificationPreferences>,
+    preferences: NotificationPreferencesUpdate,
   ): Promise<NotificationPreferences> {
     const headers = getAuthHeaders();
     return apiPut<NotificationPreferences>(
