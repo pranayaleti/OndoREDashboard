@@ -2709,21 +2709,7 @@ export const featureApi = {
       const headers = getAuthHeaders();
       return apiRequest<unknown>('GET', `/properties/${propertyId}/rewards/leaderboard`, undefined, headers);
     },
-    getTenantRewards(propertyId?: string): Promise<unknown> {
-      const headers = getAuthHeaders();
-      const qs = propertyId ? `?propertyId=${propertyId}` : '';
-      return apiRequest<unknown>('GET', `/tenant/rewards${qs}`, undefined, headers);
-    },
-    redeem(data: Record<string, unknown>): Promise<unknown> {
-      const headers = getAuthHeaders();
-      return apiRequest<unknown>('POST', '/tenant/rewards/redeem', data, headers);
-    },
-    history(propertyId?: string): Promise<unknown[]> {
-      const headers = getAuthHeaders();
-      const qs = propertyId ? `?propertyId=${propertyId}` : '';
-      return apiRequest<unknown>('GET', `/tenant/rewards/history${qs}`, undefined, headers)
-        .then((r) => unwrapDataArray(r));
-    },
+    // The tenant side (balance, history, redeem) is rewardsApi in ./rewards.
   },
 
   // ── Lease Renewals ──────────────────────────────────────────────────────────

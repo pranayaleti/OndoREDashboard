@@ -39,9 +39,9 @@ describe("/referrals", () => {
 })
 
 describe("getReferralsPath", () => {
-  it("points each portal at its referral page, and maintenance at its dashboard", () => {
+  it("points each portal at its referral page, tenants at Rewards, and maintenance at its dashboard", () => {
     expect(getReferralsPath("owner")).toBe("/owner/referrals")
-    expect(getReferralsPath("tenant")).toBe("/tenant/referrals")
+    expect(getReferralsPath("tenant")).toBe("/tenant/rewards#refer")
     expect(getReferralsPath("manager")).toBe("/dashboard/referrals")
     expect(getReferralsPath("super_admin")).toBe("/super-admin/referrals")
     expect(getReferralsPath("maintenance")).toBe("/maintenance")

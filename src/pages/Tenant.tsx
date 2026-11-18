@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Navigate, Routes, Route } from "react-router-dom"
 import { PortalSidebar } from "@/components/portal-sidebar"
 import Loading from "@/components/loading"
 
@@ -22,7 +22,6 @@ const DocumentsPanel = lazy(() => import("@/components/homeowner/documents-panel
 const TenantSettings = lazy(() => import("@/components/tenant/tenant-settings"))
 const TenantApplicationsPage = lazy(() => import("@/components/tenant/tenant-applications"))
 const TenantRewards = lazy(() => import("@/components/tenant/tenant-rewards"))
-const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
 
 export default function Tenant() {
   return (
@@ -49,7 +48,8 @@ export default function Tenant() {
             <Route path="/notifications" element={<TenantNotifications />} />
             <Route path="/profile" element={<TenantProfile />} />
             <Route path="/rewards" element={<TenantRewards />} />
-            <Route path="/referrals" element={<ReferralProgram />} />
+            {/* Referrals live inside Rewards for tenants; old links land on the referral section. */}
+            <Route path="/referrals" element={<Navigate to="/tenant/rewards#refer" replace />} />
           </Routes>
         </Suspense>
       </div>

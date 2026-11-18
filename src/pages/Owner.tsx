@@ -34,6 +34,7 @@ const ScreeningListPage = lazy(() => import("@/components/shared/screening-list-
 const RentalApplicationsPage = lazy(() => import("@/components/rental/rental-applications-page"))
 const LeasingPipelinePage = lazy(() => import("@/components/leasing/leasing-pipeline-page"))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
+const RewardRedemptions = lazy(() => import("@/components/shared/reward-redemptions"))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
 // Advanced modules. Reachable by direct URL only; kept out of PortalSidebar
@@ -88,6 +89,7 @@ export default function Owner() {
             <Route path="/profile" element={<OwnerProfile />} />
             <Route path="/organization" element={<OwnerOrganization />} />
             <Route path="/referrals" element={<ReferralProgram />} />
+            <Route path="/rewards" element={<RewardRedemptions />} />
             <Route path="/investor-portal" element={<InvestorPortal />} />
             <Route path="/trust-accounting" element={<TrustAccountingPanel />} />
           </Routes>

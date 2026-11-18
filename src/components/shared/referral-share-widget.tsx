@@ -6,6 +6,8 @@
  * referral.copyLink
  * referral.copied
  * referral.viewProgram
+ * referral.shareDescTenant
+ * referral.viewRewards
  * referral.errorLoading
  */
 
@@ -26,7 +28,7 @@ import { Gift, Copy, Check, ArrowRight } from "lucide-react";
 import { referralApi } from "@/lib/api/clients/referrals";
 import type { ReferralStats } from "@/lib/api/clients/referrals";
 import { useAuth } from "@/lib/auth-context";
-import { getDashboardPath } from "@/lib/auth-utils";
+import { getReferralsPath } from "@/lib/auth-utils";
 import { getDemoReferralLink } from "@/lib/seed-data";
 
 export function ReferralShareWidget() {
@@ -37,9 +39,9 @@ export function ReferralShareWidget() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const referralPath = user
-    ? `${getDashboardPath(user.role)}/referrals`
-    : "/referrals";
+  const referralPath = user ? getReferralsPath(user.role) : "/referrals";
+  // Tenants earn Ondo Rewards points for referrals, not portal months.
+  const isTenant = user?.role === "tenant";
 
   useEffect(() => {
     let cancelled = false;
@@ -93,7 +95,7 @@ export function ReferralShareWidget() {
           {t("referral.shareTitle")}
         </CardTitle>
         <CardDescription className="text-xs">
-          {t("referral.shareDesc")}
+          {t(isTenant ? "referral.shareDescTenant" : "referral.shareDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -131,7 +133,7 @@ export function ReferralShareWidget() {
               className="p-0 h-auto text-xs text-orange-600 dark:text-orange-400"
             >
               <Link to={referralPath}>
-                {t("referral.viewProgram")}
+                {t(isTenant ? "referral.viewRewards" : "referral.viewProgram")}
                 <ArrowRight className="h-3 w-3 ml-1" />
               </Link>
             </Button>

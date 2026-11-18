@@ -54,6 +54,7 @@ import {
   Zap,
   GitBranch,
   Info,
+  Award,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -188,6 +189,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Leasing", href: `${basePath}/leasing`, icon: <GitBranch className="h-5 w-5" /> },
         { title: "Owners", href: `${basePath}/owners`, icon: <Briefcase className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <KeyRound className="h-5 w-5" /> },
+        { title: "Tenant rewards", href: `${basePath}/rewards`, icon: <Award className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Screening", href: `${basePath}/screening`, icon: <ClipboardCheck className="h-5 w-5" /> },
         { title: "Applications", href: `${basePath}/applications`, icon: <FileText className="h-5 w-5" /> },
@@ -201,7 +203,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
         { title: "Automations", href: `${basePath}/automations`, icon: <Zap className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
-        { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
+        { title: "Refer a renter", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
     
@@ -225,6 +227,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Applications", href: `${basePath}/applications`, icon: <FileText className="h-5 w-5" /> },
         { title: "Leasing", href: `${basePath}/leasing`, icon: <GitBranch className="h-5 w-5" /> },
         { title: "Tenants", href: `${basePath}/tenants`, icon: <Users className="h-5 w-5" /> },
+        { title: "Tenant rewards", href: `${basePath}/rewards`, icon: <Award className="h-5 w-5" /> },
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" /> },
         { title: "Handoff", href: `/handoff`, icon: <ClipboardList className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
@@ -235,7 +238,7 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Tasks", href: `${basePath}/tasks`, icon: <ListTodo className="h-5 w-5" /> },
         { title: "Notifications", href: `${basePath}/notifications`, icon: <Bell className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
-        { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
+        { title: "Refer a renter", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
     
@@ -249,12 +252,12 @@ const getNavItems = (role: UserRole, t: TranslateFn): NavItem[] => {
         { title: "Maintenance", href: `${basePath}/maintenance`, icon: <Wrench className="h-5 w-5" />, dataTourId: "tenant-maintenance-nav" },
         { title: "Payments", href: `${basePath}/payments`, icon: <CreditCard className="h-5 w-5" />, dataTourId: "tenant-payments-nav" },
         { title: "Finances", href: `${basePath}/finances`, icon: <DollarSign className="h-5 w-5" /> },
+        { title: "Rewards", href: `${basePath}/rewards`, icon: <Gift className="h-5 w-5" /> },
         { title: t("tenant:nav.myUploads"), href: `${basePath}/my-documents`, icon: <Upload className="h-5 w-5" /> },
         { title: t("tenant:nav.sharedDocuments"), href: `${basePath}/documents`, icon: <FolderOpen className="h-5 w-5" /> },
         { title: "Messages", href: `${basePath}/messages`, icon: <MessageSquare className="h-5 w-5" /> },
         { title: "Calendar", href: `${basePath}/calendar`, icon: <Calendar className="h-5 w-5" /> },
         { title: "Settings", href: `${basePath}/settings`, icon: <Settings className="h-5 w-5" /> },
-        { title: "Referral Program", href: `${basePath}/referrals`, icon: <Gift className="h-5 w-5" /> },
         { title: "Profile", href: `${basePath}/profile`, icon: <User className="h-5 w-5" /> },
       ]
 
@@ -336,6 +339,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
             `/owner/occupancy`,
             `/owner/leasing`,
             `/owner/tenants`,
+            `/owner/rewards`,
             `/owner/maintenance`,
             `/owner/messages`,
             `/handoff`,
@@ -389,7 +393,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
         id: "payments",
         label: t("common:sidebar.sections.payments"),
         items: navItems.filter((item) =>
-          [`/tenant/payments`, `/tenant/finances`, `/tenant/maintenance`].includes(item.href)
+          [`/tenant/payments`, `/tenant/finances`, `/tenant/rewards`, `/tenant/maintenance`].includes(item.href)
         ),
       },
       {
@@ -404,7 +408,7 @@ const getNavSections = (role: UserRole, t: TranslateFn): NavSection[] => {
         id: "account",
         label: t("common:sidebar.sections.account"),
         items: navItems.filter((item) =>
-          [`/tenant/settings`, `/tenant/referrals`, `/tenant/profile`].includes(item.href)
+          [`/tenant/settings`, `/tenant/profile`].includes(item.href)
         ),
         defaultOpen: false,
       },

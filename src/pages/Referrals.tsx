@@ -1,14 +1,14 @@
 import { Link, Navigate, useLocation } from "react-router-dom"
-import { Gift } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Loading from "@/components/loading"
+import { MuralVignette } from "@/components/art/ondo-mural"
 import { useAuth } from "@/lib/auth-context"
 import { getReferralsPath } from "@/lib/auth-utils"
 
 /**
  * /referrals: the address the marketing site and emails link to. The referral program itself
- * lives inside each portal (/owner/referrals, /tenant/referrals, ...), so signed-in users go
+ * lives inside each portal (/owner/referrals, /tenant/rewards#refer, ...), so signed-in users go
  * straight to theirs and everyone else gets a short explanation with a way in.
  */
 export default function Referrals() {
@@ -20,18 +20,16 @@ export default function Referrals() {
 
   return (
     <section className="container mx-auto flex max-w-xl flex-col items-center px-4 py-16 text-center">
-      <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <Gift className="h-6 w-6" aria-hidden="true" />
-      </span>
+      <MuralVignette className="mb-6" />
       <h1 className="text-3xl font-bold text-foreground">Ondo referral program</h1>
       <p className="mt-3 text-foreground/80">
-        Share Ondo with friends and earn free months of portal access. When someone you refer signs up and
-        activates their account, the free month is added to yours.
+        Ondo rents out its own homes in Utah. Tenants earn Ondo Rewards points when a friend they refer signs a
+        lease, and the friend gets a welcome bonus too.
       </p>
       <Card className="mt-8 w-full">
         <CardContent className="space-y-4 p-6">
           <p className="text-sm text-foreground/80">
-            Your personal referral link and your rewards are in your Ondo portal. Log in to copy your link.
+            Your referral link and code are in your Ondo portal. Log in to copy them.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button asChild>
@@ -47,12 +45,12 @@ export default function Referrals() {
         </CardContent>
       </Card>
       <p className="mt-6 text-sm text-foreground/70">
-        Want to refer a buyer, seller or landlord to Ondo instead?{" "}
+        Questions about referrals?{" "}
         <a
-          href="https://www.ondorealestate.com/contact/?audience=agent_referrals"
+          href="https://www.ondorealestate.com/contact/"
           className="font-medium text-primary underline underline-offset-4"
         >
-          Send us the referral
+          Contact Ondo
         </a>
         .
       </p>

@@ -79,7 +79,10 @@ export function getDashboardPath(role: UserRole): string {
  */
 export function getReferralsPath(role: UserRole): string {
   const dashboard = getDashboardPath(role)
-  return role === "maintenance" ? dashboard : `${dashboard}/referrals`
+  if (role === "maintenance") return dashboard
+  // Tenants refer friends from Rewards, where a referral earns points.
+  if (role === "tenant") return `${dashboard}/rewards#refer`
+  return `${dashboard}/referrals`
 }
 
 /**

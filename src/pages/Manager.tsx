@@ -24,6 +24,7 @@ const ManagerAssistant = lazy(() => import("@/components/manager/manager-assista
 const ManagerContentStudio = lazy(() => import("@/components/manager/manager-content-studio"))
 const DashboardPaymentHistory = lazy(() => import("@/components/shared/dashboard-payment-history").then((m) => ({ default: m.DashboardPaymentHistory })))
 const ReferralProgram = lazy(() => import("@/components/shared/referral-program").then((m) => ({ default: m.ReferralProgram })))
+const RewardRedemptions = lazy(() => import("@/components/shared/reward-redemptions"))
 const ManagerAtRisk = lazy(() => import("@/components/manager/manager-at-risk"))
 const ManagerTasks = lazy(() => import("@/components/manager/manager-tasks"))
 const ManagerWorkflows = lazy(() => import("@/components/manager/manager-workflows"))
@@ -70,6 +71,7 @@ export default function Manager() {
             <Route path="/notifications" element={<ManagerNotifications />} />
             <Route path="/profile" element={<ManagerProfile />} />
             <Route path="/referrals" element={<ReferralProgram />} />
+            <Route path="/rewards" element={<RewardRedemptions />} />
           </Routes>
         </Suspense>
       </div>
