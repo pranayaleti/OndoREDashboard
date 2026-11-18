@@ -22,13 +22,20 @@ jobs:
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Secrets are not available in `if:` expressions, so expose whether the key is
+      # set. Without it (or on Dependabot runs, which cannot read repository secrets)
+      # the review steps are skipped instead of failing the check.
+      HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     steps:
       - name: Checkout
+        if: env.HAS_ANTHROPIC_KEY == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Claude review
+        if: env.HAS_ANTHROPIC_KEY == 'true'
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

@@ -41,8 +41,9 @@ export default defineConfig({
       "@ondo/types": path.resolve(__dirname, "src/lib/api/types/ondo-types.ts"),
       react: path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
-      "react-router": path.resolve(__dirname, "node_modules/react-router"),
-      "react-router-dom": path.resolve(__dirname, "node_modules/react-router-dom"),
+      // react-router / react-router-dom are deliberately NOT aliased to a node_modules
+      // path: v7 imports the subpath "react-router/dom", and a path alias bypasses the
+      // package "exports" map. `dedupe` below is what keeps a single copy.
     },
     dedupe: ["react", "react-dom", "react-router", "react-router-dom"],
   },
